@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { SharedHeader, SharedMenu } from '../components'
+import { AdminLayout } from '../components'
 import './BankEmployee.css'
 
 // Mock client data
@@ -176,21 +176,8 @@ const BankEmployee: React.FC = () => {
   }
 
   return (
-    <div className="bank-employee-page">
-      <SharedMenu 
-        userRole="bank-employee"
-        showAdminSections={true}
-      />
-      
-      <div className="main-content">
-        <SharedHeader 
-          title="Сотрудник банка"
-          navigateTo="/"
-          confirmNavigation={false}
-        />
-        
-        {/* Page Content */}
-        <div className="page-content">
+    <AdminLayout title="Сотрудник банка" userRole="bank-employee" showAdminSections={true}>
+      <div className="bank-employee-content">
         <div className="page-header">
           <h1>🏛️ Сотрудник банка</h1>
           <p className="page-subtitle">Управление клиентами и заявками</p>
@@ -416,8 +403,7 @@ const BankEmployee: React.FC = () => {
         )}
       </div>
     </div>
-      </div>
-    </div>
+    </AdminLayout>
   )
 }
 

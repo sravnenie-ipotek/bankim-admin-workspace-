@@ -4,46 +4,152 @@ import './App.css'
 
 // Import the QA Showcase component
 import BankEmployee from './pages/BankEmployee'
+import { AdminLayout } from './components'
 
-// Role components
+// Role components with AdminLayout
 const SalesManager = () => (
-  <div className="role-page">
-    <h1>Для Менеджера по продажам</h1>
-    <p>Sales Manager Management Interface - In Development</p>
-    <p><Link to="/bank-employee">Go to Components Test Page</Link></p>
-  </div>
+  <AdminLayout title="Менеджер по продажам" userRole="sales-manager">
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>📊 Менеджер по продажам</h1>
+        <p className="page-subtitle">Управление продажами и клиентской базой</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Интерфейс менеджера по продажам находится в активной разработке</p>
+          <ul>
+            <li>Управление воронкой продаж</li>
+            <li>Анализ конверсии клиентов</li>
+            <li>Отчеты по продажам</li>
+            <li>Управление задачами команды</li>
+          </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/bank-employee" className="btn-primary">
+            🧪 Перейти к тестовой странице компонентов
+          </Link>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
 )
 
 const Administration = () => (
-  <div className="role-page">
-    <h1>Для Администрации</h1>
-    <p>Administration Management Interface - In Development</p>
-    <p><Link to="/bank-employee">Go to Components Test Page</Link></p>
-  </div>
+  <AdminLayout title="Администрация" userRole="administration">
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>⚙️ Администрация</h1>
+        <p className="page-subtitle">Системное администрирование и управление пользователями</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Панель администратора находится в активной разработке</p>
+          <ul>
+            <li>Управление пользователями и ролями</li>
+            <li>Системные настройки</li>
+            <li>Мониторинг безопасности</li>
+            <li>Резервное копирование</li>
+          </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/bank-employee" className="btn-primary">
+            🧪 Перейти к тестовой странице компонентов
+          </Link>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
 )
 
 const Brokers = () => (
-  <div className="role-page">
-    <h1>Для Брокеров</h1>
-    <p>Brokers Management Interface - In Development</p>
-    <p><Link to="/bank-employee">Go to Components Test Page</Link></p>
-  </div>
+  <AdminLayout title="Брокеры" userRole="brokers">
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>🤝 Брокеры</h1>
+        <p className="page-subtitle">Управление партнерской сетью и внешними брокерами</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Интерфейс для работы с брокерами находится в активной разработке</p>
+          <ul>
+            <li>Управление партнерами</li>
+            <li>Комиссионная структура</li>
+            <li>Отслеживание сделок</li>
+            <li>Отчеты по партнерам</li>
+          </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/bank-employee" className="btn-primary">
+            🧪 Перейти к тестовой странице компонентов
+          </Link>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
 )
 
 const ContentManager = () => (
-  <div className="role-page">
-    <h1>Для Контент-менеджера</h1>
-    <p>Content Manager Interface - In Development</p>
-    <p><Link to="/bank-employee">Go to Components Test Page</Link></p>
-  </div>
+  <AdminLayout title="Контент-менеджер" userRole="content-manager">
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>📝 Контент-менеджер</h1>
+        <p className="page-subtitle">Управление контентом и медиа-ресурсами</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Система управления контентом находится в активной разработке</p>
+          <ul>
+            <li>Редактирование страниц</li>
+            <li>Управление медиа-библиотекой</li>
+            <li>SEO-оптимизация</li>
+            <li>Публикация материалов</li>
+          </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/bank-employee" className="btn-primary">
+            🧪 Перейти к тестовой странице компонентов
+          </Link>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
 )
 
 const Director = () => (
-  <div className="role-page">
-    <h1>Для Директора</h1>
-    <p>Director Management Interface - In Development</p>
-    <p><Link to="/bank-employee">Go to Components Test Page</Link></p>
-  </div>
+  <AdminLayout title="Директор" userRole="director">
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>👑 Директор</h1>
+        <p className="page-subtitle">Исполнительная панель управления и стратегический контроль</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Исполнительная панель директора находится в активной разработке</p>
+          <ul>
+            <li>Стратегические отчеты</li>
+            <li>Финансовая аналитика</li>
+            <li>Управление подразделениями</li>
+            <li>Контроль КПЭ</li>
+          </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/bank-employee" className="btn-primary">
+            🧪 Перейти к тестовой странице компонентов
+          </Link>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
 )
 
 // Dashboard component

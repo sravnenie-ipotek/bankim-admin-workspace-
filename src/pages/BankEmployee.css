@@ -1,26 +1,9 @@
 /* Bank Employee Page Styles */
 
-.bank-employee-page {
-  min-height: 100vh;
-  background: #0f172a;
+.bank-employee-content {
+  width: 100%;
   color: #e2e8f0;
   font-family: 'Inter', system-ui, sans-serif;
-  display: flex;
-}
-
-/* Main content area (excludes sidebar) */
-.main-content {
-  flex: 1;
-  margin-left: 280px; /* Width of SharedMenu */
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  transition: margin-left 0.3s ease;
-}
-
-/* Page content (excludes header) */
-.page-content {
-  flex: 1;
   padding: 2rem;
   overflow-y: auto;
 }
@@ -423,19 +406,15 @@
 }
 
 /* Responsive Design */
-/* Responsive adjustments for menu layout */
+/* Responsive adjustments for AdminLayout */
 @media (max-width: 1200px) {
-  .main-content {
-    margin-left: 240px; /* Smaller menu width */
+  .bank-employee-content {
+    padding: 1.5rem;
   }
 }
 
 @media (max-width: 1024px) {
-  .main-content {
-    margin-left: 60px; /* Collapsed menu width */
-  }
-  
-  .page-content {
+  .bank-employee-content {
     padding: 1rem;
   }
   
@@ -467,11 +446,7 @@
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    margin-left: 0; /* No sidebar margin on mobile */
-  }
-  
-  .page-content {
+  .bank-employee-content {
     padding: 0.5rem;
   }
   
