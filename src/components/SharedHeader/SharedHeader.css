@@ -72,44 +72,17 @@
   flex-grow: 0;
 }
 
-/* Logo Placeholder - Replace with actual logo */
-.logo-placeholder {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #FBE54D;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 700;
-  color: #111928;
-  font-size: 14px;
+/* Logo Image */
+.logo-image {
+  width: 96px;
+  height: 42.86px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.logo-placeholder::before {
-  content: 'LOGO';
-  position: absolute;
-  z-index: 2;
-}
-
-.logo-yellow-part {
-  position: absolute;
-  left: 0%;
-  right: 50%;
-  top: 0%;
-  bottom: 0%;
-  background: #FBE54D;
-}
-
-.logo-white-part {
-  position: absolute;
-  left: 50%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;
-  background: #FFFFFF;
+.logo-image:hover {
+  transform: scale(1.05);
 }
 
 /* Language Selector Frame */
@@ -395,6 +368,11 @@
     height: 28px;
   }
   
+  .logo-image {
+    width: 60px;
+    height: 28px;
+  }
+  
   .language-selector-frame {
     width: 70px;
     height: 20px;
@@ -448,6 +426,11 @@
   }
   
   .logo-frame {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .logo-image {
     width: 50px;
     height: 24px;
   }
