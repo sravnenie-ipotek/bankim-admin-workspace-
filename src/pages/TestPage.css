@@ -1,0 +1,511 @@
+/* Admin Shared Components Test Page Styles */
+
+.test-page {
+  min-height: 100vh;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Test Page Header */
+.test-page-header {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 2rem;
+  border-bottom: 1px solid #334155;
+}
+
+.test-page-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.test-page-header p {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+/* Role Selector */
+.role-selector {
+  text-align: center;
+}
+
+.role-selector label {
+  display: block;
+  font-weight: 600;
+  color: #fbbf24;
+  margin-bottom: 1rem;
+}
+
+.role-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.role-btn {
+  background: #1e293b;
+  border: 2px solid #334155;
+  color: #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.role-btn:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+.role-btn.active {
+  background: #2563eb;
+  border-color: currentColor;
+  color: white;
+}
+
+.role-permissions {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Component Tests */
+.component-tests {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.component-test {
+  background: #1e293b;
+  border-radius: 1rem;
+  border: 1px solid #334155;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.component-test-header {
+  background: #334155;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.component-test-header h3 {
+  color: #fbbf24;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.component-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.file-path {
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: #0f172a;
+  color: #94a3b8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status.implemented {
+  background: #065f46;
+  color: #d1fae5;
+}
+
+.status.pending {
+  background: #92400e;
+  color: #fef3c7;
+}
+
+.toggle-btn {
+  background: #2563eb;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.toggle-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Component Demo Areas */
+.component-demo {
+  padding: 1.5rem;
+  background: #0f172a;
+}
+
+.sidebar-demo {
+  display: flex;
+  min-height: 300px;
+  padding: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.sidebar-content {
+  flex: 1;
+  padding: 2rem;
+  background: #1e293b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sidebar-content h4 {
+  color: #fbbf24;
+  margin-bottom: 1rem;
+}
+
+.sidebar-content p {
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+/* Mock SharedHeader */
+.shared-header {
+  background: #242529;
+  border: 1px solid #333535;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #fbbf24;
+  font-size: 1.1rem;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.role-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.permissions-info {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.header-btn {
+  background: #334155;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.header-btn:hover {
+  background: #475569;
+  border-color: #fbbf24;
+}
+
+/* Mock SharedSidebar */
+.shared-sidebar {
+  width: 250px;
+  background: #242529;
+  border-right: 1px solid #333535;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+}
+
+.shared-sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid #333535;
+  text-align: center;
+}
+
+.sidebar-title {
+  font-weight: 700;
+  color: #fbbf24;
+  font-size: 1.1rem;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+
+.nav-section {
+  padding: 0 0.5rem;
+}
+
+.nav-bottom {
+  padding: 0 0.5rem;
+  border-top: 1px solid #333535;
+  padding-top: 1rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 0.25rem;
+}
+
+.nav-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.nav-item.active {
+  background: #2563eb;
+  color: white;
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.shared-sidebar.collapsed .nav-label {
+  display: none;
+}
+
+/* Component Details */
+.component-details {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #334155;
+  background: #1e293b;
+}
+
+.component-details h4 {
+  color: #fbbf24;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.component-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.component-details li {
+  padding: 0.25rem 0;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+}
+
+/* Development Status */
+.development-status {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.development-status h3 {
+  color: #fbbf24;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.status-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-item.pending {
+  opacity: 0.7;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.status-icon {
+  font-size: 1.5rem;
+}
+
+.status-header h4 {
+  color: white;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.status-item p {
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Next Steps */
+.next-steps {
+  background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.next-steps h3 {
+  color: #fbbf24;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.next-steps ol {
+  color: #d1fae5;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.next-steps li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .test-page-header {
+    padding: 1rem;
+  }
+  
+  .test-page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .role-buttons {
+    justify-content: center;
+  }
+  
+  .role-btn {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .component-tests {
+    padding: 1rem;
+  }
+  
+  .component-test-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .sidebar-demo {
+    flex-direction: column;
+    min-height: auto;
+  }
+  
+  .shared-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #333535;
+  }
+  
+  .shared-sidebar.collapsed {
+    width: 100%;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    padding: 0.5rem 0;
+  }
+  
+  .nav-section, .nav-bottom {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+} 

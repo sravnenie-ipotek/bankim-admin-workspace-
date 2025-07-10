@@ -1,0 +1,71 @@
+/* AdminLayout Component Styles */
+
+.admin-layout {
+  min-height: 100vh;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+}
+
+/* Main content area (excludes sidebar) */
+.admin-main-content {
+  flex: 1;
+  margin-left: 280px; /* Width of SharedMenu */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+/* Page content area (excludes header) */
+.admin-page-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  background: #0f172a;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .admin-main-content {
+    margin-left: 240px; /* Smaller menu width */
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-main-content {
+    margin-left: 60px; /* Collapsed menu width */
+  }
+  
+  .admin-page-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-main-content {
+    margin-left: 0; /* No sidebar margin on mobile */
+  }
+  
+  .admin-page-content {
+    padding: 0.5rem;
+  }
+}
+
+/* Utility classes for common page layouts */
+.admin-page-content.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.admin-page-content.full-width {
+  padding: 0;
+}
+
+.admin-page-content.compact {
+  padding: 1rem;
+} 
