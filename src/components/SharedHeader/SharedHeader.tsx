@@ -12,7 +12,6 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoImage from '../../../assets/images/logo/logo.png';
 import './SharedHeader.css';
 
 interface SharedHeaderProps {
@@ -88,9 +87,9 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
             aria-label="Go to dashboard"
           >
             <div className="logo-frame">
-              {/* Actual logo image */}
+              {/* Actual logo image from public folder */}
               <img 
-                src={logoImage} 
+                src="/assets/images/logo.png" 
                 alt="BankIM Logo" 
                 className="logo-image"
                 width="96"

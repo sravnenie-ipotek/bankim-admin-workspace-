@@ -4,16 +4,19 @@
 
 The logo has been successfully integrated into the SharedHeader component.
 
-**Current logo file:** `logo.png` (6.8KB)
+**Current logo files:** 
+- `logo.png` (6.8KB) - Source file in src/assets
+- `/public/assets/images/logo.png` - Production file served by Vite
 
 ## Integration Details
 
 The logo is now:
-- ✅ Imported in `SharedHeader.tsx`
+- ✅ Served from public folder (`/assets/images/logo.png`)
 - ✅ Properly sized (96x42.86px on desktop)
 - ✅ Responsive (scales down on mobile devices)
 - ✅ Clickable with navigation functionality
 - ✅ Has hover effect (slight scale animation)
+- ✅ Vite-compatible (no import issues)
 
 ## Responsive Sizes
 
@@ -25,17 +28,30 @@ The logo is now:
 
 ```tsx
 // In SharedHeader.tsx
-import logoImage from '../../../assets/images/logo/logo.png';
+// Logo is served from public folder - no import needed
 
 // Used as:
 <img 
-  src={logoImage} 
+  src="/assets/images/logo.png" 
   alt="BankIM Logo" 
   className="logo-image"
   width="96"
   height="43"
 />
 ```
+
+## File Locations
+
+1. **Source file**: `src/assets/images/logo/logo.png` (for backup/source)
+2. **Production file**: `public/assets/images/logo.png` (served by Vite)
+
+## Why Public Folder?
+
+The logo is placed in the public folder because:
+- ✅ No Vite import resolution issues
+- ✅ Better performance (direct static serving)
+- ✅ More reliable across different Vite configurations
+- ✅ Standard practice for static assets
 
 ## CSS Styling
 
@@ -53,4 +69,4 @@ import logoImage from '../../../assets/images/logo/logo.png';
 }
 ```
 
-The logo now appears perfectly in the dark header (#111928) as designed in the Figma specifications. 
+The logo now appears perfectly in the dark header (#111928) as designed in the Figma specifications, with no Vite import issues. 
