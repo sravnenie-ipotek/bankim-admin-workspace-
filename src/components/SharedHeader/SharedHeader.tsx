@@ -1,16 +1,16 @@
 /**
  * SharedHeader Component
  * Reusable header component for the management portal
- * Used in admin pages that need header functionality
+ * Based on Figma Admin Panel Design System
  * 
  * Features:
- * - Logo with optional navigation confirmation
- * - Language selector (placeholder for now)
+ * - Dark background (#111928)
+ * - Logo with yellow/white vector graphics
+ * - Language selector with dropdown and flags
  * - Responsive design
- * - Standalone for management portal
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SharedHeader.css';
 
@@ -21,32 +21,26 @@ interface SharedHeaderProps {
   confirmationMessage?: string;
   /** Custom navigation path (default: '/') */
   navigateTo?: string;
-  /** Hide language selector */
-  hideLanguageSelector?: boolean;
   /** Custom logo click handler */
   onLogoClick?: () => void;
-  /** Page title to display */
-  title?: string;
 }
 
 /**
  * SharedHeader component provides a reusable header with logo and navigation
- * Designed for use in the management portal admin pages
+ * Designed to match the Figma Admin Panel Design System
  */
 const SharedHeader: React.FC<SharedHeaderProps> = ({
   confirmNavigation = false,
   confirmationMessage,
   navigateTo = '/',
-  hideLanguageSelector = false,
-  onLogoClick,
-  title = 'BankIM Management Portal'
+  onLogoClick
 }) => {
   const navigate = useNavigate();
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('Русский');
 
   /**
    * Handle logo click with optional confirmation
-   * If confirmNavigation is true, shows confirmation dialog
-   * If custom onLogoClick is provided, uses that instead
    */
   const handleLogoClick = () => {
     if (onLogoClick) {
@@ -65,38 +59,99 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
     }
   };
 
+  /**
+   * Handle language selection
+   */
+  const handleLanguageSelect = (language: string) => {
+    setSelectedLanguage(language);
+    setIsLanguageDropdownOpen(false);
+    // TODO: Implement actual language switching logic
+  };
+
+  /**
+   * Toggle language dropdown
+   */
+  const toggleLanguageDropdown = () => {
+    setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
+  };
+
   return (
-    <div className="shared-header">
-      <div className="header-container">
-        <div className="header-content">
-          {/* Logo Section */}
-          <div className="logo-section">
-            <button
-              type="button"
-              className="logo-button"
-              onClick={handleLogoClick}
-              aria-label="Go to dashboard"
-            >
-              <span className="logo-icon">🏛️</span>
-              <span className="logo-text">BankIM</span>
-            </button>
-          </div>
-
-          {/* Title Section */}
-          <div className="title-section">
-            <h1 className="page-title">{title}</h1>
-          </div>
-
-          {/* Right Section - Language Selector */}
-          {!hideLanguageSelector && (
-            <div className="right-section">
-              <div className="language-selector">
-                <button className="lang-button">EN</button>
-                <button className="lang-button">RU</button>
-                <button className="lang-button">HE</button>
+    <div className="navbar-container">
+      <div className="navbar-content">
+        {/* Logo Section */}
+        <div className="logo-section">
+          <button
+            type="button"
+            className="logo-button"
+            onClick={handleLogoClick}
+            aria-label="Go to dashboard"
+          >
+            <div className="logo-frame">
+              {/* Logo placeholder - actual logo SVG will be placed here */}
+              <div className="logo-placeholder">
+                <div className="logo-yellow-part"></div>
+                <div className="logo-white-part"></div>
               </div>
             </div>
-          )}
+          </button>
+        </div>
+
+        {/* Language Selector */}
+        <div className="language-selector-frame">
+          <div className="language-selector">
+            <button 
+              className="language-button"
+              onClick={toggleLanguageDropdown}
+              aria-label="Select language"
+            >
+              <span className="selected-language">{selectedLanguage}</span>
+              <div className={`dropdown-arrow ${isLanguageDropdownOpen ? 'open' : ''}`}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path 
+                    d="M7 10l5 5 5-5" 
+                    stroke="#F3F4F6" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </button>
+
+            {/* Dropdown Menu */}
+            {isLanguageDropdownOpen && (
+              <div className="dropdown-menu">
+                <div className="dropdown-content">
+                  {/* Russian Option */}
+                  <button 
+                    className="nav-link"
+                    onClick={() => handleLanguageSelect('Русский')}
+                  >
+                    <div className="flag-icon russia-flag">
+                      <div className="flag-white"></div>
+                      <div className="flag-blue"></div>
+                      <div className="flag-red"></div>
+                    </div>
+                    <span className="language-text">Русский</span>
+                  </button>
+
+                  {/* Hebrew/Israeli Option */}
+                  <button 
+                    className="nav-link"
+                    onClick={() => handleLanguageSelect('עברית')}
+                  >
+                    <div className="flag-icon israel-flag">
+                      <div className="flag-white-bg"></div>
+                      <div className="star-of-david"></div>
+                      <div className="flag-blue-stripe-top"></div>
+                      <div className="flag-blue-stripe-bottom"></div>
+                    </div>
+                    <span className="language-text">עברית</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,162 +1,459 @@
-/* SharedHeader Component Styles */
+/* SharedHeader Component Styles - Based on Figma Admin Panel Design System */
 
-.shared-header {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  border-bottom: 3px solid #d97706;
-  box-shadow: 0 4px 12px -1px rgba(251, 191, 36, 0.3);
+/* Import Arimo font */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&display=swap');
+
+/* Navbar Initial */
+.navbar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 189px;
+  gap: 876px;
+  
+  width: 100%;
+  min-width: 1440px;
+  height: 98px;
+  
+  background: #111928;
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 100%;
-  min-height: 4rem;
+  box-sizing: border-box;
 }
 
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.header-content {
+.navbar-content {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 4rem;
-  gap: 2rem;
+  width: 100%;
+  max-width: 1062px; /* 1440 - 2*189 padding */
+  margin: 0 auto;
 }
 
 /* Logo Section */
 .logo-section {
-  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+  
+  margin: 0 auto;
+  width: 96px;
+  height: 42px;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
 
 .logo-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 96px;
+  height: 42px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-  color: #0f172a;
+  justify-content: center;
+}
+
+.logo-frame {
+  width: 96px;
+  height: 42.86px;
+  position: relative;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Logo Placeholder - Replace with actual logo */
+.logo-placeholder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FBE54D;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arimo', sans-serif;
   font-weight: 700;
-  font-size: 1.25rem;
+  color: #111928;
+  font-size: 14px;
 }
 
-.logo-button:hover {
-  background: rgba(15, 23, 42, 0.1);
-  transform: translateY(-1px);
+.logo-placeholder::before {
+  content: 'LOGO';
+  position: absolute;
+  z-index: 2;
 }
 
-.logo-icon {
-  font-size: 1.5rem;
+.logo-yellow-part {
+  position: absolute;
+  left: 0%;
+  right: 50%;
+  top: 0%;
+  bottom: 0%;
+  background: #FBE54D;
 }
 
-.logo-text {
-  font-size: 1.25rem;
-  font-weight: 700;
+.logo-white-part {
+  position: absolute;
+  left: 50%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #FFFFFF;
 }
 
-/* Title Section */
-.title-section {
-  flex: 1;
-  text-align: center;
+/* Language Selector Frame */
+.language-selector-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0px;
+  gap: 8px;
+  isolation: isolate;
+  
+  margin: 0 auto;
+  width: 90px;
+  height: 24px;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  position: relative;
 }
 
-.page-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-/* Right Section - Language Selector */
-.right-section {
-  flex-shrink: 0;
-}
-
+/* Language Selector */
 .language-selector {
   display: flex;
-  gap: 0.25rem;
-  background: rgba(15, 23, 42, 0.8);
-  border-radius: 0.5rem;
-  padding: 0.25rem;
-  border: 1px solid #0f172a;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 12px;
+  
+  width: 90px;
+  height: 24px;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  z-index: 0;
 }
 
-.lang-button {
+.language-button {
   background: none;
   border: none;
-  color: #e2e8f0;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.25rem;
   cursor: pointer;
-  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  font-family: 'Arimo', sans-serif;
+}
+
+.selected-language {
+  width: 54px;
+  height: 21px;
+  
+  font-family: 'Arimo', sans-serif;
+  font-style: normal;
   font-weight: 500;
-  transition: all 0.2s ease;
-  min-width: 2rem;
+  font-size: 14px;
+  line-height: 150%;
+  color: #FFFFFF;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
 
-.lang-button:hover {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
+.dropdown-arrow {
+  width: 24px;
+  height: 24px;
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
 }
 
-.lang-button.active {
-  background: #0f172a;
-  color: #fbbf24;
+.dropdown-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  
+  position: absolute;
+  width: 155px;
+  height: 83px;
+  left: -70px;
+  top: 32px;
+  
+  background: #374151;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  z-index: 1;
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 0px;
+  
+  width: 155px;
+  height: 82px;
+  
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+/* Nav Link */
+.nav-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 12px;
+  
+  width: 155px;
+  height: 37px;
+  
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Flag Icons */
+.flag-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Russia Flag */
+.russia-flag {
+  position: relative;
+}
+
+.russia-flag .flag-white {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 67.39%;
+  background: #F0F0F0;
+}
+
+.russia-flag .flag-blue {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 32.61%;
+  bottom: 28.26%;
+  background: #0052B4;
+}
+
+.russia-flag .flag-red {
+  position: absolute;
+  left: 3.11%;
+  right: 3.11%;
+  top: 67.39%;
+  bottom: 0%;
+  background: #D80027;
+}
+
+/* Israel Flag */
+.israel-flag {
+  position: relative;
+}
+
+.israel-flag .flag-white-bg {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F0F0F0;
+}
+
+.israel-flag .star-of-david {
+  position: absolute;
+  left: 31.17%;
+  right: 31.18%;
+  top: 28.27%;
+  bottom: 28.26%;
+  background: #0052B4;
+}
+
+.israel-flag .flag-blue-stripe-top {
+  position: absolute;
+  left: 7.34%;
+  right: 7.34%;
+  top: 10.87%;
+  bottom: 76.08%;
+  background: #0052B4;
+}
+
+.israel-flag .flag-blue-stripe-bottom {
+  position: absolute;
+  left: 7.34%;
+  right: 7.34%;
+  top: 76.09%;
+  bottom: 10.87%;
+  background: #0052B4;
+}
+
+/* Language Text */
+.language-text {
+  height: 21px;
+  
+  font-family: 'Arimo', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
 }
 
 /* Responsive Design */
+@media (max-width: 1440px) {
+  .navbar-container {
+    min-width: 100%;
+    padding: 28px 20px;
+    gap: 20px;
+  }
+  
+  .navbar-content {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
-  .header-container {
-    padding: 0 1rem;
+  .navbar-container {
+    padding: 16px 12px;
+    height: 70px;
+    gap: 10px;
   }
   
-  .header-content {
-    height: 3.5rem;
-    gap: 1rem;
+  .navbar-content {
+    gap: 10px;
   }
   
-  .logo-text {
-    display: none;
+  .logo-section {
+    width: 60px;
+    height: 28px;
   }
   
-  .page-title {
-    font-size: 1rem;
+  .logo-button {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .logo-frame {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .language-selector-frame {
+    width: 70px;
+    height: 20px;
   }
   
   .language-selector {
-    gap: 0.125rem;
-    padding: 0.125rem;
+    width: 70px;
+    height: 20px;
   }
   
-  .lang-button {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-    min-width: 1.5rem;
+  .selected-language {
+    font-size: 12px;
+    width: 40px;
+  }
+  
+  .dropdown-arrow {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dropdown-menu {
+    width: 130px;
+    left: -50px;
+  }
+  
+  .dropdown-content {
+    width: 130px;
+  }
+  
+  .nav-link {
+    width: 130px;
+    height: 32px;
+    padding: 6px 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .header-content {
-    gap: 0.5rem;
+  .navbar-container {
+    padding: 12px 8px;
+    height: 60px;
   }
   
-  .page-title {
-    font-size: 0.875rem;
+  .logo-section {
+    width: 50px;
+    height: 24px;
   }
   
-  .logo-icon {
-    font-size: 1.25rem;
+  .logo-button {
+    width: 50px;
+    height: 24px;
   }
   
-  .language-selector {
-    display: none;
+  .logo-frame {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .selected-language {
+    font-size: 11px;
+    width: 35px;
   }
 } 
