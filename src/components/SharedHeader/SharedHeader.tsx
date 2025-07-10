@@ -87,9 +87,9 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
             aria-label="Go to dashboard"
           >
             <div className="logo-frame">
-              {/* Actual logo image from public folder */}
+              {/* Primary SVG logo from public folder */}
               <img 
-                src="/assets/images/logo.png" 
+                src="/assets/images/logo.svg" 
                 alt="BankIM Logo" 
                 className="logo-image"
                 width="96"
