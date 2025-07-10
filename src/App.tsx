@@ -4,6 +4,8 @@ import './App.css'
 
 // Import the QA Showcase component
 import BankEmployee from './pages/BankEmployee'
+import ComponentShowcase from './pages/ComponentShowcase'
+import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import { AdminLayout } from './components'
 
 // Role components with AdminLayout
@@ -238,9 +240,16 @@ const Dashboard = () => (
       
       <div className="main-test-link">
         <Link to="/bank-employee" className="test-components-btn">
-          🧪 Go to Components Test Page
+          🧪 Go to Bank Employee Test Page
         </Link>
-        <p>Interactive testing environment for adminShared/ components</p>
+        <p>Interactive testing environment for bank employee functionality</p>
+      </div>
+      
+      <div className="main-test-link">
+        <Link to="/components" className="test-components-btn">
+          🔬 Component Showcase
+        </Link>
+        <p>Test individual shared components in isolation</p>
       </div>
     </div>
   </div>
@@ -258,6 +267,8 @@ function App() {
           <Route path="/brokers" element={<Brokers />} />
           <Route path="/content-manager" element={<ContentManager />} />
           <Route path="/bank-employee" element={<BankEmployee />} />
+          <Route path="/components" element={<ComponentShowcase />} />
+          <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         </Routes>
       </div>
     </Router>

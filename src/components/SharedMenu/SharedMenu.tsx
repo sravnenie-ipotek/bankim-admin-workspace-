@@ -49,7 +49,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({
   isMobile = false
 }) => {
   const location = useLocation();
-  const [expandedSections, setExpandedSections] = useState<string[]>(['main']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['Main Navigation', 'Client Management', 'Admin Tools']);
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(isCollapsed);
 
   // Toggle section expansion
