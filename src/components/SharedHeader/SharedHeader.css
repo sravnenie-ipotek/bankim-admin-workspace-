@@ -10,10 +10,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 28px 189px;
-  gap: 876px;
   
   width: 100%;
-  min-width: 1440px;
   height: 98px;
   
   background: #111928;
@@ -29,8 +27,6 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1062px; /* 1440 - 2*189 padding */
-  margin: 0 auto;
 }
 
 /* Logo Section */
@@ -42,7 +38,6 @@
   padding: 0px;
   gap: 10px;
   
-  margin: 0 auto;
   width: 96px;
   height: 42px;
   
@@ -95,7 +90,6 @@
   gap: 8px;
   isolation: isolate;
   
-  margin: 0 auto;
   width: 90px;
   height: 24px;
   
@@ -332,25 +326,14 @@
 /* Responsive Design */
 @media (max-width: 1440px) {
   .navbar-container {
-    min-width: 100%;
-    padding: 28px 20px;
-    gap: 20px;
-  }
-  
-  .navbar-content {
-    max-width: 100%;
+    padding: 28px 40px;
   }
 }
 
 @media (max-width: 768px) {
   .navbar-container {
-    padding: 16px 12px;
+    padding: 16px 20px;
     height: 70px;
-    gap: 10px;
-  }
-  
-  .navbar-content {
-    gap: 10px;
   }
   
   .logo-section {
@@ -411,7 +394,7 @@
 
 @media (max-width: 480px) {
   .navbar-container {
-    padding: 12px 8px;
+    padding: 12px 15px;
     height: 60px;
   }
   
