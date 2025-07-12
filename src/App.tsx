@@ -6,6 +6,7 @@ import './App.css'
 import BankEmployee from './pages/BankEmployee'
 import ComponentShowcase from './pages/ComponentShowcase'
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
+import TableDemo from './pages/TableDemo'
 import { AdminLayout } from './components'
 
 // Role components with AdminLayout
@@ -251,6 +252,13 @@ const Dashboard = () => (
         </Link>
         <p>Test individual shared components in isolation</p>
       </div>
+      
+      <div className="main-test-link">
+        <Link to="/table-demo" className="test-components-btn">
+          📊 Table Component Demo
+        </Link>
+        <p>Interactive bank data table with exact Figma specifications</p>
+      </div>
     </div>
   </div>
 )
@@ -269,6 +277,7 @@ function App() {
           <Route path="/bank-employee" element={<BankEmployee />} />
           <Route path="/components" element={<ComponentShowcase />} />
           <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
+          <Route path="/table-demo" element={<TableDemo />} />
         </Routes>
       </div>
     </Router>
