@@ -2,20 +2,21 @@
 
 .admin-layout {
   min-height: 100vh;
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: 'Inter', system-ui, sans-serif;
+  background: #f9fafb;
+  color: #1f2937;
+  font-family: 'Arimo', 'Inter', system-ui, sans-serif;
   display: flex;
 }
 
 /* Main content area (excludes sidebar) */
 .admin-main-content {
   flex: 1;
-  margin-left: 280px; /* Width of SharedMenu */
+  margin-left: 265px; /* Width of SharedMenu */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
+  background: #f9fafb;
 }
 
 /* Page content area (excludes header) */
@@ -23,33 +24,36 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background: #0f172a;
+  background: #f9fafb;
+  margin-top: 88px; /* TopNavigation height */
+  min-height: calc(100vh - 88px); /* Subtract TopNavigation height */
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
   .admin-main-content {
-    margin-left: 240px; /* Smaller menu width */
+    margin-left: 265px; /* Keep same width */
   }
 }
 
 @media (max-width: 1024px) {
   .admin-main-content {
-    margin-left: 60px; /* Collapsed menu width */
+    margin-left: 265px; /* Keep same width */
   }
   
   .admin-page-content {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .admin-main-content {
     margin-left: 0; /* No sidebar margin on mobile */
+    margin-top: 60px; /* Add space for mobile menu */
   }
   
   .admin-page-content {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 }
 
@@ -68,4 +72,41 @@
 
 .admin-page-content.compact {
   padding: 1rem;
+}
+
+/* Ensure smooth transitions */
+.admin-layout * {
+  box-sizing: border-box;
+}
+
+/* Handle dark mode if needed */
+@media (prefers-color-scheme: dark) {
+  .admin-layout {
+    background: #111827;
+    color: #f9fafb;
+  }
+  
+  .admin-main-content {
+    background: #111827;
+  }
+  
+  .admin-page-content {
+    background: #111827;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .admin-layout {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  .admin-main-content {
+    background: #ffffff;
+  }
+  
+  .admin-page-content {
+    background: #ffffff;
+  }
 } 

@@ -10,7 +10,7 @@ import { AdminLayout } from './components'
 
 // Role components with AdminLayout
 const SalesManager = () => (
-  <AdminLayout title="Менеджер по продажам" userRole="sales-manager">
+  <AdminLayout title="Менеджер по продажам" activeMenuItem="sales-manager">
     <div className="role-page-content">
       <div className="page-header">
         <h1>📊 Менеджер по продажам</h1>
@@ -39,7 +39,7 @@ const SalesManager = () => (
 )
 
 const Administration = () => (
-  <AdminLayout title="Администрация" userRole="administration">
+  <AdminLayout title="Администрация" activeMenuItem="administration">
     <div className="role-page-content">
       <div className="page-header">
         <h1>⚙️ Администрация</h1>
@@ -68,7 +68,7 @@ const Administration = () => (
 )
 
 const Brokers = () => (
-  <AdminLayout title="Брокеры" userRole="brokers">
+  <AdminLayout title="Брокеры" activeMenuItem="brokers">
     <div className="role-page-content">
       <div className="page-header">
         <h1>🤝 Брокеры</h1>
@@ -97,7 +97,7 @@ const Brokers = () => (
 )
 
 const ContentManager = () => (
-  <AdminLayout title="Контент-менеджер" userRole="content-manager">
+  <AdminLayout title="Контент-менеджер" activeMenuItem="content-manager">
     <div className="role-page-content">
       <div className="page-header">
         <h1>📝 Контент-менеджер</h1>
@@ -126,7 +126,7 @@ const ContentManager = () => (
 )
 
 const Director = () => (
-  <AdminLayout title="Директор" userRole="director">
+  <AdminLayout title="Директор" activeMenuItem="director">
     <div className="role-page-content">
       <div className="page-header">
         <h1>👑 Директор</h1>

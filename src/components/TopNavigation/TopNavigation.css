@@ -1,0 +1,720 @@
+/* Import Arimo font (matching SharedMenu) */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
+
+/* TopNavigation Component - Main Container */
+.top-navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  position: fixed;
+  top: 0;
+  left: 265px; /* Matches SharedMenu width */
+  right: 0;
+  height: 88px;
+  background: #1F2A37; /* gray/800 - matches design */
+  z-index: 999;
+  border-bottom: 1px solid #374151; /* gray/700 */
+  font-family: 'Arimo', 'Inter', system-ui, sans-serif;
+}
+
+/* Container for navigation content */
+.top-nav-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  width: 100%;
+  height: 88px;
+  background: #1F2A37; /* gray/800 */
+}
+
+/* Navbar content */
+.navbar-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px;
+  gap: 32px;
+  width: 100%;
+  max-width: 1095px;
+  height: 40px;
+}
+
+/* Left side - Logo and Banks Icon */
+.navbar-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.header-logo-image {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+.banks-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banks-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.banks-icon svg {
+  transition: all 0.2s ease;
+}
+
+.banks-icon:hover svg path {
+  stroke: #F9FAFB;
+}
+
+/* Right side - Navigation Items */
+.navbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Language Selector */
+.language-selector-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0px;
+  gap: 5px;
+  isolation: isolate;
+  width: 90px;
+  height: 24px;
+}
+
+.language-selector {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 12px;
+  width: 90px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 0;
+  transition: all 0.2s ease;
+}
+
+.language-selector:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.language-selector:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.language-text {
+  width: 54px;
+  height: 21px;
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%; /* 21px */
+  color: #F9FAFB;
+  text-align: center;
+}
+
+.language-arrow {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.language-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Language Dropdown */
+.language-dropdown {
+  position: absolute;
+  top: 32px;
+  left: -65px;
+  width: 155px;
+  height: 83px;
+  background: #374151; /* gray/700 */
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 0px;
+}
+
+.language-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 12px;
+  width: 100%;
+  height: 37px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #F9FAFB;
+  font-family: 'Arimo';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  transition: background-color 0.2s ease;
+}
+
+.language-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.language-option.selected {
+  background: #FBE54D;
+  color: #1F2A37;
+}
+
+.language-flag {
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-name {
+  flex: 1;
+  text-align: left;
+}
+
+/* Tech Support Button */
+.tech-support-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tech-support-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tech-support-btn:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: 2px;
+}
+
+.tech-support-btn svg {
+  transition: all 0.2s ease;
+}
+
+.tech-support-btn:hover svg path {
+  fill: #F9FAFB;
+}
+
+/* Notifications Button */
+.notifications-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.notifications-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notifications-btn:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: 2px;
+}
+
+.notifications-btn svg {
+  transition: all 0.2s ease;
+}
+
+.notifications-btn:hover svg path {
+  fill: #F9FAFB;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 20px;
+  height: 20px;
+  background: #EF4444; /* red-500 */
+  color: white;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border: 2px solid #1F2A37;
+  font-family: 'Arimo';
+}
+
+/* Bank Name */
+.bank-name {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bank-name-text {
+  font-family: 'Arimo';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  white-space: nowrap;
+}
+
+/* User Profile */
+.user-profile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-profile-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 240px;
+}
+
+.user-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-profile-btn:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: 2px;
+}
+
+/* User Avatar */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #6B7280; /* gray-500 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-initials {
+  font-family: 'Arimo';
+  font-weight: 600;
+  font-size: 12px;
+  color: #F9FAFB;
+  text-transform: uppercase;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-family: 'Arimo';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.user-role {
+  font-family: 'Arimo';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  color: #9CA3AF; /* gray-400 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Profile Arrow */
+.profile-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.profile-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 280px;
+  background: #374151; /* gray/700 */
+  border: 1px solid #4B5563; /* gray/600 */
+  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+/* Profile Dropdown Header */
+.profile-dropdown-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 8px;
+}
+
+.profile-dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-dropdown-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-dropdown-initials {
+  font-family: 'Arimo';
+  font-weight: 600;
+  font-size: 14px;
+  color: #F9FAFB;
+  text-transform: uppercase;
+}
+
+.profile-dropdown-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-dropdown-name {
+  font-family: 'Arimo';
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.profile-dropdown-email {
+  font-family: 'Arimo';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  color: #9CA3AF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Profile Dropdown Items */
+.profile-dropdown-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: 'Arimo';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  transition: background-color 0.2s ease;
+}
+
+.profile-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-dropdown-item:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: -2px;
+}
+
+.profile-dropdown-item.logout {
+  color: #EF4444; /* red-500 */
+}
+
+.profile-dropdown-item.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Profile Dropdown Separator */
+.profile-dropdown-separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 8px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .top-navigation {
+    left: 0;
+    padding-left: 265px;
+  }
+  
+  .navbar-content {
+    gap: 24px;
+  }
+  
+  .navbar-right {
+    gap: 24px;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .bank-name-text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-navigation {
+    left: 0;
+    padding-left: 0;
+  }
+  
+  .navbar-content {
+    gap: 16px;
+    padding: 0 16px;
+  }
+  
+  .navbar-left {
+    gap: 12px;
+  }
+  
+  .navbar-right {
+    gap: 16px;
+  }
+  
+  .header-logo {
+    height: 24px;
+  }
+  
+  .banks-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .banks-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .bank-name {
+    display: none;
+  }
+  
+  .language-selector-wrapper {
+    width: 70px;
+  }
+  
+  .language-text {
+    width: 40px;
+    font-size: 12px;
+  }
+  
+  .profile-dropdown {
+    width: 240px;
+    right: -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-content {
+    gap: 12px;
+  }
+  
+  .navbar-left {
+    gap: 8px;
+  }
+  
+  .navbar-right {
+    gap: 12px;
+  }
+  
+  .header-logo {
+    height: 20px;
+  }
+  
+  .banks-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .banks-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .language-selector-wrapper {
+    width: 50px;
+  }
+  
+  .language-text {
+    width: 30px;
+    font-size: 10px;
+  }
+  
+  .tech-support-btn,
+  .notifications-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .profile-dropdown {
+    width: 200px;
+    right: -40px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .top-navigation {
+    border-bottom: 2px solid #F9FAFB;
+  }
+  
+  .language-selector:focus,
+  .tech-support-btn:focus,
+  .notifications-btn:focus,
+  .user-profile-btn:focus {
+    outline: 3px solid #FBE54D;
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .language-arrow,
+  .profile-arrow,
+  .language-selector,
+  .tech-support-btn,
+  .notifications-btn,
+  .user-profile-btn,
+  .profile-dropdown-item {
+    transition: none;
+  }
+} 

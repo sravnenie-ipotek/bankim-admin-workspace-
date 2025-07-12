@@ -1,2 +1,4 @@
-export { default as SharedMenu } from './SharedMenu';
-export { default } from './SharedMenu'; 
+import SharedMenuComponent from './SharedMenu';
+export { SharedMenuComponent as SharedMenu };
+export { default } from './SharedMenu';
+export type { SharedMenuProps } from './SharedMenu'; 

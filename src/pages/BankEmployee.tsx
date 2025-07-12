@@ -176,7 +176,7 @@ const BankEmployee: React.FC = () => {
   }
 
   return (
-    <AdminLayout title="Сотрудник банка" userRole="bank-employee" showAdminSections={true}>
+    <AdminLayout title="Сотрудник банка" activeMenuItem="bank-employee">
       <div className="bank-employee-content">
         <div className="page-header">
           <h1>🏛️ Сотрудник банка</h1>

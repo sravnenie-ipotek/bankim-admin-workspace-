@@ -1,260 +1,233 @@
 /**
  * SharedMenu Component
- * Reusable navigation menu for the management portal
- * Used in admin pages that need consistent navigation
+ * Side Navigation for the BankIM Management Portal
+ * 
+ * Business Logic based on Confluence: 3 Компонент. Side Navigation. Действий 9
+ * Design based on Figma: Admin Panel Design system
  * 
  * Features:
- * - Role-based navigation items
- * - Active state management
- * - Responsive design with mobile toggle
- * - Collapsible sections
- * - Icon-based navigation
+ * - Precise 265px width sidebar with #1F2A37 background
+ * - Logo section with exact positioning (20px 0px 0px 20px padding)
+ * - Main navigation with Russian labels per business requirements
+ * - Bottom navigation (Settings + Logout)
+ * - Active state with #FBE54D yellow highlighting
+ * - Exact spacing and dimensions per Figma specifications
+ * - Icons with proper fill colors (#FBE54D active, #9CA3AF inactive)
+ * - Arimo font family, 16px size, 500 weight
+ * - 24px gaps between navigation items
+ * - 12px gap between icon and label
  */
 
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
 import './SharedMenu.css';
+import logo from '../../assets/images/logo/primary-logo05-1.svg';
 
-interface MenuItemProps {
+interface NavItem {
+  id: string;
   icon: string;
   label: string;
-  path: string;
+  active?: boolean;
   badge?: string;
-  isActive?: boolean;
 }
 
-interface MenuSectionProps {
-  title: string;
-  items: MenuItemProps[];
+export interface SharedMenuProps {
+  activeItem?: string;
+  onItemClick?: (itemId: string) => void;
 }
 
-interface SharedMenuProps {
-  /** Current user role */
-  userRole?: string;
-  /** Show/hide menu sections based on permissions */
-  showAdminSections?: boolean;
-  /** Custom menu items */
-  customItems?: MenuItemProps[];
-  /** Collapsed state */
-  isCollapsed?: boolean;
-  /** Mobile mode */
-  isMobile?: boolean;
-}
+const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
+  // Main navigation items per Confluence business logic
+  const mainNavItems: NavItem[] = [
+    {
+      id: 'dashboard',
+      icon: 'chart-pie',
+      label: 'Главная страница', // Action #2: Dashboard
+      active: activeItem === 'dashboard'
+    },
+    {
+      id: 'users',
+      icon: 'users-group',
+      label: 'Клиенты' // Action #3: Clients/Users
+    },
+    {
+      id: 'reports',
+      icon: 'file-lines',
+      label: 'Предложения' // Action #4: Reports/Offers
+    },
+    {
+      id: 'bank-employee',
+      icon: 'bank',
+      label: 'Банковские программы' // Action #5: Bank Employee Management
+    },
+    {
+      id: 'user-registration',
+      icon: 'add-user',
+      label: 'Создание аудитории' // Action #6: User Registration/Audience Creation
+    },
+    {
+      id: 'chat',
+      icon: 'messages',
+      label: 'Чат' // Action #7: Chat
+    }
+  ];
 
-const SharedMenu: React.FC<SharedMenuProps> = ({
-  userRole = 'bank-employee',
-  showAdminSections = true,
-  customItems = [],
-  isCollapsed = false,
-  isMobile = false
-}) => {
-  const location = useLocation();
-  const [expandedSections, setExpandedSections] = useState<string[]>(['Main Navigation', 'Client Management', 'Admin Tools']);
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState(isCollapsed);
+  // Bottom navigation items per Confluence business logic
+  const bottomNavItems: NavItem[] = [
+    {
+      id: 'settings',
+      icon: 'cog',
+      label: 'Настройки' // Action #8: Settings
+    },
+    {
+      id: 'logout',
+      icon: 'arrow-right-to-bracket-outline',
+      label: 'Выйти' // Action #9: Logout
+    }
+  ];
 
-  // Toggle section expansion
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => 
-      prev.includes(sectionId) 
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
-    );
+  const handleItemClick = (itemId: string) => {
+    if (onItemClick) {
+      onItemClick(itemId);
+    }
   };
 
-  // Check if menu item is active
-  const isItemActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  // Main navigation items
-  const mainMenuItems: MenuItemProps[] = [
-    {
-      icon: '🏠',
-      label: 'Dashboard',
-      path: '/'
-    },
-    {
-      icon: '🏛️',
-      label: 'Bank Employee',
-      path: '/bank-employee',
-      badge: 'Active'
-    },
-    {
-      icon: '👑',
-      label: 'Director',
-      path: '/director'
-    },
-    {
-      icon: '⚙️',
-      label: 'Administration',
-      path: '/administration'
-    },
-    {
-      icon: '📊',
-      label: 'Sales Manager',
-      path: '/sales-manager'
-    },
-    {
-      icon: '📝',
-      label: 'Content Manager',
-      path: '/content-manager'
-    },
-    {
-      icon: '🤝',
-      label: 'Brokers',
-      path: '/brokers'
-    }
-  ];
-
-  // Admin tools section
-  const adminToolsItems: MenuItemProps[] = [
-    {
-      icon: '👥',
-      label: 'User Management',
-      path: '/admin/users'
-    },
-    {
-      icon: '🛡️',
-      label: 'Permissions',
-      path: '/admin/permissions'
-    },
-    {
-      icon: '📊',
-      label: 'Analytics',
-      path: '/admin/analytics'
-    },
-    {
-      icon: '⚙️',
-      label: 'Settings',
-      path: '/admin/settings'
-    }
-  ];
-
-  // Client management section
-  const clientManagementItems: MenuItemProps[] = [
-    {
-      icon: '👤',
-      label: 'Client List',
-      path: '/clients'
-    },
-    {
-      icon: '📋',
-      label: 'Applications',
-      path: '/applications'
-    },
-    {
-      icon: '📄',
-      label: 'Documents',
-      path: '/documents'
-    },
-    {
-      icon: '💼',
-      label: 'Services',
-      path: '/services'
-    }
-  ];
-
-  // Menu sections
-  const menuSections: MenuSectionProps[] = [
-    {
-      title: 'Main Navigation',
-      items: mainMenuItems
-    },
-    {
-      title: 'Client Management',
-      items: clientManagementItems
-    },
-    ...(showAdminSections ? [{
-      title: 'Admin Tools',
-      items: adminToolsItems
-    }] : [])
-  ];
-
-  // Add custom items if provided
-  if (customItems.length > 0) {
-    menuSections.push({
-      title: 'Custom',
-      items: customItems
-    });
-  }
-
-  return (
-    <nav className={`shared-menu ${isMenuCollapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}>
-      {/* Menu Header */}
-      <div className="menu-header">
-        <div className="menu-title">
-          {!isMenuCollapsed && (
-            <>
-              <span className="menu-icon">🎛️</span>
-              <span className="menu-text">Admin Menu</span>
-            </>
-          )}
-        </div>
-        <button 
-          className="menu-toggle"
-          onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}
-          aria-label="Toggle menu"
-        >
-          {isMenuCollapsed ? '→' : '←'}
-        </button>
-      </div>
-
-      {/* Menu Content */}
-      <div className="menu-content">
-        {menuSections.map((section, sectionIndex) => (
-          <div key={section.title} className="menu-section">
-            {!isMenuCollapsed && (
-              <button
-                className="section-header"
-                onClick={() => toggleSection(section.title)}
-                aria-expanded={expandedSections.includes(section.title)}
-              >
-                <span className="section-title">{section.title}</span>
-                <span className="section-arrow">
-                  {expandedSections.includes(section.title) ? '▼' : '▶'}
-                </span>
-              </button>
-            )}
-            
-            {(expandedSections.includes(section.title) || isMenuCollapsed) && (
-              <div className="section-items">
-                {section.items.map((item, itemIndex) => (
-                  <Link
-                    key={`${section.title}-${itemIndex}`}
-                    to={item.path}
-                    className={`menu-item ${isItemActive(item.path) ? 'active' : ''}`}
-                    title={isMenuCollapsed ? item.label : undefined}
-                  >
-                    <span className="item-icon">{item.icon}</span>
-                    {!isMenuCollapsed && (
-                      <>
-                        <span className="item-label">{item.label}</span>
-                        {item.badge && (
-                          <span className="item-badge">{item.badge}</span>
-                        )}
-                      </>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            )}
+  const renderNavItem = (item: NavItem) => {
+    const isActive = item.active || activeItem === item.id;
+    
+    return (
+      <div
+        key={item.id}
+        className={`navlink-sidebar ${isActive ? 'active' : ''}`}
+        onClick={() => handleItemClick(item.id)}
+        role="button"
+        tabIndex={0}
+        aria-label={item.label}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleItemClick(item.id);
+          }
+        }}
+      >
+        <div className="left-content">
+          <div className={`icon ${item.icon}`}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              {renderIcon(item.icon, isActive)}
+            </svg>
           </div>
-        ))}
-      </div>
-
-      {/* Menu Footer */}
-      <div className="menu-footer">
-        {!isMenuCollapsed && (
-          <div className="user-info">
-            <div className="user-avatar">👤</div>
-            <div className="user-details">
-              <div className="user-name">Admin User</div>
-              <div className="user-role">{userRole}</div>
+          <span className="pages">{item.label}</span>
+        </div>
+        {item.badge && (
+          <div className="icon-badge">
+            <div className="badge">
+              <span className="text">{item.badge}</span>
             </div>
           </div>
         )}
       </div>
-    </nav>
+    );
+  };
+
+  const renderIcon = (iconName: string, isActive: boolean) => {
+    const color = isActive ? '#FBE54D' : '#9CA3AF';
+    
+    switch (iconName) {
+      case 'chart-pie':
+        return (
+          <path
+            d="M12 2L2 8v12l10-5.5L22 20V8L12 2z"
+            fill={color}
+            stroke={color}
+            strokeWidth="1"
+          />
+        );
+      case 'users-group':
+        return (
+          <path
+            d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm5.5 3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM7.5 12c1.93 0 3.5 1.57 3.5 3.5S9.43 19 7.5 19 4 17.43 4 15.5 5.57 12 7.5 12zm9 0c1.93 0 3.5 1.57 3.5 3.5S18.43 19 16.5 19 13 17.43 13 15.5s1.57-3.5 3.5-3.5z"
+            fill={color}
+          />
+        );
+      case 'file-lines':
+        return (
+          <path
+            d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-2-8H8v-2h8v2zm0 4H8v-2h8v2z"
+            fill={color}
+          />
+        );
+      case 'bank':
+        return (
+          <path
+            d="M12 2L2 7v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7l-10-5z"
+            stroke={color}
+            strokeWidth="2"
+            fill="none"
+          >
+          </path>
+        );
+      case 'add-user':
+        return (
+          <path
+            d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+            fill={color}
+          />
+        );
+      case 'messages':
+        return (
+          <path
+            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
+            fill={color}
+          />
+        );
+      case 'cog':
+        return (
+          <path
+            d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"
+            fill={color}
+          />
+        );
+      case 'arrow-right-to-bracket-outline':
+        return (
+          <path
+            d="M8 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h2c.55 0 1-.45 1-1s-.45-1-1-1H6V4h2c.55 0 1-.45 1-1s-.45-1-1-1zm9.5 7.5l-3-3c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L15.17 10H10c-.55 0-1 .45-1 1s.45 1 1 1h5.17l-2.08 2.09c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l3-3c.39-.39.39-1.02 0-1.41z"
+            fill={color}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="sidebar" role="navigation" aria-label="Main navigation">
+      <div className="content">
+        
+        {/* Logo Section - Action #1 per Confluence */}
+        <div className="logo">
+          <div className="logo-container">
+            <div className="frame-3">
+              <img src={logo} alt="BankIM Logo" className="logo-image" />
+            </div>
+          </div>
+        </div>
+
+        {/* Main Navigation - Actions #2-7 per Confluence */}
+        <div className="main">
+          {mainNavItems.map(renderNavItem)}
+        </div>
+
+        {/* Separator */}
+        <div className="separator"></div>
+
+        {/* Bottom Navigation - Actions #8-9 per Confluence */}
+        <div className="bottom">
+          {bottomNavItems.map(renderNavItem)}
+        </div>
+      </div>
+      
+      {/* Right border separator */}
+      <div className="sidebar-separator"></div>
+    </div>
   );
 };
 
