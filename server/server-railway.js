@@ -13,7 +13,7 @@ app.use(express.json());
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'BankIM Railway Database API is running',
+    message: 'BankIM Railway Database API is running - Test Deploy',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
