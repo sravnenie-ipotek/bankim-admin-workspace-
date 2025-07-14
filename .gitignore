@@ -112,4 +112,11 @@ temp/
 cypress/downloads/
 cypress/screenshots/
 cypress/videos/
-cypress/fixtures/example.json 
+cypress/fixtures/example.json
+
+# SQLite database files (local only)
+*.db
+*.sqlite
+*.sqlite3
+server/bankim_test.db
+server/bankim_local_test.db 

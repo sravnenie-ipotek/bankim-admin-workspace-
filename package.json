@@ -13,6 +13,7 @@
     "test:e2e": "cypress run --headless",
     "server": "node server/server.js",
     "dev:server": "node server/server.js",
+    "test:server": "node server/server-local.js",
     "start": "node server/server-railway.js",
     "railway:build": "npm install --production"
   },
