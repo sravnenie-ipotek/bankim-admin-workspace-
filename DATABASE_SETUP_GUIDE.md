@@ -28,12 +28,15 @@ This project supports multiple database configurations for different environment
 
 ### Option 1: Local SQLite Testing (Fastest)
 ```bash
-# Run local SQLite test server
+# Run local SQLite test server (auto-installs SQLite dependencies)
 npm run test:server
 
 # Test it
 curl http://localhost:3001/health
 curl http://localhost:3001/api/users
+
+# Restore production package (removes SQLite dependencies)
+npm run restore:production
 ```
 
 ### Option 2: Railway PostgreSQL (Production)
@@ -84,6 +87,25 @@ npm run dev:server           # Same as above
 npm run dev                  # Start React frontend (port 3002)
 ```
 
+## 📦 Package Management System
+
+**Important**: This project uses a dynamic package management system to avoid Railway deployment issues with SQLite:
+
+### How it works:
+1. **Main package.json**: Production-ready (no SQLite dependencies)
+2. **Auto-generated files**:
+   - `package-local.json`: Includes SQLite for local development
+   - `package-production.json`: Backup of production package.json
+
+### Scripts:
+- `npm run test:server`: Auto-installs SQLite dependencies and runs local server
+- `npm run restore:production`: Restores production package.json (removes SQLite)
+
+### Why this approach:
+- **Railway deployment**: No SQLite compilation issues
+- **Local development**: Full SQLite support when needed
+- **Git safety**: Only tracks the production package.json
+
 ## 🗂️ File Structure
 
 ```
@@ -100,9 +122,12 @@ server/
 
 Railway deployment files:
 ├── railway.json             # 🚀 Railway deployment configuration
-├── nixpacks.toml           # 📦 Nixpacks build configuration
-├── package.railway.json    # 📦 Railway-specific package.json (no SQLite)
 └── RAILWAY_DEPLOYMENT.md    # 📖 Railway deployment guide
+
+Package management files:
+├── package-local.json       # 🧪 Local development package (includes SQLite)
+├── package-production.json  # 🏭 Production package backup (no SQLite)
+└── .gitignore               # 🔒 Excludes local package files
 ```
 
 ## 🧪 Testing Your Setup

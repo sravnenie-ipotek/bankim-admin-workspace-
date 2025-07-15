@@ -119,4 +119,8 @@ cypress/fixtures/example.json
 *.sqlite
 *.sqlite3
 server/bankim_test.db
-server/bankim_local_test.db 
+server/bankim_local_test.db
+
+# Local development package files
+package-local.json
+package-production.json 

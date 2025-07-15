@@ -13,7 +13,9 @@
     "test:e2e": "cypress run --headless",
     "server": "node server/server.js",
     "dev:server": "node server/server.js",
-    "test:server": "node server/server-local.js",
+    "setup:local": "cp package-local.json package.json && npm install",
+    "test:server": "npm run setup:local && node server/server-local.js",
+    "restore:production": "cp package-production.json package.json && npm install",
     "start": "node server/server-railway.js",
     "railway:build": "npm install --production"
   },
@@ -37,7 +39,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",
-    "better-sqlite3": "^12.2.0",
     "cypress": "^14.5.1",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
