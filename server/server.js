@@ -1,6 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import { dbOperations, initializeDatabase } from './database.js';
+import dotenv from 'dotenv';
+import { coreOperations, testCoreConnection, initializeCoreDatabase, closeCoreConnection } from './config/database-core.js';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,27 +13,49 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize database on startup
-initializeDatabase();
+// Initialize bankim_core database on startup
+const initializeApp = async () => {
+  try {
+    await testCoreConnection();
+    await initializeCoreDatabase();
+    console.log('🚀 bankim_core database ready');
+  } catch (error) {
+    console.error('❌ Failed to initialize bankim_core database:', error);
+    process.exit(1);
+  }
+};
+
+initializeApp();
 
 // Routes
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'BankIM Test Database API is running',
-    timestamp: new Date().toISOString()
-  });
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  try {
+    const dbInfo = await coreOperations.getDbInfo();
+    res.json({ 
+      status: 'ok', 
+      message: 'BankIM Management Portal API is running',
+      timestamp: new Date().toISOString(),
+      database: 'bankim_core (PostgreSQL)',
+      tables: dbInfo.tables
+    });
+  } catch (error) {
+    res.json({ 
+      status: 'error', 
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
 });
 
-// Database info
-app.get('/api/db-info', (req, res) => {
+// Database info endpoint
+app.get('/api/db-info', async (req, res) => {
   try {
-    const info = dbOperations.getDbInfo();
+    const dbInfo = await coreOperations.getDbInfo();
     res.json({
       success: true,
-      data: info
+      data: dbInfo
     });
   } catch (error) {
     res.status(500).json({
@@ -39,39 +65,38 @@ app.get('/api/db-info', (req, res) => {
   }
 });
 
-// Get all users
-app.get('/api/users', (req, res) => {
-  try {
-    const users = dbOperations.getAllUsers();
-    res.json({
-      success: true,
-      data: users,
-      count: users.length
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
+// Calculator Formula Routes
 
-// Get user by ID
-app.get('/api/users/:id', (req, res) => {
+// Get calculator formula
+app.get('/api/calculator-formula', async (req, res) => {
   try {
-    const userId = parseInt(req.params.id);
-    const user = dbOperations.getUserById(userId);
+    const formula = await coreOperations.getCalculatorFormula();
     
-    if (!user) {
+    if (!formula) {
       return res.status(404).json({
         success: false,
-        error: 'User not found'
+        error: 'Calculator formula not found'
       });
     }
     
+    // Transform database field names to frontend field names
+    const transformedFormula = {
+      minTerm: formula.min_term,
+      maxTerm: formula.max_term,
+      financingPercentage: formula.financing_percentage,
+      bankInterestRate: formula.bank_interest_rate,
+      baseInterestRate: formula.base_interest_rate,
+      variableInterestRate: formula.variable_interest_rate,
+      interestChangePeriod: formula.interest_change_period,
+      inflationIndex: formula.inflation_index,
+      id: formula.id,
+      createdAt: formula.created_at,
+      updatedAt: formula.updated_at
+    };
+    
     res.json({
       success: true,
-      data: user
+      data: transformedFormula
     });
   } catch (error) {
     res.status(500).json({
@@ -81,87 +106,78 @@ app.get('/api/users/:id', (req, res) => {
   }
 });
 
-// Create new user
-app.post('/api/users', (req, res) => {
+// Update calculator formula
+app.put('/api/calculator-formula', async (req, res) => {
   try {
-    const { name, email, role, status } = req.body;
+    const {
+      minTerm, maxTerm, financingPercentage, bankInterestRate,
+      baseInterestRate, variableInterestRate, interestChangePeriod, inflationIndex
+    } = req.body;
     
-    if (!name || !email) {
+    // Validation
+    if (!minTerm || !maxTerm || !financingPercentage || !bankInterestRate ||
+        !baseInterestRate || !variableInterestRate || !interestChangePeriod || !inflationIndex) {
       return res.status(400).json({
         success: false,
-        error: 'Name and email are required'
+        error: 'All formula fields are required'
       });
     }
     
-    const userId = dbOperations.createUser({ name, email, role, status });
-    const newUser = dbOperations.getUserById(userId);
+    // Validate numeric inputs (numbers and dots only)
+    const numericFields = {
+      minTerm, maxTerm, financingPercentage, bankInterestRate,
+      baseInterestRate, variableInterestRate, interestChangePeriod, inflationIndex
+    };
     
-    res.status(201).json({
-      success: true,
-      data: newUser,
-      message: 'User created successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Update user
-app.put('/api/users/:id', (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const { name, email, role, status } = req.body;
+    for (const [fieldName, value] of Object.entries(numericFields)) {
+      const numericPattern = /^[0-9.]+$/;
+      if (!numericPattern.test(value) || isNaN(parseFloat(value))) {
+        return res.status(400).json({
+          success: false,
+          error: `Field ${fieldName} must be a valid number`
+        });
+      }
+    }
     
-    if (!name || !email) {
+    // Additional validation: min term should be less than max term
+    if (parseFloat(minTerm) >= parseFloat(maxTerm)) {
       return res.status(400).json({
         success: false,
-        error: 'Name and email are required'
+        error: 'Maximum term must be greater than minimum term'
       });
     }
     
-    const updated = dbOperations.updateUser(userId, { name, email, role, status });
+    const updatedFormula = await coreOperations.updateCalculatorFormula({
+      minTerm, maxTerm, financingPercentage, bankInterestRate,
+      baseInterestRate, variableInterestRate, interestChangePeriod, inflationIndex
+    });
     
-    if (!updated) {
-      return res.status(404).json({
+    if (!updatedFormula) {
+      return res.status(500).json({
         success: false,
-        error: 'User not found'
+        error: 'Failed to update calculator formula'
       });
     }
     
-    const updatedUser = dbOperations.getUserById(userId);
+    // Transform for response
+    const transformedFormula = {
+      minTerm: updatedFormula.min_term,
+      maxTerm: updatedFormula.max_term,
+      financingPercentage: updatedFormula.financing_percentage,
+      bankInterestRate: updatedFormula.bank_interest_rate,
+      baseInterestRate: updatedFormula.base_interest_rate,
+      variableInterestRate: updatedFormula.variable_interest_rate,
+      interestChangePeriod: updatedFormula.interest_change_period,
+      inflationIndex: updatedFormula.inflation_index,
+      id: updatedFormula.id,
+      createdAt: updatedFormula.created_at,
+      updatedAt: updatedFormula.updated_at
+    };
     
     res.json({
       success: true,
-      data: updatedUser,
-      message: 'User updated successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Delete user
-app.delete('/api/users/:id', (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const deleted = dbOperations.deleteUser(userId);
-    
-    if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        error: 'User not found'
-      });
-    }
-    
-    res.json({
-      success: true,
-      message: 'User deleted successfully'
+      data: transformedFormula,
+      message: 'Calculator formula updated successfully'
     });
   } catch (error) {
     res.status(500).json({
@@ -173,29 +189,41 @@ app.delete('/api/users/:id', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
+  console.error('Server error:', err);
   res.status(500).json({
     success: false,
     error: 'Internal server error'
   });
 });
 
-// 404 handler
-app.use((req, res) => {
+// Handle 404 for undefined routes
+app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
-    error: 'Endpoint not found'
+    error: 'Route not found'
   });
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down server...');
+  await closeCoreConnection();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n🛑 Shutting down server...');
+  await closeCoreConnection();
+  process.exit(0);
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log('🚀 BankIM Test Database API Server Starting...');
+  console.log('🚀 BankIM Management Portal API Server Starting...');
   console.log(`📡 Server running on http://localhost:${PORT}`);
   console.log(`🔍 Health check: http://localhost:${PORT}/health`);
   console.log(`📊 Database info: http://localhost:${PORT}/api/db-info`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
+  console.log(`🧮 Calculator Formula API: http://localhost:${PORT}/api/calculator-formula`);
+  console.log('📋 Database: bankim_core (PostgreSQL)');
   console.log('=====================================');
-});
-
-export default app; 
+}); 

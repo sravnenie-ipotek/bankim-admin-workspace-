@@ -125,6 +125,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       case 'user-registration':
         window.location.href = '/user-registration';
         break;
+      case 'calculator-formula':
+        window.location.href = '/calculator-formula';
+        break;
       case 'chat':
         window.location.href = '/chat';
         break;

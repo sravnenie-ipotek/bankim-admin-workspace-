@@ -7,6 +7,7 @@ import BankEmployee from './pages/BankEmployee'
 import ComponentShowcase from './pages/ComponentShowcase'
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
+import CalculatorFormula from './pages/CalculatorFormula'
 import { AdminLayout } from './components'
 
 // Role components with AdminLayout
@@ -136,14 +137,20 @@ const Director = () => (
       
       <div className="development-notice">
         <div className="notice-card">
-          <h3>🚧 В разработке</h3>
-          <p>Исполнительная панель директора находится в активной разработке</p>
+          <h3>🚀 Готовые компоненты</h3>
+          <p>Реализованные функции директора:</p>
           <ul>
-            <li>Стратегические отчеты</li>
-            <li>Финансовая аналитика</li>
-            <li>Управление подразделениями</li>
-            <li>Контроль КПЭ</li>
+            <li>✅ Формула калькулятора - настройка параметров расчета</li>
+            <li>🚧 Стратегические отчеты</li>
+            <li>🚧 Финансовая аналитика</li>
+            <li>🚧 Управление подразделениями</li>
+            <li>🚧 Контроль КПЭ</li>
           </ul>
+        </div>
+        <div className="test-link">
+          <Link to="/calculator-formula" className="btn-primary">
+            🧮 Формула калькулятора
+          </Link>
         </div>
         <div className="test-link">
           <Link to="/bank-employee" className="btn-primary">
@@ -275,6 +282,7 @@ function App() {
           <Route path="/brokers" element={<Brokers />} />
           <Route path="/content-manager" element={<ContentManager />} />
           <Route path="/bank-employee" element={<BankEmployee />} />
+          <Route path="/calculator-formula" element={<CalculatorFormula />} />
           <Route path="/components" element={<ComponentShowcase />} />
           <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
           <Route path="/table-demo" element={<TableDemo />} />

@@ -65,9 +65,14 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       label: 'Создание аудитории' // Action #6: User Registration/Audience Creation
     },
     {
+      id: 'calculator-formula',
+      icon: 'calculator',
+      label: 'Формула калькулятора' // Action #7: Calculator Formula
+    },
+    {
       id: 'chat',
       icon: 'messages',
-      label: 'Чат' // Action #7: Chat
+      label: 'Чат' // Action #8: Chat
     }
   ];
 
@@ -176,6 +181,13 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
         return (
           <path
             d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
+            fill={color}
+          />
+        );
+      case 'calculator':
+        return (
+          <path
+            d="M7 2h10c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm0 2v3h10V4H7zm2 5h2v2H9V9zm4 0h2v2h-2V9zm-4 4h2v2H9v-2zm4 0h2v6h-2v-6zm-4 4h2v2H9v-2z"
             fill={color}
           />
         );
