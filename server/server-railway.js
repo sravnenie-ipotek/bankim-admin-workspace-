@@ -10,17 +10,26 @@ app.use(cors());
 app.use(express.json());
 
 // Health check - Railway requires this
+// This endpoint should always respond quickly, regardless of database status
 app.get('/health', (req, res) => {
-  res.json({ 
+  res.status(200).json({ 
     status: 'OK', 
-    message: 'BankIM Railway Database API is running - Test Deploy',
+    message: 'BankIM Railway API Server is running',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    port: PORT
   });
 });
 
-// Initialize database on startup
-initializeDatabase().catch(console.error);
+// Initialize database on startup (non-blocking)
+initializeDatabase()
+  .then(() => {
+    console.log('✅ Database initialization completed');
+  })
+  .catch((error) => {
+    console.error('❌ Database initialization failed:', error.message);
+    console.log('⚠️  Server will continue running without database');
+  });
 
 // Routes
 
