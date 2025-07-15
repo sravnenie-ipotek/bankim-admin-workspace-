@@ -2,13 +2,16 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 
-// Import the QA Showcase component
+// Import components
 import BankEmployee from './pages/BankEmployee'
 import ComponentShowcase from './pages/ComponentShowcase'
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
 import { AdminLayout } from './components'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import AdminLogin from './components/AdminLogin/AdminLogin'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 // Role components with AdminLayout
 const SalesManager = () => (
@@ -270,25 +273,47 @@ const Dashboard = () => (
   </div>
 )
 
+// Main App Router Component
+const AppRouter: React.FC = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <AdminLogin />;
+  }
+
+  return (
+    <div className="app">
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/director" element={<Director />} />
+        <Route path="/administration" element={<Administration />} />
+        <Route path="/sales-manager" element={<SalesManager />} />
+        <Route path="/brokers" element={<Brokers />} />
+        <Route path="/content-manager" element={<ContentManager />} />
+        <Route path="/bank-employee" element={<BankEmployee />} />
+        <Route 
+          path="/calculator-formula" 
+          element={
+            <ProtectedRoute requiredPermission={{ action: 'read', resource: 'calculator-formula' }}>
+              <CalculatorFormula />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/components" element={<ComponentShowcase />} />
+        <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
+        <Route path="/table-demo" element={<TableDemo />} />
+      </Routes>
+    </div>
+  );
+};
+
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/director" element={<Director />} />
-          <Route path="/administration" element={<Administration />} />
-          <Route path="/sales-manager" element={<SalesManager />} />
-          <Route path="/brokers" element={<Brokers />} />
-          <Route path="/content-manager" element={<ContentManager />} />
-          <Route path="/bank-employee" element={<BankEmployee />} />
-          <Route path="/calculator-formula" element={<CalculatorFormula />} />
-          <Route path="/components" element={<ComponentShowcase />} />
-          <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
-          <Route path="/table-demo" element={<TableDemo />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRouter />
+      </Router>
+    </AuthProvider>
   )
 }
 
