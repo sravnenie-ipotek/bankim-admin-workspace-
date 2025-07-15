@@ -93,8 +93,8 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
 
   const renderNavItem = (item: NavItem) => {
     const isActive = item.active || activeItem === item.id;
-    
-    return (
+
+  return (
       <div
         key={item.id}
         className={`navlink-sidebar ${isActive ? 'active' : ''}`}
@@ -108,7 +108,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
             handleItemClick(item.id);
           }
         }}
-      >
+              >
         <div className="left-content">
           <div className={`icon ${item.icon}`}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -116,7 +116,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
             </svg>
           </div>
           <span className="pages">{item.label}</span>
-        </div>
+      </div>
         {item.badge && (
           <div className="icon-badge">
             <div className="badge">

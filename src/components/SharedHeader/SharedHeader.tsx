@@ -78,14 +78,14 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   return (
     <div className="navbar-container">
       <div className="navbar-content">
-        {/* Logo Section */}
-        <div className="logo-section">
-          <button
-            type="button"
-            className="logo-button"
-            onClick={handleLogoClick}
-            aria-label="Go to dashboard"
-          >
+          {/* Logo Section */}
+          <div className="logo-section">
+            <button
+              type="button"
+              className="logo-button"
+              onClick={handleLogoClick}
+              aria-label="Go to dashboard"
+            >
             <div className="logo-frame">
               {/* Primary SVG logo from public folder */}
               <img 
@@ -96,12 +96,12 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
                 height="43"
               />
             </div>
-          </button>
-        </div>
+            </button>
+          </div>
 
         {/* Language Selector */}
         <div className="language-selector-frame">
-          <div className="language-selector">
+              <div className="language-selector">
             <button 
               className="language-button"
               onClick={toggleLanguageDropdown}
@@ -151,9 +151,9 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
                     </div>
                     <span className="language-text">עברית</span>
                   </button>
-                </div>
               </div>
-            )}
+            </div>
+          )}
           </div>
         </div>
       </div>
