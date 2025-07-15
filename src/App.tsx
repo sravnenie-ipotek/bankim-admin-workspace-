@@ -13,6 +13,78 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
+// Placeholder components for missing routes
+const PlaceholderPage = ({ title, description, icon, activeMenuItem }: { title: string; description: string; icon: string; activeMenuItem: string }) => (
+  <AdminLayout title={title} activeMenuItem={activeMenuItem}>
+    <div className="role-page-content">
+      <div className="page-header">
+        <h1>{icon} {title}</h1>
+        <p className="page-subtitle">{description}</p>
+      </div>
+      
+      <div className="development-notice">
+        <div className="notice-card">
+          <h3>🚧 В разработке</h3>
+          <p>Эта страница находится в активной разработке и будет доступна в ближайшее время.</p>
+          <div className="placeholder-actions">
+            <Link to="/" className="btn-primary">
+              🏠 Вернуться на главную
+            </Link>
+            <Link to="/bank-employee" className="btn-secondary">
+              🧪 Перейти к тестовой странице
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const Users = () => (
+  <PlaceholderPage 
+    title="Клиенты" 
+    description="Управление клиентской базой и взаимодействие с клиентами"
+    icon="👥"
+    activeMenuItem="users"
+  />
+)
+
+const Reports = () => (
+  <PlaceholderPage 
+    title="Предложения" 
+    description="Отчеты по предложениям и аналитика продаж"
+    icon="📊"
+    activeMenuItem="reports"
+  />
+)
+
+const UserRegistration = () => (
+  <PlaceholderPage 
+    title="Создание аудитории" 
+    description="Регистрация новых пользователей и создание целевых аудиторий"
+    icon="👤"
+    activeMenuItem="user-registration"
+  />
+)
+
+const Chat = () => (
+  <PlaceholderPage 
+    title="Чат" 
+    description="Система внутренних сообщений и коммуникации"
+    icon="💬"
+    activeMenuItem="chat"
+  />
+)
+
+const Settings = () => (
+  <PlaceholderPage 
+    title="Настройки" 
+    description="Системные настройки и конфигурация приложения"
+    icon="⚙️"
+    activeMenuItem="settings"
+  />
+)
+
 // Role components with AdminLayout
 const SalesManager = () => (
   <AdminLayout title="Менеджер по продажам" activeMenuItem="sales-manager">
@@ -302,6 +374,11 @@ const AppRouter: React.FC = () => {
         <Route path="/components" element={<ComponentShowcase />} />
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/table-demo" element={<TableDemo />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/user-registration" element={<UserRegistration />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>
   );

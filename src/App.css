@@ -345,6 +345,74 @@
   text-decoration: none;
 }
 
+/* Placeholder Pages Styling */
+.placeholder-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.placeholder-actions .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.placeholder-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.placeholder-actions .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #667eea;
+  border: 2px solid #667eea;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.placeholder-actions .btn-secondary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.notice-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #f39c12;
+}
+
+.notice-card h3 {
+  color: #f39c12;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notice-card p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboard {
@@ -405,5 +473,18 @@
   .btn-primary {
     padding: 0.875rem 1.5rem;
     font-size: 1rem;
+  }
+} 
+
+/* Responsive placeholder pages */
+@media (max-width: 768px) {
+  .placeholder-actions {
+    flex-direction: column;
+  }
+  
+  .placeholder-actions .btn-primary,
+  .placeholder-actions .btn-secondary {
+    text-align: center;
+    justify-content: center;
   }
 } 
