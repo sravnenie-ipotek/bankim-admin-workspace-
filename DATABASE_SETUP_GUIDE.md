@@ -97,6 +97,12 @@ server/
 ├── bankim_local_test.db     # 🗄️ Local test database (auto-generated)
 ├── bankim_test.db           # 🗄️ Legacy database (auto-generated)
 └── README.md                # Documentation
+
+Railway deployment files:
+├── railway.json             # 🚀 Railway deployment configuration
+├── nixpacks.toml           # 📦 Nixpacks build configuration
+├── package.railway.json    # 📦 Railway-specific package.json (no SQLite)
+└── RAILWAY_DEPLOYMENT.md    # 📖 Railway deployment guide
 ```
 
 ## 🧪 Testing Your Setup
@@ -195,6 +201,7 @@ npm run server         # Use original SQLite
 - ✅ **Production ready** - scalable cloud database
 - ✅ **Automatic deployment** - via git push
 - ✅ **SSL encryption** - secure connections
+- ✅ **No SQLite dependencies** - uses package.railway.json and nixpacks.toml
 - ⚠️ **Requires setup** - Railway account needed
 
 ### Database Files

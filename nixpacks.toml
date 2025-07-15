@@ -1,0 +1,8 @@
+[phases.setup]
+cmds = ["cp package.railway.json package.json"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[start]
+cmd = "npm start" 
