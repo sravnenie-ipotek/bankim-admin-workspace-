@@ -73,6 +73,11 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       id: 'chat',
       icon: 'messages',
       label: 'Чат' // Action #8: Chat
+    },
+    {
+      id: 'content-management',
+      icon: 'file-edit',
+      label: 'Контент сайта' // Action #9: Content Management (standalone)
     }
   ];
 
@@ -99,7 +104,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   const renderNavItem = (item: NavItem) => {
     const isActive = item.active || activeItem === item.id;
 
-  return (
+    return (
       <div
         key={item.id}
         className={`navlink-sidebar ${isActive ? 'active' : ''}`}
@@ -113,7 +118,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
             handleItemClick(item.id);
           }
         }}
-              >
+      >
         <div className="left-content">
           <div className={`icon ${item.icon}`}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -121,7 +126,8 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
             </svg>
           </div>
           <span className="pages">{item.label}</span>
-      </div>
+        </div>
+        
         {item.badge && (
           <div className="icon-badge">
             <div className="badge">
@@ -195,6 +201,13 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
         return (
           <path
             d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"
+            fill={color}
+          />
+        );
+      case 'file-edit':
+        return (
+          <path
+            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
             fill={color}
           />
         );

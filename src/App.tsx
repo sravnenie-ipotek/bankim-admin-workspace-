@@ -8,6 +8,8 @@ import ComponentShowcase from './pages/ComponentShowcase'
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
+import Chat from './pages/Chat'
+import ContentManagement from './pages/ContentManagement'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
@@ -67,14 +69,7 @@ const UserRegistration = () => (
   />
 )
 
-const Chat = () => (
-  <PlaceholderPage 
-    title="Чат" 
-    description="Система внутренних сообщений и коммуникации"
-    icon="💬"
-    activeMenuItem="chat"
-  />
-)
+// Chat component now imported above
 
 const Settings = () => (
   <PlaceholderPage 
@@ -380,6 +375,7 @@ const AppRouter: React.FC = () => {
         <Route path="/reports" element={<Reports />} />
         <Route path="/user-registration" element={<UserRegistration />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/content-management" element={<ContentManagement />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>

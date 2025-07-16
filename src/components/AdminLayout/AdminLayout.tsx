@@ -146,6 +146,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       case 'chat':
         window.location.href = '/chat';
         break;
+      case 'content-management':
+        window.location.href = '/content-management';
+        break;
       case 'settings':
         window.location.href = '/settings';
         break;
