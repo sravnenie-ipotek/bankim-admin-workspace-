@@ -183,6 +183,12 @@ const ContentTable: React.FC<ContentTableProps> = ({
     return names[category] || category;
   }, []);
 
+  // Convert internal sort order to aria-sort values
+  const getAriaSortValue = useCallback((field: ContentSortField): 'none' | 'ascending' | 'descending' => {
+    if (filter.sortBy !== field) return 'none';
+    return filter.sortOrder === 'asc' ? 'ascending' : 'descending';
+  }, [filter.sortBy, filter.sortOrder]);
+
   // Render sort indicator
   const renderSortIndicator = (field: ContentSortField) => {
     if (filter.sortBy !== field) {
@@ -317,7 +323,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('pageNumber')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('pageNumber')}
-                aria-sort={filter.sortBy === 'pageNumber' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('pageNumber')}
               >
                 <span>№</span>
                 {renderSortIndicator('pageNumber')}
@@ -329,7 +335,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('title')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('title')}
-                aria-sort={filter.sortBy === 'title' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('title')}
               >
                 <span>Название</span>
                 {renderSortIndicator('title')}
@@ -341,7 +347,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('category')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('category')}
-                aria-sort={filter.sortBy === 'category' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('category')}
               >
                 <span>Категория</span>
                 {renderSortIndicator('category')}
@@ -353,7 +359,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('actionCount')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('actionCount')}
-                aria-sort={filter.sortBy === 'actionCount' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('actionCount')}
               >
                 <span>Действия</span>
                 {renderSortIndicator('actionCount')}
@@ -365,7 +371,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('status')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('status')}
-                aria-sort={filter.sortBy === 'status' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('status')}
               >
                 <span>Статус</span>
                 {renderSortIndicator('status')}
@@ -377,7 +383,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
                 tabIndex={0}
                 onClick={() => handleSort('lastModified')}
                 onKeyDown={(e) => e.key === 'Enter' && handleSort('lastModified')}
-                aria-sort={filter.sortBy === 'lastModified' ? filter.sortOrder : 'none'}
+                aria-sort={getAriaSortValue('lastModified')}
               >
                 <span>Изменено</span>
                 {renderSortIndicator('lastModified')}
