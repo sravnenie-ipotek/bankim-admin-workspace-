@@ -1,6 +1,11 @@
 import express from 'express';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { dbOperations, initializeDatabase } from './database-railway.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -8,6 +13,10 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from React build
+const distPath = join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
 
 // Health check - Railway requires this
 // This endpoint should always respond quickly, regardless of database status
@@ -197,11 +206,18 @@ app.use((err, req, res, next) => {
 });
 
 // 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Endpoint not found'
-  });
+// Catch-all handler: send back React's index.html file for all non-API routes
+app.get('*', (req, res) => {
+  // Only serve React app for non-API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({
+      success: false,
+      error: 'API endpoint not found'
+    });
+  }
+  
+  // Serve React app
+  res.sendFile(join(distPath, 'index.html'));
 });
 
 // Graceful shutdown
