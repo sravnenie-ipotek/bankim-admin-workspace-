@@ -48,7 +48,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   initialFilter,
   onPageSelect,
   onFilterChange,
-  readonly = false,
+  readonly: _readonly = false,
   className = ''
 }) => {
   const { user } = useAuth();
@@ -65,7 +65,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set());
+  const [_selectedPages] = useState<Set<string>>(new Set());
 
   // Security check: Verify user has Director role
   // Following security rule: Role verification before rendering sensitive content
@@ -157,8 +157,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
         ? newFilter.searchQuery.trim().substring(0, 255) 
         : currentFilter.searchQuery,
       // Validate pagination
-      page: Math.max(1, newFilter.page || currentFilter.page),
-      limit: Math.min(100, Math.max(1, newFilter.limit || currentFilter.limit))
+      page: Math.max(1, newFilter.page ?? currentFilter.page ?? 1),
+      limit: Math.min(100, Math.max(1, newFilter.limit ?? currentFilter.limit ?? 10))
     };
 
     setCurrentFilter(validatedFilter);

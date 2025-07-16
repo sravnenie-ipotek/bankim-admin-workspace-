@@ -52,7 +52,7 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ activeSection = 'messages' }) => {
   const { user } = useAuth();
   const [currentSection, setCurrentSection] = useState(activeSection);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   // Define available chat sections with role-based access control
   // Following security rule: Role-based access verification
