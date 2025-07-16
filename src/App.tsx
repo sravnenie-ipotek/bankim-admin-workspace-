@@ -8,7 +8,7 @@ import ComponentShowcase from './pages/ComponentShowcase'
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
-import { AdminLayout } from './components'
+import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -366,9 +366,11 @@ const AppRouter: React.FC = () => {
         <Route 
           path="/calculator-formula" 
           element={
-            <ProtectedRoute requiredPermission={{ action: 'read', resource: 'calculator-formula' }}>
-              <CalculatorFormula />
-            </ProtectedRoute>
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'calculator-formula' }}>
+                <CalculatorFormula />
+              </ProtectedRoute>
+            </ErrorBoundary>
           } 
         />
         <Route path="/components" element={<ComponentShowcase />} />
