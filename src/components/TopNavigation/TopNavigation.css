@@ -568,6 +568,7 @@
   .top-navigation {
     left: 0;
     height: 70px;
+    padding-left: 60px; /* Space for mobile menu button */
   }
   
   .top-nav-container {
@@ -641,6 +642,7 @@
   .top-navigation {
     left: 0;
     height: 60px;
+    padding-left: 55px; /* Space for mobile menu button */
   }
   
   .top-nav-container {
@@ -713,6 +715,7 @@
 @media (max-width: 480px) {
   .top-navigation {
     height: 55px;
+    padding-left: 50px; /* Space for mobile menu button */
   }
   
   .top-nav-container {
