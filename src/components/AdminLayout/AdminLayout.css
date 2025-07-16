@@ -6,6 +6,43 @@
   color: #1f2937;
   font-family: 'Arimo', 'Inter', system-ui, sans-serif;
   display: flex;
+  position: relative;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1001;
+  background: #1F2A37;
+  border: none;
+  color: #F9FAFB;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.mobile-menu-toggle:hover {
+  background: #374151;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-menu-toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Sidebar wrapper for mobile handling */
+.admin-sidebar-wrapper {
+  position: relative;
+  z-index: 100;
 }
 
 /* Main content area (excludes sidebar) */
@@ -15,7 +52,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: margin-left 0.3s ease;
+  transition: all 0.3s ease;
   background: #f9fafb;
 }
 
@@ -27,18 +64,51 @@
   background: #f9fafb;
   margin-top: 88px; /* TopNavigation height */
   min-height: calc(100vh - 88px); /* Subtract TopNavigation height */
+  transition: all 0.3s ease;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .admin-main-content {
-    margin-left: 265px; /* Keep same width */
+/* Content overlay for mobile menu */
+.admin-content-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.admin-content-overlay.active {
+  opacity: 1;
+}
+
+/* Responsive Breakpoints */
+
+/* Extra Large Screens (1400px+) */
+@media (min-width: 1400px) {
+  .admin-page-content {
+    padding: 3rem;
   }
 }
 
-@media (max-width: 1024px) {
+/* Large Screens (1200px - 1399px) */
+@media (max-width: 1399px) and (min-width: 1200px) {
   .admin-main-content {
-    margin-left: 265px; /* Keep same width */
+    margin-left: 265px;
+  }
+  
+  .admin-page-content {
+    padding: 2rem;
+  }
+}
+
+/* Medium-Large Screens (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .admin-main-content {
+    margin-left: 265px;
   }
   
   .admin-page-content {
@@ -46,14 +116,106 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Medium Screens (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
   .admin-main-content {
-    margin-left: 0; /* No sidebar margin on mobile */
-    margin-top: 60px; /* Add space for mobile menu */
+    margin-left: 0;
+  }
+  
+  .admin-page-content {
+    padding: 1.5rem;
+    margin-top: 70px; /* Reduced header height */
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .admin-sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: -265px;
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-layout.mobile-menu-open .admin-sidebar-wrapper {
+    left: 0;
+  }
+  
+  .admin-layout.mobile-menu-open .admin-content-overlay {
+    display: block;
+  }
+}
+
+/* Small Screens (481px - 767px) */
+@media (max-width: 767px) {
+  .admin-main-content {
+    margin-left: 0;
   }
   
   .admin-page-content {
     padding: 1rem;
+    margin-top: 60px; /* Further reduced header height */
+    min-height: calc(100vh - 60px);
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.5rem;
+  }
+  
+  .mobile-menu-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .admin-sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Slightly wider on mobile */
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .admin-layout.mobile-menu-open .admin-sidebar-wrapper {
+    left: 0;
+  }
+  
+  .admin-layout.mobile-menu-open .admin-content-overlay {
+    display: block;
+  }
+}
+
+/* Extra Small Screens (320px - 480px) */
+@media (max-width: 480px) {
+  .admin-page-content {
+    padding: 0.75rem;
+    margin-top: 55px;
+    min-height: calc(100vh - 55px);
+  }
+  
+  .mobile-menu-toggle {
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .mobile-menu-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .admin-sidebar-wrapper {
+    left: -100%;
+    width: 100%;
   }
 }
 
@@ -70,8 +232,30 @@
   padding: 0;
 }
 
+@media (max-width: 768px) {
+  .admin-page-content.full-width {
+    margin-top: 60px;
+  }
+}
+
 .admin-page-content.compact {
   padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .admin-page-content.compact {
+    padding: 0.75rem;
+    margin-top: 60px;
+  }
+}
+
+/* Loading states */
+.admin-layout.loading {
+  pointer-events: none;
+}
+
+.admin-layout.loading .admin-page-content {
+  opacity: 0.7;
 }
 
 /* Ensure smooth transitions */
@@ -79,7 +263,46 @@
   box-sizing: border-box;
 }
 
-/* Handle dark mode if needed */
+/* Focus management for accessibility */
+.admin-layout:focus-within .mobile-menu-toggle {
+  outline: 2px solid #FBE54D;
+  outline-offset: 2px;
+}
+
+/* Handle high contrast mode */
+@media (prefers-contrast: high) {
+  .admin-layout {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  .admin-main-content {
+    background: #ffffff;
+  }
+  
+  .admin-page-content {
+    background: #ffffff;
+  }
+  
+  .mobile-menu-toggle {
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Handle reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .admin-main-content,
+  .admin-page-content,
+  .admin-sidebar-wrapper,
+  .admin-content-overlay,
+  .mobile-menu-toggle {
+    transition: none;
+  }
+}
+
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .admin-layout {
     background: #111827;
@@ -95,18 +318,36 @@
   }
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .admin-layout {
-    background: #ffffff;
-    color: #000000;
+/* Print styles */
+@media print {
+  .mobile-menu-toggle,
+  .admin-sidebar-wrapper {
+    display: none !important;
   }
   
   .admin-main-content {
-    background: #ffffff;
+    margin-left: 0 !important;
   }
   
   .admin-page-content {
-    background: #ffffff;
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* Landscape orientation for tablets */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .admin-page-content {
+    padding: 1rem 2rem;
+  }
+}
+
+/* Very wide screens optimization */
+@media (min-width: 1600px) {
+  .admin-page-content {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3rem;
   }
 } 

@@ -4,14 +4,14 @@
  * 
  * Features:
  * - Comprehensive top navigation with language selector, notifications, user profile
- * - Consistent sidebar navigation
- * - Responsive design
+ * - Consistent sidebar navigation with mobile menu support
+ * - Responsive design with mobile menu toggle
  * - Easy integration for admin pages
  * - Proper spacing and layout management
  * - Tech support and profile menu functionality
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TopNavigation } from '../TopNavigation';
 import { SharedMenu } from '../SharedMenu';
 import './AdminLayout.css';
@@ -75,6 +75,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   }
 }) => {
   const [currentActiveItem, setCurrentActiveItem] = useState(activeMenuItem);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // TopNavigation handlers
   const handleLanguageChange = (languageCode: string) => {
@@ -101,8 +102,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     }
   };
 
+  // Mobile menu handlers
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   const handleMenuItemClick = (itemId: string) => {
     setCurrentActiveItem(itemId);
+    
+    // Close mobile menu when item is clicked
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
     
     if (onMenuItemClick) {
       onMenuItemClick(itemId);
@@ -143,12 +158,95 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     }
   };
 
+  // Handle window resize to close mobile menu on larger screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1023 && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Close mobile menu when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isMobileMenuOpen && !target.closest('.admin-sidebar-wrapper') && !target.closest('.mobile-menu-toggle')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
+
+  // Handle escape key to close mobile menu
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [isMobileMenuOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <div className={`admin-layout ${className}`}>
-      <SharedMenu 
-        activeItem={currentActiveItem}
-        onItemClick={handleMenuItemClick}
-      />
+    <div className={`admin-layout ${className} ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+      {/* Mobile Menu Toggle Button */}
+      <button 
+        className="mobile-menu-toggle"
+        onClick={toggleMobileMenu}
+        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={isMobileMenuOpen}
+        type="button"
+      >
+        {isMobileMenuOpen ? (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        )}
+      </button>
+
+      {/* Sidebar wrapper for mobile handling */}
+      <div className="admin-sidebar-wrapper">
+        <SharedMenu 
+          activeItem={currentActiveItem}
+          onItemClick={handleMenuItemClick}
+        />
+      </div>
+
+      {/* Content overlay for mobile */}
+      <div 
+        className={`admin-content-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+        onClick={closeMobileMenu}
+        aria-hidden="true"
+      ></div>
       
       <div className="admin-main-content">
         <TopNavigation

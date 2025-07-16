@@ -16,6 +16,7 @@
   z-index: 999;
   border-bottom: 1px solid #374151; /* gray/700 */
   font-family: 'Arimo', 'Inter', system-ui, sans-serif;
+  transition: all 0.3s ease;
 }
 
 /* Container for navigation content */
@@ -72,6 +73,8 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 32px;
+  min-width: 32px;
 }
 
 .banks-icon:hover {
@@ -96,128 +99,145 @@
 
 /* Language Selector */
 .language-selector-wrapper {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
-  padding: 0px;
-  gap: 5px;
-  isolation: isolate;
+  position: relative;
   width: 90px;
   height: 24px;
 }
 
 .language-selector {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
-  padding: 0px;
-  gap: 12px;
-  width: 90px;
-  height: 24px;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
   background: transparent;
   border: none;
-  cursor: pointer;
-  z-index: 0;
-  transition: all 0.2s ease;
+  color: #F9FAFB;
+  font-family: 'Arimo';
+  font-size: 14px;
+  min-height: 40px;
+  min-width: 40px;
 }
 
 .language-selector:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
 }
 
 .language-selector:focus {
   outline: 2px solid #FBE54D;
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
-.language-text {
-  width: 54px;
-  height: 21px;
-  font-family: 'Arimo';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 150%; /* 21px */
-  color: #F9FAFB;
-  text-align: center;
+.selected-language {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.language-arrow {
-  width: 24px;
-  height: 24px;
+.flag-icon {
+  width: 20px;
+  height: 15px;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.language-text {
+  width: 30px;
+  font-family: 'Arimo';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  text-align: left;
+}
+
+.language-arrow {
+  width: 16px;
+  height: 16px;
   transition: transform 0.2s ease;
 }
 
-.language-arrow.open {
+.language-selector.open .language-arrow {
   transform: rotate(180deg);
 }
 
 /* Language Dropdown */
 .language-dropdown {
   position: absolute;
-  top: 32px;
-  left: -65px;
-  width: 155px;
-  height: 83px;
-  background: #374151; /* gray/700 */
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #1F2A37;
+  border: 1px solid #374151;
   border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   z-index: 1000;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 4px 0px;
+  min-width: 150px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.language-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .language-option {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 8px 16px;
   gap: 12px;
-  width: 100%;
-  height: 37px;
-  background: transparent;
-  border: none;
+  padding: 12px 16px;
   cursor: pointer;
-  color: #F9FAFB;
+  transition: background 0.2s ease;
   font-family: 'Arimo';
-  font-weight: 500;
   font-size: 14px;
-  line-height: 150%;
-  transition: background-color 0.2s ease;
+  color: #F9FAFB;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
 }
 
 .language-option:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.language-option.selected {
-  background: #FBE54D;
-  color: #1F2A37;
+.language-option:focus {
+  outline: 2px solid #FBE54D;
+  outline-offset: -2px;
 }
 
-.language-flag {
-  font-size: 16px;
-  width: 20px;
-  height: 20px;
+.language-option.active {
+  background: rgba(251, 229, 77, 0.1);
+  color: #FBE54D;
+}
+
+/* Bank Name */
+.bank-name {
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.language-name {
-  flex: 1;
-  text-align: left;
+.bank-name-text {
+  font-family: 'Arimo';
+  font-weight: 500;
+  font-size: 14px;
+  color: #F9FAFB;
+  white-space: nowrap;
 }
 
 /* Tech Support Button */
@@ -229,14 +249,15 @@
   height: 40px;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  position: relative;
+  color: #9CA3AF;
 }
 
 .tech-support-btn:hover {
   background: rgba(255, 255, 255, 0.1);
+  color: #F9FAFB;
 }
 
 .tech-support-btn:focus {
@@ -245,11 +266,8 @@
 }
 
 .tech-support-btn svg {
-  transition: all 0.2s ease;
-}
-
-.tech-support-btn:hover svg path {
-  fill: #F9FAFB;
+  width: 20px;
+  height: 20px;
 }
 
 /* Notifications Button */
@@ -261,14 +279,16 @@
   height: 40px;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #9CA3AF;
   position: relative;
 }
 
 .notifications-btn:hover {
   background: rgba(255, 255, 255, 0.1);
+  color: #F9FAFB;
 }
 
 .notifications-btn:focus {
@@ -277,71 +297,41 @@
 }
 
 .notifications-btn svg {
-  transition: all 0.2s ease;
+  width: 20px;
+  height: 20px;
 }
 
-.notifications-btn:hover svg path {
-  fill: #F9FAFB;
-}
-
-/* Notification Badge */
 .notification-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  min-width: 20px;
-  height: 20px;
-  background: #EF4444; /* red-500 */
+  top: 8px;
+  right: 8px;
+  background: #EF4444;
   color: white;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  border: 2px solid #1F2A37;
+  font-size: 10px;
+  font-weight: 600;
   font-family: 'Arimo';
-}
-
-/* Bank Name */
-.bank-name {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.bank-name-text {
-  font-family: 'Arimo';
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 150%;
-  color: #F9FAFB;
-  white-space: nowrap;
 }
 
 /* User Profile */
-.user-profile-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
 .user-profile-btn {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 8px 12px;
   gap: 12px;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  max-width: 240px;
+  padding: 8px;
+  color: #F9FAFB;
+  position: relative;
+  min-height: 44px;
 }
 
 .user-profile-btn:hover {
@@ -353,79 +343,54 @@
   outline-offset: 2px;
 }
 
-/* User Avatar */
 .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #6B7280; /* gray-500 */
+  background: #667EEA;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-initials {
   font-family: 'Arimo';
   font-weight: 600;
   font-size: 12px;
-  color: #F9FAFB;
-  text-transform: uppercase;
+  color: white;
+  flex-shrink: 0;
 }
 
-/* User Info */
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
+  text-align: left;
 }
 
 .user-name {
   font-family: 'Arimo';
   font-weight: 500;
   font-size: 14px;
-  line-height: 150%;
   color: #F9FAFB;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  line-height: 1.2;
+  margin-bottom: 2px;
 }
 
 .user-role {
   font-family: 'Arimo';
   font-weight: 400;
   font-size: 12px;
-  line-height: 150%;
-  color: #9CA3AF; /* gray-400 */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  color: #9CA3AF;
+  line-height: 1.2;
 }
 
-/* Profile Arrow */
 .profile-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 16px;
   height: 16px;
+  color: #9CA3AF;
   transition: transform 0.2s ease;
-  flex-shrink: 0;
+  margin-left: 4px;
 }
 
-.profile-arrow.open {
+.user-profile-btn.open .profile-arrow {
   transform: rotate(180deg);
 }
 
@@ -435,90 +400,72 @@
   top: 100%;
   right: 0;
   margin-top: 8px;
-  width: 280px;
-  background: #374151; /* gray/700 */
-  border: 1px solid #4B5563; /* gray/600 */
-  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: #1F2A37;
+  border: 1px solid #374151;
   border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   z-index: 1000;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 8px 0;
+  min-width: 280px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
 }
 
-/* Profile Dropdown Header */
+.profile-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 .profile-dropdown-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 8px;
+}
+
+.profile-dropdown-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .profile-dropdown-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #6B7280;
+  background: #667EEA;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.profile-dropdown-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-dropdown-initials {
   font-family: 'Arimo';
   font-weight: 600;
-  font-size: 14px;
-  color: #F9FAFB;
-  text-transform: uppercase;
+  font-size: 16px;
+  color: white;
 }
 
-.profile-dropdown-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+.profile-dropdown-details {
   flex: 1;
-  min-width: 0;
 }
 
 .profile-dropdown-name {
   font-family: 'Arimo';
   font-weight: 600;
-  font-size: 14px;
-  line-height: 150%;
+  font-size: 16px;
   color: #F9FAFB;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  margin-bottom: 4px;
 }
 
 .profile-dropdown-email {
   font-family: 'Arimo';
   font-weight: 400;
-  font-size: 12px;
-  line-height: 150%;
+  font-size: 14px;
   color: #9CA3AF;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-/* Profile Dropdown Items */
+.profile-dropdown-menu {
+  padding: 8px 0;
+}
+
 .profile-dropdown-item {
   display: flex;
   flex-direction: row;
@@ -562,11 +509,41 @@
   margin: 8px 0;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* =================================== */
+/* RESPONSIVE BREAKPOINTS */
+/* =================================== */
+
+/* Extra Large Screens (1400px+) */
+@media (min-width: 1400px) {
+  .navbar-content {
+    gap: 40px;
+    max-width: 1200px;
+  }
+  
+  .navbar-right {
+    gap: 40px;
+  }
+}
+
+/* Large Screens (1200px - 1399px) */
+@media (max-width: 1399px) and (min-width: 1200px) {
   .top-navigation {
-    left: 0;
-    padding-left: 265px;
+    left: 265px;
+  }
+  
+  .navbar-content {
+    gap: 28px;
+  }
+  
+  .navbar-right {
+    gap: 28px;
+  }
+}
+
+/* Medium-Large Screens (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .top-navigation {
+    left: 265px;
   }
   
   .navbar-content {
@@ -586,15 +563,21 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Medium Screens (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
   .top-navigation {
     left: 0;
-    padding-left: 0;
+    height: 70px;
+  }
+  
+  .top-nav-container {
+    height: 70px;
+    padding: 16px 20px;
   }
   
   .navbar-content {
-    gap: 16px;
-    padding: 0 16px;
+    gap: 20px;
+    height: 38px;
   }
   
   .navbar-left {
@@ -602,11 +585,11 @@
   }
   
   .navbar-right {
-    gap: 16px;
+    gap: 20px;
   }
   
   .header-logo {
-    height: 24px;
+    height: 28px;
   }
   
   .banks-icon {
@@ -623,6 +606,10 @@
     display: none;
   }
   
+  .user-info {
+    display: none;
+  }
+  
   .language-selector-wrapper {
     width: 70px;
   }
@@ -636,11 +623,106 @@
     width: 240px;
     right: -20px;
   }
+  
+  .tech-support-btn,
+  .notifications-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
 }
 
+/* Small Screens (481px - 767px) */
+@media (max-width: 767px) {
+  .top-navigation {
+    left: 0;
+    height: 60px;
+  }
+  
+  .top-nav-container {
+    height: 60px;
+    padding: 12px 16px;
+  }
+  
+  .navbar-content {
+    gap: 16px;
+    height: 36px;
+  }
+  
+  .navbar-left {
+    gap: 10px;
+  }
+  
+  .navbar-right {
+    gap: 16px;
+  }
+  
+  .header-logo {
+    height: 24px;
+  }
+  
+  .banks-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .banks-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .bank-name {
+    display: none;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .language-selector-wrapper {
+    width: 60px;
+  }
+  
+  .language-text {
+    width: 30px;
+    font-size: 11px;
+  }
+  
+  .tech-support-btn,
+  .notifications-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .profile-dropdown {
+    width: 240px;
+    right: -20px;
+  }
+}
+
+/* Extra Small Screens (320px - 480px) */
 @media (max-width: 480px) {
+  .top-navigation {
+    height: 55px;
+  }
+  
+  .top-nav-container {
+    height: 55px;
+    padding: 10px 12px;
+  }
+  
   .navbar-content {
     gap: 12px;
+    height: 35px;
   }
   
   .navbar-left {
@@ -676,18 +758,50 @@
   
   .tech-support-btn,
   .notifications-btn {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .tech-support-btn svg,
+  .notifications-btn svg {
+    width: 16px;
+    height: 16px;
   }
   
   .user-avatar {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
   }
   
   .profile-dropdown {
     width: 200px;
     right: -40px;
+  }
+  
+  .notification-badge {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* Touch-friendly interactions for mobile */
+@media (max-width: 768px) {
+  .language-selector,
+  .tech-support-btn,
+  .notifications-btn,
+  .user-profile-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .language-option,
+  .profile-dropdown-item {
+    min-height: 44px;
+    padding: 12px 16px;
   }
 }
 
@@ -714,7 +828,16 @@
   .tech-support-btn,
   .notifications-btn,
   .user-profile-btn,
-  .profile-dropdown-item {
+  .profile-dropdown-item,
+  .language-dropdown,
+  .profile-dropdown {
     transition: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .top-navigation {
+    display: none !important;
   }
 } 
