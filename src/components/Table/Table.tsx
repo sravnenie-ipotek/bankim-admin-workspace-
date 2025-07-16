@@ -106,7 +106,7 @@ const Table: React.FC<TableProps> = ({
   className = ''
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker] = useState(false); // Used in datepicker className
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;

@@ -95,7 +95,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   onLanguageChange,
   onTechSupportClick,
   onNotificationsClick,
-  onBankContextChange,
+  onBankContextChange: _onBankContextChange,
   onProfileMenuClick,
   className = ''
 }) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { AdminLayout } from '../components'
 import './BankEmployee.css'
 
@@ -70,7 +70,7 @@ const FILTER_OPTIONS = {
 }
 
 const BankEmployee: React.FC = () => {
-  const [clients, setClients] = useState(MOCK_CLIENTS)
+  const [clients] = useState(MOCK_CLIENTS)
   const [filteredClients, setFilteredClients] = useState(MOCK_CLIENTS)
   const [searchTerm, setSearchTerm] = useState('')
   const [showFilters, setShowFilters] = useState(false)

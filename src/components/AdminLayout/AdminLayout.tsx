@@ -54,7 +54,7 @@ interface AdminLayoutProps {
  * Supports language switching, notifications, tech support, and user profile management
  */
 const AdminLayout: React.FC<AdminLayoutProps> = ({
-  title,
+  title: _title,
   activeMenuItem = 'dashboard',
   children,
   className = '',

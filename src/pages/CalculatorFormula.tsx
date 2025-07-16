@@ -22,7 +22,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout/AdminLayout';
-import { apiService, type FormulaData } from '../services/api';
+// import { apiService } from '../services/api'; // Unused in current implementation
 import { useAuth } from '../contexts/AuthContext';
 import './CalculatorFormula.css';
 

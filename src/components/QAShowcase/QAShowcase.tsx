@@ -13,26 +13,7 @@ const mockBank = {
   logo: '/static/bank-logo.png'
 }
 
-const mockNotifications = [
-  {
-    id: '1',
-    type: 'success',
-    title: 'Паспорт лицевая сторона',
-    message: 'Паспорт принят',
-    time: '16:04',
-    date: '20.01.2023',
-    isRead: false
-  },
-  {
-    id: '2',
-    type: 'error', 
-    title: 'Банк Hapoalim',
-    message: '"Паспорт лицевая сторона" есть ошибки',
-    time: '16:04',
-    date: '20.01.2023',
-    isRead: false
-  }
-]
+// Removed unused mockNotifications array
 
 export const QAShowcase: React.FC = () => {
   return (
