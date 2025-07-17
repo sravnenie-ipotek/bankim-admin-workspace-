@@ -1,4 +1,19 @@
-# 🏛️ BankIM Management Portal
+# BankIM Management Portal
+
+## 🔒 Security Setup (IMPORTANT)
+
+### Environment Variables
+1. **Copy the template**: `cp env.template .env`
+2. **Edit `.env`** with your real database credentials
+3. **NEVER commit `.env`** - it's protected by `.gitignore`
+4. **Only share `env.template`** - it contains placeholder values only
+
+### Database Credentials
+- Real credentials are in `.env` (local only, not committed)
+- Template with placeholders is in `env.template` (safe to commit)
+- Production: Use environment variables or Railway's secret management
+
+---
 
 Портал управления BankIM - современная веб-платформа для управления банковскими операциями и клиентским сервисом.
 
