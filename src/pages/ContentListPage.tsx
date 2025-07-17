@@ -2,8 +2,16 @@ import React from 'react';
 import AdminLayout from '../components/AdminLayout';
 import SharedHeader from '../components/SharedHeader';
 import { Table } from '../components/Table';
-import { useNavigate } from 'react-router-dom';
 import './ContentListPage.css';
+
+interface TableRow {
+  id: string;
+  name: string;
+  type: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+  status: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+  access: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+  actions: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+}
 
 interface ContentPage {
   id: string;
@@ -15,6 +23,9 @@ interface ContentPage {
   status: 'Published' | 'Draft';
   lastModified: string;
   modifiedBy: string;
+  type: string;
+  access: string;
+  actions: string;
 }
 
 const mockPages: ContentPage[] = [
@@ -28,6 +39,9 @@ const mockPages: ContentPage[] = [
     status: 'Published',
     lastModified: '10.12.2024, 02:00',
     modifiedBy: 'director-1',
+    type: 'page',
+    access: 'public',
+    actions: 'edit',
   },
   {
     id: 'menu',
@@ -39,6 +53,9 @@ const mockPages: ContentPage[] = [
     status: 'Published',
     lastModified: '12.12.2024, 02:00',
     modifiedBy: 'director-1',
+    type: 'page',
+    access: 'public',
+    actions: 'edit',
   },
   {
     id: 'calculate-mortgage',
@@ -50,45 +67,26 @@ const mockPages: ContentPage[] = [
     status: 'Draft',
     lastModified: '11.12.2024, 02:00',
     modifiedBy: 'director-1',
+    type: 'page',
+    access: 'public',
+    actions: 'edit',
   },
 ];
 
 const ContentListPage: React.FC = () => {
-    const navigate = useNavigate();
-
-    const handleRowClick = (page: ContentPage) => {
-        navigate(`/content/${page.id}`);
-    };
-    
-    const columns = [
-        { Header: '№', accessor: 'number' },
-        { Header: 'НАЗВАНИЕ', accessor: 'name', Cell: ({ row }: any) => (
-            <div>
-                <div className="page-name">{row.original.name}</div>
-                <div className="page-path">{row.original.path}</div>
-            </div>
-        )},
-        { Header: 'КАТЕГОРИЯ', accessor: 'category' },
-        { Header: 'ДЕЙСТВИЯ', accessor: 'actionsCount', Cell: ({ value }: any) => <div className="actions-count-cell"><span className="actions-count-badge">{value}</span></div> },
-        { Header: 'СТАТУС', accessor: 'status', Cell: ({ value }: any) => <span className={`status-badge ${value.toLowerCase()}`}>{value}</span> },
-        { Header: 'ИЗМЕНЕНО', accessor: 'lastModified', Cell: ({ row }: any) => (
-            <div>
-                <div>{row.original.lastModified}</div>
-                <div className="modified-by">изм. {row.original.modifiedBy}</div>
-            </div>
-        )},
-        { Header: 'ДЕЙСТВИЯ', accessor: 'actions', Cell: ({ row }: any) => (
-            <div className="action-buttons">
-              <button className="action-btn view-btn" onClick={(e) => { e.stopPropagation(); alert('View page'); }}></button>
-              <button className="action-btn edit-btn" onClick={(e) => { e.stopPropagation(); handleRowClick(row.original); }}></button>
-              <button className="action-btn delete-btn" onClick={(e) => { e.stopPropagation(); alert('Delete page'); }}></button>
-            </div>
-          )},
-      ];
+    // Transform ContentPage data to TableRow format
+    const transformedData: TableRow[] = mockPages.map(page => ({
+        id: page.id,
+        name: page.name,
+        type: { text: page.type, type: 'inactive' as const },
+        status: { text: page.status, type: page.status === 'Published' ? 'active' as const : 'pending' as const },
+        access: { text: page.access, type: 'active' as const },
+        actions: { text: page.actions, type: 'active' as const }
+    }));
 
   return (
-    <AdminLayout>
-      <SharedHeader title="Контент сайта" subtitle="Управление контентом и страницами сайта" />
+    <AdminLayout title="Контент сайта">
+      <SharedHeader />
       <div className="content-list-page">
         <div className="page-list-container">
             <div className="page-list-header">
@@ -96,7 +94,7 @@ const ContentListPage: React.FC = () => {
                 {/* Add dropdowns here */}
             </div>
             <h3>Список страниц</h3>
-            <Table columns={columns} data={mockPages} onRowClick={handleRowClick} />
+            <Table data={transformedData} />
             <div className="page-list-footer">
                 Показано {mockPages.length} записей
             </div>

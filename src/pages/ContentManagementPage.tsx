@@ -26,6 +26,10 @@ interface PageAction {
   type: 'dropdown' | 'link' | 'text';
   ru: string;
   heb: string;
+  name: string;
+  status: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+  access: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
+  actions: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
 }
 
 interface SelectedAction extends PageAction {
@@ -47,19 +51,19 @@ const mockPageStates: PageState[] = [
 ];
 
 const mockActions: PageAction[] = [
-  { actionNumber: 1, id: 'Income_Main', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 2, id: 'Income_Main_2', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 3, id: 'Income_Main_3', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 4, id: 'Income_Main_4', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 5, id: 'Income_Main_5', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 6, id: 'Income_Main_6', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 7, id: 'Income_Main_7', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 8, id: 'Income_Main_8', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 9, id: 'Income_Main_9', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 10, id: 'Income_Main_10', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 11, id: 'Income_Main_11', type: 'text', ru: 'Заголовок', heb: 'כותרת' },
-  { actionNumber: 12, id: 'Income_Main_12', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך' },
-  { actionNumber: 13, id: 'Income_Main_13', type: 'link', ru: 'Подробнее', heb: 'למידע נוסף' },
+  { actionNumber: 1, id: 'Income_Main', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 2, id: 'Income_Main_2', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_2', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 3, id: 'Income_Main_3', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_3', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 4, id: 'Income_Main_4', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_4', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 5, id: 'Income_Main_5', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_5', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 6, id: 'Income_Main_6', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_6', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 7, id: 'Income_Main_7', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_7', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 8, id: 'Income_Main_8', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_8', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 9, id: 'Income_Main_9', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_9', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 10, id: 'Income_Main_10', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_10', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 11, id: 'Income_Main_11', type: 'text', ru: 'Заголовок', heb: 'כותרת', name: 'Income_Main_11', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 12, id: 'Income_Main_12', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_12', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
+  { actionNumber: 13, id: 'Income_Main_13', type: 'link', ru: 'Подробнее', heb: 'למידע נוסף', name: 'Income_Main_13', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
 ];
 
 
@@ -81,17 +85,6 @@ const ContentManagementPage: React.FC = () => {
     }).replace(',', ' |');
   };
 
-  const handleEditClick = (action: PageAction) => {
-    const actionName = `${action.ru} / ${action.heb}`;
-    setSelectedAction({ ...action, actionName });
-    if (action.type === 'text') {
-      setIsTextModalOpen(true);
-    } else if (action.type === 'dropdown') {
-      setIsDropdownModalOpen(true);
-    } else if (action.type === 'link') {
-      setIsLinkModalOpen(true);
-    }
-  };
 
   const handleCloseModals = () => {
     setIsTextModalOpen(false);
@@ -118,31 +111,20 @@ const ContentManagementPage: React.FC = () => {
     handleCloseModals();
   };
 
-  const columns = [
-    { key: 'actionNumber', title: 'Номер действия' },
-    { key: 'id', title: 'ID' },
-    { key: 'type', title: 'Тип', render: (item: PageAction) => (
-      <span className={`type-label type-${item.type}`}>
-        {item.type === 'dropdown' ? 'Дропдаун' : item.type === 'link' ? 'Ссылка' : 'Текст'}
-      </span>
-    )},
-    { key: 'ru', title: 'RU' },
-    { key: 'heb', title: 'HEB', render: (item: PageAction) => <span style={{ direction: 'rtl', textAlign: 'right', display: 'block' }}>{item.heb}</span> },
-    { key: 'edit', title: '', render: (item: PageAction) => (
-      <button className="edit-button" aria-label={`Edit ${item.id}`} onClick={() => handleEditClick(item)}>
-        {item.type === 'text' || item.type === 'link' ? (
-          <img src="/assets/images/static/calculate-credit/pencilsimple1132-cw1.svg" alt="Edit" />
-        ) : (
-          <img src="/assets/images/static/carret-right.svg" alt="View" />
-        )}
-      </button>
-    )}
-  ];
+  // Transform PageAction data to match Table component format
+  const transformedActionsData = mockActions.map(action => ({
+    id: action.id,
+    name: action.ru,
+    type: { text: action.type === 'dropdown' ? 'Дропдаун' : action.type === 'link' ? 'Ссылка' : 'Текст', type: 'inactive' as const },
+    status: action.status,
+    access: action.access,
+    actions: action.actions
+  }));
 
 
   return (
-    <AdminLayout>
-      <SharedHeader title="Контент сайта" />
+    <AdminLayout title="Контент сайта">
+      <SharedHeader />
       <div className="content-management-page">
         <div className="page-content-wrapper">
           {/* Breadcrumbs and Page Header */}
@@ -208,7 +190,7 @@ const ContentManagementPage: React.FC = () => {
                   Фильтры
                 </button>
               </div>
-              <Table data={mockActions} columns={columns} />
+              <Table data={transformedActionsData} />
               <div className="table-pagination">
                  <span>Показывает 1-12 из {mockActions.length}</span>
                  <div className="pagination-controls">
