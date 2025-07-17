@@ -11,6 +11,7 @@ import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
+import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
@@ -381,6 +382,7 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/components" element={<ComponentShowcase />} />
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/table-demo" element={<TableDemo />} />
@@ -392,7 +394,9 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <Chat activeSection="content-management" />
+                <AdminLayout title="Контент сайта" activeMenuItem="content-management">
+                  <ContentManagement />
+                </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
           } 
