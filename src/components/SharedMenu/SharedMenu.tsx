@@ -21,6 +21,7 @@
 import React from 'react';
 import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface NavItem {
   id: string;
@@ -28,6 +29,7 @@ interface NavItem {
   label: string;
   active?: boolean;
   badge?: string;
+  requiredPermission?: { action: string; resource: string };
 }
 
 export interface SharedMenuProps {
@@ -36,6 +38,8 @@ export interface SharedMenuProps {
 }
 
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
+  const { hasPermission } = useAuth();
+
   // Main navigation items per Confluence business logic
   const mainNavItems: NavItem[] = [
     {
@@ -50,19 +54,19 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       label: 'Клиенты' // Action #3: Clients/Users
     },
     {
-      id: 'reports',
-      icon: 'file-lines',
-      label: 'Предложения' // Action #4: Reports/Offers
-    },
-    {
       id: 'bank-employee',
       icon: 'bank',
-      label: 'Банковские программы' // Action #5: Bank Employee Management
+      label: 'Банк сотрудник' // Action #4: Bank Employee
     },
     {
-      id: 'user-registration',
-      icon: 'add-user',
-      label: 'Создание аудитории' // Action #6: User Registration/Audience Creation
+      id: 'component-showcase',
+      icon: 'ui-kit',
+      label: 'Компоненты' // Action #5: Components
+    },
+    {
+      id: 'shared-header-preview',
+      icon: 'computer-header',
+      label: 'Заголовок' // Action #6: Header
     },
     {
       id: 'calculator-formula',
@@ -77,7 +81,8 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     {
       id: 'content-management',
       icon: 'file-edit',
-      label: 'Контент сайта' // Action #9: Content Management (standalone)
+      label: 'Контент сайта', // Action #9: Content Management (standalone)
+      requiredPermission: { action: 'read', resource: 'content-management' }
     }
   ];
 
@@ -95,7 +100,17 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     }
   ];
 
-  const handleItemClick = (itemId: string) => {
+  const isMenuItemDisabled = (item: NavItem): boolean => {
+    if (!item.requiredPermission) return false;
+    return !hasPermission(item.requiredPermission.action, item.requiredPermission.resource);
+  };
+
+  const handleItemClick = (itemId: string, item: NavItem) => {
+    // Don't handle click if item is disabled
+    if (isMenuItemDisabled(item)) {
+      return;
+    }
+    
     if (onItemClick) {
       onItemClick(itemId);
     }
@@ -103,32 +118,35 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
 
   const renderNavItem = (item: NavItem) => {
     const isActive = item.active || activeItem === item.id;
+    const isDisabled = isMenuItemDisabled(item);
 
     return (
       <div
         key={item.id}
-        className={`navlink-sidebar ${isActive ? 'active' : ''}`}
-        onClick={() => handleItemClick(item.id)}
+        className={`navlink-sidebar ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+        onClick={() => handleItemClick(item.id, item)}
         role="button"
-        tabIndex={0}
+        tabIndex={isDisabled ? -1 : 0}
         aria-label={item.label}
+        aria-disabled={isDisabled}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
-            handleItemClick(item.id);
+            handleItemClick(item.id, item);
           }
         }}
+        title={isDisabled ? 'У вас нет прав доступа к этой странице' : ''}
       >
         <div className="left-content">
           <div className={`icon ${item.icon}`}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              {renderIcon(item.icon, isActive)}
+              {renderIcon(item.icon, isActive && !isDisabled, isDisabled)}
             </svg>
           </div>
           <span className="pages">{item.label}</span>
         </div>
         
-        {item.badge && (
+        {item.badge && !isDisabled && (
           <div className="icon-badge">
             <div className="badge">
               <span className="text">{item.badge}</span>
@@ -139,8 +157,13 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     );
   };
 
-  const renderIcon = (iconName: string, isActive: boolean) => {
-    const color = isActive ? '#FBE54D' : '#9CA3AF';
+  const renderIcon = (iconName: string, isActive: boolean, isDisabled: boolean = false) => {
+    let color = '#9CA3AF'; // Default inactive color
+    if (isDisabled) {
+      color = '#6B7280'; // Darker gray for disabled
+    } else if (isActive) {
+      color = '#FBE54D'; // Active yellow
+    }
     
     switch (iconName) {
       case 'chart-pie':

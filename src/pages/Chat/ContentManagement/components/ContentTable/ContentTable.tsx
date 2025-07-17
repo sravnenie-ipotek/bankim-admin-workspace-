@@ -88,7 +88,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
   onView,
   className = ''
 }) => {
-  const { user } = useAuth();
+  const { hasPermission } = useAuth();
   
   // Component state
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
@@ -96,12 +96,12 @@ const ContentTable: React.FC<ContentTableProps> = ({
 
   // Security check: Verify user has appropriate permissions
   const hasEditPermission = useMemo(() => {
-    return user?.role === 'director' && !readonly;
-  }, [user, readonly]);
+    return hasPermission('edit', 'content-management') && !readonly;
+  }, [hasPermission, readonly]);
 
   const hasDeletePermission = useMemo(() => {
-    return user?.role === 'director' && !readonly;
-  }, [user, readonly]);
+    return hasPermission('delete', 'content-management') && !readonly;
+  }, [hasPermission, readonly]);
 
   // Handle sorting with validation
   const handleSort = useCallback((field: ContentSortField) => {

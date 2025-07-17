@@ -22,6 +22,7 @@
 import React, { useState, useEffect } from 'react';
 import { AdminLayout } from '../components';
 import { useAuth } from '../contexts/AuthContext';
+import ContentManagement from './Chat/ContentManagement/ContentManagement';
 
 import './Chat.css';
 
@@ -62,7 +63,15 @@ const Chat: React.FC<ChatProps> = ({ activeSection = 'messages' }) => {
       title: 'Сообщения',
       description: 'Внутренние сообщения и коммуникация',
       icon: '💬',
-      requiredRole: ['director', 'admin', 'bank-employee', 'sales-manager'],
+      requiredRole: ['director', 'administration', 'bank-employee', 'sales-manager'],
+      isActive: true
+    },
+    {
+      id: 'content-management',
+      title: 'Управление контентом',
+      description: 'Управление содержимым страниц сайта',
+      icon: '📝',
+      requiredRole: ['director'],
       isActive: true
     }
   ];
@@ -111,6 +120,8 @@ const Chat: React.FC<ChatProps> = ({ activeSection = 'messages' }) => {
     switch (currentSection) {
       case 'messages':
         return renderMessagesSection();
+      case 'content-management':
+        return renderContentManagementSection();
       default:
         return renderDefaultSection();
     }
@@ -130,6 +141,13 @@ const Chat: React.FC<ChatProps> = ({ activeSection = 'messages' }) => {
           <p>Система сообщений будет реализована в Phase 2</p>
         </div>
       </div>
+    </div>
+  );
+
+  // Content Management section (Director only)
+  const renderContentManagementSection = () => (
+    <div className="chat-section content-management-section">
+      <ContentManagement />
     </div>
   );
 

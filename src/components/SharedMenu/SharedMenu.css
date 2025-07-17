@@ -347,6 +347,26 @@
   border-radius: 6px;
 }
 
+/* Disabled state styles */
+.navlink-sidebar.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.navlink-sidebar.disabled:hover {
+  background: transparent;
+}
+
+.navlink-sidebar.disabled .pages {
+  color: #6B7280;
+}
+
+.navlink-sidebar.disabled .icon svg path {
+  fill: #6B7280;
+  stroke: #6B7280;
+}
+
 /* Hover effects for non-active items */
 .navlink-sidebar:hover:not(.active) .pages {
   color: #E5E7EB;

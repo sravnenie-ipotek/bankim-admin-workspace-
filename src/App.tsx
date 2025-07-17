@@ -344,7 +344,18 @@ const Dashboard = () => (
 
 // Main App Router Component
 const AppRouter: React.FC = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <AdminLogin />;

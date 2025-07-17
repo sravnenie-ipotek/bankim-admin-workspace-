@@ -37,6 +37,10 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     { action: 'manage', resource: 'system' },
     { action: 'view', resource: 'audit-logs' },
     { action: 'manage', resource: 'content' },
+    { action: 'read', resource: 'content-management' },
+    { action: 'write', resource: 'content-management' },
+    { action: 'edit', resource: 'content-management' },
+    { action: 'delete', resource: 'content-management' },
     { action: 'manage', resource: 'sales' },
     { action: 'manage', resource: 'brokers' }
   ],
@@ -54,6 +58,8 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   'content-manager': [
     { action: 'read', resource: 'calculator-formula' },
     { action: 'manage', resource: 'content' },
+    { action: 'read', resource: 'content-management' },
+    { action: 'write', resource: 'content-management' },
     { action: 'manage', resource: 'media' }
   ],
   brokers: [
@@ -91,7 +97,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (savedUser) {
       try {
         const userData = JSON.parse(savedUser);
-        setUser(userData);
+        
+        // Update permissions to latest role definitions (in case roles were updated)
+        const updatedUserData = {
+          ...userData,
+          permissions: ROLE_PERMISSIONS[userData.role as UserRole] || []
+        };
+        
+        setUser(updatedUserData);
+        localStorage.setItem('bankIM_admin_user', JSON.stringify(updatedUserData));
       } catch (error) {
         console.error('Failed to parse saved user data:', error);
         localStorage.removeItem('bankIM_admin_user');
