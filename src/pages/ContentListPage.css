@@ -1,0 +1,114 @@
+.content-list-page {
+    padding: 24px;
+    background-color: #111928;
+    color: #F9FAFB;
+  }
+  
+  .page-list-container {
+    background-color: #1F2A37;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  
+  .page-list-header {
+    margin-bottom: 16px;
+  }
+  
+  .search-input {
+    background-color: #374151;
+    border: 1px solid #4B5563;
+    border-radius: 8px;
+    color: #F9FAFB;
+    padding: 12px 16px;
+    width: 400px;
+  }
+  
+  .page-list-container h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  
+  .page-name {
+    font-weight: 600;
+  }
+  
+  .page-path {
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+  
+  .actions-count-cell {
+    display: flex;
+    justify-content: center;
+  }
+
+  .actions-count-badge {
+    background-color: #3F83F8;
+    border-radius: 50%;
+    color: white;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .status-badge.published {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+  }
+  
+  .status-badge.draft {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+  }
+  
+  .modified-by {
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+  
+  .action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .view-btn {
+    background-image: url('/src/assets/images/static/icons/eye.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .edit-btn {
+    background-image: url('/src/assets/images/static/icons/pencil.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .delete-btn {
+    background-image: url('/src/assets/images/static/icons/trash.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .page-list-footer {
+    padding-top: 16px;
+    color: #9CA3AF;
+    font-size: 14px;
+  } 

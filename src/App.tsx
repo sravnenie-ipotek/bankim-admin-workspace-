@@ -1,19 +1,21 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import './App.css'
 
 // Import components
 import BankEmployee from './pages/BankEmployee'
 import ComponentShowcase from './pages/ComponentShowcase'
+import ContentListPage from './pages/ContentListPage';
+import ContentManagementPage from './pages/ContentManagementPage';
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
-import ContentManagement from './pages/ContentManagement'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { QAShowcase } from './components/QAShowcase/QAShowcase';
 
 // Placeholder components for missing routes
 const PlaceholderPage = ({ title, description, icon, activeMenuItem }: { title: string; description: string; icon: string; activeMenuItem: string }) => (
@@ -42,7 +44,7 @@ const PlaceholderPage = ({ title, description, icon, activeMenuItem }: { title: 
   </AdminLayout>
 )
 
-const Users = () => (
+const _Users = () => (
   <PlaceholderPage 
     title="Клиенты" 
     description="Управление клиентской базой и взаимодействие с клиентами"
@@ -51,7 +53,7 @@ const Users = () => (
   />
 )
 
-const Reports = () => (
+const _Reports = () => (
   <PlaceholderPage 
     title="Предложения" 
     description="Отчеты по предложениям и аналитика продаж"
@@ -60,7 +62,7 @@ const Reports = () => (
   />
 )
 
-const UserRegistration = () => (
+const _UserRegistration = () => (
   <PlaceholderPage 
     title="Создание аудитории" 
     description="Регистрация новых пользователей и создание целевых аудиторий"
@@ -71,7 +73,7 @@ const UserRegistration = () => (
 
 // Chat component now imported above
 
-const Settings = () => (
+const _Settings = () => (
   <PlaceholderPage 
     title="Настройки" 
     description="Системные настройки и конфигурация приложения"
@@ -371,12 +373,22 @@ const AppRouter: React.FC = () => {
         <Route path="/components" element={<ComponentShowcase />} />
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/table-demo" element={<TableDemo />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/user-registration" element={<UserRegistration />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/content-management" element={<ContentManagement />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/qa-showcase" element={<QAShowcase />} />
+        <Route path="/content" element={<ContentListPage />} />
+        <Route path="/content/:pageId" element={<ContentManagementPage />} />
+        <Route 
+          path="/content-management" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <Chat activeSection="content-management" />
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Fallback route - must be last */}
+        <Route path="*" element={<Navigate to="/admin/login" replace />} />
       </Routes>
     </div>
   );
