@@ -831,3 +831,157 @@ html {
     background: #fff;
   }
 } 
+
+/* Director Page Styles */
+.director-page {
+  padding: 40px;
+  background-color: #111928;
+  min-height: calc(100vh - 88px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.director-content {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin-top: 60px;
+}
+
+.director-header {
+  text-align: center;
+}
+
+.director-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 48px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0 0 16px 0;
+}
+
+.crown-icon {
+  font-size: 48px;
+}
+
+.director-subtitle {
+  font-size: 18px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.ready-components-panel {
+  background-color: #1F2A37;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.panel-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FBE54D;
+  margin: 0;
+}
+
+.panel-icon {
+  font-size: 24px;
+}
+
+.panel-description {
+  font-size: 16px;
+  color: #E5E7EB;
+  margin: 0 0 24px 0;
+}
+
+.components-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.component-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: #374151;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.component-item:hover {
+  background-color: #4B5563;
+}
+
+.component-item.completed {
+  background-color: #065F46;
+  border-left: 4px solid #10B981;
+}
+
+.component-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.component-text {
+  font-size: 16px;
+  color: #F9FAFB;
+  font-weight: 500;
+}
+
+.director-actions {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.action-button.primary {
+  background-color: #FBE54D;
+  color: #111928;
+}
+
+.action-button.primary:hover {
+  background-color: #F59E0B;
+  transform: translateY(-2px);
+}
+
+.action-button.secondary {
+  background-color: #374151;
+  color: #F9FAFB;
+  border: 1px solid #4B5563;
+}
+
+.action-button.secondary:hover {
+  background-color: #4B5563;
+  transform: translateY(-2px);
+} 

@@ -145,31 +145,61 @@ const ContentManager = () => (
 
 const Director = () => (
   <AdminLayout title="Директор" activeMenuItem="director">
-    <div className="role-page-content">
-      <div className="page-header">
-        <h1>👑 Директор</h1>
-        <p className="page-subtitle">Исполнительная панель управления и стратегический контроль</p>
-      </div>
-      
-      <div className="development-notice">
-        <div className="notice-card">
-          <h3>🚀 Готовые компоненты</h3>
-          <p>Реализованные функции директора:</p>
-          <ul>
-            <li>✅ Формула калькулятора - настройка параметров расчета</li>
-            <li>🚧 Стратегические отчеты</li>
-            <li>🚧 Финансовая аналитика</li>
-            <li>🚧 Управление подразделениями</li>
-            <li>🚧 Контроль КПЭ</li>
-          </ul>
+    <div className="director-page">
+      <div className="director-content">
+        {/* Director Header */}
+        <div className="director-header">
+          <h1 className="director-title">
+            <span className="crown-icon">👑</span>
+            Директор
+          </h1>
+          <p className="director-subtitle">Исполнительная панель управления и стратегический контроль</p>
         </div>
-        <div className="test-link">
-          <Link to="/calculator-formula" className="btn-primary">
+        
+        {/* Ready Components Panel */}
+        <div className="ready-components-panel">
+          <div className="panel-header">
+            <span className="panel-icon">🚀</span>
+            <h2>Готовые компоненты</h2>
+          </div>
+          
+          <p className="panel-description">Реализованные функции директора:</p>
+          
+          <div className="components-list">
+            <div className="component-item completed">
+              <span className="component-icon">✅</span>
+              <span className="component-text">Формула калькулятора - настройка параметров расчета</span>
+            </div>
+            
+            <div className="component-item">
+              <span className="component-icon">📊</span>
+              <span className="component-text">Стратегические отчеты</span>
+            </div>
+            
+            <div className="component-item">
+              <span className="component-icon">💰</span>
+              <span className="component-text">Финансовая аналитика</span>
+            </div>
+            
+            <div className="component-item">
+              <span className="component-icon">🏢</span>
+              <span className="component-text">Управление подразделениями</span>
+            </div>
+            
+            <div className="component-item">
+              <span className="component-icon">📈</span>
+              <span className="component-text">Контроль КПЭ</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="director-actions">
+          <Link to="/calculator-formula" className="action-button primary">
             🧮 Формула калькулятора
           </Link>
-        </div>
-        <div className="test-link">
-          <Link to="/bank-employee" className="btn-primary">
+          
+          <Link to="/dev" className="action-button secondary">
             🧪 Перейти к тестовой странице компонентов
           </Link>
         </div>
@@ -308,7 +338,8 @@ const AppRouter: React.FC = () => {
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<ContentManagementPage />} />
+        <Route path="/dev" element={<Dashboard />} />
         <Route path="/director" element={<Director />} />
         <Route path="/administration" element={<Administration />} />
         <Route path="/sales-manager" element={<SalesManager />} />

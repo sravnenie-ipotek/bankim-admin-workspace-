@@ -23,13 +23,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { ContentTable } from './components/ContentTable';
+import { ContentTable, Breadcrumb, UserInfoCards, PageGallery } from './components';
 import type { 
   ContentPage, 
   ContentFilter, 
-  ContentManagementProps,
-  ContentPageCategory,
-  ContentPageStatus 
+  ContentManagementProps
 } from './types/contentTypes';
 import './ContentManagement.css';
 
@@ -234,6 +232,30 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     return filtered;
   }, [contentPages, currentFilter]);
 
+  // Get the current selected page (for demo purposes, we'll use the first page)
+  const currentPage = contentPages.length > 0 ? contentPages[0] : null;
+
+  // Mock image data for gallery
+  const mockImages = [
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+1',
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+2',
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+3',
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+4',
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+5',
+    'https://via.placeholder.com/400x300/1F2A37/FFFFFF?text=Page+6'
+  ];
+
+  // Format date for display
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   // Render loading state
   if (isLoading) {
     return (
@@ -272,114 +294,112 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   }
 
   return (
-    <div className={`content-management ${className}`}>
-      {/* Header Section */}
-      <div className="content-header">
-        <div className="header-info">
-          <h1>📝 Контент сайта</h1>
-          <p>Управление контентом и страницами сайта</p>
+    <div className={`content-management-new ${className}`}>
+      {/* Breadcrumb Section */}
+      <div className="breadcrumb-section">
+        <Breadcrumb
+          items={[
+            { label: 'Контент сайта', href: '/content-management' },
+            { label: 'Главная', href: '/content-management/main' },
+            { label: 'Калькулятор ипотеки Страница №2', isActive: true }
+          ]}
+        />
+      </div>
+
+      {/* Page Header Section */}
+      <div className="page-header-section">
+        <div className="page-title-container">
+          <h1 className="page-title">
+            {currentPage ? currentPage.title : 'Калькулятор ипотеки Страница №2'}
+          </h1>
         </div>
         
-        <div className="header-stats">
-          <div className="stat-item">
-            <span className="stat-label">Всего страниц:</span>
-            <span className="stat-value">{contentPages.length}</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Найдено:</span>
-            <span className="stat-value">{filteredPages.length}</span>
-          </div>
+        {/* User Info Cards */}
+        <div className="info-cards-section">
+          <UserInfoCards
+            actionCount={currentPage ? currentPage.actionCount : 33}
+            lastModified={currentPage ? formatDate(currentPage.lastModified) : '01.08.2023 | 15:03'}
+          />
         </div>
       </div>
 
-      {/* Search and Filter Section */}
-      <div className="content-filters">
-        <div className="search-section">
-          <div className="search-input-group">
-            <input
-              type="text"
-              placeholder="Поиск по названию, ID или номеру страницы..."
-              value={currentFilter.searchQuery}
-              onChange={(e) => handleFilterChange({ searchQuery: e.target.value })}
-              className="search-input"
-              maxLength={255}
-            />
-            <button 
-              className="search-button"
-              onClick={() => {/* Search action will be handled by input change */}}
-              title="Поиск"
-            >
-              🔍
-            </button>
-          </div>
-        </div>
-
-        <div className="filter-controls">
-          <select 
-            value={currentFilter.category || ''}
-            onChange={(e) => handleFilterChange({ 
-              category: e.target.value as ContentPageCategory || undefined 
-            })}
-            className="filter-select"
-          >
-            <option value="">Все категории</option>
-            <option value="main">Главная</option>
-            <option value="menu">Меню</option>
-            <option value="mortgage">Ипотека</option>
-            <option value="credit">Кредит</option>
-            <option value="general">Общие</option>
-          </select>
-
-          <select 
-            value={currentFilter.status || ''}
-            onChange={(e) => handleFilterChange({ 
-              status: e.target.value as ContentPageStatus || undefined 
-            })}
-            className="filter-select"
-          >
-            <option value="">Все статусы</option>
-            <option value="published">Опубликовано</option>
-            <option value="draft">Черновик</option>
-            <option value="archived">Архив</option>
-          </select>
-        </div>
+      {/* Page Gallery Section */}
+      <div className="gallery-section">
+        <PageGallery
+          images={mockImages}
+          title="Страница и ее состояния"
+        />
       </div>
 
-      {/* Content Table Section - Real Implementation */}
+      {/* Content Table Section */}
       <div className="content-table-section">
         <div className="table-header">
-          <h2>📋 Список страниц</h2>
+          <h2>Список действий на странице</h2>
         </div>
         
-        <ContentTable
-          data={filteredPages}
-          filter={currentFilter}
-          isLoading={isLoading}
-          readonly={false}
-          onSortChange={(sortBy, sortOrder) => {
-            handleFilterChange({ sortBy, sortOrder });
-          }}
-          onRowSelect={(page) => {
-            console.log('Row selected:', page);
-            handlePageSelect(page);
-          }}
-          onMultiSelect={(pageIds) => {
-            console.log('Multi-select:', pageIds);
-            // TODO: Handle multi-selection in Phase 2
-          }}
-          onEdit={(page) => {
-            console.log('Edit page:', page);
-            // TODO: Implement edit functionality in Phase 2
-          }}
-          onDelete={(page) => {
-            console.log('Delete page:', page);
-            // TODO: Implement delete functionality in Phase 2
-          }}
-          onView={(page) => {
-            console.log('View page:', page);
-            // TODO: Implement view functionality in Phase 2
-          }}
-        />
+        <div className="table-container">
+          {/* Search and Filter Section */}
+          <div className="content-filters">
+            <div className="search-section">
+              <div className="search-input-group">
+                <input
+                  type="text"
+                  placeholder="Искать по действию"
+                  value={currentFilter.searchQuery}
+                  onChange={(e) => handleFilterChange({ searchQuery: e.target.value })}
+                  className="search-input"
+                  maxLength={255}
+                />
+                <button 
+                  className="search-button"
+                  onClick={() => {/* Search action will be handled by input change */}}
+                  title="Поиск"
+                >
+                  🔍
+                </button>
+              </div>
+            </div>
+
+            <div className="filter-controls">
+              <button className="filter-button">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 4.5H14M4 8.5H12M6 12.5H10" stroke="#F9FAFB" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                Filters
+              </button>
+            </div>
+          </div>
+          
+          <ContentTable
+            data={filteredPages}
+            filter={currentFilter}
+            isLoading={isLoading}
+            readonly={false}
+            onSortChange={(sortBy, sortOrder) => {
+              handleFilterChange({ sortBy, sortOrder });
+            }}
+            onRowSelect={(page) => {
+              console.log('Row selected:', page);
+              handlePageSelect(page);
+            }}
+            onMultiSelect={(pageIds) => {
+              console.log('Multi-select:', pageIds);
+              // TODO: Handle multi-selection in Phase 2
+            }}
+            onEdit={(page) => {
+              console.log('Edit page:', page);
+              // TODO: Implement edit functionality in Phase 2
+            }}
+            onDelete={(page) => {
+              console.log('Delete page:', page);
+              // TODO: Implement delete functionality in Phase 2
+            }}
+            onView={(page) => {
+              console.log('View page:', page);
+              // TODO: Implement view functionality in Phase 2
+            }}
+          />
+        </div>
       </div>
     </div>
   );

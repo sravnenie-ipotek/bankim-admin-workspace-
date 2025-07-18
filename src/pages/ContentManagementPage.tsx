@@ -38,16 +38,19 @@ interface SelectedAction extends PageAction {
 
 // --- Mock Data ---
 const mockPageInfo: PageInfo = {
-  name: 'Калькулятор ипотеки Страница №2',
-  id: '1021231231', // Example ID
+  name: 'Главная страница',
+  id: '1021231231',
   totalActions: 33,
   lastModified: '2023-08-01T12:03:00Z',
 };
 
 const mockPageStates: PageState[] = [
-  { id: '1', name: 'Main', thumbnail: '/assets/images/static/calculate-mortgage/main-preview.png' },
-  { id: '2', name: 'State 2', thumbnail: '/assets/images/static/calculate-mortgage/state2-preview.png' },
-  { id: '3', name: 'State 3', thumbnail: '/assets/images/static/calculate-mortgage/state3-preview.png' },
+  { id: '1', name: 'Main', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '2', name: 'State 2', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '3', name: 'State 3', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '4', name: 'State 4', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '5', name: 'State 5', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '6', name: 'State 6', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
 ];
 
 const mockActions: PageAction[] = [
@@ -131,9 +134,9 @@ const ContentManagementPage: React.FC = () => {
           <section className="page-header-section">
             <div className="breadcrumbs">
               <span>Контент сайта</span>
-              <img src="/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
+              <img src="/src/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
               <span>Главная</span>
-              <img src="/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
+              <img src="/src/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
               <span className="active">{mockPageInfo.name}</span>
             </div>
             <h1 className="main-title">{mockPageInfo.name}</h1>
@@ -151,13 +154,38 @@ const ContentManagementPage: React.FC = () => {
 
           {/* Page States Gallery */}
           <section className="gallery-section">
-            <h2 className="section-title">Cтраница и ее состояния</h2>
+            <h2 className="section-title">Страница и ее состояния</h2>
             <div className="main-image-container">
-                <img src={activeState.thumbnail} alt={activeState.name} className="main-preview-image" />
+                <div className="main-preview-placeholder">
+                  <div className="preview-content">
+                    <div className="preview-header">
+                      <span className="preview-title">🏠 Главная страница</span>
+                    </div>
+                    <div className="preview-body">
+                      <div className="preview-section">
+                        <div className="preview-card">
+                          <h3>Добро пожаловать в BankIM</h3>
+                          <p>Ваш надежный партнер в мире финансов</p>
+                        </div>
+                      </div>
+                      <div className="preview-section">
+                        <div className="preview-card">
+                          <h3>Наши услуги</h3>
+                          <div className="services-grid">
+                            <span>Ипотека</span>
+                            <span>Кредиты</span>
+                            <span>Вклады</span>
+                            <span>Консультации</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
             <div className="carousel-container">
               <button className="carousel-nav-button" aria-label="Previous State">
-                <img src="/assets/images/static/carret-left.svg" alt="<" />
+                <img src="/src/assets/images/static/carret-left.svg" alt="<" />
               </button>
               <div className="carousel-track">
                 {mockPageStates.map(state => (
@@ -166,19 +194,21 @@ const ContentManagementPage: React.FC = () => {
                     className={`thumbnail-container ${state.id === activeState.id ? 'active' : ''}`}
                     onClick={() => setActiveState(state)}
                   >
-                    <img src={state.thumbnail} alt={state.name} className="thumbnail-image" />
+                    <div className="thumbnail-placeholder">
+                      <span>State {state.id}</span>
+                    </div>
                   </div>
                 ))}
               </div>
               <button className="carousel-nav-button" aria-label="Next State">
-                <img src="/assets/images/static/carret-right.svg" alt=">" />
+                <img src="/src/assets/images/static/carret-right.svg" alt=">" />
               </button>
             </div>
           </section>
 
           {/* Actions Table */}
           <section className="actions-table-section">
-            <h2 className="section-title">Cписок действий на странице</h2>
+            <h2 className="section-title">Список действий на странице</h2>
             <div className="table-wrapper">
               <div className="table-controls">
                 <div className="search-input-wrapper">

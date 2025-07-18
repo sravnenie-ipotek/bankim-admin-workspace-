@@ -57,18 +57,23 @@ const ContentManagement: React.FC = () => {
   }
 
   return (
-    <AdminLayout title="Контент сайта" activeMenuItem="content-management">
-      <ContentManagementComponent 
-        onPageSelect={(page) => {
-          console.log('Page selected:', page);
-          // TODO: Handle page selection in Phase 2
-        }}
-        onFilterChange={(filter) => {
-          console.log('Filter changed:', filter);
-          // TODO: Handle filter changes in Phase 2
-        }}
-      />
-    </AdminLayout>
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Render the full layout with sidebar and header */}
+      <AdminLayout title="Контент сайта" activeMenuItem="content-management">
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <ContentManagementComponent 
+            onPageSelect={(page) => {
+              console.log('Page selected:', page);
+              // TODO: Handle page selection in Phase 2
+            }}
+            onFilterChange={(filter) => {
+              console.log('Filter changed:', filter);
+              // TODO: Handle filter changes in Phase 2
+            }}
+          />
+        </div>
+      </AdminLayout>
+    </div>
   );
 };
 
