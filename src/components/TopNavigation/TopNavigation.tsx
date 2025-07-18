@@ -22,6 +22,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import './TopNavigation.css';
+import { useNavigation } from '../../contexts/NavigationContext';
 
 // Language options interface
 interface LanguageOption {
@@ -99,6 +100,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   onProfileMenuClick,
   className = ''
 }) => {
+  const { navigationState } = useNavigation();
   // State management for dropdowns
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -146,7 +148,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   };
 
   return (
-    <nav className={`top-navigation ${className}`} role="navigation" aria-label="Main navigation">
+    <nav className={`top-navigation ${className} ${navigationState.submenuLabel ? 'submenu-active' : ''}`} role="navigation" aria-label="Main navigation">
       <div className="top-nav-container">
         <div className="navbar-content">
           
@@ -229,9 +231,15 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
             )}
           </button>
 
-          {/* Bank Name */}
+          {/* Bank Name or Submenu Name */}
           <div className="bank-name" aria-label={`Current bank: ${bankContext.name}`}>
-            <span className="bank-name-text">{bankContext.name}</span>
+            {navigationState.submenuLabel ? (
+              <span className="submenu-name" style={{ color: '#2D3748' }}>
+                {navigationState.submenuLabel}
+              </span>
+            ) : (
+              <span className="bank-name-text">{bankContext.name}</span>
+            )}
           </div>
 
           {/* User Profile */}

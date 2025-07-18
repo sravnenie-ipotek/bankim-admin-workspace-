@@ -156,6 +156,28 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         // Handle logout logic
         console.log('Logout clicked');
         break;
+      // Handle submenu navigation
+      case 'content-main':
+        window.location.href = '/content/main';
+        break;
+      case 'content-menu':
+        window.location.href = '/content/menu';
+        break;
+      case 'content-mortgage':
+        window.location.href = '/content/mortgage';
+        break;
+      case 'content-mortgage-refi':
+        window.location.href = '/content/mortgage-refi';
+        break;
+      case 'content-credit':
+        window.location.href = '/content/credit';
+        break;
+      case 'content-credit-refi':
+        window.location.href = '/content/credit-refi';
+        break;
+      case 'content-general':
+        window.location.href = '/content/general';
+        break;
       default:
         break;
     }

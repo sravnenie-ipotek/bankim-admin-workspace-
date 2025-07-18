@@ -985,3 +985,69 @@ html {
   background-color: #4B5563;
   transform: translateY(-2px);
 } 
+
+/* Content page styles */
+.content-page {
+  padding: 24px;
+  width: 100%;
+  background: #2D3748;
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Responsive padding adjustments for content page */
+@media (max-width: 1023px) {
+  .content-page {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .content-page {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-page {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+.content-page h1 {
+  font-family: 'Arimo', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #F9FAFB;
+  margin-bottom: 16px;
+}
+
+.content-page p {
+  font-family: 'Arimo', 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #CBD5E1;
+  line-height: 1.5;
+} 
+
+/* Fix first submenu item always highlighted */
+.submenu-item:first-child .submenu-label {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+/* Make full content area dark and remove side white spaces */
+.admin-layout .admin-main-content {
+  background: #2D3748 !important;
+}
+
+.admin-layout .admin-page-content {
+  padding: 0 !important;
+  background: #2D3748 !important;
+  margin-top: 88px; /* TopNavigation height */
+  min-height: calc(100vh - 88px);
+} 

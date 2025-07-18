@@ -14,6 +14,7 @@ import Chat from './pages/Chat'
 import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { NavigationProvider } from './contexts/NavigationContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
@@ -375,6 +376,113 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+        
+        {/* Content submenu routes */}
+        <Route 
+          path="/content/main" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Главная" activeMenuItem="content-main">
+                  <div className="content-page">
+                    <h1>Главная страница</h1>
+                    <p>Управление главной страницей сайта</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/menu" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Меню" activeMenuItem="content-menu">
+                  <div className="content-page">
+                    <h1>Управление меню</h1>
+                    <p>Настройка навигационного меню сайта</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/mortgage" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Рассчитать ипотеку" activeMenuItem="content-mortgage">
+                  <div className="content-page">
+                    <h1>Рассчитать ипотеку</h1>
+                    <p>Управление страницей расчета ипотеки</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/mortgage-refi" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Рефинансирование ипотеки" activeMenuItem="content-mortgage-refi">
+                  <div className="content-page">
+                    <h1>Рефинансирование ипотеки</h1>
+                    <p>Управление страницей рефинансирования ипотеки</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/credit" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Расчет Кредита" activeMenuItem="content-credit">
+                  <div className="content-page">
+                    <h1>Расчет Кредита</h1>
+                    <p>Управление страницей расчета кредита</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/credit-refi" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Рефинансирование кредита" activeMenuItem="content-credit-refi">
+                  <div className="content-page">
+                    <h1>Рефинансирование кредита</h1>
+                    <p>Управление страницей рефинансирования кредита</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/general" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Общие страницы" activeMenuItem="content-general">
+                  <div className="content-page">
+                    <h1>Общие страницы</h1>
+                    <p>Управление общими страницами сайта</p>
+                  </div>
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
 
         {/* Fallback route - must be last */}
         <Route path="*" element={<Navigate to="/admin/login" replace />} />
@@ -386,9 +494,11 @@ const AppRouter: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRouter />
-      </Router>
+      <NavigationProvider>
+        <Router>
+          <AppRouter />
+        </Router>
+      </NavigationProvider>
     </AuthProvider>
   )
 }

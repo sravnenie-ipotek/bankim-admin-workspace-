@@ -23,6 +23,8 @@ import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFontSettings } from '../../hooks/useFontSettings';
+import { useNavigation } from '../../contexts/NavigationContext';
+import { useLocation } from 'react-router-dom';
 
 interface SubMenuItem {
   id: string;
@@ -50,6 +52,16 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   const { hasPermission } = useAuth();
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { fontSettings, loading: fontLoading } = useFontSettings();
+  const { setCurrentSubmenu } = useNavigation();
+  const location = useLocation();
+
+  // Auto-expand content-management if any of its subitems is active
+  useEffect(() => {
+    const contentSubPaths = contentSubItems.map(item => item.path);
+    if (contentSubPaths.includes(location.pathname)) {
+      setExpandedItem('content-management');
+    }
+  }, [location.pathname]);
 
   // Apply font settings dynamically
   useEffect(() => {
@@ -176,7 +188,10 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     }
   };
 
-  const handleSubItemClick = (subItemId: string) => {
+  const handleSubItemClick = (subItemId: string, subItemLabel: string) => {
+    // Set the current submenu in navigation context
+    setCurrentSubmenu(subItemId, subItemLabel);
+    
     if (onItemClick) {
       onItemClick(subItemId);
     }
@@ -185,28 +200,37 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   const renderSubMenu = (subItems: SubMenuItem[]) => {
     return (
       <div className="submenu">
-        {subItems.map((subItem, index) => (
-          <div
-            key={subItem.id}
-            className={`submenu-item ${index === 0 ? 'active' : ''}`}
-            onClick={() => handleSubItemClick(subItem.id)}
-            role="button"
-            tabIndex={0}
-            aria-label={subItem.label}
-          >
-            <div className="sublink-sidebar">
-              <div className="left-content">
-                <span className="submenu-label">{subItem.label}</span>
+        {subItems.map((subItem) => {
+          const isActive = location.pathname === subItem.path;
+          return (
+            <div
+              key={subItem.id}
+              className={`submenu-item${isActive ? ' active' : ''}`}
+              onClick={() => handleSubItemClick(subItem.id, subItem.label)}
+              role="button"
+              tabIndex={0}
+              aria-label={subItem.label}
+            >
+              <div className="sublink-sidebar">
+                <div className="left-content">
+                  <span className="submenu-label">{subItem.label}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
 
   const renderNavItem = (item: NavItem) => {
-    const isActive = item.active || activeItem === item.id;
+    // Only mark parent as active if current path is exactly its path
+    let isActive = false;
+    if (item.hasDropdown && item.id === 'content-management') {
+      isActive = location.pathname === '/content-management';
+    } else {
+      isActive = item.active || activeItem === item.id || location.pathname === `/${item.id}`;
+    }
     const isDisabled = isMenuItemDisabled(item);
     const isExpanded = expandedItem === item.id;
 
