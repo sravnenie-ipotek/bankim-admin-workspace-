@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { coreOperations, testCoreConnection, initializeCoreDatabase, closeCoreConnection } from './config/database-core.js';
+import { contentOperations, testContentConnection, initializeContentDatabase } from './config/database-content.js';
 
 // Load environment variables
 dotenv.config();
@@ -13,14 +14,18 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize bankim_core database on startup
+// Initialize databases on startup
 const initializeApp = async () => {
   try {
     await testCoreConnection();
     await initializeCoreDatabase();
     console.log('🚀 bankim_core database ready');
+    
+    await testContentConnection();
+    await initializeContentDatabase();
+    console.log('🚀 bankim_content database ready');
   } catch (error) {
-    console.error('❌ Failed to initialize bankim_core database:', error);
+    console.error('❌ Failed to initialize databases:', error);
     process.exit(1);
   }
 };
@@ -611,6 +616,161 @@ app.get('/api/applications/:id/offers', async (req, res) => {
       success: true,
       data: offers,
       count: offers.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Content Management Routes
+
+// Get all content items with translations
+app.get('/api/content-items', async (req, res) => {
+  try {
+    const contentItems = await contentOperations.getAllContentItems();
+    
+    res.json({
+      success: true,
+      data: contentItems,
+      count: contentItems.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get specific content item by ID
+app.get('/api/content-items/:id', async (req, res) => {
+  try {
+    const contentItemId = req.params.id;
+    const contentItem = await contentOperations.getContentItemById(contentItemId);
+    
+    if (!contentItem) {
+      return res.status(404).json({
+        success: false,
+        error: 'Content item not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: contentItem
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Update content translation
+app.put('/api/content-items/:id/translations/:languageCode', async (req, res) => {
+  try {
+    const { id: contentItemId, languageCode } = req.params;
+    const { content_value } = req.body;
+    
+    if (!content_value) {
+      return res.status(400).json({
+        success: false,
+        error: 'Content value is required'
+      });
+    }
+    
+    const updatedTranslation = await contentOperations.updateContentTranslation(
+      contentItemId, 
+      languageCode, 
+      content_value
+    );
+    
+    if (!updatedTranslation) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update content translation'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: updatedTranslation,
+      message: 'Content translation updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get all content categories
+app.get('/api/content-categories', async (req, res) => {
+  try {
+    const categories = await contentOperations.getContentCategories();
+    
+    res.json({
+      success: true,
+      data: categories,
+      count: categories.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get all languages
+app.get('/api/languages', async (req, res) => {
+  try {
+    const languages = await contentOperations.getLanguages();
+    
+    res.json({
+      success: true,
+      data: languages,
+      count: languages.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Create new content item
+app.post('/api/content-items', async (req, res) => {
+  try {
+    const contentData = req.body;
+    
+    // Validation
+    if (!contentData.content_key || !contentData.content_type) {
+      return res.status(400).json({
+        success: false,
+        error: 'Content key and content type are required'
+      });
+    }
+    
+    const newContentItem = await contentOperations.createContentItem(contentData);
+    
+    if (!newContentItem) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create content item'
+      });
+    }
+    
+    res.status(201).json({
+      success: true,
+      data: newContentItem,
+      message: 'Content item created successfully'
     });
   } catch (error) {
     res.status(500).json({

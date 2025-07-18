@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import SharedHeader from '../components/SharedHeader';
 import './ContentManagementPage.css';
@@ -7,6 +7,47 @@ import { TextEditModal, TextEditData, DropdownEditModal, DropdownEditData, LinkE
 
 
 // --- Data Interfaces ---
+interface ContentTranslation {
+  language_code: string;
+  content_value: string;
+  status: string;
+  is_default: boolean;
+}
+
+interface ContentItem {
+  id: string;
+  content_key: string;
+  content_type: string;
+  category: string;
+  screen_location: string;
+  component_type: string;
+  description: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  translations: ContentTranslation[];
+}
+
+interface Language {
+  id: number;
+  code: string;
+  name: string;
+  native_name: string;
+  direction: string;
+  is_active: boolean;
+  is_default: boolean;
+}
+
+interface ContentCategory {
+  id: number;
+  name: string;
+  display_name: string;
+  description: string;
+  parent_id: number | null;
+  sort_order: number;
+  is_active: boolean;
+}
+
 interface PageInfo {
   name: string;
   id: string;
@@ -20,20 +61,10 @@ interface PageState {
   thumbnail: string;
 }
 
-interface PageAction {
-  actionNumber: number;
+interface SelectedAction {
   id: string;
-  type: 'dropdown' | 'link' | 'text';
-  ru: string;
-  heb: string;
-  name: string;
-  status: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
-  access: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
-  actions: { text: string; type: 'active' | 'inactive' | 'pending' | 'blocked' | 'verification' };
-}
-
-interface SelectedAction extends PageAction {
   actionName: string;
+  type: 'dropdown' | 'link' | 'text';
 }
 
 // --- Mock Data ---
@@ -76,6 +107,56 @@ const ContentManagementPage: React.FC = () => {
   const [isDropdownModalOpen, setIsDropdownModalOpen] = useState(false);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState<SelectedAction | null>(null);
+  
+  // Real data state
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [categories, setCategories] = useState<ContentCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch content items, languages, and categories in parallel
+        const [contentResponse, languagesResponse, categoriesResponse] = await Promise.all([
+          fetch('http://localhost:3001/api/content-items'),
+          fetch('http://localhost:3001/api/languages'),
+          fetch('http://localhost:3001/api/content-categories')
+        ]);
+
+        if (!contentResponse.ok || !languagesResponse.ok || !categoriesResponse.ok) {
+          throw new Error('Failed to fetch data from server');
+        }
+
+        const contentData = await contentResponse.json();
+        const languagesData = await languagesResponse.json();
+        const categoriesData = await categoriesResponse.json();
+
+        if (contentData.success) {
+          setContentItems(contentData.data);
+        }
+        if (languagesData.success) {
+          setLanguages(languagesData.data);
+        }
+        if (categoriesData.success) {
+          setCategories(categoriesData.data);
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching content data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load content data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -114,16 +195,82 @@ const ContentManagementPage: React.FC = () => {
     handleCloseModals();
   };
 
-  // Transform PageAction data to match Table component format
-  const transformedActionsData = mockActions.map(action => ({
-    id: action.id,
-    name: action.ru,
-    type: { text: action.type === 'dropdown' ? 'Дропдаун' : action.type === 'link' ? 'Ссылка' : 'Текст', type: 'inactive' as const },
-    status: action.status,
-    access: action.access,
-    actions: action.actions
-  }));
+  // Transform ContentItem data to match Table component format
+  const transformedActionsData = contentItems.map((item, index) => {
+    const ruTranslation = item.translations.find(t => t.language_code === 'ru');
+    const heTranslation = item.translations.find(t => t.language_code === 'he');
+    const enTranslation = item.translations.find(t => t.language_code === 'en');
+    
+    const displayText = ruTranslation?.content_value || 
+                       enTranslation?.content_value || 
+                       heTranslation?.content_value || 
+                       item.content_key;
 
+    return {
+      id: item.id,
+      name: displayText,
+      type: { 
+        text: item.content_type === 'dropdown' ? 'Дропдаун' : 
+              item.content_type === 'link' ? 'Ссылка' : 
+              item.content_type === 'button' ? 'Кнопка' : 'Текст', 
+        type: 'inactive' as const 
+      },
+      status: { 
+        text: item.is_active ? 'Активен' : 'Неактивен', 
+        type: item.is_active ? 'active' as const : 'inactive' as const 
+      },
+      access: { 
+        text: 'Полный', 
+        type: 'active' as const 
+      },
+      actions: { 
+        text: 'Редактировать', 
+        type: 'active' as const 
+      }
+    };
+  });
+
+  // Calculate page info from real data
+  const pageInfo = {
+    name: 'Главная страница',
+    id: '1021231231',
+    totalActions: contentItems.length,
+    lastModified: contentItems.length > 0 ? contentItems[0].updated_at : new Date().toISOString()
+  };
+
+
+  if (loading) {
+    return (
+      <AdminLayout title="Контент сайта">
+        <SharedHeader />
+        <div className="content-management-page">
+          <div className="page-content-wrapper">
+            <div style={{ padding: '2rem', textAlign: 'center' }}>
+              <p>Загрузка контента...</p>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminLayout title="Контент сайта">
+        <SharedHeader />
+        <div className="content-management-page">
+          <div className="page-content-wrapper">
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
+              <p>Ошибка загрузки: {error}</p>
+              <button onClick={() => window.location.reload()} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>
+                Попробовать снова
+              </button>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Контент сайта">
@@ -137,17 +284,17 @@ const ContentManagementPage: React.FC = () => {
               <img src="/src/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
               <span>Главная</span>
               <img src="/src/assets/images/static/carret-right.svg" alt=">" className="breadcrumb-separator" />
-              <span className="active">{mockPageInfo.name}</span>
+              <span className="active">{pageInfo.name}</span>
             </div>
-            <h1 className="main-title">{mockPageInfo.name}</h1>
+            <h1 className="main-title">{pageInfo.name}</h1>
             <div className="info-cards">
               <div className="info-card">
                 <span className="info-card-label">Количество действий</span>
-                <span className="info-card-value">{mockPageInfo.totalActions}</span>
+                <span className="info-card-value">{pageInfo.totalActions}</span>
               </div>
               <div className="info-card">
                 <span className="info-card-label">Последнее редактирование</span>
-                <span className="info-card-value">{formatDateTime(mockPageInfo.lastModified)}</span>
+                <span className="info-card-value">{formatDateTime(pageInfo.lastModified)}</span>
               </div>
             </div>
           </section>
@@ -222,7 +369,7 @@ const ContentManagementPage: React.FC = () => {
               </div>
               <Table data={transformedActionsData} />
               <div className="table-pagination">
-                 <span>Показывает 1-12 из {mockActions.length}</span>
+                 <span>Показывает 1-{Math.min(12, contentItems.length)} из {contentItems.length}</span>
                  <div className="pagination-controls">
                     <button className="page-nav-button"><img src="/assets/images/static/carret-left.svg" alt="<" /></button>
                     <button className="page-number-button active">1</button>

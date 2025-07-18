@@ -18,10 +18,16 @@
  * - 12px gap between icon and label
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
 import { useAuth } from '../../contexts/AuthContext';
+
+interface SubMenuItem {
+  id: string;
+  label: string;
+  path: string;
+}
 
 interface NavItem {
   id: string;
@@ -30,6 +36,8 @@ interface NavItem {
   active?: boolean;
   badge?: string;
   requiredPermission?: { action: string; resource: string };
+  hasDropdown?: boolean;
+  subItems?: SubMenuItem[];
 }
 
 export interface SharedMenuProps {
@@ -39,6 +47,18 @@ export interface SharedMenuProps {
 
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
   const { hasPermission } = useAuth();
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+  // Content site sub-menu items
+  const contentSubItems: SubMenuItem[] = [
+    { id: 'content-main', label: 'Главная', path: '/content/main' },
+    { id: 'content-menu', label: 'Меню', path: '/content/menu' },
+    { id: 'content-mortgage', label: 'Рассчитать ипотеку', path: '/content/mortgage' },
+    { id: 'content-mortgage-refi', label: 'Рефинансирование ипо...', path: '/content/mortgage-refi' },
+    { id: 'content-credit', label: 'Расчет Кредита', path: '/content/credit' },
+    { id: 'content-credit-refi', label: 'Рефинансирован...', path: '/content/credit-refi' },
+    { id: 'content-general', label: 'Общие страницы', path: '/content/general' }
+  ];
 
   // Main navigation items per Confluence business logic
   const mainNavItems: NavItem[] = [
@@ -82,7 +102,9 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       id: 'content-management',
       icon: 'file-edit',
       label: 'Контент сайта', // Action #9: Content Management (standalone)
-      requiredPermission: { action: 'read', resource: 'content-management' }
+      requiredPermission: { action: 'read', resource: 'content-management' },
+      hasDropdown: true,
+      subItems: contentSubItems
     }
   ];
 
@@ -111,48 +133,98 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       return;
     }
     
+    // Handle dropdown toggle
+    if (item.hasDropdown) {
+      setExpandedItem(expandedItem === itemId ? null : itemId);
+      return;
+    }
+    
     if (onItemClick) {
       onItemClick(itemId);
     }
   };
 
+  const handleSubItemClick = (subItemId: string, subItem: SubMenuItem) => {
+    if (onItemClick) {
+      onItemClick(subItemId);
+    }
+  };
+
+  const renderSubMenu = (subItems: SubMenuItem[]) => {
+    return (
+      <div className="submenu">
+        {subItems.map((subItem) => (
+          <div
+            key={subItem.id}
+            className="submenu-item"
+            onClick={() => handleSubItemClick(subItem.id, subItem)}
+            role="button"
+            tabIndex={0}
+            aria-label={subItem.label}
+          >
+            <span className="submenu-label">{subItem.label}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderNavItem = (item: NavItem) => {
     const isActive = item.active || activeItem === item.id;
     const isDisabled = isMenuItemDisabled(item);
+    const isExpanded = expandedItem === item.id;
 
     return (
-      <div
-        key={item.id}
-        className={`navlink-sidebar ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
-        onClick={() => handleItemClick(item.id, item)}
-        role="button"
-        tabIndex={isDisabled ? -1 : 0}
-        aria-label={item.label}
-        aria-disabled={isDisabled}
-        onKeyDown={(e) => {
-          if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
-            e.preventDefault();
-            handleItemClick(item.id, item);
-          }
-        }}
-        title={isDisabled ? 'У вас нет прав доступа к этой странице' : ''}
-      >
-        <div className="left-content">
-          <div className={`icon ${item.icon}`}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              {renderIcon(item.icon, isActive && !isDisabled, isDisabled)}
-            </svg>
+      <div key={item.id} className="nav-item-container">
+        <div
+          className={`navlink-sidebar ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''} ${item.hasDropdown ? 'has-dropdown' : ''}`}
+          onClick={() => handleItemClick(item.id, item)}
+          role="button"
+          tabIndex={isDisabled ? -1 : 0}
+          aria-label={item.label}
+          aria-disabled={isDisabled}
+          aria-expanded={item.hasDropdown ? isExpanded : undefined}
+          onKeyDown={(e) => {
+            if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              handleItemClick(item.id, item);
+            }
+          }}
+          title={isDisabled ? 'У вас нет прав доступа к этой странице' : ''}
+        >
+          <div className="left-content">
+            <div className={`icon ${item.icon}`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                {renderIcon(item.icon, isActive && !isDisabled, isDisabled)}
+              </svg>
+            </div>
+            <span className="pages">{item.label}</span>
           </div>
-          <span className="pages">{item.label}</span>
+          
+          {item.hasDropdown && !isDisabled && (
+            <div className={`dropdown-arrow ${isExpanded ? 'expanded' : ''}`}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M4 6L8 10L12 6"
+                  stroke={isActive ? '#FBE54D' : '#9CA3AF'}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          )}
+          
+          {item.badge && !isDisabled && (
+            <div className="icon-badge">
+              <div className="badge">
+                <span className="text">{item.badge}</span>
+              </div>
+            </div>
+          )}
         </div>
         
-        {item.badge && !isDisabled && (
-          <div className="icon-badge">
-            <div className="badge">
-              <span className="text">{item.badge}</span>
-            </div>
-          </div>
-        )}
+        {item.hasDropdown && isExpanded && item.subItems && renderSubMenu(item.subItems)}
       </div>
     );
   };
