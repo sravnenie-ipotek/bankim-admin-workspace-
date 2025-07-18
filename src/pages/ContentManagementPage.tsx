@@ -4,6 +4,7 @@ import SharedHeader from '../components/SharedHeader';
 import './ContentManagementPage.css';
 import { Table } from '../components/Table';
 import { TextEditModal, TextEditData, DropdownEditModal, DropdownEditData, LinkEditModal, LinkEditData } from '../components/ContentEditModals';
+import { apiService, ContentItem, Language, ContentCategory } from '../services/api';
 
 
 // --- Data Interfaces ---
@@ -76,12 +77,12 @@ const mockPageInfo: PageInfo = {
 };
 
 const mockPageStates: PageState[] = [
-  { id: '1', name: 'Main', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
-  { id: '2', name: 'State 2', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
-  { id: '3', name: 'State 3', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
-  { id: '4', name: 'State 4', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
-  { id: '5', name: 'State 5', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
-  { id: '6', name: 'State 6', thumbnail: '/src/assets/images/static/calculate-mortgage/background@2x.png' },
+  { id: '1', name: 'Main', thumbnail: '' },
+  { id: '2', name: 'State 2', thumbnail: '' },
+  { id: '3', name: 'State 3', thumbnail: '' },
+  { id: '4', name: 'State 4', thumbnail: '' },
+  { id: '5', name: 'State 5', thumbnail: '' },
+  { id: '6', name: 'State 6', thumbnail: '' },
 ];
 
 const mockActions: PageAction[] = [
@@ -121,32 +122,37 @@ const ContentManagementPage: React.FC = () => {
       try {
         setLoading(true);
         
-        // Fetch content items, languages, and categories in parallel
+        // Fetch content items, languages, and categories in parallel using API service
         const [contentResponse, languagesResponse, categoriesResponse] = await Promise.all([
-          fetch('http://localhost:3001/api/content-items'),
-          fetch('http://localhost:3001/api/languages'),
-          fetch('http://localhost:3001/api/content-categories')
+          apiService.getContentItems(),
+          apiService.getLanguages(),
+          apiService.getContentCategories()
         ]);
 
-        if (!contentResponse.ok || !languagesResponse.ok || !categoriesResponse.ok) {
-          throw new Error('Failed to fetch data from server');
+        if (contentResponse.success && contentResponse.data) {
+          setContentItems(contentResponse.data);
+        } else {
+          console.error('Failed to fetch content items:', contentResponse.error);
         }
 
-        const contentData = await contentResponse.json();
-        const languagesData = await languagesResponse.json();
-        const categoriesData = await categoriesResponse.json();
+        if (languagesResponse.success && languagesResponse.data) {
+          setLanguages(languagesResponse.data);
+        } else {
+          console.error('Failed to fetch languages:', languagesResponse.error);
+        }
 
-        if (contentData.success) {
-          setContentItems(contentData.data);
-        }
-        if (languagesData.success) {
-          setLanguages(languagesData.data);
-        }
-        if (categoriesData.success) {
-          setCategories(categoriesData.data);
+        if (categoriesResponse.success && categoriesResponse.data) {
+          setCategories(categoriesResponse.data);
+        } else {
+          console.error('Failed to fetch categories:', categoriesResponse.error);
         }
         
-        setError(null);
+        // Only set error if all requests failed
+        if (!contentResponse.success && !languagesResponse.success && !categoriesResponse.success) {
+          setError('Failed to load any content data');
+        } else {
+          setError(null);
+        }
       } catch (err) {
         console.error('Error fetching content data:', err);
         setError(err instanceof Error ? err.message : 'Failed to load content data');
@@ -341,8 +347,19 @@ const ContentManagementPage: React.FC = () => {
                     className={`thumbnail-container ${state.id === activeState.id ? 'active' : ''}`}
                     onClick={() => setActiveState(state)}
                   >
-                    <div className="thumbnail-placeholder">
-                      <span>State {state.id}</span>
+                    <div 
+                      className="thumbnail-placeholder"
+                      style={{
+                        backgroundColor: '#2A2D3A',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: '80px',
+                        border: '1px solid #3A3D4A',
+                        borderRadius: '4px'
+                      }}
+                    >
+                      <span style={{ color: '#8B8FA3', fontSize: '12px' }}>State {state.id}</span>
                     </div>
                   </div>
                 ))}

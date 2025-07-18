@@ -780,6 +780,86 @@ app.post('/api/content-items', async (req, res) => {
   }
 });
 
+// UI Settings Routes
+
+// Get all UI settings
+app.get('/api/ui-settings', async (req, res) => {
+  try {
+    const settings = await contentOperations.getUISettings();
+    
+    res.json({
+      success: true,
+      data: settings,
+      count: settings.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get specific UI setting by key
+app.get('/api/ui-settings/:key', async (req, res) => {
+  try {
+    const settingKey = req.params.key;
+    const setting = await contentOperations.getUISettingByKey(settingKey);
+    
+    if (!setting) {
+      return res.status(404).json({
+        success: false,
+        error: 'UI setting not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: setting
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Update UI setting
+app.put('/api/ui-settings/:key', async (req, res) => {
+  try {
+    const settingKey = req.params.key;
+    const { settingValue } = req.body;
+    
+    if (!settingValue) {
+      return res.status(400).json({
+        success: false,
+        error: 'Setting value is required'
+      });
+    }
+    
+    const updatedSetting = await contentOperations.updateUISetting(settingKey, settingValue);
+    
+    if (!updatedSetting) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update UI setting'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: updatedSetting,
+      message: 'UI setting updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);

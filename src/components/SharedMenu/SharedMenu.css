@@ -185,12 +185,12 @@
 .pages {
   height: 24px;
 
-  /* text-base-16/font-medium */
-  font-family: 'Arimo';
+  /* Font specifications as per requirements */
+  font-family: 'Arimo', Arial, sans-serif;
   font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 150%;
+  font-weight: 500; /* Medium for main navigation items */
+  font-size: 16px; /* 16px for main navigation items */
+  line-height: 150%; /* 1.5 line height */
   /* identical to box height, or 24px */
 
   color: #FFFFFF;
@@ -920,11 +920,11 @@
 }
 
 .submenu-label {
-  font-family: 'Arimo', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
+  font-family: 'Arimo', Arial, sans-serif;
+  font-size: 14px; /* 14px for sub-navigation items */
+  font-weight: 600; /* Semi-bold for sub-navigation items */
   color: #D1D5DB;
-  line-height: 1.4;
+  line-height: 150%; /* 1.5 line height */
 }
 
 .submenu-item:hover .submenu-label {
@@ -938,7 +938,7 @@
 
 .submenu-item.active .submenu-label {
   color: #111928;
-  font-weight: 500;
+  font-weight: 600; /* Keep semi-bold for active submenu items */
 }
 
 /* Update existing navlink-sidebar to handle dropdown spacing */

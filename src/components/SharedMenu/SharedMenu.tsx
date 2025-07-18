@@ -18,10 +18,11 @@
  * - 12px gap between icon and label
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
 import { useAuth } from '../../contexts/AuthContext';
+import { useFontSettings } from '../../hooks/useFontSettings';
 
 interface SubMenuItem {
   id: string;
@@ -48,6 +49,37 @@ export interface SharedMenuProps {
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
   const { hasPermission } = useAuth();
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  const { fontSettings, loading: fontLoading } = useFontSettings();
+
+  // Apply font settings dynamically
+  useEffect(() => {
+    if (!fontLoading && fontSettings) {
+      const style = document.createElement('style');
+      style.id = 'shared-menu-font-settings';
+      style.textContent = `
+        .pages {
+          font-family: '${fontSettings.menuFontFamily}', Arial, sans-serif !important;
+          font-weight: ${fontSettings.menuMainFontWeight} !important;
+          font-size: ${fontSettings.menuMainFontSize} !important;
+          line-height: ${fontSettings.menuLineHeight} !important;
+        }
+        .submenu-label {
+          font-family: '${fontSettings.menuFontFamily}', Arial, sans-serif !important;
+          font-weight: ${fontSettings.menuSubFontWeight} !important;
+          font-size: ${fontSettings.menuSubFontSize} !important;
+          line-height: ${fontSettings.menuLineHeight} !important;
+        }
+      `;
+      
+      // Remove existing style if it exists
+      const existingStyle = document.getElementById('shared-menu-font-settings');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+      
+      document.head.appendChild(style);
+    }
+  }, [fontSettings, fontLoading]);
 
   // Content site sub-menu items
   const contentSubItems: SubMenuItem[] = [

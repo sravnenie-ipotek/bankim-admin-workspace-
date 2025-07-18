@@ -26,6 +26,56 @@ interface FormulaData {
   updatedAt?: string;
 }
 
+interface UISetting {
+  id: number;
+  settingKey: string;
+  settingValue: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ContentTranslation {
+  language_code: string;
+  content_value: string;
+  status: string;
+  is_default: boolean;
+}
+
+interface ContentItem {
+  id: string;
+  content_key: string;
+  content_type: string;
+  category: string;
+  screen_location: string;
+  component_type: string;
+  description: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  translations: ContentTranslation[];
+}
+
+interface Language {
+  id: number;
+  code: string;
+  name: string;
+  native_name: string;
+  direction: string;
+  is_active: boolean;
+  is_default: boolean;
+}
+
+interface ContentCategory {
+  id: number;
+  name: string;
+  display_name: string;
+  description: string;
+  parent_id: number | null;
+  sort_order: number;
+  is_active: boolean;
+}
+
 class ApiService {
   private async request<T>(
     endpoint: string,
@@ -101,8 +151,67 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // UI Settings Operations
+  async getUISettings(): Promise<ApiResponse<UISetting[]>> {
+    return this.request<UISetting[]>('/api/ui-settings');
+  }
+
+  async getUISettingByKey(key: string): Promise<ApiResponse<UISetting>> {
+    return this.request<UISetting>(`/api/ui-settings/${key}`);
+  }
+
+  async updateUISetting(key: string, value: string): Promise<ApiResponse<UISetting>> {
+    return this.request<UISetting>(`/api/ui-settings/${key}`, {
+      method: 'PUT',
+      body: JSON.stringify({ settingValue: value }),
+    });
+  }
+
+  // Content Management Operations
+  async getContentItems(): Promise<ApiResponse<ContentItem[]>> {
+    return this.request<ContentItem[]>('/api/content-items');
+  }
+
+  async getContentItemById(id: string): Promise<ApiResponse<ContentItem>> {
+    return this.request<ContentItem>(`/api/content-items/${id}`);
+  }
+
+  async updateContentTranslation(
+    contentItemId: string, 
+    languageCode: string, 
+    contentValue: string
+  ): Promise<ApiResponse<ContentTranslation>> {
+    return this.request<ContentTranslation>(`/api/content-items/${contentItemId}/translations/${languageCode}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content_value: contentValue }),
+    });
+  }
+
+  async getContentCategories(): Promise<ApiResponse<ContentCategory[]>> {
+    return this.request<ContentCategory[]>('/api/content-categories');
+  }
+
+  async getLanguages(): Promise<ApiResponse<Language[]>> {
+    return this.request<Language[]>('/api/languages');
+  }
+
+  async createContentItem(contentData: any): Promise<ApiResponse<ContentItem>> {
+    return this.request<ContentItem>('/api/content-items', {
+      method: 'POST',
+      body: JSON.stringify(contentData),
+    });
+  }
 }
 
 // Export singleton instance
 export const apiService = new ApiService();
-export type { FormulaData, ApiResponse }; 
+export type { 
+  FormulaData, 
+  ApiResponse, 
+  UISetting, 
+  ContentItem, 
+  ContentTranslation, 
+  Language, 
+  ContentCategory 
+}; 
