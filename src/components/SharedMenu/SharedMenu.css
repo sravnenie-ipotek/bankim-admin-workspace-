@@ -99,67 +99,46 @@
 
 /* Main */
 .main {
-  /* Auto layout */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px 8px;
-  gap: 12px;
-
-  width: 240px;
-  height: 295px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
+  padding: 16px 12px 0px;
+  gap: 8px;
+  width: 100%;
+  flex: 1;
 }
 
 /* Navlink Sidebar */
 .navlink-sidebar {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px;
-
-  width: 225px;
-  height: 40px;
-
-  background: #374151;
-  border-radius: 4px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  
+  justify-content: space-between;
+  padding: 12px 8px;
+  width: 100%;
+  min-height: 48px;
+  background: transparent;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  margin-bottom: 2px;
 }
 
 .navlink-sidebar:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Left Content */
 .left-content {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   padding: 0px;
   gap: 12px;
-
-  width: 185px;
+  width: 100%;
   height: 24px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 1;
+  flex: 1;
 }
 
 /* Icon styles for different states */
@@ -206,7 +185,8 @@
 
 /* Active State - Dashboard gets yellow color */
 .navlink-sidebar.active {
-  background: #374151;
+  background: rgba(251, 229, 77, 0.1);
+  border: 1px solid rgba(251, 229, 77, 0.3);
 }
 
 .navlink-sidebar.active .pages {
@@ -862,21 +842,13 @@
 
 /* Navigation Item Container */
 .nav-item-container {
-  /* Auto layout */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
-  gap: 12px;
-
-  width: 240px;
-  height: auto;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
+  gap: 0px;
+  width: 100%;
+  margin-bottom: 4px;
 }
 
 /* Dropdown Arrow */
@@ -907,23 +879,15 @@
   justify-content: space-between;
 }
 
-/* Submenu Styles - Exact Figma specifications */
+/* Submenu Styles - Fixed and properly structured */
 .submenu {
-  /* Auto layout */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px 0px 0px 48px;
-  gap: 16px;
-
-  width: 225px;
-  height: 243px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-  
+  padding: 8px 0px 8px 48px;
+  gap: 8px;
+  width: 100%;
+  background: transparent;
   animation: slideDown 0.2s ease-out;
   overflow: hidden;
 }
@@ -939,87 +903,56 @@
   }
 }
 
-/* Navlink 2 level container */
+/* Submenu item container */
 .submenu-item {
-  /* Auto layout */
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 8px;
-
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
   width: 177px;
-  height: 21px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-  
+  min-height: 32px;
   cursor: pointer;
   transition: all 0.15s ease;
+  border-radius: 4px;
+  background: transparent;
+}
+
+.submenu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Sublink Sidebar */
 .submenu-item .sublink-sidebar {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0px;
-
-  width: 177px;
-  height: 21px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 0;
+  width: 100%;
+  height: 100%;
 }
 
 /* Left Content for submenu */
 .submenu-item .left-content {
-  /* Auto layout */
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  padding: 0px;
+  align-items: center;
   gap: 12px;
-
-  width: 177px;
-  height: 21px;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 0;
-  flex-grow: 1;
+  width: 100%;
+  height: 100%;
 }
 
 /* Submenu label styling */
 .submenu-label {
-  /* Pages */
-  width: auto;
-  height: 21px;
-
-  /* text-sm-14/font-semibold */
   font-family: 'Arimo', Arial, sans-serif;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-  /* identical to box height, or 21px */
-
   color: #FFFFFF;
-
-  /* Inside auto layout */
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  white-space: nowrap;
 }
 
 /* Hover state for submenu items */
@@ -1037,36 +970,6 @@
 .submenu-item:first-child .submenu-label {
   color: #FBE54D;
   font-weight: 600;
-}
-
-/* Additional submenu items with different font weights */
-.submenu-item:nth-child(n+2) .submenu-label {
-  font-weight: 500; /* font-medium for other items */
-}
-
-/* Submenu items with longer text */
-.submenu-item:nth-child(3) .submenu-label {
-  width: 135px;
-}
-
-.submenu-item:nth-child(4) .submenu-label {
-  width: 177px;
-  font-weight: 500;
-}
-
-.submenu-item:nth-child(5) .submenu-label {
-  width: 104px;
-  font-weight: 500;
-}
-
-.submenu-item:nth-child(6) .submenu-label {
-  width: 131px;
-  font-weight: 500;
-}
-
-.submenu-item:nth-child(7) .submenu-label {
-  width: 116px;
-  font-weight: 500;
 }
 
 /* Update existing navlink-sidebar to handle dropdown spacing */
