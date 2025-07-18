@@ -176,7 +176,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     }
   };
 
-  const handleSubItemClick = (subItemId: string, subItem: SubMenuItem) => {
+  const handleSubItemClick = (subItemId: string) => {
     if (onItemClick) {
       onItemClick(subItemId);
     }
@@ -185,16 +185,20 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   const renderSubMenu = (subItems: SubMenuItem[]) => {
     return (
       <div className="submenu">
-        {subItems.map((subItem) => (
+        {subItems.map((subItem, index) => (
           <div
             key={subItem.id}
-            className="submenu-item"
-            onClick={() => handleSubItemClick(subItem.id, subItem)}
+            className={`submenu-item ${index === 0 ? 'active' : ''}`}
+            onClick={() => handleSubItemClick(subItem.id)}
             role="button"
             tabIndex={0}
             aria-label={subItem.label}
           >
-            <span className="submenu-label">{subItem.label}</span>
+            <div className="sublink-sidebar">
+              <div className="left-content">
+                <span className="submenu-label">{subItem.label}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>

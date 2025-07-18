@@ -4,57 +4,7 @@ import SharedHeader from '../components/SharedHeader';
 import './ContentManagementPage.css';
 import { Table } from '../components/Table';
 import { TextEditModal, TextEditData, DropdownEditModal, DropdownEditData, LinkEditModal, LinkEditData } from '../components/ContentEditModals';
-import { apiService, ContentItem, Language, ContentCategory } from '../services/api';
-
-
-// --- Data Interfaces ---
-interface ContentTranslation {
-  language_code: string;
-  content_value: string;
-  status: string;
-  is_default: boolean;
-}
-
-interface ContentItem {
-  id: string;
-  content_key: string;
-  content_type: string;
-  category: string;
-  screen_location: string;
-  component_type: string;
-  description: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  translations: ContentTranslation[];
-}
-
-interface Language {
-  id: number;
-  code: string;
-  name: string;
-  native_name: string;
-  direction: string;
-  is_active: boolean;
-  is_default: boolean;
-}
-
-interface ContentCategory {
-  id: number;
-  name: string;
-  display_name: string;
-  description: string;
-  parent_id: number | null;
-  sort_order: number;
-  is_active: boolean;
-}
-
-interface PageInfo {
-  name: string;
-  id: string;
-  totalActions: number;
-  lastModified: string;
-}
+import { apiService, ContentItem } from '../services/api';
 
 interface PageState {
   id: string;
@@ -68,14 +18,6 @@ interface SelectedAction {
   type: 'dropdown' | 'link' | 'text';
 }
 
-// --- Mock Data ---
-const mockPageInfo: PageInfo = {
-  name: 'Главная страница',
-  id: '1021231231',
-  totalActions: 33,
-  lastModified: '2023-08-01T12:03:00Z',
-};
-
 const mockPageStates: PageState[] = [
   { id: '1', name: 'Main', thumbnail: '' },
   { id: '2', name: 'State 2', thumbnail: '' },
@@ -83,22 +25,6 @@ const mockPageStates: PageState[] = [
   { id: '4', name: 'State 4', thumbnail: '' },
   { id: '5', name: 'State 5', thumbnail: '' },
   { id: '6', name: 'State 6', thumbnail: '' },
-];
-
-const mockActions: PageAction[] = [
-  { actionNumber: 1, id: 'Income_Main', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 2, id: 'Income_Main_2', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_2', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 3, id: 'Income_Main_3', type: 'link', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_3', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 4, id: 'Income_Main_4', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_4', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 5, id: 'Income_Main_5', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_5', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 6, id: 'Income_Main_6', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_6', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 7, id: 'Income_Main_7', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_7', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 8, id: 'Income_Main_8', type: 'text', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_8', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 9, id: 'Income_Main_9', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_9', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 10, id: 'Income_Main_10', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_10', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 11, id: 'Income_Main_11', type: 'text', ru: 'Заголовок', heb: 'כותרת', name: 'Income_Main_11', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 12, id: 'Income_Main_12', type: 'dropdown', ru: 'Рассчитать Ипотеку', heb: 'חשב את המשכנתא שלך', name: 'Income_Main_12', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
-  { actionNumber: 13, id: 'Income_Main_13', type: 'link', ru: 'Подробнее', heb: 'למידע נוסף', name: 'Income_Main_13', status: { text: 'Active', type: 'active' }, access: { text: 'Full', type: 'active' }, actions: { text: 'Edit', type: 'active' } },
 ];
 
 
@@ -111,8 +37,6 @@ const ContentManagementPage: React.FC = () => {
   
   // Real data state
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [categories, setCategories] = useState<ContentCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,36 +46,15 @@ const ContentManagementPage: React.FC = () => {
       try {
         setLoading(true);
         
-        // Fetch content items, languages, and categories in parallel using API service
-        const [contentResponse, languagesResponse, categoriesResponse] = await Promise.all([
-          apiService.getContentItems(),
-          apiService.getLanguages(),
-          apiService.getContentCategories()
-        ]);
+        // Fetch content items using API service
+        const contentResponse = await apiService.getContentItems();
 
         if (contentResponse.success && contentResponse.data) {
           setContentItems(contentResponse.data);
+          setError(null);
         } else {
           console.error('Failed to fetch content items:', contentResponse.error);
-        }
-
-        if (languagesResponse.success && languagesResponse.data) {
-          setLanguages(languagesResponse.data);
-        } else {
-          console.error('Failed to fetch languages:', languagesResponse.error);
-        }
-
-        if (categoriesResponse.success && categoriesResponse.data) {
-          setCategories(categoriesResponse.data);
-        } else {
-          console.error('Failed to fetch categories:', categoriesResponse.error);
-        }
-        
-        // Only set error if all requests failed
-        if (!contentResponse.success && !languagesResponse.success && !categoriesResponse.success) {
-          setError('Failed to load any content data');
-        } else {
-          setError(null);
+          setError('Failed to load content data');
         }
       } catch (err) {
         console.error('Error fetching content data:', err);
@@ -202,7 +105,7 @@ const ContentManagementPage: React.FC = () => {
   };
 
   // Transform ContentItem data to match Table component format
-  const transformedActionsData = contentItems.map((item, index) => {
+  const transformedActionsData = contentItems.map((item) => {
     const ruTranslation = item.translations.find(t => t.language_code === 'ru');
     const heTranslation = item.translations.find(t => t.language_code === 'he');
     const enTranslation = item.translations.find(t => t.language_code === 'en');

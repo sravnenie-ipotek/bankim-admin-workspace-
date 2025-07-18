@@ -103,18 +103,17 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 16px 12px 0px;
-  gap: 24px;
+  padding: 0px 8px;
+  gap: 12px;
 
-  width: 264px;
-  height: auto;
-  flex: 1;
+  width: 240px;
+  height: 295px;
 
   /* Inside auto layout */
   flex: none;
   order: 1;
   align-self: stretch;
-  flex-grow: 1;
+  flex-grow: 0;
 }
 
 /* Navlink Sidebar */
@@ -123,26 +122,26 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 8px;
+  padding: 8px;
 
-  width: 240px;
-  min-height: 48px;
+  width: 225px;
+  height: 40px;
+
+  background: #374151;
+  border-radius: 4px;
 
   /* Inside auto layout */
   flex: none;
   order: 0;
-  align-self: stretch;
   flex-grow: 0;
   
   cursor: pointer;
   transition: all 0.2s ease;
-  border-radius: 6px;
   position: relative;
 }
 
 .navlink-sidebar:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Left Content */
@@ -150,11 +149,11 @@
   /* Auto layout */
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   padding: 0px;
   gap: 12px;
 
-  width: 224px;
+  width: 185px;
   height: 24px;
 
   /* Inside auto layout */
@@ -207,8 +206,7 @@
 
 /* Active State - Dashboard gets yellow color */
 .navlink-sidebar.active {
-  background: rgba(251, 229, 77, 0.1);
-  border: 1px solid rgba(251, 229, 77, 0.3);
+  background: #374151;
 }
 
 .navlink-sidebar.active .pages {
@@ -539,8 +537,9 @@
   }
   
   .main {
-    padding: 12px 12px 0px;
-    gap: 20px;
+    padding: 0px 8px;
+    gap: 12px;
+    width: 240px;
   }
   
   .bottom {
@@ -549,8 +548,9 @@
   }
   
   .navlink-sidebar {
-    min-height: 44px;
-    padding: 10px 8px;
+    width: 225px;
+    height: 40px;
+    padding: 8px;
   }
   
   .pages {
@@ -862,16 +862,40 @@
 
 /* Navigation Item Container */
 .nav-item-container {
+  /* Auto layout */
   display: flex;
   flex-direction: column;
-  width: 100%;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 12px;
+
+  width: 240px;
+  height: auto;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
 }
 
 /* Dropdown Arrow */
 .dropdown-arrow {
+  /* Auto layout */
   display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: center;
+  padding: 0px;
+
+  width: 24px;
+  height: 24px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  
   transition: transform 0.2s ease;
 }
 
@@ -883,12 +907,23 @@
   justify-content: space-between;
 }
 
-/* Submenu Styles */
+/* Submenu Styles - Exact Figma specifications */
 .submenu {
-  background-color: #1A2332;
-  margin-left: 0;
-  padding-left: 0;
-  border-left: 2px solid #374151;
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px 0px 0px 48px;
+  gap: 16px;
+
+  width: 225px;
+  height: 243px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  
   animation: slideDown 0.2s ease-out;
   overflow: hidden;
 }
@@ -904,41 +939,134 @@
   }
 }
 
+/* Navlink 2 level container */
 .submenu-item {
-  padding: 12px 20px 12px 52px;
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  width: 177px;
+  height: 21px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  
   cursor: pointer;
-  transition: background-color 0.15s ease;
-  border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+  transition: all 0.15s ease;
 }
 
-.submenu-item:hover {
-  background-color: #374151;
+/* Sublink Sidebar */
+.submenu-item .sublink-sidebar {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+
+  width: 177px;
+  height: 21px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
 
-.submenu-item:last-child {
-  border-bottom: none;
+/* Left Content for submenu */
+.submenu-item .left-content {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 12px;
+
+  width: 177px;
+  height: 21px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 1;
 }
 
+/* Submenu label styling */
 .submenu-label {
+  /* Pages */
+  width: auto;
+  height: 21px;
+
+  /* text-sm-14/font-semibold */
   font-family: 'Arimo', Arial, sans-serif;
-  font-size: 14px; /* 14px for sub-navigation items */
-  font-weight: 600; /* Semi-bold for sub-navigation items */
-  color: #D1D5DB;
-  line-height: 150%; /* 1.5 line height */
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  /* identical to box height, or 21px */
+
+  color: #FFFFFF;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
+/* Hover state for submenu items */
 .submenu-item:hover .submenu-label {
-  color: #F9FAFB;
+  color: #FBE54D;
 }
 
 /* Active submenu item */
-.submenu-item.active {
-  background-color: #FBE54D;
+.submenu-item.active .submenu-label {
+  color: #FBE54D;
+  font-weight: 600;
 }
 
-.submenu-item.active .submenu-label {
-  color: #111928;
-  font-weight: 600; /* Keep semi-bold for active submenu items */
+/* First submenu item (active state) */
+.submenu-item:first-child .submenu-label {
+  color: #FBE54D;
+  font-weight: 600;
+}
+
+/* Additional submenu items with different font weights */
+.submenu-item:nth-child(n+2) .submenu-label {
+  font-weight: 500; /* font-medium for other items */
+}
+
+/* Submenu items with longer text */
+.submenu-item:nth-child(3) .submenu-label {
+  width: 135px;
+}
+
+.submenu-item:nth-child(4) .submenu-label {
+  width: 177px;
+  font-weight: 500;
+}
+
+.submenu-item:nth-child(5) .submenu-label {
+  width: 104px;
+  font-weight: 500;
+}
+
+.submenu-item:nth-child(6) .submenu-label {
+  width: 131px;
+  font-weight: 500;
+}
+
+.submenu-item:nth-child(7) .submenu-label {
+  width: 116px;
+  font-weight: 500;
 }
 
 /* Update existing navlink-sidebar to handle dropdown spacing */

@@ -29,6 +29,15 @@ export const useFontSettings = () => {
       setLoading(true);
       setError(null);
       
+      // Check if we're in development mode with placeholder API URL
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl || apiUrl.includes('your-api-domain.railway.app')) {
+        // Use default settings in development when API is not configured
+        setFontSettings(defaultFontSettings);
+        setLoading(false);
+        return;
+      }
+      
       const response = await apiService.getUISettings();
       
       if (response.success && response.data) {
@@ -60,10 +69,13 @@ export const useFontSettings = () => {
         
         setFontSettings(newFontSettings);
       } else {
-        setError('Failed to load font settings');
+        // Fallback to default settings if API fails
+        setFontSettings(defaultFontSettings);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load font settings');
+      // Use default settings if API is unavailable
+      setFontSettings(defaultFontSettings);
+      console.warn('API unavailable, using default font settings:', err);
     } finally {
       setLoading(false);
     }
