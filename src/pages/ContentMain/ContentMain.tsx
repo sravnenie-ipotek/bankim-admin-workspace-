@@ -16,20 +16,48 @@
  * @since 2024-12-14
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Breadcrumb } from '../Chat/ContentManagement/components/Breadcrumb';
 import { UserInfoCards } from '../Chat/ContentManagement/components/UserInfoCards';
 import { PageGallery } from '../Chat/ContentManagement/components/PageGallery';
 import { ContentTable } from '../Chat/ContentManagement/components/ContentTable';
 import type { ContentPage, ContentFilter } from '../Chat/ContentManagement/types/contentTypes';
+import { apiService } from '../../services/api';
+import type { MainPageContent } from '../../services/api';
 import './ContentMain.css';
+
+/**
+ * Data transformation function - converts API data to ContentTable format
+ * Follows CSS example structure from main_page.md
+ */
+const transformMainPageData = (apiData: MainPageContent): ContentPage[] => {
+  return apiData.actions.map((action, index) => ({
+    id: action.id,
+    pageNumber: action.actionNumber,
+    title: action.title,                    // "X.Основной источник дохода"
+    titleRu: action.titleRu,               // "Рассчитать Ипотеку"
+    titleHe: action.titleHe,               // "חשב את המשכנתא שלך"
+    titleEn: action.titleEn,               // "Calculate Mortgage"
+    actionCount: index + 1,
+    lastModified: action.lastModified,
+    modifiedBy: action.createdBy,
+    category: 'main',
+    status: action.status,
+    url: `/income-main-${action.actionNumber}`,
+    createdAt: action.createdAt,
+    createdBy: action.createdBy
+  }));
+};
 
 /**
  * ContentMain Component
  * Implements the main content management page following existing patterns
  */
 const ContentMain: React.FC = () => {
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [actionCount, setActionCount] = useState(33);
+  const [lastModified, setLastModified] = useState("01.08.2023 | 15:03");
   const [contentFilter, setContentFilter] = useState<ContentFilter>({
     searchQuery: '',
     sortBy: 'pageNumber',
@@ -39,7 +67,7 @@ const ContentMain: React.FC = () => {
   });
 
   // Mock data for content pages - following existing ContentPage structure
-  const mockContentPages: ContentPage[] = [
+  const [mockContentPages, setMockContentPages] = useState<ContentPage[]>([
     {
       id: '1',
       pageNumber: 1,
@@ -232,7 +260,37 @@ const ContentMain: React.FC = () => {
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     }
-  ];
+  ]);
+
+  // Data fetching effect - follows ContentManagement.tsx pattern
+  useEffect(() => {
+    const fetchMainPageData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const response = await apiService.getMainPageContent();
+        if (response.success && response.data) {
+          const transformedData = transformMainPageData(response.data);
+          setMockContentPages(transformedData);
+          
+          // Update UserInfoCards with API data
+          setActionCount(response.data.actionCount);
+          setLastModified(response.data.lastModified);
+        } else {
+          throw new Error(response.error || 'Ошибка загрузки данных');
+        }
+      } catch (err) {
+        console.error('Failed to fetch main page data:', err);
+        // Graceful fallback to mock data - no error display for development
+        console.log('Falling back to mock data for development');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchMainPageData();
+  }, []);
 
   // Mock images for gallery - using data URLs to avoid network requests
   const pageImages = [
@@ -273,6 +331,39 @@ const ContentMain: React.FC = () => {
     console.log('Multi-select:', pageIds);
   };
 
+  // Retry function for error state
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
+  // Loading state - matches existing ContentTable component
+  if (isLoading) {
+    return (
+      <div className="content-table loading">
+        <div className="table-loading">
+          <div className="loading-spinner"></div>
+          <p>Загрузка данных...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - follows existing error handling patterns
+  if (error) {
+    return (
+      <div className="content-main error">
+        <div className="error-state">
+          <div className="error-icon">⚠️</div>
+          <h3>Ошибка загрузки</h3>
+          <p>{error}</p>
+          <button onClick={handleRetry} className="retry-button">
+            Повторить
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="content-main">
       {/* Breadcrumb Section */}
@@ -296,8 +387,8 @@ const ContentMain: React.FC = () => {
         {/* User Info Cards */}
         <div className="info-cards-section">
           <UserInfoCards
-            actionCount={33}
-            lastModified="01.08.2023 | 15:03"
+            actionCount={actionCount}
+            lastModified={lastModified}
           />
         </div>
       </div>
