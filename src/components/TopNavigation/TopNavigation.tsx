@@ -234,7 +234,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
           {/* Bank Name or Submenu Name */}
           <div className="bank-name" aria-label={`Current bank: ${bankContext.name}`}>
             {navigationState.submenuLabel ? (
-              <span className="submenu-name" style={{ color: '#2D3748' }}>
+              <span className="submenu-name" style={{ color: '#F9FAFB' }}>
                 {navigationState.submenuLabel}
               </span>
             ) : (

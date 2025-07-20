@@ -2,8 +2,8 @@
 
 .admin-layout {
   min-height: 100vh;
-  background: #f9fafb;
-  color: #1f2937;
+  background: #1F2A37; /* Match sidebar background */
+  color: #F9FAFB;
   font-family: 'Arimo', 'Inter', system-ui, sans-serif;
   display: flex;
   position: relative;
@@ -53,7 +53,7 @@
   flex-direction: column;
   min-height: 100vh;
   transition: all 0.3s ease;
-  background: #f9fafb;
+  background: #1F2A37; /* Match sidebar background */
 }
 
 /* Page content area (excludes header) */
@@ -61,7 +61,7 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background: #f9fafb;
+  background: #2D3748; /* Slightly lighter than nav for content distinction */
   margin-top: 88px; /* TopNavigation height */
   min-height: calc(100vh - 88px); /* Subtract TopNavigation height */
   transition: all 0.3s ease;
@@ -272,16 +272,16 @@
 /* Handle high contrast mode */
 @media (prefers-contrast: high) {
   .admin-layout {
-    background: #ffffff;
-    color: #000000;
+    background: #000000;
+    color: #ffffff;
   }
   
   .admin-main-content {
-    background: #ffffff;
+    background: #000000;
   }
   
   .admin-page-content {
-    background: #ffffff;
+    background: #111111;
   }
   
   .mobile-menu-toggle {
@@ -305,16 +305,16 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .admin-layout {
-    background: #111827;
+    background: #1F2A37; /* Consistent dark theme */
     color: #f9fafb;
   }
   
   .admin-main-content {
-    background: #111827;
+    background: #1F2A37; /* Match sidebar background */
   }
   
   .admin-page-content {
-    background: #111827;
+    background: #2D3748; /* Content background */
   }
 }
 

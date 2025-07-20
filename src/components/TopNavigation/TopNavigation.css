@@ -19,11 +19,11 @@
   transition: all 0.3s ease;
 }
 
-/* White header when submenu is active */
-.top-navigation.submenu-active {
+/* Keep dark theme for content management pages - removed white header override */
+/* .top-navigation.submenu-active {
   background: #FFFFFF;
   border-bottom: 1px solid #E5E7EB;
-}
+} */
 
 /* Container for navigation content */
 .top-nav-container {
@@ -37,10 +37,10 @@
   background: #1F2A37; /* gray/800 */
 }
 
-/* White container when submenu is active */
-.top-navigation.submenu-active .top-nav-container {
+/* Keep dark theme for content management pages - removed white container override */
+/* .top-navigation.submenu-active .top-nav-container {
   background: #FFFFFF;
-}
+} */
 
 /* Navbar content */
 .navbar-content {
