@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 interface NavigationState {
   currentSubmenu: string | null;
@@ -23,19 +23,19 @@ export const NavigationProvider: React.FC<NavigationProviderProps> = ({ children
     submenuLabel: null
   });
 
-  const setCurrentSubmenu = (submenuId: string | null, label: string | null) => {
+  const setCurrentSubmenu = useCallback((submenuId: string | null, label: string | null) => {
     setNavigationState({
       currentSubmenu: submenuId,
       submenuLabel: label
     });
-  };
+  }, []);
 
-  const clearSubmenu = () => {
+  const clearSubmenu = useCallback(() => {
     setNavigationState({
       currentSubmenu: null,
       submenuLabel: null
     });
-  };
+  }, []);
 
   return (
     <NavigationContext.Provider value={{

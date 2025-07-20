@@ -24,6 +24,7 @@ import { ContentTable } from '../Chat/ContentManagement/components/ContentTable'
 import type { ContentPage, ContentFilter } from '../Chat/ContentManagement/types/contentTypes';
 import { apiService } from '../../services/api';
 import type { MainPageContent } from '../../services/api';
+import { useNavigation } from '../../contexts/NavigationContext';
 import './ContentMain.css';
 
 /**
@@ -54,6 +55,7 @@ const transformMainPageData = (apiData: MainPageContent): ContentPage[] => {
  * Implements the main content management page following existing patterns
  */
 const ContentMain: React.FC = () => {
+  const { setCurrentSubmenu } = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [actionCount, setActionCount] = useState(33);
@@ -65,6 +67,16 @@ const ContentMain: React.FC = () => {
     page: 1,
     limit: 20
   });
+
+  // Set navigation context when component mounts
+  useEffect(() => {
+    setCurrentSubmenu('content-main', 'Главная');
+    
+    // Cleanup function to clear submenu when component unmounts
+    return () => {
+      // Don't clear on unmount to maintain breadcrumb state during navigation
+    };
+  }, [setCurrentSubmenu]);
 
   // Mock data for content pages - following existing ContentPage structure
   const [mockContentPages, setMockContentPages] = useState<ContentPage[]>([
