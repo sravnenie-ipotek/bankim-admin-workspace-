@@ -1,0 +1,201 @@
+/* ContentMain Component Styles */
+/* Following existing design patterns and dark theme */
+
+.content-main {
+  width: 100%;
+  min-height: 100vh;
+  background: #2D3748;
+  color: #F9FAFB;
+  font-family: 'Arimo', 'Inter', system-ui, sans-serif;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Breadcrumb Section */
+.breadcrumb-section {
+  margin-bottom: 32px;
+}
+
+/* Page Header Section */
+.page-header-section {
+  margin-bottom: 40px;
+}
+
+.page-title-container {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.info-cards-section {
+  margin-top: 24px;
+}
+
+/* Gallery Section */
+.gallery-section {
+  margin-bottom: 40px;
+}
+
+/* Actions Table Section */
+.actions-table-section {
+  margin-bottom: 40px;
+}
+
+.table-header {
+  margin-bottom: 24px;
+}
+
+.table-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0;
+}
+
+.table-container {
+  background: #1F2A37;
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Actions table specific styling */
+.actions-table {
+  width: 100%;
+}
+
+.action-icons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.edit-btn {
+  color: #FBE54D;
+}
+
+.view-btn {
+  color: #60A5FA;
+}
+
+/* Responsive Design */
+@media (max-width: 1023px) {
+  .content-main {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 26px;
+  }
+  
+  .table-header h2 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .content-main {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 22px;
+  }
+  
+  .breadcrumb-section {
+    margin-bottom: 24px;
+  }
+  
+  .page-header-section {
+    margin-bottom: 32px;
+  }
+  
+  .gallery-section {
+    margin-bottom: 32px;
+  }
+  
+  .actions-table-section {
+    margin-bottom: 32px;
+  }
+  
+  .action-icons {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-main {
+    padding: 12px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .table-header h2 {
+    font-size: 18px;
+  }
+}
+
+/* Dark theme consistency */
+.content-main .table-container,
+.content-main .actions-table {
+  background: #1F2A37;
+  color: #F9FAFB;
+}
+
+.content-main .table-container th {
+  background: #374151;
+  color: #F9FAFB;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.content-main .table-container td {
+  border-bottom: 1px solid #374151;
+  color: #E5E7EB;
+}
+
+.content-main .table-container tr:hover {
+  background: rgba(55, 65, 81, 0.3);
+}
+
+/* Ensure proper spacing and alignment */
+.content-main .info-cards-section,
+.content-main .gallery-section,
+.content-main .actions-table-section {
+  width: 100%;
+  max-width: none;
+}
+
+/* Integration with existing layout */
+.content-main .breadcrumb-section .breadcrumb,
+.content-main .info-cards-section .user-info-cards,
+.content-main .gallery-section .page-gallery {
+  background: transparent;
+}

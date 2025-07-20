@@ -12,6 +12,7 @@ import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
 import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
+import ContentMain from './pages/ContentMain'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -384,10 +385,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Главная" activeMenuItem="content-main">
-                  <div className="content-page">
-                    <h1>Главная страница</h1>
-                    <p>Управление главной страницей сайта</p>
-                  </div>
+                  <ContentMain />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -495,7 +493,7 @@ function App() {
   return (
     <AuthProvider>
       <NavigationProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <AppRouter />
         </Router>
       </NavigationProvider>
