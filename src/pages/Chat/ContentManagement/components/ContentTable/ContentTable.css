@@ -26,7 +26,7 @@
   border-radius: 8px;
   border: 1px solid #374151;
   overflow: hidden;
-  font-family: 'Arimo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Arimo', Arial, sans-serif;
 }
 
 /* ==========================================================================
@@ -217,6 +217,10 @@
   color: #D1D5DB;
   border-right: 1px solid #374151;
   vertical-align: middle;
+  font-family: 'Arimo', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
 }
 
 .data-table tbody td:last-child {
