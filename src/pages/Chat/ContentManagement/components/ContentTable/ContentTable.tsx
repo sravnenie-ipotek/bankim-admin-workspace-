@@ -100,7 +100,9 @@ const ContentTable: React.FC<ContentTableProps> = ({
 
   // Security check: Verify user has appropriate permissions
   const hasEditPermission = useMemo(() => {
-    return hasPermission('edit', 'content-management') && !readonly;
+    const permission = hasPermission('edit', 'content-management');
+    console.log('Edit permission check:', { permission, readonly, hasPermission: hasPermission.toString() });
+    return permission && !readonly;
   }, [hasPermission, readonly]);
 
   const hasDeletePermission = useMemo(() => {
@@ -227,6 +229,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
           className="action-btn edit"
           onClick={(e) => {
             e.stopPropagation();
+            console.log('Edit button clicked for page:', page);
             onEdit(page);
           }}
           title="Редактировать"

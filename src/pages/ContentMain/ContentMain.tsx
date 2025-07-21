@@ -25,6 +25,7 @@ import ContentTable from '../Chat/ContentManagement/components/ContentTable/Cont
 import type { ContentPage, ContentFilter } from '../Chat/ContentManagement/types/contentTypes';
 import { apiService } from '../../services/api';
 import { useNavigation } from '../../contexts/NavigationContext';
+import { useAuth } from '../../contexts/AuthContext';
 import './ContentMain.css';
 
 /**
@@ -58,10 +59,19 @@ import './ContentMain.css';
 const ContentMain: React.FC = () => {
   const navigate = useNavigate();
   const { setCurrentSubmenu } = useNavigation();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [actionCount, setActionCount] = useState(33);
   const [lastModified, setLastModified] = useState("01.08.2023 | 15:03");
+
+  // Auto-login as director for testing if no user is logged in
+  useEffect(() => {
+    if (!localStorage.getItem('bankIM_admin_user')) {
+      console.log('Auto-logging in as director for testing...');
+      login('admin@bankim.com', 'password', 'director');
+    }
+  }, [login]);
   
   // Basic filter state for ContentTable
   const [filter] = useState<ContentFilter>({
@@ -144,11 +154,15 @@ const ContentMain: React.FC = () => {
   };
 
   const handleEdit = (page: ContentPage) => {
+    console.log('handleEdit called with page:', page);
+    
     // Determine which editing interface to use based on content type
     const contentType = page.contentType || 'dropdown'; // Default to dropdown for backward compatibility
+    console.log('Content type determined:', contentType);
     
     switch (contentType) {
       case 'text':
+        console.log('Navigating to text editing:', `/content/main/text/${page.id}`);
         navigate(`/content/main/text/${page.id}`);
         break;
       case 'link':
@@ -158,6 +172,7 @@ const ContentMain: React.FC = () => {
         break;
       case 'dropdown':
       default:
+        console.log('Navigating to dropdown editing:', `/content/main/action/${page.id}`);
         navigate(`/content/main/action/${page.id}`);
         break;
     }
