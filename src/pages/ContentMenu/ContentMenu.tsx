@@ -80,12 +80,46 @@ const ContentMenu: React.FC = () => {
     fetchMenuContent();
   }, [menuItem, selectedLanguage]);
 
+  // If no menu item specified, show menu index
+  if (!menuItem) {
+    return (
+      <div className="content-menu">
+        <div className="breadcrumb-section">
+          <Breadcrumb
+            items={[
+              { label: 'Контент сайта', href: '/content-management' },
+              { label: 'Меню', href: '#', isActive: true }
+            ]}
+          />
+        </div>
+
+        <div className="page-header">
+          <div className="page-title-main">
+            <h1>Управление меню сайта</h1>
+            <span className="page-subtitle">Выберите раздел для редактирования</span>
+          </div>
+        </div>
+
+        <div className="menu-index">
+          {Object.entries(MENU_ITEMS).map(([key, item]) => (
+            <a key={key} href={`/content/menu/${key}`} className="menu-card">
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <span className="menu-card-arrow">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   const currentMenuItem = MENU_ITEMS[menuItem as keyof typeof MENU_ITEMS];
 
   if (!currentMenuItem) {
     return (
       <div className="content-menu error">
         <p>Неизвестный раздел меню: {menuItem}</p>
+        <a href="/content/menu" className="back-link">← Вернуться к списку разделов</a>
       </div>
     );
   }
