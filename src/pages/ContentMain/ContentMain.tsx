@@ -17,6 +17,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../Chat/ContentManagement/components/Breadcrumb';
 import { UserInfoCards } from '../Chat/ContentManagement/components/UserInfoCards';
 import { PageGallery } from '../Chat/ContentManagement/components/PageGallery';
@@ -55,6 +56,7 @@ const transformMainPageData = (apiData: MainPageContent): ContentPage[] => {
  * Implements the main content management page following existing patterns
  */
 const ContentMain: React.FC = () => {
+  const navigate = useNavigate();
   const { setCurrentSubmenu } = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -328,7 +330,8 @@ const ContentMain: React.FC = () => {
   };
 
   const handleEdit = (page: ContentPage) => {
-    console.log('Edit page:', page);
+    // Navigate to drill page for editing dropdown actions
+    navigate(`/content/main/action/${page.id}`);
   };
 
   const handleDelete = (page: ContentPage) => {

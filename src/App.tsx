@@ -13,6 +13,7 @@ import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
 import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
 import ContentMain from './pages/ContentMain'
+import ContentMainDrill from './pages/ContentMainDrill'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -386,6 +387,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Главная" activeMenuItem="content-main">
                   <ContentMain />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/main/action/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование действия" activeMenuItem="content-main">
+                  <ContentMainDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
