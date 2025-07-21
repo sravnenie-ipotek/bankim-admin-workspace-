@@ -35,7 +35,6 @@ const ContentMainText: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [textData, setTextData] = useState<TextContent | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
-  const [activeLanguage, setActiveLanguage] = useState<Language>('ru');
   const [isSaving, setIsSaving] = useState(false);
 
   // Set navigation context
@@ -181,195 +180,143 @@ const ContentMainText: React.FC = () => {
         </div>
       </div>
 
-      {/* Main content layout */}
+      {/* Main content layout following Figma structure */}
       <div className="content-main-text__body">
-        {/* Left panel - Controls */}
-        <div className="text-controls-panel">
-          <div className="panel-section">
-            <h3 className="section-title">Языковые версии</h3>
-            
-            {/* Language Tabs */}
-            <div className="language-tabs">
-              <button 
-                className={`lang-tab ${activeLanguage === 'ru' ? 'active' : ''}`}
-                onClick={() => setActiveLanguage('ru')}
-              >
-                RU
-              </button>
-              <button 
-                className={`lang-tab ${activeLanguage === 'he' ? 'active' : ''}`}
-                onClick={() => setActiveLanguage('he')}
-              >
-                HE
-              </button>
-              <button 
-                className={`lang-tab ${activeLanguage === 'en' ? 'active' : ''}`}
-                onClick={() => setActiveLanguage('en')}
-              >
-                EN
-              </button>
-            </div>
-
-            {/* Text Input */}
-            <div className="text-input-section">
-              <label className="input-label">Текст ({activeLanguage.toUpperCase()})</label>
-              <textarea
-                value={textData.textContent[activeLanguage]}
-                onChange={(e) => handleTextChange(activeLanguage, e.target.value)}
-                className="text-input-area"
-                style={{ direction: activeLanguage === 'he' ? 'rtl' : 'ltr' }}
-                placeholder={activeLanguage === 'ru' ? 'Введите текст на русском' : 
-                           activeLanguage === 'he' ? 'הכנס טקסט בעברית' : 'Enter text in English'}
-                rows={4}
-              />
-            </div>
-          </div>
-
-          {/* Typography Controls */}
-          <div className="panel-section">
-            <h3 className="section-title">Типографика</h3>
-            
-            <div className="controls-grid">
-              <div className="control-group">
-                <label className="control-label">Шрифт</label>
-                <select 
-                  value={textData.styling.font} 
-                  onChange={(e) => handleStyleChange('font', e.target.value)}
-                  className="control-select"
-                >
-                  <option value="Arimo">Arimo</option>
-                  <option value="Roboto">Roboto</option>
-                  <option value="Open Sans">Open Sans</option>
-                  <option value="Inter">Inter</option>
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="control-label">Размер</label>
-                <input 
-                  type="number" 
-                  value={textData.styling.size} 
-                  onChange={(e) => handleStyleChange('size', parseInt(e.target.value))}
-                  className="control-input"
-                  min="8"
-                  max="72"
+        {/* Text Content Sections */}
+        
+        {/* Section 1: Заголовки действия */}
+        <div className="text-section">
+          <h2 className="section-title">Заголовки действия</h2>
+          <div className="language-inputs-row">
+            <div className="language-input-group">
+              <label className="input-label">RU</label>
+              <div className="input-field">
+                <input
+                  type="text"
+                  value={textData.textContent.ru}
+                  onChange={(e) => handleTextChange('ru', e.target.value)}
+                  className="text-input"
+                  placeholder="Основой источник дохода"
                 />
               </div>
-
-              <div className="control-group">
-                <label className="control-label">Цвет</label>
-                <input 
-                  type="color" 
-                  value={textData.styling.color} 
-                  onChange={(e) => handleStyleChange('color', e.target.value)}
-                  className="control-color"
-                />
-              </div>
-
-              <div className="control-group">
-                <label className="control-label">Насыщенность</label>
-                <select 
-                  value={textData.styling.weight} 
-                  onChange={(e) => handleStyleChange('weight', e.target.value)}
-                  className="control-select"
-                >
-                  <option value="400">Normal</option>
-                  <option value="500">Medium</option>
-                  <option value="600">Semibold</option>
-                  <option value="700">Bold</option>
-                </select>
-              </div>
-
-              <div className="control-group">
-                <label className="control-label">Выравнивание</label>
-                <select 
-                  value={textData.styling.alignment} 
-                  onChange={(e) => handleStyleChange('alignment', e.target.value)}
-                  className="control-select"
-                >
-                  <option value="left">Слева</option>
-                  <option value="center">По центру</option>
-                  <option value="right">Справа</option>
-                  <option value="justify">По ширине</option>
-                </select>
-              </div>
             </div>
-          </div>
-
-          {/* Position Controls */}
-          <div className="panel-section">
-            <h3 className="section-title">Позиционирование</h3>
             
-            <div className="position-controls">
-              <div className="control-group">
-                <label className="control-label">Позиция X</label>
-                <input 
-                  type="number" 
-                  value={textData.position.x} 
-                  onChange={(e) => handlePositionChange('x', parseInt(e.target.value))}
-                  className="control-input"
-                />
-              </div>
-
-              <div className="control-group">
-                <label className="control-label">Позиция Y</label>
-                <input 
-                  type="number" 
-                  value={textData.position.y} 
-                  onChange={(e) => handlePositionChange('y', parseInt(e.target.value))}
-                  className="control-input"
+            <div className="language-input-group">
+              <label className="input-label">HEB</label>
+              <div className="input-field">
+                <input
+                  type="text"
+                  value={textData.textContent.he}
+                  onChange={(e) => handleTextChange('he', e.target.value)}
+                  className="text-input heb-input"
+                  placeholder="מקור הכנסה עיקרי"
+                  dir="rtl"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right panel - Preview */}
-        <div className="text-preview-panel">
-          <h3 className="section-title">Предпросмотр</h3>
+        {/* Section 2: Дополнительный текст */}
+        <div className="text-section">
+          <h2 className="section-title">Дополнительный текст</h2>
           
-          <div className="preview-area">
-            <div className="preview-content">
-              <p 
-                className="preview-text"
-                style={{
-                  fontFamily: textData.styling.font,
-                  fontSize: `${textData.styling.size}px`,
-                  color: textData.styling.color,
-                  fontWeight: textData.styling.weight,
-                  textAlign: textData.styling.alignment as any,
-                  direction: activeLanguage === 'he' ? 'rtl' : 'ltr',
-                  transform: `translate(${textData.position.x}px, ${textData.position.y}px)`
-                }}
-              >
-                {textData.textContent[activeLanguage] || 'Предпросмотр текста'}
-              </p>
-            </div>
-          </div>
-
-          {/* Language Preview Cards */}
-          <div className="language-previews">
-            {(['ru', 'he', 'en'] as Language[]).map((lang) => (
-              <div key={lang} className="language-preview-card">
-                <div className="preview-card-header">
-                  <h4>{lang.toUpperCase()}</h4>
+          <div className="additional-text-items">
+            {/* Text Item 1 */}
+            <div className="text-item">
+              <div className="item-number">1</div>
+              <div className="language-inputs-row">
+                <div className="language-input-group">
+                  <label className="input-label">RU</label>
+                  <div className="input-field">
+                    <input
+                      type="text"
+                      className="text-input"
+                      placeholder="Сотрудник"
+                    />
+                  </div>
                 </div>
-                <div className="preview-card-content">
-                  <p 
-                    style={{
-                      fontFamily: textData.styling.font,
-                      fontSize: `${Math.max(textData.styling.size * 0.8, 12)}px`,
-                      color: textData.styling.color,
-                      fontWeight: textData.styling.weight,
-                      textAlign: textData.styling.alignment as any,
-                      direction: lang === 'he' ? 'rtl' : 'ltr'
-                    }}
-                  >
-                    {textData.textContent[lang] || `Текст на ${lang}`}
-                  </p>
+                
+                <div className="language-input-group">
+                  <label className="input-label">HEB</label>
+                  <div className="input-field">
+                    <input
+                      type="text"
+                      className="text-input heb-input"
+                      placeholder="עוֹבֵד"
+                      dir="rtl"
+                    />
+                  </div>
                 </div>
               </div>
-            ))}
+              <button className="edit-item-btn">
+                <span className="edit-icon">✏️</span>
+              </button>
+            </div>
+
+            {/* Text Item 2 - Extended text */}
+            <div className="text-item">
+              <div className="item-number">2</div>
+              <div className="language-inputs-row">
+                <div className="language-input-group">
+                  <label className="input-label">RU</label>
+                  <div className="input-field">
+                    <textarea
+                      className="text-input textarea-input"
+                      rows={6}
+                      placeholder="Основная квартира: у заемщика нет квартиры, ставка финансирования Максимум до 75%..."
+                    />
+                  </div>
+                </div>
+                
+                <div className="language-input-group">
+                  <label className="input-label">HEB</label>
+                  <div className="input-field">
+                    <textarea
+                      className="text-input textarea-input heb-input"
+                      rows={6}
+                      placeholder="דירה ראשית: ללווה אין שיעור מימון דירה מקסימום עד 75%..."
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button className="edit-item-btn">
+                <span className="edit-icon">✏️</span>
+              </button>
+            </div>
+
+            {/* Text Item 3 */}
+            <div className="text-item">
+              <div className="item-number">3</div>
+              <div className="language-inputs-row">
+                <div className="language-input-group">
+                  <label className="input-label">RU</label>
+                  <div className="input-field">
+                    <input
+                      type="text"
+                      className="text-input"
+                      placeholder="Сотрудник"
+                    />
+                  </div>
+                </div>
+                
+                <div className="language-input-group">
+                  <label className="input-label">HEB</label>
+                  <div className="input-field">
+                    <input
+                      type="text"
+                      className="text-input heb-input"
+                      placeholder="עוֹבֵד"
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button className="edit-item-btn">
+                <span className="edit-icon">✏️</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
