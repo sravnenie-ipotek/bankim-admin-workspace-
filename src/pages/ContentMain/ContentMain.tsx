@@ -334,6 +334,11 @@ const ContentMain: React.FC = () => {
     navigate(`/content/main/action/${page.id}`);
   };
 
+  const handleConfirm = (page: ContentPage) => {
+    // Navigate to confirmation page for content manager approval
+    navigate(`/content/main/confirm/${page.id}`);
+  };
+
   const handleDelete = (page: ContentPage) => {
     console.log('Delete page:', page);
   };
@@ -434,6 +439,7 @@ const ContentMain: React.FC = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
+            onConfirm={handleConfirm}
             className="actions-table"
           />
         </div>

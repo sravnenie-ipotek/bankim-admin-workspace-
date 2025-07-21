@@ -67,6 +67,9 @@ export interface ContentTableProps {
   /** Callback when view action is triggered */
   onView?: (page: ContentPage) => void;
   
+  /** Callback when confirm action is triggered (for content managers) */
+  onConfirm?: (page: ContentPage) => void;
+  
   /** Custom CSS class name */
   className?: string;
 }
@@ -86,6 +89,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
   onEdit,
   onDelete,
   onView,
+  onConfirm,
   className = ''
 }) => {
   const { hasPermission } = useAuth();
@@ -229,6 +233,20 @@ const ContentTable: React.FC<ContentTableProps> = ({
           aria-label={`Редактировать страницу ${page.title}`}
         >
           ✏️
+        </button>
+      )}
+      
+      {hasEditPermission && onConfirm && (
+        <button
+          className="action-btn confirm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onConfirm(page);
+          }}
+          title="Подтвердить изменения"
+          aria-label={`Подтвердить изменения страницы ${page.title}`}
+        >
+          ✅
         </button>
       )}
       
