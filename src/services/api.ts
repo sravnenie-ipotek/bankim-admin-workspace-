@@ -534,7 +534,7 @@ class ApiService {
         status: 'success',
         screen_location: screenLocation,
         language_code: languageCode,
-        content_count: 8,
+        content_count: 7,
         content: {
           'app.main.action.1.dropdown.income_source': {
             value: languageCode === 'ru' ? 'Основной источник дохода' : 
@@ -569,10 +569,26 @@ class ApiService {
             status: 'approved'
           },
           'app.main.action.5.text.description': {
-            value: languageCode === 'ru' ? 'Описание страницы' : 
-                   languageCode === 'he' ? 'תיאור העמוד' : 'Page Description',
+            value: languageCode === 'ru' ? 'Кредитная история' : 
+                   languageCode === 'he' ? 'היסטוריית אשראי' : 'Credit History',
             component_type: 'text',
-            category: 'content',
+            category: 'headers',
+            language: languageCode,
+            status: 'approved'
+          },
+          'app.main.action.6.text.document_type': {
+            value: languageCode === 'ru' ? 'Тип документа' : 
+                   languageCode === 'he' ? 'סוג מסמך' : 'Document Type',
+            component_type: 'text',
+            category: 'labels',
+            language: languageCode,
+            status: 'approved'
+          },
+          'app.main.action.7.link.family_status': {
+            value: languageCode === 'ru' ? 'Семейное положение' : 
+                   languageCode === 'he' ? 'מצב משפחתי' : 'Marital Status',
+            component_type: 'link',
+            category: 'navigation',
             language: languageCode,
             status: 'approved'
           }
