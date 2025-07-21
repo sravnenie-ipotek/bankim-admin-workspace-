@@ -154,100 +154,133 @@ const ContentMainDrill: React.FC = () => {
 
       {/* Page Header */}
       <div className="page-header">
-        <h1>Редактирование Dropdown</h1>
-        <p className="page-subtitle">Действие №{dropdownData.actionNumber} | Последнее изменение: {dropdownData.lastModified}</p>
+        <div className="page-title-main">
+          <h1>Номер дейcтвия №{dropdownData.actionNumber} | Основной источник дохода</h1>
+          <span className="page-subtitle">Home_page</span>
+        </div>
+      </div>
+
+      {/* Last Modified Card */}
+      <div className="last-modified-card">
+        <span className="last-modified-label">Последнее редактирование</span>
+        <span className="last-modified-time">{dropdownData.lastModified}</span>
       </div>
 
       {/* Action Headers Section */}
       <div className="action-headers-section">
-        <h2>Заголовки действий</h2>
-        <div className="headers-grid">
-          <div className="header-input">
-            <label>RU</label>
-            <input 
-              type="text" 
-              value={dropdownData.titleRu}
-              onChange={(e) => {
-                setDropdownData({ ...dropdownData, titleRu: e.target.value });
-                setHasChanges(true);
-              }}
-              placeholder="Название на русском"
-            />
+        <h2 className="section-title">Заголовки действий</h2>
+        <div className="headers-container">
+          <div className="header-input-group">
+            <label className="input-label">RU</label>
+            <div className="input-wrapper">
+              <input 
+                type="text" 
+                value={dropdownData.titleRu}
+                onChange={(e) => {
+                  setDropdownData({ ...dropdownData, titleRu: e.target.value });
+                  setHasChanges(true);
+                }}
+                className="header-text-input"
+                placeholder="Основной источник дохода"
+              />
+            </div>
           </div>
-          <div className="header-input">
-            <label>HEB</label>
-            <input 
-              type="text" 
-              value={dropdownData.titleHe}
-              onChange={(e) => {
-                setDropdownData({ ...dropdownData, titleHe: e.target.value });
-                setHasChanges(true);
-              }}
-              placeholder="שם בעברית"
-              dir="rtl"
-            />
+          <div className="header-input-group heb-input">
+            <label className="input-label">HEB</label>
+            <div className="input-wrapper">
+              <input 
+                type="text" 
+                value={dropdownData.titleHe}
+                onChange={(e) => {
+                  setDropdownData({ ...dropdownData, titleHe: e.target.value });
+                  setHasChanges(true);
+                }}
+                className="header-text-input heb-text"
+                placeholder="מקור הכנסה עיקרי"
+                dir="rtl"
+              />
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Add Option Button */}
+      <div className="add-option-section">
+        <button className="add-option-btn" onClick={handleAddOption}>
+          <span className="add-icon">+</span>
+          Добавить вариант
+        </button>
+      </div>
+
       {/* Options Section */}
       <div className="options-section">
-        <div className="section-header">
-          <h2>Опции ответов</h2>
-          <button className="add-option-btn" onClick={handleAddOption}>
-            + Добавить вариант
-          </button>
-        </div>
+        <h2 className="section-title">Опции ответов</h2>
 
         <div className="options-list">
           {dropdownData.options.map((option) => (
             <div 
               key={option.id} 
-              className="option-item"
+              className="option-row"
               draggable
               onDragStart={(e) => handleDragStart(e, option.id)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, option.id)}
             >
-              <div className="drag-handle">
-                <span className="drag-icon">⋮⋮</span>
+              <div className="option-left-section">
+                <div className="drag-handle">
+                  <span className="drag-icon">⋮⋮</span>
+                </div>
+                <div className="option-number">{option.order}</div>
               </div>
-              <div className="option-number">{option.order}</div>
-              <div className="option-content">
-                <input 
-                  type="text" 
-                  value={option.titleRu}
-                  onChange={() => {
-                    // Update option logic here
-                    setHasChanges(true);
-                  }}
-                  placeholder="RU"
-                />
-                <input 
-                  type="text" 
-                  value={option.titleHe}
-                  onChange={() => {
-                    // Update option logic here
-                    setHasChanges(true);
-                  }}
-                  placeholder="HEB"
-                  dir="rtl"
-                />
+              
+              <div className="option-inputs-section">
+                <div className="option-input-group">
+                  <label className="option-label">RU</label>
+                  <div className="option-input-wrapper">
+                    <input 
+                      type="text" 
+                      value={option.titleRu}
+                      onChange={() => {
+                        // Update option logic here
+                        setHasChanges(true);
+                      }}
+                      className="option-text-input"
+                      placeholder="Сотрудник"
+                    />
+                  </div>
+                </div>
+                <div className="option-input-group">
+                  <label className="option-label">HEB</label>
+                  <div className="option-input-wrapper">
+                    <input 
+                      type="text" 
+                      value={option.titleHe}
+                      onChange={() => {
+                        // Update option logic here
+                        setHasChanges(true);
+                      }}
+                      className="option-text-input heb-text"
+                      placeholder="עובד"
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
               </div>
+              
               <div className="option-actions">
                 <button 
-                  className="edit-btn" 
+                  className="action-btn edit-btn" 
                   onClick={() => handleEditOption(option.id)}
                   title="Редактировать"
                 >
-                  ✏️
+                  <span className="btn-icon">✏️</span>
                 </button>
                 <button 
-                  className="delete-btn" 
+                  className="action-btn delete-btn" 
                   onClick={() => handleDeleteOption(option.id)}
                   title="Удалить"
                 >
-                  🗑️
+                  <span className="btn-icon">🗑️</span>
                 </button>
               </div>
             </div>
@@ -257,11 +290,11 @@ const ContentMainDrill: React.FC = () => {
 
       {/* Action Buttons */}
       <div className="action-buttons">
-        <button className="back-btn" onClick={handleBack}>
-          ← Назад
+        <button className="back-button" onClick={handleBack}>
+          Назад
         </button>
         <button 
-          className="save-publish-btn" 
+          className="save-publish-button" 
           onClick={handleSaveAndPublish}
           disabled={!hasChanges}
         >

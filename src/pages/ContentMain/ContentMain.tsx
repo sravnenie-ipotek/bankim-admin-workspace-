@@ -45,7 +45,7 @@ const transformMainPageData = (apiData: MainPageContent): ContentPage[] => {
     modifiedBy: action.createdBy,
     category: 'main',
     status: action.status,
-    url: `/income-main-${action.actionNumber}`,
+    url: `/dropdown-action-${action.actionNumber}`,
     createdAt: action.createdAt,
     createdBy: action.createdBy
   }));
@@ -94,7 +94,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main',
+      url: '/dropdown-action',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -110,7 +110,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-2',
+      url: '/dropdown-action-2',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -126,7 +126,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'draft',
-      url: '/income-main-3',
+      url: '/dropdown-action-3',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -142,7 +142,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-4',
+      url: '/dropdown-action-4',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -158,7 +158,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-5',
+      url: '/dropdown-action-5',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -174,7 +174,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-6',
+      url: '/dropdown-action-6',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -190,7 +190,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-7',
+      url: '/dropdown-action-7',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -206,7 +206,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'draft',
-      url: '/income-main-8',
+      url: '/dropdown-action-8',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -222,7 +222,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-9',
+      url: '/dropdown-action-9',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -238,7 +238,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-10',
+      url: '/dropdown-action-10',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -254,7 +254,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-11',
+      url: '/dropdown-action-11',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     },
@@ -270,7 +270,7 @@ const ContentMain: React.FC = () => {
       modifiedBy: 'director-1',
       category: 'main',
       status: 'published',
-      url: '/income-main-12',
+      url: '/dropdown-action-12',
       createdAt: new Date('2024-12-01'),
       createdBy: 'director-1'
     }
