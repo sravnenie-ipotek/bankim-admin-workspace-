@@ -678,6 +678,11 @@ class ApiService {
     return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
   }
 
+  // Menu content operations
+  async getMenuContent(menuItem: string, language: string = 'ru'): Promise<ApiResponse<any>> {
+    return this.requestWithCache<any>(`/api/content/menu/${menuItem}/${language}`);
+  }
+
   // Text editing API methods
   async getTextContent(actionId: string): Promise<ApiResponse<TextContent | null>> {
     // Mock data for text content editing following Figma specifications

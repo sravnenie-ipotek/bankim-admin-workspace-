@@ -16,6 +16,7 @@ import ContentMain from './pages/ContentMain'
 import ContentMainDrill from './pages/ContentMainDrill'
 import ContentMainConfirm from './pages/ContentMainConfirm'
 import ContentMainText from './pages/ContentMainText'
+import ContentMenu from './pages/ContentMenu'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -431,15 +432,12 @@ const AppRouter: React.FC = () => {
           } 
         />
         <Route 
-          path="/content/menu" 
+          path="/content/menu/:menuItem?" 
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Меню" activeMenuItem="content-menu">
-                  <div className="content-page">
-                    <h1>Управление меню</h1>
-                    <p>Настройка навигационного меню сайта</p>
-                  </div>
+                  <ContentMenu />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

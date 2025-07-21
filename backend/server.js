@@ -308,6 +308,78 @@ app.get('/api/content/stats', async (req, res) => {
 });
 
 /**
+ * Get menu content by menu item name
+ * GET /api/content/menu/{menuItem}/{language}
+ */
+app.get('/api/content/menu/:menuItem/:language', async (req, res) => {
+  const { menuItem, language } = req.params;
+  
+  // Map menu items to their database screen locations
+  const menuScreenMapping = {
+    'glavnaya': 'main_page',
+    'mortgage': 'mortgage_calculation',
+    'refinance': 'refinance_step1',
+    'credit': 'calculate_credit_1',
+    'cooperation': 'cooperation',
+    'general': ['cooperation', 'tenders_for_brokers', 'tenders_for_lawyers', 'temporary_franchise']
+  };
+  
+  const screenLocations = menuScreenMapping[menuItem];
+  if (!screenLocations) {
+    return res.status(404).json({
+      success: false,
+      error: 'Menu item not found'
+    });
+  }
+  
+  try {
+    let allContent = {};
+    let totalCount = 0;
+    
+    // Handle both single screen and multiple screens
+    const screens = Array.isArray(screenLocations) ? screenLocations : [screenLocations];
+    
+    for (const screenLocation of screens) {
+      const result = await pool.query(
+        'SELECT * FROM get_content_by_screen($1, $2)',
+        [screenLocation, language]
+      );
+      
+      result.rows.forEach(row => {
+        allContent[row.content_key] = {
+          value: row.value,
+          component_type: row.component_type,
+          category: row.category,
+          language: row.language,
+          status: row.status,
+          screen_location: screenLocation
+        };
+        totalCount++;
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        menu_item: menuItem,
+        language_code: language,
+        content_count: totalCount,
+        screen_locations: screens,
+        content: allContent
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get menu content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get dropdown options for a specific action
  * GET /api/content/main_page/action/{actionNumber}/options
  */
