@@ -238,6 +238,11 @@ const ContentTable: React.FC<ContentTableProps> = ({
           ✏️
         </button>
       )}
+      {!hasEditPermission && (
+        <span style={{color: 'red', fontSize: '10px'}}>
+          No edit permission (hasEditPermission: {hasEditPermission.toString()}, onEdit: {onEdit ? 'exists' : 'missing'})
+        </span>
+      )}
       
       {hasEditPermission && onConfirm && (
         <button
@@ -293,6 +298,13 @@ const ContentTable: React.FC<ContentTableProps> = ({
       </div>
     );
   }
+
+  console.log('ContentTable rendering with:', { 
+    dataLength: data.length, 
+    hasEditPermission, 
+    onEdit: !!onEdit, 
+    readonly 
+  });
 
   return (
     <div className={`content-table ${className}`}>

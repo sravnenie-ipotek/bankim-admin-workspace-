@@ -186,6 +186,8 @@ const ContentMain: React.FC = () => {
     { label: 'Главная', path: '/content/main' }
   ];
 
+  console.log('ContentMain rendering with data:', mockContentPages);
+
   return (
     <div className="content-main">
       {/* Top navigation with breadcrumb */}
