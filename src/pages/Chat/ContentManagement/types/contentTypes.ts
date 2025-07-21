@@ -69,9 +69,23 @@ export interface ContentPage {
   /** ID of user who created this page */
   createdBy: string;
   
+  /** Content type for determining editing interface */
+  contentType?: ContentType;
+  
   /** Additional metadata (flexible JSON structure) */
   metadata?: Record<string, unknown>;
 }
+
+/**
+ * Content Types
+ * Determines which editing interface to use
+ * Based on Figma specifications and Confluence documentation
+ */
+export type ContentType = 
+  | 'text'              // Текстовые элементы
+  | 'dropdown'          // Dropdown элементы
+  | 'link'              // Ссылки
+  | 'mixed';            // Смешанный контент
 
 /**
  * Content Page Categories

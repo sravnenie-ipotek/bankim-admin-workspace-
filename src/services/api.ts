@@ -131,6 +131,33 @@ interface ContentApiResponse {
   }>;
 }
 
+interface TextContent {
+  id: string;
+  actionNumber: number;
+  titleRu: string;
+  titleHe: string;
+  titleEn: string;
+  contentType: string;
+  textContent: {
+    ru: string;
+    he: string;
+    en: string;
+  };
+  styling: {
+    font: string;
+    size: number;
+    color: string;
+    weight: string;
+    alignment: string;
+  };
+  position: {
+    x: number;
+    y: number;
+  };
+  lastModified: Date;
+  status: string;
+}
+
 class ApiService {
   // Cache for content API responses with ETag support
   private contentCache = new Map<string, { 
@@ -366,45 +393,73 @@ class ApiService {
 
   // Main Page Content Operations - following CSS example structure
   async getMainPageContent(): Promise<ApiResponse<MainPageContent>> {
-    // Check for placeholder URLs and return mock data for development
-    if (isPlaceholderUrl(API_BASE_URL)) {
-      console.log('API URL is placeholder, returning mock data for development');
+    try {
+      // Fetch content using the correct API endpoint pattern
+      const contentResponse = await this.getContentByScreen('main_page', 'ru');
       
-      // Return mock data that matches CSS example structure
-      const mockData: MainPageContent = {
-        pageTitle: "Калькулятор ипотеки Страница №2",
-        actionCount: 33,
-        lastModified: "01.08.2023 | 15:03",
-        actions: Array.from({ length: 12 }, (_, index) => ({
-          id: `income-main-${index + 1}`,
-          actionNumber: index + 1,
-          title: `${index + 1}.Основной источник дохода`,
-          titleRu: "Рассчитать Ипотеку",
-          titleHe: "חשב את המשכנתא שלך",
-          titleEn: "Calculate Mortgage",
-          actionType: index % 3 === 0 ? "Дропдаун" : index % 3 === 1 ? "Ссылка" : "Текст",
-          status: index === 2 || index === 7 ? 'draft' : 'published',
-          createdBy: 'director-1',
-          lastModified: new Date(2024, 11, 10 + index),
-          createdAt: new Date(2024, 11, 1)
-        })),
+      if (!contentResponse.success || !contentResponse.data) {
+        throw new Error(contentResponse.error || 'Failed to fetch content');
+      }
+      
+      const apiData = contentResponse.data;
+      
+      // Transform the API response to MainPageContent format
+      const actions: MainPageAction[] = [];
+      
+      // Extract actions from content
+      Object.entries(apiData.content).forEach(([key, value]) => {
+        const actionMatch = key.match(/app\.main\.action\.(\d+)\.dropdown\./);
+        if (actionMatch) {
+          const actionNumber = parseInt(actionMatch[1]);
+          actions.push({
+            id: `action-${actionNumber}`,
+            actionNumber,
+            title: `${actionNumber}.${value.value}`,
+            titleRu: typeof value.value === 'string' ? value.value : value.value[0],
+            titleHe: '', // Will be filled from Hebrew response
+            titleEn: '', // Will be filled from English response
+            actionType: 'Дропдаун',
+            status: value.status === 'approved' ? 'published' : 'draft',
+            createdBy: 'content-manager',
+            lastModified: new Date(),
+            createdAt: new Date()
+          });
+        }
+      });
+      
+      // Sort actions by number
+      actions.sort((a, b) => a.actionNumber - b.actionNumber);
+      
+      // Get page title from content
+      const pageTitle = apiData.content['app.main.page.title']?.value || 'Калькулятор ипотеки Страница №2';
+      
+      const mainPageContent: MainPageContent = {
+        pageTitle: typeof pageTitle === 'string' ? pageTitle : pageTitle[0],
+        actionCount: actions.length,
+        lastModified: new Date().toLocaleDateString('ru-RU') + ' | ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+        actions,
         galleryImages: [
           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMTwvdGV4dD48L3N2Zz4=',
           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMjwvdGV4dD48L3N2Zz4=',
           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMzwvdGV4dD48L3N2Zz4=',
           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNDwvdGV4dD48L3N2Zz4=',
           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNTwvdGV4dD48L3N2Zz4=',
-          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNjwvdGV4dD48L3N2Zz4='
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1saXNpdGl6ZT0iMjQiIGZpbGw9IiNGRkZGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7QodGC0YDQsNC90LjRhtCwIDY8L3RleHQ+PC9zdmc+'
         ]
       };
       
       return {
         success: true,
-        data: mockData
+        data: mainPageContent
+      };
+      
+    } catch (error) {
+      console.error('Error fetching main page content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
       };
     }
-    
-    return this.request<MainPageContent>('/api/content/main');
   }
 
   async updateMainPageAction(actionId: string, actionData: Partial<MainPageAction>): Promise<ApiResponse<MainPageAction>> {
@@ -504,6 +559,22 @@ class ApiService {
             category: 'dropdowns',
             language: languageCode,
             status: 'approved'
+          },
+          'app.main.action.4.text.page_title': {
+            value: languageCode === 'ru' ? 'Рассчитать Ипотеку' : 
+                   languageCode === 'he' ? 'חשב את המשכנתא שלך' : 'Calculate Mortgage',
+            component_type: 'text',
+            category: 'headers',
+            language: languageCode,
+            status: 'approved'
+          },
+          'app.main.action.5.text.description': {
+            value: languageCode === 'ru' ? 'Описание страницы' : 
+                   languageCode === 'he' ? 'תיאור העמוד' : 'Page Description',
+            component_type: 'text',
+            category: 'content',
+            language: languageCode,
+            status: 'approved'
           }
         }
       };
@@ -576,6 +647,86 @@ class ApiService {
     }
   }
 
+  async getMainPageAction(actionId: string): Promise<ApiResponse<MainPageAction | null>> {
+    // Re-use existing logic: fetch the multilingual main page content once and pick the required action.
+    const pagesResp = await this.getMainPageContent();
+    if (!pagesResp.success || !pagesResp.data) {
+      return { success: false, error: pagesResp.error || 'Failed to load main page content' };
+    }
+
+    const found = pagesResp.data.actions.find(a => a.id === actionId || a.id === `action-${a.actionNumber}`);
+    return { success: true, data: found || null };
+  }
+
+  async getDropdownOptions(actionNumber: number): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
+  }
+
+  // Text editing API methods
+  async getTextContent(actionId: string): Promise<ApiResponse<TextContent | null>> {
+    // Mock data for text content editing following Figma specifications
+    const mockTextContent: TextContent = {
+      id: actionId,
+      actionNumber: parseInt(actionId.replace('action-', '')) || 1,
+      titleRu: 'Заголовок страницы',
+      titleHe: 'כותרת העמוד',
+      titleEn: 'Page Title',
+      contentType: 'text',
+      textContent: {
+        ru: 'Рассчитать Ипотеку',
+        he: 'חשב את המשכנתא שלך',
+        en: 'Calculate Mortgage'
+      },
+      styling: {
+        font: 'Arimo',
+        size: 16,
+        color: '#FFFFFF',
+        weight: '600',
+        alignment: 'left'
+      },
+      position: {
+        x: 0,
+        y: 0
+      },
+      lastModified: new Date(),
+      status: 'published'
+    };
+
+    return { success: true, data: mockTextContent };
+  }
+
+  async updateTextContent(actionId: string, textData: Partial<TextContent>): Promise<ApiResponse<TextContent>> {
+    // Mock update for text content
+    console.log('Updating text content for action:', actionId, textData);
+    
+    // In a real implementation, this would make an API call to update the text content
+    const updatedContent: TextContent = {
+      id: actionId,
+      actionNumber: parseInt(actionId.replace('action-', '')) || 1,
+      titleRu: textData.titleRu || 'Заголовок страницы',
+      titleHe: textData.titleHe || 'כותרת העמוד',
+      titleEn: textData.titleEn || 'Page Title',
+      contentType: 'text',
+      textContent: textData.textContent || {
+        ru: 'Рассчитать Ипотеку',
+        he: 'חשב את המשכנתא שלך',
+        en: 'Calculate Mortgage'
+      },
+      styling: textData.styling || {
+        font: 'Arimo',
+        size: 16,
+        color: '#FFFFFF',
+        weight: '600',
+        alignment: 'left'
+      },
+      position: textData.position || { x: 0, y: 0 },
+      lastModified: new Date(),
+      status: textData.status || 'published'
+    };
+
+    return { success: true, data: updatedContent };
+  }
+
   private transformApiToContentPages(apiResponses: ContentApiResponse[]): ContentPage[] {
     const contentMap = new Map<string, Partial<ContentPage>>();
     
@@ -616,9 +767,19 @@ class ApiService {
               page.titleEn = Array.isArray(contentData.value) ? contentData.value[0] : contentData.value;
             }
             
-            // Count dropdown options for actionCount
-            if (contentData.component_type === 'dropdown' && Array.isArray(contentData.value)) {
-              page.actionCount = Math.max(page.actionCount || 1, contentData.value.length);
+            // Set content type based on component type
+            if (contentData.component_type === 'dropdown') {
+              page.contentType = 'dropdown';
+              // Count dropdown options for actionCount
+              if (Array.isArray(contentData.value)) {
+                page.actionCount = Math.max(page.actionCount || 1, contentData.value.length);
+              }
+            } else if (contentData.component_type === 'text') {
+              page.contentType = 'text';
+            } else if (contentData.component_type === 'link') {
+              page.contentType = 'link';
+            } else {
+              page.contentType = 'mixed'; // For unknown or mixed content types
             }
           }
         });
@@ -653,5 +814,6 @@ export type {
   ContentCategory,
   MainPageContent,
   MainPageAction,
-  ContentApiResponse
+  ContentApiResponse,
+  TextContent
 }; 

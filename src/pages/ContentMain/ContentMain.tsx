@@ -144,8 +144,23 @@ const ContentMain: React.FC = () => {
   };
 
   const handleEdit = (page: ContentPage) => {
-    // Navigate to drill page for editing dropdown actions
-    navigate(`/content/main/action/${page.id}`);
+    // Determine which editing interface to use based on content type
+    const contentType = page.contentType || 'dropdown'; // Default to dropdown for backward compatibility
+    
+    switch (contentType) {
+      case 'text':
+        navigate(`/content/main/text/${page.id}`);
+        break;
+      case 'link':
+        // TODO: Implement link editing interface
+        console.log('Link editing not yet implemented');
+        navigate(`/content/main/action/${page.id}`); // Fallback to dropdown for now
+        break;
+      case 'dropdown':
+      default:
+        navigate(`/content/main/action/${page.id}`);
+        break;
+    }
   };
 
 

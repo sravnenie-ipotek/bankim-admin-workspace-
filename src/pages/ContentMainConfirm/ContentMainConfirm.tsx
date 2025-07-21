@@ -18,9 +18,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Breadcrumb } from '../Chat/ContentManagement/components/Breadcrumb';
+import Breadcrumb from '../Chat/ContentManagement/components/Breadcrumb/Breadcrumb';
 import { useNavigation } from '../../contexts/NavigationContext';
 import './ContentMainConfirm.css';
+import { apiService } from '../../services/api';
 
 interface ChangeOption {
   id: string;
@@ -57,79 +58,33 @@ const ContentMainConfirm: React.FC = () => {
     setCurrentSubmenu('content-main', 'Главная');
   }, [setCurrentSubmenu]);
 
-  // Mock data for development - simulating pending changes from copywriters
+  // Fetch pending change data
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setChangeData({
-        id: actionId || '1',
-        actionNumber: 3,
-        titleRu: 'Основной источник дохода',
-        titleHe: 'מקור הכנסה עיקרי',
-        lastModified: '01.08.2023 | 12:03',
-        copywriterName: 'Александр Пушкин',
-        changeCount: 8,
-        options: [
-          { 
-            id: '1', 
-            order: 1, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'modified'
-          },
-          { 
-            id: '2', 
-            order: 2, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: false,
-            changeType: 'modified'
-          },
-          { 
-            id: '3', 
-            order: 3, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'added'
-          },
-          { 
-            id: '5', 
-            order: 5, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'modified'
-          },
-          { 
-            id: '6', 
-            order: 6, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'modified'
-          },
-          { 
-            id: '7', 
-            order: 7, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'modified'
-          },
-          { 
-            id: '8', 
-            order: 8, 
-            titleRu: 'Сотрудник', 
-            titleHe: 'עוֹבֵד',
-            isChanged: true,
-            changeType: 'modified'
-          }
-        ]
-      });
+    const fetchPending = async () => {
+      if (!actionId) return;
+      setIsLoading(true);
+      // TODO: replace with dedicated pending change endpoint when available
+      const resp = await apiService.getMainPageAction(actionId);
+      if (resp.success && resp.data) {
+        const action = resp.data;
+        setChangeData({
+          id: action.id,
+          actionNumber: action.actionNumber,
+          titleRu: action.titleRu,
+          titleHe: action.titleHe,
+          lastModified: action.lastModified.toLocaleDateString('ru-RU') + ' | ' +
+            action.lastModified.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+          copywriterName: 'неизвестно',
+          changeCount: 0,
+          options: []
+        });
+      } else {
+        console.error('Failed to load pending change', resp.error);
+      }
       setIsLoading(false);
-    }, 500);
+    };
+
+    fetchPending();
   }, [actionId]);
 
   // Handlers

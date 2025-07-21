@@ -18,9 +18,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Breadcrumb } from '../Chat/ContentManagement/components/Breadcrumb';
+import Breadcrumb from '../Chat/ContentManagement/components/Breadcrumb/Breadcrumb';
 import { useNavigation } from '../../contexts/NavigationContext';
 import './ContentMainDrill.css';
+import { apiService } from '../../services/api';
 
 interface DropdownOption {
   id: string;
@@ -53,26 +54,42 @@ const ContentMainDrill: React.FC = () => {
     setCurrentSubmenu('content-main', 'Главная');
   }, [setCurrentSubmenu]);
 
-  // Mock data for development
+  // Fetch real dropdown data
   useEffect(() => {
-    // Simulate loading dropdown data
-    setIsLoading(true);
-    setTimeout(() => {
-      setDropdownData({
-        id: actionId || '1',
-        actionNumber: 3,
-        titleRu: 'Основной источник дохода',
-        titleHe: 'מקור הכנסה עיקרי',
-        lastModified: '01.08.2023 | 15:03',
-        options: [
-          { id: '1', order: 1, titleRu: 'Наемный работник', titleHe: 'שכיר' },
-          { id: '2', order: 2, titleRu: 'Индивидуальный предприниматель', titleHe: 'עצמאי' },
-          { id: '3', order: 3, titleRu: 'Владелец бизнеса', titleHe: 'בעל עסק' },
-          { id: '4', order: 4, titleRu: 'Пенсионер', titleHe: 'פנסיונר' }
-        ]
-      });
-      setIsLoading(false);
-    }, 500);
+    const fetchAction = async () => {
+      if (!actionId) return;
+      setIsLoading(true);
+      
+      try {
+        // Fetch action data
+        const resp = await apiService.getMainPageAction(actionId);
+        if (resp.success && resp.data) {
+          const action = resp.data;
+          
+          // Fetch dropdown options
+          const optionsResp = await apiService.getDropdownOptions(action.actionNumber);
+          const options = optionsResp.success && optionsResp.data ? optionsResp.data : [];
+          
+          setDropdownData({
+            id: action.id,
+            actionNumber: action.actionNumber,
+            titleRu: action.titleRu,
+            titleHe: action.titleHe,
+            lastModified: action.lastModified.toLocaleDateString('ru-RU') + ' | ' +
+              action.lastModified.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+            options: options
+          });
+        } else {
+          console.error('Failed to load action data', resp.error);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAction();
   }, [actionId]);
 
   // Handlers

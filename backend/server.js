@@ -308,6 +308,59 @@ app.get('/api/content/stats', async (req, res) => {
 });
 
 /**
+ * Get dropdown options for a specific action
+ * GET /api/content/main_page/action/{actionNumber}/options
+ */
+app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) => {
+  const { actionNumber } = req.params;
+  
+  try {
+    // Get all options for this action
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        CAST(
+          SUBSTRING(ci.content_key FROM 'option\\.([0-9]+)\\.')
+          AS INTEGER
+        ) as option_order
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.screen_location = 'main_page'
+        AND ci.component_type = 'option'
+        AND ci.content_key LIKE $1
+        AND ci.is_active = TRUE
+      ORDER BY option_order
+    `, [`app.main.action.${actionNumber}.option.%`]);
+    
+    // Transform to expected format
+    const options = result.rows.map((row, index) => ({
+      id: row.id.toString(),
+      order: row.option_order || (index + 1),
+      titleRu: row.title_ru || '',
+      titleHe: row.title_he || ''
+    }));
+    
+    res.json({
+      success: true,
+      data: options
+    });
+    
+  } catch (error) {
+    console.error('Get dropdown options error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Update content translation
  * PUT /api/content-items/{content_item_id}/translations/{language_code}
  */

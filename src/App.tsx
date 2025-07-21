@@ -15,6 +15,7 @@ import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
 import ContentMain from './pages/ContentMain'
 import ContentMainDrill from './pages/ContentMainDrill'
 import ContentMainConfirm from './pages/ContentMainConfirm'
+import ContentMainText from './pages/ContentMainText'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -412,6 +413,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
                 <AdminLayout title="Подтверждение изменений" activeMenuItem="content-main">
                   <ContentMainConfirm />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/main/text/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование текста" activeMenuItem="content-main">
+                  <ContentMainText />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
