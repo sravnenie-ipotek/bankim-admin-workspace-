@@ -1,6 +1,17 @@
 /* ContentMain Component Styles */
 /* Following existing design patterns and dark theme */
 
+/* Error message */
+.content-main__error {
+  background-color: #ff4444;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin: 20px 0;
+  font-size: 14px;
+  text-align: center;
+}
+
 .content-main {
   width: 100%;
   min-height: 100vh;
@@ -9,6 +20,91 @@
   font-family: 'Arimo', 'Inter', system-ui, sans-serif;
   padding: 24px;
   box-sizing: border-box;
+}
+
+/* Main container */
+.content-main__container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Page header */
+.content-main__header {
+  margin-bottom: 32px;
+}
+
+.content-main__title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0 0 8px 0;
+}
+
+.content-main__subtitle {
+  font-size: 16px;
+  color: #9CA3AF;
+  margin: 0 0 24px 0;
+}
+
+/* Page stats */
+.content-main__stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.content-main__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.content-main__stat-label {
+  font-size: 14px;
+  color: #9CA3AF;
+}
+
+.content-main__stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #F9FAFB;
+}
+
+.content-main__stat-value--url {
+  color: #60A5FA;
+}
+
+.content-main__highlight {
+  color: #FBE54D;
+}
+
+/* Gallery section */
+.content-main__gallery-section {
+  margin-bottom: 40px;
+}
+
+.content-main__section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content-main__badge {
+  background: #6366F1;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Table section */
+.content-main__table-section {
+  margin-bottom: 40px;
 }
 
 /* Breadcrumb Section */
