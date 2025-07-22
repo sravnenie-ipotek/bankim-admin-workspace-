@@ -154,18 +154,17 @@ const ContentMainText: React.FC = () => {
   }
 
   // Breadcrumb paths for navigation
-  const breadcrumbPaths = [
-    { label: 'Главная', path: '/' },
-    { label: 'Управление контентом', path: '/content-management' },
-    { label: 'Главная', path: '/content/main' },
-    { label: `Редактирование текста: Действие ${textData.actionNumber}`, path: '' }
+  const breadcrumbItems = [
+    { label: 'Контент сайта', href: '/content-management' },
+    { label: 'Главная', href: '/content/main' },
+    { label: `Редактирование текста: Действие ${textData.actionNumber}`, isActive: true }
   ];
 
   return (
     <div className="content-main-text">
       {/* Navigation */}
       <div className="content-main-text__navigation">
-        <Breadcrumb paths={breadcrumbPaths} />
+        <Breadcrumb items={breadcrumbItems} />
       </div>
 
       {/* Header */}
