@@ -58,21 +58,35 @@ const ContentMenu: React.FC = () => {
         if (response.success && response.data) {
           const data = response.data;
           if (data.menu_items && Array.isArray(data.menu_items)) {
-            const normalizedItems = data.menu_items.map(item => ({
-              id: item.id || '',
-              content_key: item.content_key || '',
-              component_type: item.component_type || 'menu',
-              category: item.category || 'navigation',
-              screen_location: item.screen_location || '',
-              description: item.description || '',
-              is_active: item.is_active ?? true,
-              translations: {
-                ru: item.translations?.ru || '',
-                he: item.translations?.he || '',
-                en: item.translations?.en || ''
-              },
-              last_modified: item.last_modified || new Date().toISOString()
-            }));
+            const normalizedItems = data.menu_items.map(item => {
+              // Map component_type to category for display
+              let category = 'text';
+              if (item.component_type === 'nav_link' || item.component_type === 'service_card' || item.component_type === 'link') {
+                category = 'link';
+              } else if (item.component_type === 'menu_item' || item.component_type === 'dropdown') {
+                category = 'dropdown';
+              } else if (item.component_type === 'heading' || item.component_type === 'title') {
+                category = 'dropdown';
+              } else {
+                category = 'text';
+              }
+              
+              return {
+                id: item.id || '',
+                content_key: item.content_key || '',
+                component_type: item.component_type || 'menu',
+                category: category,
+                screen_location: item.screen_location || '',
+                description: item.description || '',
+                is_active: item.is_active ?? true,
+                translations: {
+                  ru: item.translations?.ru || '',
+                  he: item.translations?.he || '',
+                  en: item.translations?.en || ''
+                },
+                last_modified: item.last_modified || new Date().toISOString()
+              };
+            });
             
             const normalizedData: MenuData = {
               status: data.status || 'success',
@@ -129,7 +143,13 @@ const ContentMenu: React.FC = () => {
   };
 
   const handleViewClick = (item: MenuTranslation) => {
-    window.open(`/content/preview/${item.id}`, '_blank');
+    if (item.category?.toLowerCase() === 'dropdown') {
+      navigate(`/content/main/action/${item.id}`);
+    } else if (item.category?.toLowerCase() === 'text') {
+      navigate(`/content/main/text/${item.id}`);
+    } else {
+      window.open(`/content/preview/${item.id}`, '_blank');
+    }
   };
 
   const handleDeleteClick = (item: MenuTranslation) => {
@@ -304,7 +324,7 @@ const ContentMenu: React.FC = () => {
               {currentItems.map((item, index) => (
                 <div key={item.id} className="table-row">
                   <div className="table-cell number-cell">
-                    <span className="action-number">{`${startIndex + index + 1}.${item.content_key}`}</span>
+                    <span className="action-number">{`${startIndex + index + 1}.`}</span>
                   </div>
                   <div className="table-cell id-cell">
                     <span className="content-id">{item.content_key}</span>
