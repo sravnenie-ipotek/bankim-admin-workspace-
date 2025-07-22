@@ -144,6 +144,15 @@ interface TextContent {
     he: string;
     en: string;
   };
+  additionalText?: Array<{
+    id: string;
+    contentKey: string;
+    translations: {
+      ru: string;
+      he: string;
+      en: string;
+    };
+  }>;
   styling: {
     font: string;
     size: number;
@@ -1011,35 +1020,13 @@ class ApiService {
 
   // Text editing API methods
   async getTextContent(actionId: string): Promise<ApiResponse<TextContent | null>> {
-    // Mock data for text content editing following Figma specifications
-    const mockTextContent: TextContent = {
-      id: actionId,
-      actionNumber: parseInt(actionId.replace('action-', '')) || 1,
-      titleRu: 'Заголовок страницы',
-      titleHe: 'כותרת העמוד',
-      titleEn: 'Page Title',
-      contentType: 'text',
-      textContent: {
-        ru: 'Рассчитать Ипотеку',
-        he: 'חשב את המשכנתא שלך',
-        en: 'Calculate Mortgage'
-      },
-      styling: {
-        font: 'Arimo',
-        size: 16,
-        color: '#FFFFFF',
-        weight: '600',
-        alignment: 'left'
-      },
-      position: {
-        x: 0,
-        y: 0
-      },
-      lastModified: new Date(),
-      status: 'published'
-    };
-
-    return { success: true, data: mockTextContent };
+    try {
+      const response = await this.request<TextContent>(`/api/content/text/${actionId}`);
+      return response;
+    } catch (error) {
+      console.error('Error fetching text content:', error);
+      return { success: false, error: 'Failed to fetch text content' };
+    }
   }
 
   async updateTextContent(actionId: string, textData: Partial<TextContent>): Promise<ApiResponse<TextContent>> {

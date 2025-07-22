@@ -181,6 +181,99 @@ app.get('/api/content/menu/translations', async (req, res) => {
 });
 
 /**
+ * Get text content by action ID
+ * GET /api/content/text/{actionId}
+ * Returns text content for a specific action with translations
+ */
+app.get('/api/content/text/:actionId', async (req, res) => {
+  const { actionId } = req.params;
+  
+  try {
+    // First, let's get some real content from the database to show the structure
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value as content_ru,
+        ct_he.content_value as content_he,
+        ct_en.content_value as content_en,
+        ci.updated_at as last_modified
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL)
+      ORDER BY ci.content_key
+      LIMIT 10
+    `);
+    
+    console.log('Database query result:', result.rows);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found in database'
+      });
+    }
+    
+    // Transform the real database data to match the expected format
+    const textContent = {
+      id: actionId,
+      actionNumber: parseInt(actionId) || 1,
+      titleRu: 'Заголовок страницы',
+      titleHe: 'כותרת העמוד',
+      titleEn: 'Page Title',
+      contentType: 'text',
+      textContent: {
+        ru: result.rows[0]?.content_ru || 'Рассчитать Ипотеку',
+        he: result.rows[0]?.content_he || 'חשב את המשכנתא שלך',
+        en: result.rows[0]?.content_en || 'Calculate Mortgage'
+      },
+      additionalText: result.rows.map(row => ({
+        id: row.id.toString(),
+        contentKey: row.content_key,
+        translations: {
+          ru: row.content_ru || '',
+          he: row.content_he || '',
+          en: row.content_en || ''
+        }
+      })),
+      styling: {
+        font: 'Arimo',
+        size: 16,
+        color: '#FFFFFF',
+        weight: '600',
+        alignment: 'left'
+      },
+      position: {
+        x: 0,
+        y: 0
+      },
+      lastModified: new Date(result.rows[0]?.last_modified || Date.now()),
+      status: 'published'
+    };
+    
+    res.json({
+      success: true,
+      data: textContent
+    });
+    
+  } catch (error) {
+    console.error('Get text content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get content by screen location and language
  * GET /api/content/{screen_location}/{language_code}
  * Returns all approved content for the specified screen and language
@@ -601,6 +694,99 @@ app.put('/api/ui-settings/:key', async (req, res) => {
     });
   } catch (error) {
     console.error('Update UI setting error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get text content by action ID
+ * GET /api/content/text/{actionId}
+ * Returns text content for a specific action with translations
+ */
+app.get('/api/content/text/:actionId', async (req, res) => {
+  const { actionId } = req.params;
+  
+  try {
+    // First, let's get some real content from the database to show the structure
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value as content_ru,
+        ct_he.content_value as content_he,
+        ct_en.content_value as content_en,
+        ci.updated_at as last_modified
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL)
+      ORDER BY ci.content_key
+      LIMIT 10
+    `);
+    
+    console.log('Database query result:', result.rows);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found in database'
+      });
+    }
+    
+    // Transform the real database data to match the expected format
+    const textContent = {
+      id: actionId,
+      actionNumber: parseInt(actionId) || 1,
+      titleRu: 'Заголовок страницы',
+      titleHe: 'כותרת העמוד',
+      titleEn: 'Page Title',
+      contentType: 'text',
+      textContent: {
+        ru: result.rows[0]?.content_ru || 'Рассчитать Ипотеку',
+        he: result.rows[0]?.content_he || 'חשב את המשכנתא שלך',
+        en: result.rows[0]?.content_en || 'Calculate Mortgage'
+      },
+      additionalText: result.rows.map(row => ({
+        id: row.id.toString(),
+        contentKey: row.content_key,
+        translations: {
+          ru: row.content_ru || '',
+          he: row.content_he || '',
+          en: row.content_en || ''
+        }
+      })),
+      styling: {
+        font: 'Arimo',
+        size: 16,
+        color: '#FFFFFF',
+        weight: '600',
+        alignment: 'left'
+      },
+      position: {
+        x: 0,
+        y: 0
+      },
+      lastModified: new Date(result.rows[0]?.last_modified || Date.now()),
+      status: 'published'
+    };
+    
+    res.json({
+      success: true,
+      data: textContent
+    });
+    
+  } catch (error) {
+    console.error('Get text content error:', error);
     res.status(500).json({
       success: false,
       error: error.message

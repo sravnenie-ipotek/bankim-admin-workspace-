@@ -109,6 +109,26 @@ const ContentMainText: React.FC = () => {
     setHasChanges(true);
   };
 
+  const handleAdditionalTextChange = (itemId: string, language: Language, value: string) => {
+    if (!textData || !textData.additionalText) return;
+    
+    setTextData({
+      ...textData,
+      additionalText: textData.additionalText.map(item => 
+        item.id === itemId 
+          ? {
+              ...item,
+              translations: {
+                ...item.translations,
+                [language]: value
+              }
+            }
+          : item
+      )
+    });
+    setHasChanges(true);
+  };
+
   const handleStyleChange = (styleKey: string, value: any) => {
     if (!textData) return;
     
@@ -174,7 +194,14 @@ const ContentMainText: React.FC = () => {
             Редактирование текста: Действие {textData.actionNumber}
           </h1>
           <p className="page-subtitle">
-            Последнее изменение: {textData.lastModified.toLocaleDateString('ru-RU')} | {textData.lastModified.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+            Последнее изменение: {(() => {
+              try {
+                const date = new Date(textData.lastModified);
+                return date.toLocaleDateString('ru-RU') + ' | ' + date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+              } catch (error) {
+                return 'Дата недоступна';
+              }
+            })()}
           </p>
         </div>
       </div>
@@ -221,101 +248,42 @@ const ContentMainText: React.FC = () => {
           <h2 className="section-title">Дополнительный текст</h2>
           
           <div className="additional-text-items">
-            {/* Text Item 1 */}
-            <div className="text-item">
-              <div className="item-number">1</div>
-              <div className="language-inputs-row">
-                <div className="language-input-group">
-                  <label className="input-label">RU</label>
-                  <div className="input-field">
-                    <input
-                      type="text"
-                      className="text-input"
-                      placeholder="Сотрудник"
-                    />
+            {textData.additionalText && textData.additionalText.map((item, index) => (
+              <div key={item.id} className="text-item">
+                <div className="item-number">{index + 1}</div>
+                <div className="language-inputs-row">
+                  <div className="language-input-group">
+                    <label className="input-label">RU</label>
+                    <div className="input-field">
+                      <input
+                        type="text"
+                        value={item.translations.ru}
+                        onChange={(e) => handleAdditionalTextChange(item.id, 'ru', e.target.value)}
+                        className="text-input"
+                        placeholder="Сотрудник"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="language-input-group">
+                    <label className="input-label">HEB</label>
+                    <div className="input-field">
+                      <input
+                        type="text"
+                        value={item.translations.he}
+                        onChange={(e) => handleAdditionalTextChange(item.id, 'he', e.target.value)}
+                        className="text-input heb-input"
+                        placeholder="עוֹבֵד"
+                        dir="rtl"
+                      />
+                    </div>
                   </div>
                 </div>
-                
-                <div className="language-input-group">
-                  <label className="input-label">HEB</label>
-                  <div className="input-field">
-                    <input
-                      type="text"
-                      className="text-input heb-input"
-                      placeholder="עוֹבֵד"
-                      dir="rtl"
-                    />
-                  </div>
-                </div>
+                <button className="edit-item-btn">
+                  <span className="edit-icon">✏️</span>
+                </button>
               </div>
-              <button className="edit-item-btn">
-                <span className="edit-icon">✏️</span>
-              </button>
-            </div>
-
-            {/* Text Item 2 - Extended text */}
-            <div className="text-item">
-              <div className="item-number">2</div>
-              <div className="language-inputs-row">
-                <div className="language-input-group">
-                  <label className="input-label">RU</label>
-                  <div className="input-field">
-                    <textarea
-                      className="text-input textarea-input"
-                      rows={6}
-                      placeholder="Основная квартира: у заемщика нет квартиры, ставка финансирования Максимум до 75%..."
-                    />
-                  </div>
-                </div>
-                
-                <div className="language-input-group">
-                  <label className="input-label">HEB</label>
-                  <div className="input-field">
-                    <textarea
-                      className="text-input textarea-input heb-input"
-                      rows={6}
-                      placeholder="דירה ראשית: ללווה אין שיעור מימון דירה מקסימום עד 75%..."
-                      dir="rtl"
-                    />
-                  </div>
-                </div>
-              </div>
-              <button className="edit-item-btn">
-                <span className="edit-icon">✏️</span>
-              </button>
-            </div>
-
-            {/* Text Item 3 */}
-            <div className="text-item">
-              <div className="item-number">3</div>
-              <div className="language-inputs-row">
-                <div className="language-input-group">
-                  <label className="input-label">RU</label>
-                  <div className="input-field">
-                    <input
-                      type="text"
-                      className="text-input"
-                      placeholder="Сотрудник"
-                    />
-                  </div>
-                </div>
-                
-                <div className="language-input-group">
-                  <label className="input-label">HEB</label>
-                  <div className="input-field">
-                    <input
-                      type="text"
-                      className="text-input heb-input"
-                      placeholder="עוֹבֵד"
-                      dir="rtl"
-                    />
-                  </div>
-                </div>
-              </div>
-              <button className="edit-item-btn">
-                <span className="edit-icon">✏️</span>
-              </button>
-            </div>
+            ))}
           </div>
         </div>
       </div>
