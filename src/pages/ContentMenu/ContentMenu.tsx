@@ -1,128 +1,138 @@
 /**
  * ContentMenu Component
- * Displays content for each menu category using existing database screens
+ * Menu translations management - displays and allows editing of menu component translations
  * 
  * @version 1.0.0
  * @since 2025-01-20
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import Breadcrumb from '../Chat/ContentManagement/components/Breadcrumb/Breadcrumb';
 import { useNavigation } from '../../contexts/NavigationContext';
 import './ContentMenu.css';
 
-interface MenuContentData {
-  menu_item: string;
-  language_code: string;
-  content_count: number;
-  screen_locations: string[];
-  content: Record<string, {
-    value: string | string[];
-    component_type: string;
-    category: string;
-    language: string;
-    status: string;
-    screen_location: string;
-  }>;
+interface MenuTranslation {
+  id: string;
+  content_key: string;
+  component_type: string;
+  category: string;
+  description: string;
+  is_active: boolean;
+  translations: {
+    ru: string;
+    he: string;
+    en: string;
+  };
+  last_modified: string;
 }
 
-// Menu item configuration
-const MENU_ITEMS = {
-  glavnaya: { name: 'Главная', description: 'Главная страница сайта' },
-  mortgage: { name: 'Рассчитать ипотеку', description: 'Калькулятор ипотеки' },
-  refinance: { name: 'Рефинансирование', description: 'Рефинансирование ипотеки' },
-  credit: { name: 'Расчет Кредита', description: 'Кредитный калькулятор' },
-  cooperation: { name: 'Сотрудничество', description: 'Информация о сотрудничестве' },
-  general: { name: 'Общие страницы', description: 'Общие страницы и разделы' }
-};
+interface MenuData {
+  status: string;
+  content_count: number;
+  menu_items: MenuTranslation[];
+}
 
 const ContentMenu: React.FC = () => {
-  const { menuItem } = useParams<{ menuItem: string }>();
   const { setCurrentSubmenu } = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const [menuData, setMenuData] = useState<MenuContentData | null>(null);
+  const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Set navigation context
   useEffect(() => {
     setCurrentSubmenu('content-menu', 'Меню');
   }, [setCurrentSubmenu]);
 
-  // Fetch menu content
+  // Fetch menu translations
   useEffect(() => {
-    const fetchMenuContent = async () => {
-      if (!menuItem || !MENU_ITEMS[menuItem as keyof typeof MENU_ITEMS]) {
-        setError('Неизвестный раздел меню');
-        return;
-      }
-
+    const fetchMenuTranslations = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await apiService.getMenuContent(menuItem, selectedLanguage);
+        const response = await apiService.getMenuTranslations();
         if (response.success && response.data) {
           setMenuData(response.data);
         } else {
-          setError(response.error || 'Ошибка загрузки данных');
+          throw new Error(response.error || 'Failed to fetch menu translations');
         }
       } catch (err) {
-        setError('Не удалось загрузить данные меню');
-        console.error('Menu content fetch error:', err);
+        setError('Не удалось загрузить переводы меню');
+        console.error('Menu translations fetch error:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchMenuContent();
-  }, [menuItem, selectedLanguage]);
+    fetchMenuTranslations();
+  }, []);
 
-  // If no menu item specified, show menu index
-  if (!menuItem) {
-    return (
-      <div className="content-menu">
-        <div className="breadcrumb-section">
-          <Breadcrumb
-            items={[
-              { label: 'Контент сайта', href: '/content-management' },
-              { label: 'Меню', href: '#', isActive: true }
-            ]}
-          />
-        </div>
+  const handleEditToggle = (itemId: string) => {
+    setEditingItem(editingItem === itemId ? null : itemId);
+  };
 
-        <div className="page-header">
-          <div className="page-title-main">
-            <h1>Управление меню сайта</h1>
-            <span className="page-subtitle">Выберите раздел для редактирования</span>
-          </div>
-        </div>
+  const handleTranslationChange = (itemId: string, language: 'ru' | 'he' | 'en', value: string) => {
+    if (!menuData) return;
 
-        <div className="menu-index">
-          {Object.entries(MENU_ITEMS).map(([key, item]) => (
-            <a key={key} href={`/content/menu/${key}`} className="menu-card">
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-              <span className="menu-card-arrow">→</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    );
-  }
+    setMenuData({
+      ...menuData,
+      menu_items: menuData.menu_items.map(item =>
+        item.id === itemId
+          ? {
+              ...item,
+              translations: {
+                ...item.translations,
+                [language]: value
+              }
+            }
+          : item
+      )
+    });
+  };
 
-  const currentMenuItem = MENU_ITEMS[menuItem as keyof typeof MENU_ITEMS];
+  const handleSave = async (itemId: string) => {
+    if (!menuData) return;
+    
+    const item = menuData.menu_items.find(item => item.id === itemId);
+    if (!item) return;
 
-  if (!currentMenuItem) {
-    return (
-      <div className="content-menu error">
-        <p>Неизвестный раздел меню: {menuItem}</p>
-        <a href="/content/menu" className="back-link">← Вернуться к списку разделов</a>
-      </div>
-    );
-  }
+    try {
+      // Save all three translations
+      const savePromises = [
+        apiService.updateMenuTranslation(itemId, 'ru', item.translations.ru),
+        apiService.updateMenuTranslation(itemId, 'he', item.translations.he),
+        apiService.updateMenuTranslation(itemId, 'en', item.translations.en)
+      ];
+
+      await Promise.all(savePromises);
+      
+      // Update the last modified timestamp
+      setMenuData({
+        ...menuData,
+        menu_items: menuData.menu_items.map(menuItem =>
+          menuItem.id === itemId
+            ? { ...menuItem, last_modified: new Date().toISOString() }
+            : menuItem
+        )
+      });
+
+      console.log('Menu item translations saved successfully:', itemId);
+      setEditingItem(null);
+    } catch (error) {
+      console.error('Failed to save menu translations:', error);
+      // TODO: Show error notification to user
+    }
+  };
+
+  const filteredItems = menuData?.menu_items.filter(item =>
+    item.content_key.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.translations.ru.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.translations.he.includes(searchQuery) ||
+    item.translations.en.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <div className="content-menu">
@@ -131,8 +141,7 @@ const ContentMenu: React.FC = () => {
         <Breadcrumb
           items={[
             { label: 'Контент сайта', href: '/content-management' },
-            { label: 'Меню', href: '/content/menu' },
-            { label: currentMenuItem.name, href: '#', isActive: true }
+            { label: 'Меню', href: '#', isActive: true }
           ]}
         />
       </div>
@@ -140,93 +149,160 @@ const ContentMenu: React.FC = () => {
       {/* Page Header */}
       <div className="page-header">
         <div className="page-title-main">
-          <h1>{currentMenuItem.name}</h1>
-          <span className="page-subtitle">{currentMenuItem.description}</span>
-        </div>
-
-        {/* Language Selector */}
-        <div className="language-selector">
-          <button 
-            className={`lang-btn ${selectedLanguage === 'ru' ? 'active' : ''}`}
-            onClick={() => setSelectedLanguage('ru')}
-          >
-            RU
-          </button>
-          <button 
-            className={`lang-btn ${selectedLanguage === 'he' ? 'active' : ''}`}
-            onClick={() => setSelectedLanguage('he')}
-          >
-            HE
-          </button>
-          <button 
-            className={`lang-btn ${selectedLanguage === 'en' ? 'active' : ''}`}
-            onClick={() => setSelectedLanguage('en')}
-          >
-            EN
-          </button>
+          <h1>Меню</h1>
+          <span className="page-subtitle">Управление переводами меню сайта</span>
         </div>
       </div>
 
-      {/* Content Display */}
+      {/* Search and Stats */}
+      <div className="menu-controls">
+        <div className="search-section">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Искать по названию, ID, номеру страницы"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+            <span className="search-icon">🔍</span>
+          </div>
+        </div>
+        
+        <div className="menu-stats">
+          <span>Показано {filteredItems.length} из {menuData?.content_count || 0}</span>
+        </div>
+      </div>
+
+      {/* Loading State */}
       {isLoading && (
         <div className="loading-state">
           <div className="loading-spinner"></div>
-          <p>Загрузка содержимого...</p>
+          <p>Загрузка переводов меню...</p>
         </div>
       )}
 
+      {/* Error State */}
       {error && (
         <div className="error-state">
           <p>❌ {error}</p>
         </div>
       )}
 
+      {/* Menu Items Table */}
       {menuData && (
-        <div className="menu-content">
-          {/* Stats */}
-          <div className="content-stats">
-            <div className="stat-item">
-              <span className="stat-label">Всего элементов:</span>
-              <span className="stat-value">{menuData.content_count}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Экраны:</span>
-              <span className="stat-value">{menuData.screen_locations.join(', ')}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Язык:</span>
-              <span className="stat-value">{selectedLanguage.toUpperCase()}</span>
-            </div>
+        <div className="menu-table-container">
+          <div className="menu-table-header">
+            <div className="header-cell">НАЗВАНИЕ СТРАНИЦЫ</div>
+            <div className="header-cell">КОЛИЧЕСТВО ДЕЙСТВИЙ</div>
+            <div className="header-cell">БЫЛИ ИЗМЕНЕНИЯ</div>
+            <div className="header-cell">ДЕЙСТВИЯ</div>
           </div>
-
-          {/* Content Items */}
-          <div className="content-items">
-            <h2>Содержимое ({menuData.content_count} элементов)</h2>
-            
-            {Object.entries(menuData.content).map(([key, item]) => (
-              <div key={key} className="content-item">
-                <div className="item-header">
-                  <span className="item-key">{key}</span>
-                  <div className="item-badges">
-                    <span className={`badge type-${item.component_type}`}>
-                      {item.component_type}
-                    </span>
-                    <span className="badge category">{item.category}</span>
-                    <span className={`badge status-${item.status}`}>
-                      {item.status}
-                    </span>
-                    <span className="badge screen">{item.screen_location}</span>
+          
+          <div className="menu-table-body">
+            {filteredItems.map((item) => (
+              <div key={item.id} className="menu-table-row">
+                <div className="menu-item-info">
+                  <div className="menu-item-translations">
+                    {editingItem === item.id ? (
+                      // Edit mode
+                      <div className="translation-inputs">
+                        <div className="translation-input-group">
+                          <label>RU:</label>
+                          <input
+                            type="text"
+                            value={item.translations.ru}
+                            onChange={(e) => handleTranslationChange(item.id, 'ru', e.target.value)}
+                            className="translation-input"
+                          />
+                        </div>
+                        <div className="translation-input-group">
+                          <label>HE:</label>
+                          <input
+                            type="text"
+                            value={item.translations.he}
+                            onChange={(e) => handleTranslationChange(item.id, 'he', e.target.value)}
+                            className="translation-input heb-input"
+                            dir="rtl"
+                          />
+                        </div>
+                        <div className="translation-input-group">
+                          <label>EN:</label>
+                          <input
+                            type="text"
+                            value={item.translations.en}
+                            onChange={(e) => handleTranslationChange(item.id, 'en', e.target.value)}
+                            className="translation-input"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      // Display mode
+                      <div className="translation-display">
+                        <div className="primary-title">{item.translations.ru}</div>
+                        <div className="translation-line">
+                          <span className="lang-code">RU:</span> {item.translations.ru}
+                        </div>
+                        <div className="translation-line">
+                          <span className="lang-code">HE:</span> <span dir="rtl">{item.translations.he}</span>
+                        </div>
+                        <div className="translation-line">
+                          <span className="lang-code">EN:</span> {item.translations.en}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="menu-item-meta">
+                    <div className="content-key">{item.content_key}</div>
                   </div>
                 </div>
-                <div className="item-content">
-                  {Array.isArray(item.value) ? (
-                    <ul>
-                      {item.value.map((val, idx) => (
-                        <li key={idx}>{val}</li>
-                      ))}
-                    </ul>
+
+                <div className="actions-count">
+                  <span className="count-badge">1</span>
+                </div>
+
+                <div className="last-modified">
+                  {new Date(item.last_modified).toLocaleDateString('ru-RU')} | {new Date(item.last_modified).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+
+                <div className="item-actions">
+                  {editingItem === item.id ? (
+                    <div className="edit-actions">
+                      <button 
+                        className="save-btn"
+                        onClick={() => handleSave(item.id)}
+                      >
+                        ✓
+                      </button>
+                      <button 
+                        className="cancel-btn"
+                        onClick={() => setEditingItem(null)}
+                      >
+                        ✕
+                      </button>
+                    </div>
                   ) : (
-                    <p>{item.value}</p>
+                    <div className="view-actions">
+                      <button 
+                        className="view-btn"
+                        title="Просмотр"
+                      >
+                        👁
+                      </button>
+                      <button 
+                        className="edit-btn"
+                        onClick={() => handleEditToggle(item.id)}
+                        title="Редактировать"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="delete-btn"
+                        title="Удалить"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

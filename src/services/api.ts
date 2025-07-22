@@ -678,9 +678,16 @@ class ApiService {
     return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
   }
 
-  // Menu content operations
-  async getMenuContent(menuItem: string, language: string = 'ru'): Promise<ApiResponse<any>> {
-    return this.requestWithCache<any>(`/api/content/menu/${menuItem}/${language}`);
+  // Menu translations operations
+  async getMenuTranslations(): Promise<ApiResponse<any>> {
+    return this.requestWithCache<any>(`/api/content/menu/translations`);
+  }
+
+  async updateMenuTranslation(contentItemId: string, languageCode: string, contentValue: string): Promise<ApiResponse<any>> {
+    return this.request<any>(`/api/content-items/${contentItemId}/translations/${languageCode}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content_value: contentValue }),
+    });
   }
 
   // Text editing API methods

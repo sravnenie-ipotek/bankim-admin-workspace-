@@ -117,6 +117,82 @@ app.get('/api/db-info', async (req, res) => {
 });
 
 /**
+ * Get menu translations for menu components
+ * GET /api/content/menu/translations
+ */
+app.get('/api/content/menu/translations', async (req, res) => {
+  try {
+    // Get navigation menu translations - these are the main site navigation items
+    // Based on the content structure, we look for headings and titles that represent navigation
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ci.updated_at
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE (
+        -- Main navigation items like "О нас", "Контакты", etc.
+        (ci.component_type = 'text' AND ci.content_key LIKE '%footer_%') OR
+        -- Service navigation from home page
+        (ci.component_type = 'service_card' AND ci.screen_location = 'home_page') OR
+        -- Main page navigation
+        (ci.component_type = 'nav_link' AND ci.screen_location = 'home_page') OR
+        -- Cooperation and partnership navigation
+        (ci.component_type IN ('heading', 'title') AND ci.screen_location IN ('cooperation', 'tenders_for_brokers', 'tenders_for_lawyers')) OR
+        -- Menu navigation items
+        (ci.screen_location = 'menu_navigation' AND ci.component_type = 'menu_item')
+      )
+        AND ci.is_active = TRUE
+        AND ct_ru.content_value IS NOT NULL
+      ORDER BY ci.screen_location, ci.content_key
+    `);
+    
+    const menuItems = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: menuItems.length,
+        menu_items: menuItems
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get menu translations error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get content by screen location and language
  * GET /api/content/{screen_location}/{language_code}
  * Returns all approved content for the specified screen and language
@@ -300,78 +376,6 @@ app.get('/api/content/stats', async (req, res) => {
     
   } catch (error) {
     console.error('Get content stats error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-/**
- * Get menu content by menu item name
- * GET /api/content/menu/{menuItem}/{language}
- */
-app.get('/api/content/menu/:menuItem/:language', async (req, res) => {
-  const { menuItem, language } = req.params;
-  
-  // Map menu items to their database screen locations
-  const menuScreenMapping = {
-    'glavnaya': 'main_page',
-    'mortgage': 'mortgage_calculation',
-    'refinance': 'refinance_step1',
-    'credit': 'calculate_credit_1',
-    'cooperation': 'cooperation',
-    'general': ['cooperation', 'tenders_for_brokers', 'tenders_for_lawyers', 'temporary_franchise']
-  };
-  
-  const screenLocations = menuScreenMapping[menuItem];
-  if (!screenLocations) {
-    return res.status(404).json({
-      success: false,
-      error: 'Menu item not found'
-    });
-  }
-  
-  try {
-    let allContent = {};
-    let totalCount = 0;
-    
-    // Handle both single screen and multiple screens
-    const screens = Array.isArray(screenLocations) ? screenLocations : [screenLocations];
-    
-    for (const screenLocation of screens) {
-      const result = await pool.query(
-        'SELECT * FROM get_content_by_screen($1, $2)',
-        [screenLocation, language]
-      );
-      
-      result.rows.forEach(row => {
-        allContent[row.content_key] = {
-          value: row.value,
-          component_type: row.component_type,
-          category: row.category,
-          language: row.language,
-          status: row.status,
-          screen_location: screenLocation
-        };
-        totalCount++;
-      });
-    }
-    
-    res.json({
-      success: true,
-      data: {
-        status: 'success',
-        menu_item: menuItem,
-        language_code: language,
-        content_count: totalCount,
-        screen_locations: screens,
-        content: allContent
-      }
-    });
-    
-  } catch (error) {
-    console.error('Get menu content error:', error);
     res.status(500).json({
       success: false,
       error: error.message
