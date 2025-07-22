@@ -17,10 +17,9 @@ interface MenuTranslation {
   content_key: string;
   component_type: string;
   category: string;
+  screen_location: string;
   description: string;
   is_active: boolean;
-  page_name: string;
-  action_count: number;
   translations: {
     ru: string;
     he: string;
@@ -43,7 +42,7 @@ const ContentMenu: React.FC = () => {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 50;
 
   // Set navigation context
   useEffect(() => {
@@ -62,233 +61,52 @@ const ContentMenu: React.FC = () => {
           // Ensure data has proper structure
           const data = response.data;
           if (data.menu_items && Array.isArray(data.menu_items)) {
-            // Normalize menu items to ensure all required properties exist
-            const normalizedItems = data.menu_items.map(item => ({
-              id: item.id || '',
-              content_key: item.content_key || '',
-              component_type: item.component_type || 'menu',
-              category: item.category || 'navigation',
-              description: item.description || '',
-              is_active: item.is_active ?? true,
-              page_name: item.page_name || '',
-              action_count: item.action_count || 0,
-              translations: {
-                ru: item.translations?.ru || '',
-                he: item.translations?.he || '',
-                en: item.translations?.en || ''
-              },
-              last_modified: item.last_modified || new Date().toISOString()
-            }));
+            console.log('✅ Processing real menu data from bankim_content:', data.menu_items);
+            
+            // Process real database items and map component_type to category
+            const processedItems = data.menu_items.map((item, index) => {
+              // Map component_type to category for display
+              let category = 'text';
+              if (item.component_type === 'nav_link' || item.component_type === 'service_card' || item.component_type === 'link') {
+                category = 'link';
+              } else if (item.component_type === 'menu_item' || item.component_type === 'dropdown') {
+                category = 'dropdown';
+              } else if (item.component_type === 'heading' || item.component_type === 'title') {
+                category = 'dropdown';
+              } else {
+                category = 'text';
+              }
+              
+              return {
+                id: item.id?.toString() || (index + 1).toString(),
+                content_key: item.content_key || '',
+                component_type: item.component_type || 'menu',
+                category: category,
+                screen_location: item.screen_location || '',
+                description: item.description || '',
+                is_active: item.is_active ?? true,
+                translations: {
+                  ru: item.translations?.ru || '',
+                  he: item.translations?.he || '',
+                  en: item.translations?.en || ''
+                },
+                last_modified: item.last_modified || new Date().toISOString()
+              };
+            });
             
             setMenuData({
-              ...data,
-              menu_items: normalizedItems
+              status: data.status || 'success',
+              content_count: data.content_count || processedItems.length,
+              menu_items: processedItems
             });
+            
+            console.log('✅ Processed menu items:', processedItems.length);
           } else {
             throw new Error('Invalid data structure received from API');
           }
         } else {
-          // Fallback to mock data if API fails
-          console.warn('API failed, using mock data:', response.error);
-          const mockData: MenuData = {
-            status: 'success',
-            content_count: 1000,
-            menu_items: [
-              {
-                id: '1',
-                content_key: 'menu.side_navigation',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Side navigation menu item',
-                is_active: true,
-                page_name: '15.1 Сайд навигация. Меню',
-                action_count: 17,
-                translations: {
-                  ru: 'Сайд навигация. Меню',
-                  he: 'תפריט ניווט צדדי',
-                  en: 'Side Navigation Menu'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '2',
-                content_key: 'menu.about_us',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'About us menu item',
-                is_active: true,
-                page_name: '16. О нас. Меню',
-                action_count: 26,
-                translations: {
-                  ru: 'О нас',
-                  he: 'אודותינו',
-                  en: 'About Us'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '3',
-                content_key: 'menu.vacancies',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Vacancies menu item',
-                is_active: true,
-                page_name: '17. Вакансии',
-                action_count: 28,
-                translations: {
-                  ru: 'Вакансии',
-                  he: 'משרות פנויות',
-                  en: 'Vacancies'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '4',
-                content_key: 'menu.vacancy_form',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Vacancy application form',
-                is_active: true,
-                page_name: '17.1 Вакансии. Описание и анкета кандидата',
-                action_count: 17,
-                translations: {
-                  ru: 'Вакансии. Описание и анкета кандидата',
-                  he: 'משרות פנויות. תיאור וטופס מועמד',
-                  en: 'Vacancies. Description and Candidate Form'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '5',
-                content_key: 'menu.vacancy_submitted',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Vacancy application submitted',
-                is_active: true,
-                page_name: '17.2 Вакансии. Заявка принята в обработку',
-                action_count: 2,
-                translations: {
-                  ru: 'Заявка принята в обработку',
-                  he: 'הבקשה התקבלה לעיבוד',
-                  en: 'Application Received for Processing'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '6',
-                content_key: 'menu.contacts',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Contacts menu item',
-                is_active: true,
-                page_name: '18.Контакты',
-                action_count: 46,
-                translations: {
-                  ru: 'Контакты',
-                  he: 'צור קשר',
-                  en: 'Contacts'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '7',
-                content_key: 'menu.referral_program',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Referral program menu item',
-                is_active: true,
-                page_name: '19. Реферальная программа',
-                action_count: 32,
-                translations: {
-                  ru: 'Реферальная программа',
-                  he: 'תוכנית הפניות',
-                  en: 'Referral Program'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '8',
-                content_key: 'menu.broker_franchise',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Broker franchise menu item',
-                is_active: true,
-                page_name: '20. Франшиза для брокеров',
-                action_count: 40,
-                translations: {
-                  ru: 'Франшиза для брокеров',
-                  he: 'זיכיון לברוקרים',
-                  en: 'Broker Franchise'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '9',
-                content_key: 'menu.broker_application',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Broker application form',
-                is_active: true,
-                page_name: '20.1 Брокеры. Анкета для сотрудничества',
-                action_count: 21,
-                translations: {
-                  ru: 'Брокеры. Анкета для сотрудничества',
-                  he: 'ברוקרים. טופס לשיתוף פעולה',
-                  en: 'Brokers. Cooperation Form'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '10',
-                content_key: 'menu.broker_submitted',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Broker application submitted',
-                is_active: true,
-                page_name: '20.2 Брокеры. Заявка принята в обработку',
-                action_count: 2,
-                translations: {
-                  ru: 'Брокеры. Заявка принята в обработку',
-                  he: 'ברוקרים. הבקשה התקבלה לעיבוד',
-                  en: 'Brokers. Application Received for Processing'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '11',
-                content_key: 'menu.realtor_franchise',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Realtor franchise menu item',
-                is_active: true,
-                page_name: '20А. Франшиза для риэлторов',
-                action_count: 39,
-                translations: {
-                  ru: 'Франшиза для риэлторов',
-                  he: 'זיכיון למתווכי נדלן',
-                  en: 'Realtor Franchise'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              },
-              {
-                id: '12',
-                content_key: 'menu.realtor_application',
-                component_type: 'menu',
-                category: 'navigation',
-                description: 'Realtor application form',
-                is_active: true,
-                page_name: '20А.1 Риэлторы. Анкета для сотрудничества',
-                action_count: 18,
-                translations: {
-                  ru: 'Риэлторы. Анкета для сотрудничества',
-                  he: 'מתווכי נדלן. טופס לשיתוף פעולה',
-                  en: 'Realtors. Cooperation Form'
-                },
-                last_modified: '2023-08-01T12:03:00Z'
-              }
-            ]
-          };
-          setMenuData(mockData);
+          console.error('❌ Failed to fetch menu translations from database:', response.error);
+          setError(response.error || 'Failed to fetch menu translations from database');
         }
       } catch (err) {
         setError('Не удалось загрузить переводы меню');
@@ -378,7 +196,7 @@ const ContentMenu: React.FC = () => {
     const item = menuData?.menu_items.find(item => item.id === itemId);
     if (!item) return;
 
-    const confirmDelete = window.confirm(`Вы уверены, что хотите удалить "${item.page_name}"?`);
+    const confirmDelete = window.confirm(`Вы уверены, что хотите удалить "${item.content_key}"?`);
     if (!confirmDelete) return;
 
     try {
@@ -402,7 +220,6 @@ const ContentMenu: React.FC = () => {
   };
 
   const filteredItems = menuData?.menu_items.filter(item =>
-    (item.page_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
     (item.content_key?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
     (item.translations?.ru?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
     (item.translations?.he || '').includes(searchQuery) ||
@@ -489,14 +306,20 @@ const ContentMenu: React.FC = () => {
         <div className="menu-table-container">
           {/* Table Header - matches Figma view, view2, view3 headers */}
           <div className="table-header">
-            <div className="header-cell name-header">
-              <span>НАЗВАНИЕ СТРАНИЦЫ</span>
+            <div className="header-cell number-header">
+              <span>НОМЕР ДЕЙСТВИЯ</span>
             </div>
-            <div className="header-cell count-header">
-              <span>Количество действии</span>
+            <div className="header-cell id-header">
+              <span>ID</span>
             </div>
-            <div className="header-cell modified-header">
-              <span>Были изменения</span>
+            <div className="header-cell type-header">
+              <span>ТИП</span>
+            </div>
+            <div className="header-cell ru-header">
+              <span>RU</span>
+            </div>
+            <div className="header-cell he-header">
+              <span>HEB</span>
             </div>
             <div className="header-cell actions-header">
               {/* Empty header for actions */}
@@ -507,59 +330,55 @@ const ContentMenu: React.FC = () => {
           <div className="table-body">
             {currentItems.map((item, index) => (
               <div key={item.id} className={`table-row ${editingItem === item.id ? 'editing' : ''}`}>
-                {/* Page Name Column - matches Figma text13 */}
-                <div className="cell name-cell">
+                {/* Action Number Column - matches Figma text13 */}
+                <div className="cell number-cell">
+                  <span className="action-number">{`${startIndex + index + 1}.`}</span>
+                </div>
+
+                {/* ID Column - matches Figma text14 */}
+                <div className="cell id-cell">
+                  <span className="content-id">{item.content_key}</span>
+                </div>
+
+                {/* Type Column - matches Figma text15, text16, text17, text18, text19 */}
+                <div className="cell type-cell">
+                  <span className={`content-type ${item.category?.toLowerCase()}`}>
+                    {item.category === 'dropdown' ? 'Дропдаун' : 
+                     item.category === 'link' ? 'Ссылка' : 
+                     item.category === 'text' ? 'Текст' : 
+                     'Дропдаун'}
+                  </span>
+                </div>
+
+                {/* RU Translation Column - matches Figma text20, text21 */}
+                <div className="cell ru-cell">
                   {editingItem === item.id ? (
-                    <div className="edit-translations">
-                      <div className="translation-input-group">
-                        <label>RU:</label>
-                        <input
-                          type="text"
-                          value={item.translations?.ru || ''}
-                          onChange={(e) => handleTranslationChange(item.id, 'ru', e.target.value)}
-                          className="translation-input"
-                        />
-                      </div>
-                      <div className="translation-input-group">
-                        <label>HE:</label>
-                        <input
-                          type="text"
-                          value={item.translations?.he || ''}
-                          onChange={(e) => handleTranslationChange(item.id, 'he', e.target.value)}
-                          className="translation-input heb-input"
-                          dir="rtl"
-                        />
-                      </div>
-                      <div className="translation-input-group">
-                        <label>EN:</label>
-                        <input
-                          type="text"
-                          value={item.translations?.en || ''}
-                          onChange={(e) => handleTranslationChange(item.id, 'en', e.target.value)}
-                          className="translation-input"
-                        />
-                      </div>
-                    </div>
+                    <input
+                      type="text"
+                      value={item.translations?.ru || ''}
+                      onChange={(e) => handleTranslationChange(item.id, 'ru', e.target.value)}
+                      className="translation-input"
+                      placeholder="Русский перевод"
+                    />
                   ) : (
-                    <div className="page-name-display">
-                      <span className="page-name">{item.page_name || 'Untitled'}</span>
-                      <div className="translation-preview">
-                        <small>RU: {item.translations?.ru || ''}</small>
-                        <small>HE: {item.translations?.he || ''}</small>
-                        <small>EN: {item.translations?.en || ''}</small>
-                      </div>
-                    </div>
+                    <span className="translation-text">{item.translations?.ru || ''}</span>
                   )}
                 </div>
 
-                {/* Action Count Column - matches Figma text15, text16, etc. */}
-                <div className="cell count-cell">
-                  <span className="action-count">{item.action_count}</span>
-                </div>
-
-                {/* Last Modified Column - matches Figma text20, text21 */}
-                <div className="cell modified-cell">
-                  <span className="modified-date">{formatDate(item.last_modified)}</span>
+                {/* HE Translation Column - matches Figma text23, text24 */}
+                <div className="cell he-cell">
+                  {editingItem === item.id ? (
+                    <input
+                      type="text"
+                      value={item.translations?.he || ''}
+                      onChange={(e) => handleTranslationChange(item.id, 'he', e.target.value)}
+                      className="translation-input heb-input"
+                      dir="rtl"
+                      placeholder="תרגום עברי"
+                    />
+                  ) : (
+                    <span className="translation-text heb-text" dir="rtl">{item.translations?.he || ''}</span>
+                  )}
                 </div>
 
                 {/* Actions Column - matches Figma image8 icons */}

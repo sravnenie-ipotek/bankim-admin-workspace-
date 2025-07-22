@@ -11,7 +11,7 @@
 
 .calculator-formula-page {
   padding: 32px;
-  background-color: #F9FAFB;
+  background-color: transparent;
   min-height: calc(100vh - 80px);
   max-width: 1200px;
   margin: 0 auto;
@@ -31,7 +31,7 @@
   font-family: 'Arimo', sans-serif;
   font-size: 32px;
   font-weight: 600;
-  color: #1F2A37;
+  color: #F9FAFB;
   margin: 0;
   line-height: 1.2;
 }
@@ -89,18 +89,18 @@
 
 /* Formula Sections - Actions 5, 8, 10 */
 .formula-section {
-  background-color: #FFFFFF;
+  background-color: rgba(31, 42, 55, 0.5);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(55, 65, 81, 0.5);
 }
 
 .section-title {
   font-family: 'Arimo', sans-serif;
   font-size: 20px;
   font-weight: 600;
-  color: #1F2A37;
+  color: #F9FAFB;
   margin: 0 0 20px 0;
   padding-bottom: 12px;
   border-bottom: 2px solid #FBE54D;
@@ -124,7 +124,7 @@
   font-family: 'Arimo', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #9CA3AF;
   margin: 0;
 }
 
@@ -136,12 +136,12 @@
 
 .formula-input {
   padding: 12px 16px;
-  border: 2px solid #D1D5DB;
+  border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;
   font-family: 'Arimo', sans-serif;
   font-size: 14px;
-  color: #1F2A37;
-  background-color: #FFFFFF;
+  color: #F9FAFB;
+  background-color: rgba(55, 65, 81, 0.3);
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
@@ -159,8 +159,8 @@
 }
 
 .formula-input:disabled {
-  background-color: #F3F4F6;
-  color: #9CA3AF;
+  background-color: rgba(55, 65, 81, 0.2);
+  color: #6B7280;
   cursor: not-allowed;
 }
 
@@ -174,12 +174,12 @@
 
 .formula-display-value {
   padding: 12px 16px;
-  background-color: #F9FAFB;
-  border: 2px solid #E5E7EB;
+  background-color: rgba(55, 65, 81, 0.2);
+  border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;
   font-family: 'Arimo', sans-serif;
   font-size: 14px;
-  color: #1F2A37;
+  color: #F9FAFB;
   font-weight: 500;
   min-height: 20px;
   display: flex;
@@ -192,9 +192,9 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 24px;
-  background-color: #FFFFFF;
+  background-color: rgba(31, 42, 55, 0.5);
   border-radius: 12px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(55, 65, 81, 0.5);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -436,11 +436,11 @@
 
 /* Bank Selection Section */
 .bank-selection-section {
-  background-color: #FFFFFF;
+  background-color: rgba(31, 42, 55, 0.5);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(55, 65, 81, 0.5);
   margin-bottom: 24px;
 }
 
@@ -453,12 +453,12 @@
 
 .bank-dropdown {
   padding: 12px 16px;
-  border: 2px solid #D1D5DB;
+  border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;
   font-family: 'Arimo', sans-serif;
   font-size: 14px;
-  color: #1F2A37;
-  background-color: #FFFFFF;
+  color: #F9FAFB;
+  background-color: rgba(55, 65, 81, 0.3);
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
@@ -472,8 +472,8 @@
 }
 
 .bank-dropdown:disabled {
-  background-color: #F3F4F6;
-  color: #9CA3AF;
+  background-color: rgba(55, 65, 81, 0.2);
+  color: #6B7280;
   cursor: not-allowed;
 }
 
@@ -577,12 +577,12 @@
 /* Enhanced Display Values for Bank Configuration */
 .formula-display-value {
   padding: 12px 16px;
-  background-color: #F9FAFB;
-  border: 2px solid #E5E7EB;
+  background-color: rgba(55, 65, 81, 0.2);
+  border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;
   font-family: 'Arimo', sans-serif;
   font-size: 14px;
-  color: #1F2A37;
+  color: #F9FAFB;
   font-weight: 600;
   min-height: 20px;
   display: flex;
@@ -611,10 +611,10 @@
   padding: 40px;
   font-family: 'Arimo', sans-serif;
   font-size: 16px;
-  color: #6B7280;
-  background-color: #F9FAFB;
+  color: #9CA3AF;
+  background-color: rgba(31, 42, 55, 0.5);
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid rgba(55, 65, 81, 0.5);
 }
 
 .loading-indicator::before {

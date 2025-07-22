@@ -1,259 +1,186 @@
 /**
  * ContentMain Component
- * Main content management page for "Калькулятор ипотеки Страница №2"
+ * Main content navigation hub for "Контент сайта" (Page 3 from Confluence)
  * 
  * Features:
- * - Reuses existing Breadcrumb, UserInfoCards, PageGallery, and ContentTable components
- * - Follows established dark theme and typography patterns
- * - Responsive design with mobile menu support
- * - Integrates with NavigationContext for submenu state
+ * - Navigation hub showing all content sections
+ * - Simple card-based layout with action counts
+ * - Links to specific content section pages
+ * - Dark theme design matching system standards
  * 
- * Reference: devHelp/contentMenu/content_main.md - Phase 1 implementation
- * Design: devHelp/contentMenu/cssPages/main_page.md
+ * Reference: Confluence Page 138903604 - "3. Контент сайта. Контент-менеджер/Копирайтер. Стр.3"
+ * Figma: https://www.figma.com/file/Eenpc3kJRZHhxQNB2lkOxa/AP-node-id=128-127736
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @author BankIM Development Team
  * @since 2024-12-14
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Breadcrumb from '../Chat/ContentManagement/components/Breadcrumb/Breadcrumb';
-import UserInfoCards from '../Chat/ContentManagement/components/UserInfoCards/UserInfoCards';
-import PageGallery from '../Chat/ContentManagement/components/PageGallery/PageGallery';
-import ContentTable from '../Chat/ContentManagement/components/ContentTable/ContentTable';
-import type { ContentPage, ContentFilter } from '../Chat/ContentManagement/types/contentTypes';
-import { apiService } from '../../services/api';
-import { useNavigation } from '../../contexts/NavigationContext';
 import { useAuth } from '../../contexts/AuthContext';
 import './ContentMain.css';
 
 /**
- * Legacy data transformation function - converts old API data to ContentTable format
- * Kept for backward compatibility with existing MainPageContent API
- * Currently unused as we now use getAllMainPageLanguages() method
+ * Content section interface for navigation cards
  */
-// const transformMainPageData = (apiData: MainPageContent): ContentPage[] => {
-//   return apiData.actions.map((action, index) => ({
-//     id: action.id,
-//     pageNumber: action.actionNumber,
-//     title: action.title,                    // "X.Основной источник дохода"
-//     titleRu: action.titleRu,               // "Рассчитать Ипотеку"
-//     titleHe: action.titleHe,               // "חשב את המשכנתא שלך"
-//     titleEn: action.titleEn,               // "Calculate Mortgage"
-//     actionCount: index + 1,
-//     lastModified: action.lastModified,
-//     modifiedBy: action.createdBy,
-//     category: 'main',
-//     status: action.status,
-//     url: `/dropdown-action-${action.actionNumber}`,
-//     createdAt: action.createdAt,
-//     createdBy: action.createdBy
-//   }));
-// };
+interface ContentSection {
+  id: string;
+  title: string;
+  description: string;
+  actionCount: number;
+  lastModified: string;
+  path: string;
+  category: string;
+}
 
-/**
- * ContentMain Component
- * Implements the main content management page following existing patterns
- */
 const ContentMain: React.FC = () => {
   const navigate = useNavigate();
-  const { setCurrentSubmenu } = useNavigation();
-  const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [actionCount, setActionCount] = useState(33);
-  const [lastModified, setLastModified] = useState("01.08.2023 | 15:03");
+  const { user } = useAuth();
 
-  // Auto-login as director for testing if no user is logged in
-  useEffect(() => {
-    if (!localStorage.getItem('bankIM_admin_user')) {
-      console.log('Auto-logging in as director for testing...');
-      login('admin@bankim.com', 'password', 'director');
+  // Content sections based on Confluence Page 3 specification
+  const contentSections: ContentSection[] = [
+    {
+      id: 'main',
+      title: 'Главная',
+      description: 'Основная страница сайта',
+      actionCount: 7,
+      lastModified: '15.12.2024, 02:00',
+      path: '#', // TODO: Implement main page editing
+      category: 'Главная'
+    },
+    {
+      id: 'menu',
+      title: 'Меню',
+      description: 'Навигационное меню сайта',
+      actionCount: 17,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/menu',
+      category: 'Навигация'
+    },
+    {
+      id: 'mortgage',
+      title: 'Рассчитать ипотеку',
+      description: 'Калькулятор ипотечных кредитов',
+      actionCount: 12,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/mortgage',
+      category: 'Ипотека'
+    },
+    {
+      id: 'mortgage-refi',
+      title: 'Рефинансирование ипотеки',
+      description: 'Перекредитование ипотечных займов',
+      actionCount: 8,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/mortgage-refi',
+      category: 'Ипотека'
+    },
+    {
+      id: 'credit',
+      title: 'Расчет кредита',
+      description: 'Калькулятор потребительских кредитов',
+      actionCount: 15,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/credit',
+      category: 'Кредитование'
+    },
+    {
+      id: 'credit-refi',
+      title: 'Рефинансирование кредита',
+      description: 'Перекредитование потребительских займов',
+      actionCount: 6,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/credit-refi',
+      category: 'Кредитование'
+    },
+    {
+      id: 'general',
+      title: 'Общие страницы',
+      description: 'Статические страницы и общая информация',
+      actionCount: 23,
+      lastModified: '15.12.2024, 02:00',
+      path: '/content/general',
+      category: 'Общие'
     }
-  }, [login]);
-  
-  // Basic filter state for ContentTable
-  const [filter] = useState<ContentFilter>({
-    searchQuery: '',
-    sortBy: 'pageNumber',
-    sortOrder: 'asc',
-    page: 1,
-    limit: 20
-  });
-
-  // Set navigation context when component mounts
-  useEffect(() => {
-    setCurrentSubmenu('content-main', 'Главная');
-    
-    // Cleanup function to clear submenu when component unmounts
-    return () => {
-      // Don't clear on unmount to maintain breadcrumb state during navigation
-    };
-  }, [setCurrentSubmenu]);
-
-  // Content pages state - will be populated from API
-  const [mockContentPages, setMockContentPages] = useState<ContentPage[]>([]);
-
-  // Fetch real content data from bankim_content database API
-  useEffect(() => {
-    const fetchMainPageData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Try to fetch real data from bankim_content API - updated method
-        const response = await apiService.getAllMainPageLanguages();
-        
-        if (response.success && response.data) {
-          setMockContentPages(response.data);
-          
-          // Calculate total action count from all actions
-          const totalActions = response.data.reduce((sum, page) => sum + page.actionCount, 0);
-          setActionCount(totalActions);
-          
-          // Update last modified date from newest item
-          setLastModified(response.data.length > 0 ? 
-            response.data[0].lastModified.toLocaleDateString('ru-RU') + ' | ' +
-            response.data[0].lastModified.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) :
-            '01.08.2023 | 15:03'
-          );
-          
-          console.log('Loaded content data from bankim_content API:', response.data.length, 'items');
-        } else {
-          throw new Error(response.error || 'Ошибка загрузки данных из bankim_content API');
-        }
-      } catch (err) {
-        console.error('Failed to fetch content data from bankim_content API:', err);
-        setError('Не удалось загрузить данные. Пожалуйста, убедитесь, что сервер запущен.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchMainPageData();
-  }, []);
-
-  // Fixed mock images for gallery - corrected SVG format
-  const pageImages = [
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMTwvdGV4dD48L3N2Zz4=',
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMjwvdGV4dD48L3N2Zz4=',
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgMzwvdGV4dD48L3N2Zz4=',
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNDwvdGV4dD48L3N2Zz4=',
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ci8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNTwvdGV4dD48L3N2Zz4=',
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMUYyQTM3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1saXN0aXplPSIyNCIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPtCh0YLRgNCw0L3QuNGG0LAgNjwvdGV4dD48L3N2Zz4='
   ];
 
-  // Handlers for table interactions
-  const handleSortChange = (sortBy: any, sortOrder: 'asc' | 'desc') => {
-    console.log('Sort changed:', sortBy, sortOrder);
-  };
-
-  const handlePageSelect = (page: ContentPage) => {
-    console.log('Page selected:', page);
-  };
-
-  const handleEdit = (page: ContentPage) => {
-    console.log('handleEdit called with page:', page);
-    
-    // Determine which editing interface to use based on content type
-    const contentType = page.contentType || 'dropdown'; // Default to dropdown for backward compatibility
-    console.log('Content type determined:', contentType);
-    
-    switch (contentType) {
-      case 'text':
-        console.log('Navigating to text editing:', `/content/main/text/${page.id}`);
-        navigate(`/content/main/text/${page.id}`);
-        break;
-      case 'link':
-        // TODO: Implement link editing interface
-        console.log('Link editing not yet implemented');
-        navigate(`/content/main/action/${page.id}`); // Fallback to dropdown for now
-        break;
-      case 'dropdown':
-      default:
-        console.log('Navigating to dropdown editing:', `/content/main/action/${page.id}`);
-        navigate(`/content/main/action/${page.id}`);
-        break;
+  /**
+   * Handle navigation to content section
+   */
+  const handleSectionClick = (section: ContentSection) => {
+    if (section.path === '#') {
+      alert('Данная секция находится в разработке');
+      return;
     }
+    navigate(section.path);
   };
-
-
-  // Breadcrumb paths for navigation
-  const breadcrumbPaths = [
-    { label: 'Главная', path: '/' },
-    { label: 'Управление контентом', path: '/content-management' },
-    { label: 'Главная', path: '/content/main' }
-  ];
-
-  console.log('ContentMain rendering with data:', mockContentPages);
 
   return (
     <div className="content-main">
-      {/* Top navigation with breadcrumb */}
-      <Breadcrumb items={breadcrumbPaths.map((path, index) => ({
-        label: path.label,
-        href: path.path,
-        isActive: index === breadcrumbPaths.length - 1
-      }))} />
-
-      {/* Main content container */}
-      <div className="content-main__container">
-        {/* Page header */}
-        <div className="content-main__header">
-          <h1 className="content-main__title">Калькулятор ипотеки Страница №2</h1>
-          <p className="content-main__subtitle">Главная страница</p>
-          
-          {/* Page stats */}
-          <div className="content-main__stats">
-            <div className="content-main__stat">
-              <span className="content-main__stat-label">Количество действий:</span>
-              <span className="content-main__stat-value">{actionCount}</span>
-            </div>
-            <div className="content-main__stat">
-              <span className="content-main__stat-label">Последнее изменение:</span>
-              <span className="content-main__stat-value">{lastModified}</span>
-            </div>
-            <div className="content-main__stat">
-              <span className="content-main__stat-label">URL:</span>
-              <span className="content-main__stat-value content-main__stat-value--url">
-                www.bankonline.il/ru/<span className="content-main__highlight">main-page</span>
-              </span>
-            </div>
-          </div>
+      {/* Page Header */}
+      <div className="content-main__header">
+        <h1 className="content-main__title">Контент сайта</h1>
+        <div className="content-main__breadcrumb">
+          <span className="breadcrumb-item">Контент сайта</span>
         </div>
+      </div>
 
-        {/* User info cards */}
-        <UserInfoCards actionCount={actionCount} lastModified={lastModified} />
+      {/* Content Sections Grid */}
+      <div className="content-main__sections">
+        <h2 className="content-main__section-title">
+          Список страниц
+          <span className="content-main__badge">{contentSections.length}</span>
+        </h2>
+        
+        <div className="content-main__grid">
+          {contentSections.map((section) => (
+            <div 
+              key={section.id}
+              className="content-section-card"
+              onClick={() => handleSectionClick(section)}
+              role="button"
+              tabIndex={0}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleSectionClick(section);
+                }
+              }}
+            >
+              {/* Card Header */}
+              <div className="section-card__header">
+                <h3 className="section-card__title">{section.title}</h3>
+                <span className="section-card__category">{section.category}</span>
+              </div>
 
-        {/* Page gallery */}
-        <div className="content-main__gallery-section">
-          <h2 className="content-main__section-title">Галерея страницы</h2>
-          <PageGallery images={pageImages} title="Галерея страницы" />
-        </div>
+              {/* Card Content */}
+              <div className="section-card__content">
+                <p className="section-card__description">{section.description}</p>
+                
+                <div className="section-card__stats">
+                  <div className="section-card__stat">
+                    <span className="stat__label">Количество действий</span>
+                    <span className="stat__value">{section.actionCount}</span>
+                  </div>
+                  
+                  <div className="section-card__stat">
+                    <span className="stat__label">Последнее изменение</span>
+                    <span className="stat__value">{section.lastModified}</span>
+                  </div>
+                </div>
+              </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="content-main__error">
-            {error}
-          </div>
-        )}
-
-        {/* Content table */}
-        <div className="content-main__table-section">
-          <h2 className="content-main__section-title">
-            Активные страницы 
-            <span className="content-main__badge">{mockContentPages.length}</span>
-          </h2>
-          <ContentTable 
-            data={mockContentPages}
-            filter={filter}
-            isLoading={isLoading}
-            readonly={false}
-            onSortChange={handleSortChange}
-            onRowSelect={handlePageSelect}
-            onEdit={handleEdit}
-          />
+              {/* Card Footer */}
+              <div className="section-card__footer">
+                <span className="section-card__link">
+                  Перейти к редактированию
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

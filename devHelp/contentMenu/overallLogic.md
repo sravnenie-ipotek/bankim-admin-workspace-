@@ -129,6 +129,8 @@ flowchart TD
 
 ### 🔄 **In Progress (Needs Work)**
 - [x] **Menu Untitled Issue**: Fixed "Untitled" appearing in menu by adding proper mock data with page_name values
+- [x] **ContentMain Redesign**: Converted to navigation hub matching Confluence Page 3 specification with card-based layout
+- [x] **ContentMenu Table Structure**: Updated to match Figma types.md with proper content type columns (ID, Type, RU, HEB)
 - [ ] **Backend API Endpoints**: Need real backend implementation for content sections
   - `GET /api/content/sections/{contentType}` - fetch content by type (mortgage, credit, etc.)
   - `GET /api/content/menu/translations` - fetch menu translations

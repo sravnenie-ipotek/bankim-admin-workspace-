@@ -141,21 +141,7 @@ app.get('/api/content/menu/translations', async (req, res) => {
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE (
-        -- Main navigation items like "О нас", "Контакты", etc.
-        (ci.component_type = 'text' AND ci.content_key LIKE '%footer_%') OR
-        -- Service navigation from home page
-        (ci.component_type = 'service_card' AND ci.screen_location = 'home_page') OR
-        -- Main page navigation
-        (ci.component_type = 'nav_link' AND ci.screen_location = 'home_page') OR
-        -- Cooperation and partnership navigation
-        (ci.component_type IN ('heading', 'title') AND ci.screen_location IN ('cooperation', 'tenders_for_brokers', 'tenders_for_lawyers')) OR
-        -- Menu navigation items
-        (ci.screen_location = 'menu_navigation' AND ci.component_type = 'menu_item') OR
-        -- Sidebar items
-        (ci.content_key LIKE 'sidebar_%')
-      )
-        AND ci.is_active = TRUE
+      WHERE ci.is_active = TRUE
         AND ct_ru.content_value IS NOT NULL
       ORDER BY ci.screen_location, ci.content_key
     `);

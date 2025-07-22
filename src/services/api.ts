@@ -679,117 +679,29 @@ class ApiService {
     return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
   }
 
-  // Menu translations operations
+  // Menu translations operations - using real bankim_content database
   async getMenuTranslations(): Promise<ApiResponse<any>> {
     try {
-      // Check environment variable for real vs mock data
-      const useRealData = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
+      console.log('🔄 Fetching menu translations from bankim_content database...');
       
-      if (useRealData) {
-        // Try real API call
-        const response = await this.requestWithCache<any>(`/api/content/menu/translations`);
-        if (response.success && response.data && response.data.menu_items && Array.isArray(response.data.menu_items)) {
-          return response;
-        }
-        // Fallback to mock data if real API fails or returns invalid data
-        console.warn('Real API failed or returned invalid data for menu translations, falling back to mock data');
+      // Fetch real data from bankim_content database
+      const response = await this.requestWithCache<any>(`/api/content/menu/translations`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched menu translations from database:', response.data);
+        return response;
+      } else {
+        console.error('❌ Failed to fetch menu translations:', response.error);
+        return {
+          success: false,
+          error: response.error || 'Failed to fetch menu translations from database'
+        };
       }
-      
-      // Return mock data
-      return {
-        success: true,
-        data: {
-          status: 'success',
-          content_count: 1000,
-          menu_items: [
-            {
-              id: '1',
-              content_key: 'menu.side_navigation',
-              component_type: 'menu',
-              category: 'navigation',
-              description: 'Side navigation menu item',
-              is_active: true,
-              page_name: '15.1 Сайд навигация. Меню',
-              action_count: 17,
-              translations: {
-                ru: 'Сайд навигация. Меню',
-                he: 'תפריט ניווט צדדי',
-                en: 'Side Navigation Menu'
-              },
-              last_modified: '2023-08-01T12:03:00Z'
-            },
-            {
-              id: '2',
-              content_key: 'menu.about_us',
-              component_type: 'menu',
-              category: 'navigation',
-              description: 'About us menu item',
-              is_active: true,
-              page_name: '16. О нас. Меню',
-              action_count: 8,
-              translations: {
-                ru: 'О нас',
-                he: 'אודותינו',
-                en: 'About us'
-              },
-              last_modified: '2023-08-01T12:03:00Z'
-            },
-            {
-              id: '3',
-              content_key: 'menu.ready_partner',
-              component_type: 'menu',
-              category: 'navigation',
-              description: 'Ready to become a partner menu item',
-              is_active: true,
-              page_name: '17. Готовы стать партнером? Меню',
-              action_count: 12,
-              translations: {
-                ru: 'Готовы стать партнером?',
-                he: 'מוכנים להיות שותפים?',
-                en: 'Ready to become a partner?'
-              },
-              last_modified: '2023-08-01T12:03:00Z'
-            },
-            {
-              id: '4',
-              content_key: 'menu.special_bonuses',
-              component_type: 'menu',
-              category: 'navigation',
-              description: 'Special bonuses menu item',
-              is_active: true,
-              page_name: '18. Специальные бонусы. Меню',
-              action_count: 5,
-              translations: {
-                ru: 'Специальные бонусы',
-                he: 'בונוסים מיוחדים',
-                en: 'Special bonuses'
-              },
-              last_modified: '2023-08-01T12:03:00Z'
-            },
-            {
-              id: '5',
-              content_key: 'menu.attractive_commissions',
-              component_type: 'menu',
-              category: 'navigation',
-              description: 'Attractive commissions menu item',
-              is_active: true,
-              page_name: '19. Привлекательные комиссии. Меню',
-              action_count: 9,
-              translations: {
-                ru: 'Привлекательные комиссии',
-                he: 'עמלות אטרקטיביות',
-                en: 'Attractive commissions'
-              },
-              last_modified: '2023-08-01T12:03:00Z'
-            }
-          ]
-        }
-      };
     } catch (error) {
-      console.error('Error fetching menu translations:', error);
+      console.error('❌ Error fetching menu translations from bankim_content:', error);
       return {
         success: false,
-        error: 'Failed to fetch menu translations'
+        error: 'Database connection error: ' + (error as Error).message
       };
     }
   }
