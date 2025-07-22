@@ -151,7 +151,9 @@ app.get('/api/content/menu/translations', async (req, res) => {
         -- Cooperation and partnership navigation
         (ci.component_type IN ('heading', 'title') AND ci.screen_location IN ('cooperation', 'tenders_for_brokers', 'tenders_for_lawyers')) OR
         -- Menu navigation items
-        (ci.screen_location = 'menu_navigation' AND ci.component_type = 'menu_item')
+        (ci.screen_location = 'menu_navigation' AND ci.component_type = 'menu_item') OR
+        -- Sidebar items
+        (ci.content_key LIKE 'sidebar_%')
       )
         AND ci.is_active = TRUE
         AND ct_ru.content_value IS NOT NULL

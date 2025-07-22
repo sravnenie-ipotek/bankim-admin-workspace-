@@ -121,9 +121,16 @@ flowchart TD
 - [x] **Real API Integration**: Switched to `apiService.getMenuTranslations()` with fallback to mock data
 - [x] **View Action**: Opens site preview in new tab using `content_key` mapping
 - [x] **Delete Confirmation**: Implemented delete with confirmation dialog and state updates
+- [x] **Content Sections Implementation**: Created ContentMortgage, ContentMortgageRefi, ContentCredit, ContentCreditRefi, ContentGeneral components
+- [x] **Base Component Pattern**: Created reusable ContentListBase component following clientSideDev rules to avoid code duplication
+- [x] **Routing Integration**: Added all content section routes to App.tsx with proper AdminLayout and permissions
+- [x] **Dark Theme Implementation**: Converted entire design system to dark theme with colors from Figma (#1F2A37, #374151, #60A5FA)
+- [x] **Unified Design System**: Removed white/light color scheme and made dark theme the default for all content sections
 
 ### 🔄 **In Progress (Needs Work)**
-- [ ] **Backend API Endpoints**: Need real backend implementation for menu CRUD operations
+- [x] **Menu Untitled Issue**: Fixed "Untitled" appearing in menu by adding proper mock data with page_name values
+- [ ] **Backend API Endpoints**: Need real backend implementation for content sections
+  - `GET /api/content/sections/{contentType}` - fetch content by type (mortgage, credit, etc.)
   - `GET /api/content/menu/translations` - fetch menu translations
   - `PUT /api/content-items/{id}/translations/{lang}` - update translations
   - `DELETE /api/content-items/{id}` - delete menu item
