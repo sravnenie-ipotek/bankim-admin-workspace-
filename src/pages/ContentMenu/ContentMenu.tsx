@@ -370,27 +370,34 @@ const ContentMenu: React.FC = () => {
                       </div>
                     ) : (
                       <div className="row-actions">
-                        <button 
-                          className="action-btn view-btn" 
-                          onClick={() => handleViewClick(item)}
-                          title="Просмотр"
-                        >
-                          <img src="/src/assets/images/static/icons/eye.svg" alt="View" />
-                        </button>
-                        <button 
-                          className="action-btn edit-btn" 
-                          onClick={() => handleEditClick(item)}
-                          title="Редактировать"
-                        >
-                          <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
-                        </button>
-                        <button 
-                          className="action-btn delete-btn" 
-                          onClick={() => handleDeleteClick(item)}
-                          title="Удалить"
-                        >
-                          <img src="/src/assets/images/static/icons/trash.svg" alt="Delete" />
-                        </button>
+                        {/* Render only the primary action based on content type to match Figma */}
+                        {item.category?.toLowerCase() === 'dropdown' && (
+                          <button
+                            className="action-btn view-btn"
+                            onClick={() => handleViewClick(item)}
+                            title="Перейти к действиям"
+                          >
+                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" />
+                          </button>
+                        )}
+                        {item.category?.toLowerCase() === 'text' && (
+                          <button
+                            className="action-btn edit-btn"
+                            onClick={() => handleViewClick(item)}
+                            title="Редактировать текст"
+                          >
+                            <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
+                          </button>
+                        )}
+                        {item.category?.toLowerCase() === 'link' && (
+                          <button
+                            className="action-btn view-btn"
+                            onClick={() => window.open(`/content/preview/${item.id}`, '_blank')}
+                            title="Просмотр"
+                          >
+                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" />
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
