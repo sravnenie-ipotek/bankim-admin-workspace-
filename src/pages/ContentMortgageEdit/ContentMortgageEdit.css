@@ -1,0 +1,275 @@
+.mortgage-edit-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+.edit-header {
+  margin-bottom: 2rem;
+}
+
+.edit-header h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #8c94a6;
+}
+
+.breadcrumb-link {
+  color: #6366f1;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: #5255d4;
+}
+
+.breadcrumb-separator {
+  color: #4a4e5a;
+}
+
+.breadcrumb-current {
+  color: #8c94a6;
+}
+
+/* Messages */
+.message {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.message-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.message-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+/* Item Info */
+.item-info {
+  background-color: #252b3b;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-item label {
+  font-size: 0.75rem;
+  color: #8c94a6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-item span {
+  font-size: 0.875rem;
+  color: #ffffff;
+}
+
+.component-type {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #6366f1;
+  color: #ffffff;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.status.active {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.status.inactive {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Translation Form */
+.translation-form {
+  background-color: #252b3b;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.translation-form h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.translation-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.translation-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.translation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.language-flag {
+  font-size: 1.25rem;
+}
+
+.translation-header label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.translation-input {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #1a1f2a;
+  border: 1px solid #3a3f4b;
+  border-radius: 0.375rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+
+.translation-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.translation-input::placeholder {
+  color: #6b7280;
+}
+
+/* Actions */
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #3a3f4b;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #5255d4;
+}
+
+.btn-primary:disabled {
+  background-color: #4a4e5a;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #8c94a6;
+  border: 1px solid #3a3f4b;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #252b3b;
+  color: #ffffff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #8c94a6;
+  gap: 1rem;
+}
+
+.error-state p {
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mortgage-edit-container {
+    padding: 1rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}

@@ -794,6 +794,70 @@ app.get('/api/content/text/:actionId', async (req, res) => {
   }
 });
 
+/**
+ * Get mortgage calculation content
+ * GET /api/content/mortgage
+ * Returns content for mortgage calculation screen with translations
+ */
+app.get('/api/content/mortgage', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ci.updated_at
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND ci.screen_location = 'mortgage_calculation'
+        AND ct_ru.content_value IS NOT NULL
+      ORDER BY ci.content_key
+    `);
+    
+    const mortgageContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: mortgageContent.length,
+        mortgage_content: mortgageContent
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get mortgage content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);

@@ -29,6 +29,13 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
   // Authentication context for permission checks
   const { user, hasPermission } = useAuth();
   
+  // Debug: Log user permissions
+  useEffect(() => {
+    console.log('Current user:', user);
+    console.log('User permissions:', user?.permissions);
+    console.log('Has write permission:', hasPermission('write', 'content-management'));
+  }, [user]);
+  
   // State management for component data and UI
   const [contentPages, setContentPages] = useState<ContentListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,12 +143,36 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
    * Handle edit action - navigates to appropriate edit page based on content type
    */
   const handleEditClick = (page: ContentListItem) => {
-    if (!hasPermission('write/content-management')) {
+    if (!hasPermission('write', 'content-management')) {
       console.log('No edit permission for user:', user?.role);
       return;
     }
 
-    const editPath = `/content/main/action/${page.id}`;
+    // Route to different edit pages based on content type
+    let editPath = '';
+    switch (contentType) {
+      case 'menu':
+        editPath = `/content/menu/${page.id}`;
+        break;
+      case 'mortgage':
+        editPath = `/content/mortgage/edit/${page.id}`;
+        break;
+      case 'mortgage-refi':
+        editPath = `/content/mortgage-refi/edit/${page.id}`;
+        break;
+      case 'credit':
+        editPath = `/content/credit/edit/${page.id}`;
+        break;
+      case 'credit-refi':
+        editPath = `/content/credit-refi/edit/${page.id}`;
+        break;
+      case 'general':
+        editPath = `/content/general/edit/${page.id}`;
+        break;
+      default:
+        editPath = `/content/main/action/${page.id}`;
+    }
+    
     window.location.href = editPath;
   };
 
@@ -366,7 +397,7 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
                       >
                         <img src="/src/assets/images/static/icons/eye.svg" alt="View" />
                       </button>
-                      {hasPermission('write/content-management') && (
+                      {hasPermission('write', 'content-management') && (
                         <button
                           className="action-button edit-button"
                           onClick={() => handleEditClick(page)}

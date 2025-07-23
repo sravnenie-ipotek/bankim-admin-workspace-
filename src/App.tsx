@@ -28,6 +28,8 @@ import { NavigationProvider } from './contexts/NavigationContext'
 import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
+import QAMortgage from './pages/QAMortgage';
+import ContentMortgageEdit from './pages/ContentMortgageEdit';
 
 
 
@@ -372,6 +374,7 @@ const AppRouter: React.FC = () => {
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/table-demo" element={<TableDemo />} />
         <Route path="/qa-showcase" element={<QAShowcase />} />
+        <Route path="/qa-mortgage" element={<QAMortgage />} />
         <Route path="/content" element={<ContentListPage />} />
         <Route path="/content/:pageId" element={<ContentManagementPage />} />
         <Route 
@@ -455,6 +458,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Рассчитать ипотеку" activeMenuItem="content-mortgage">
                   <ContentMortgage />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/mortgage/edit/:itemId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование контента ипотеки" activeMenuItem="content-mortgage">
+                  <ContentMortgageEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

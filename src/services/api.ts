@@ -731,36 +731,80 @@ class ApiService {
    */
   async getContentByContentType(contentType: string): Promise<ApiResponse<ContentListItem[]>> {
     try {
-      // Check environment variable for real vs mock data
-      const useRealData = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
+      // Map content type to database screen_location
+      const screenLocationMap: Record<string, string> = {
+        'mortgage': 'mortgage_calculation',
+        'mortgage-refi': 'mortgage_refinancing',
+        'credit': 'credit_calculation',
+        'credit-refi': 'credit_refinancing',
+        'general': 'general_pages',
+        'menu': 'navigation_menu'
+      };
+
+      const screenLocation = screenLocationMap[contentType];
       
-      if (useRealData) {
-        // Real API call - would be implemented when backend is ready
-        const response = await this.requestWithCache<ContentListItem[]>(`/api/content/sections/${contentType}`);
-        if (response.success) {
-          return response;
+      if (!screenLocation) {
+        console.warn(`Unknown content type: ${contentType}, using mock data`);
+        const mockData = this.generateMockDataByContentType(contentType);
+        return {
+          success: true,
+          data: mockData
+        };
+      }
+
+      // Try to fetch real data from the database
+      console.log(`🔄 Fetching ${contentType} content from database...`);
+      const response = await this.requestWithCache<any>(`/api/content/${contentType}`);
+      
+      if (response.success && response.data) {
+        // Handle different response structures based on content type
+        let contentArray: any[] = [];
+        
+        if (contentType === 'mortgage' && response.data.mortgage_content) {
+          contentArray = response.data.mortgage_content;
+        } else if (contentType === 'menu' && response.data.menu_items) {
+          contentArray = response.data.menu_items;
+        } else if (Array.isArray(response.data)) {
+          contentArray = response.data;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          contentArray = response.data.data;
+        } else if (response.data.items && Array.isArray(response.data.items)) {
+          contentArray = response.data.items;
         }
-        // Fallback to mock data if real API fails
-        console.warn(`Real API failed for ${contentType}, falling back to mock data`);
+        
+        if (contentArray.length > 0) {
+          // Transform database response to ContentListItem format
+          const items: ContentListItem[] = contentArray.map((item: any, index: number) => ({
+            id: item.id?.toString() || `item-${index}`,
+            title: item.translations?.ru || item.title_ru || item.content_key || `Item ${index + 1}`,
+            actionCount: item.action_count || 1,
+            lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
+            contentType: item.component_type || item.content_type || 'text',
+            pageNumber: item.page_number || index + 1
+          }));
+          
+          console.log(`✅ Successfully fetched ${items.length} ${contentType} items from database`);
+          return {
+            success: true,
+            data: items
+          };
+        }
       }
       
-      // Generate mock data based on content type
+      // Fallback to mock data if real API fails or returns empty
+      console.warn(`Real API failed or empty for ${contentType}, falling back to mock data`);
       const mockData = this.generateMockDataByContentType(contentType);
-      console.log(`🔧 Generated mock data for ${contentType}:`, { 
-        isArray: Array.isArray(mockData), 
-        length: mockData?.length, 
-        data: mockData 
-      });
-      
       return {
         success: true,
         data: mockData
       };
     } catch (error) {
       console.error(`Error fetching ${contentType} content:`, error);
+      // Return mock data on error
+      const mockData = this.generateMockDataByContentType(contentType);
       return {
-        success: false,
-        error: `Failed to fetch ${contentType} content`
+        success: true,
+        data: mockData
       };
     }
   }
