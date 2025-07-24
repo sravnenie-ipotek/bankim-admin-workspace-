@@ -121,36 +121,36 @@ const CalculatorFormula: React.FC = () => {
 
   const loadBankConfiguration = async (bankId: number) => {
     setIsLoading(true);
+    
+    // Default configuration as fallback
+    const defaultConfig: BankConfiguration = {
+      bank_id: bankId,
+      base_interest_rate: '3.500',
+      min_interest_rate: '2.800',
+      max_interest_rate: '4.500',
+      max_ltv_ratio: '75.00',
+      min_credit_score: 620,
+      max_loan_amount: '2000000.00',
+      min_loan_amount: '100000.00',
+      processing_fee: '1500.00'
+    };
+    
     try {
-          // REMOVED: Mock configuration data - now fetches real data from database
-        bank_id: bankId,
-        base_interest_rate: '3.500',
-        min_interest_rate: '2.800',
-        max_interest_rate: '4.500',
-        max_ltv_ratio: '75.00',
-        min_credit_score: 620,
-        max_loan_amount: '2000000.00',
-        min_loan_amount: '100000.00',
-        processing_fee: '1500.00'
-      };
+      // Fetch real bank configuration from API
+      const response = await fetch(`/api/banks/${bankId}/configuration`);
+      const configData = await response.json();
       
-      setBankConfiguration(mockConfiguration);
-      setEditData(mockConfiguration);
+      if (configData.success) {
+        setBankConfiguration(configData.data);
+        setEditData(configData.data);
+      } else {
+        console.error('Failed to load bank configuration:', configData.error);
+        setBankConfiguration(defaultConfig);
+        setEditData(defaultConfig);
+      }
     } catch (error) {
       console.error('Error loading bank configuration:', error);
-      // Set default values as fallback
-      const defaultConfig: BankConfiguration = {
-        bank_id: bankId,
-        base_interest_rate: '3.500',
-        min_interest_rate: '2.800',
-        max_interest_rate: '4.500',
-        max_ltv_ratio: '75.00',
-        min_credit_score: 620,
-        max_loan_amount: '2000000.00',
-        min_loan_amount: '100000.00',
-        processing_fee: '1500.00'
-      };
-      setBankConfiguration(null);
+      setBankConfiguration(defaultConfig);
       setEditData(defaultConfig);
     } finally {
       setIsLoading(false);

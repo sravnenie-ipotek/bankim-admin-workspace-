@@ -320,8 +320,8 @@ const ContentMenu: React.FC = () => {
               {/* Column 2 - Number of Actions */}
               <div className="column12">
                 {currentItems.map((item) => {
-                  // Use real action count from database
-                  const actionCount = item.actionCount || 0;
+                  // Use calculated action count based on menu item type
+                  const actionCount = item.component_type === 'menu_item' ? 1 : 0;
                   return (
                     <React.Fragment key={`actions-${item.id}`}>
                       <div className="box4"></div>
