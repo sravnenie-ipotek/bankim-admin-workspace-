@@ -821,6 +821,7 @@ app.get('/api/content/mortgage', async (req, res) => {
       WHERE ci.is_active = TRUE
         AND ci.screen_location = 'mortgage_calculation'
         AND ct_ru.content_value IS NOT NULL
+        AND ci.content_key NOT LIKE 'app.mortgage.form.%'
       ORDER BY ci.content_key
     `);
     
