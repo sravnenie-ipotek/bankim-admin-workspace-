@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
-import { ContentListItem } from '../ContentListBase/types';
+
 import AdminLayout from '../../components/AdminLayout/AdminLayout';
 import './ContentMortgageEdit.css';
 
@@ -12,8 +12,20 @@ interface DropdownOption {
   titleHe: string;
 }
 
-interface MortgageContentItem extends ContentListItem {
-  contentKey?: string;
+interface MortgageContentItem {
+  id: string;
+  content_key: string;
+  component_type: string;
+  category: string;
+  screen_location: string;
+  description: string;
+  is_active: boolean;
+  translations: {
+    ru: string;
+    he: string;
+    en: string;
+  };
+  last_modified: string;
 }
 
 const ContentMortgageEdit: React.FC = () => {
@@ -34,22 +46,23 @@ const ContentMortgageEdit: React.FC = () => {
     try {
       setLoading(true);
       // Fetch the specific content item
-      const response = await apiService.getContentByContentType('mortgage');
+      const response = await apiService.getMortgageContent();
       
-      if (response.success && response.data) {
-        const item = response.data.find(item => item.id === itemId);
+      if (response.success && response.data?.mortgage_content) {
+        const item = response.data.mortgage_content.find((item: any) => item.id === itemId);
         console.log('Found item:', item);
         
         if (item) {
           setContentItem(item);
-          setTitleRu(item.title || '');
+          setTitleRu(item.translations?.ru || '');
+          setTitleHe(item.translations?.he || '');
           
           // If it's a dropdown, fetch its options
-          if (item.contentType === 'dropdown') {
+          if (item.component_type === 'dropdown') {
             console.log('Item is a dropdown, fetching options...');
             fetchDropdownOptions(item);
           } else {
-            console.log('Item content type:', item.contentType);
+            console.log('Item component type:', item.component_type);
           }
         } else {
           setError('Content item not found');
@@ -170,7 +183,7 @@ const ContentMortgageEdit: React.FC = () => {
     );
   }
 
-  const isDropdown = contentItem?.contentType === 'dropdown';
+  const isDropdown = contentItem?.component_type === 'dropdown';
 
   return (
     <AdminLayout title="Редактирование контента ипотеки">
@@ -181,13 +194,13 @@ const ContentMortgageEdit: React.FC = () => {
           <span className="breadcrumb-separator">›</span>
           <span className="breadcrumb-item">Рассчитать ипотеку</span>
           <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item active">Страница №{contentItem?.pageNumber}</span>
+          <span className="breadcrumb-item active">Редактирование</span>
         </div>
 
         {/* Header */}
         <div className="page-header-edit">
           <h1 className="page-title-edit">
-            Номер страницы №{contentItem?.pageNumber} | {contentItem?.title}
+            {contentItem?.content_key}
           </h1>
           <span className="page-subtitle">Mortgage_page</span>
         </div>
@@ -196,7 +209,7 @@ const ContentMortgageEdit: React.FC = () => {
         <div className="last-edit-info">
           <span className="last-edit-label">Последнее редактирование</span>
           <span className="last-edit-date">
-            {new Date(contentItem?.lastModified || '').toLocaleDateString('ru-RU')} | {new Date(contentItem?.lastModified || '').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+            {new Date(contentItem?.last_modified || '').toLocaleDateString('ru-RU')} | {new Date(contentItem?.last_modified || '').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
 

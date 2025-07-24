@@ -16,169 +16,237 @@
  * @since 2024-12-14
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ContentMain.css';
 
 /**
- * Content section interface for navigation cards
+ * Content page interface for table rows
  */
-interface ContentSection {
+interface ContentPage {
   id: string;
   title: string;
-  description: string;
+  pageNumber: number;
   actionCount: number;
   lastModified: string;
   path: string;
-  category: string;
 }
 
 const ContentMain: React.FC = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
-  // Content sections based on Confluence Page 3 specification
-  const contentSections: ContentSection[] = [
+  // Content pages - original data preserved
+  const contentPages: ContentPage[] = [
     {
       id: 'main',
       title: 'Главная',
-      description: 'Основная страница сайта',
+      pageNumber: 1,
       actionCount: 7,
       lastModified: '15.12.2024, 02:00',
-      path: '#', // TODO: Implement main page editing
-      category: 'Главная'
+      path: '#' // TODO: Implement main page editing
     },
     {
       id: 'menu',
       title: 'Меню',
-      description: 'Навигационное меню сайта',
+      pageNumber: 2,
       actionCount: 17,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/menu',
-      category: 'Навигация'
+      path: '/content/menu'
     },
     {
       id: 'mortgage',
       title: 'Рассчитать ипотеку',
-      description: 'Калькулятор ипотечных кредитов',
+      pageNumber: 3,
       actionCount: 12,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/mortgage',
-      category: 'Ипотека'
+      path: '/content/mortgage'
     },
     {
       id: 'mortgage-refi',
       title: 'Рефинансирование ипотеки',
-      description: 'Перекредитование ипотечных займов',
+      pageNumber: 4,
       actionCount: 8,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/mortgage-refi',
-      category: 'Ипотека'
+      path: '/content/mortgage-refi'
     },
     {
       id: 'credit',
       title: 'Расчет кредита',
-      description: 'Калькулятор потребительских кредитов',
+      pageNumber: 5,
       actionCount: 15,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/credit',
-      category: 'Кредитование'
+      path: '/content/credit'
     },
     {
       id: 'credit-refi',
       title: 'Рефинансирование кредита',
-      description: 'Перекредитование потребительских займов',
+      pageNumber: 6,
       actionCount: 6,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/credit-refi',
-      category: 'Кредитование'
+      path: '/content/credit-refi'
     },
     {
       id: 'general',
       title: 'Общие страницы',
-      description: 'Статические страницы и общая информация',
+      pageNumber: 7,
       actionCount: 23,
       lastModified: '15.12.2024, 02:00',
-      path: '/content/general',
-      category: 'Общие'
+      path: '/content/general'
     }
   ];
 
+  // Filter pages based on search
+  const filteredPages = contentPages.filter(page =>
+    page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    page.pageNumber.toString().includes(searchQuery)
+  );
+
+  // Pagination
+  const totalItems = filteredPages.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const displayedPages = filteredPages.slice(startIndex, endIndex);
+
   /**
-   * Handle navigation to content section
+   * Handle page navigation
    */
-  const handleSectionClick = (section: ContentSection) => {
-    if (section.path === '#') {
-      alert('Данная секция находится в разработке');
-      return;
-    }
-    navigate(section.path);
+  const handlePageClick = (page: ContentPage) => {
+    navigate(page.path);
   };
 
   return (
     <div className="content-main">
       {/* Page Header */}
       <div className="content-main__header">
-        <h1 className="content-main__title">Контент сайта</h1>
-        <div className="content-main__breadcrumb">
-          <span className="breadcrumb-item">Контент сайта</span>
-        </div>
+        <h1 className="content-main__title">Главная</h1>
       </div>
 
-      {/* Content Sections Grid */}
-      <div className="content-main__sections">
-        <h2 className="content-main__section-title">
-          Список страниц
-          <span className="content-main__badge">{contentSections.length}</span>
-        </h2>
+      {/* Content Section */}
+      <div className="content-main__content">
+        <h2 className="content-main__subtitle">Список страниц</h2>
         
-        <div className="content-main__grid">
-          {contentSections.map((section) => (
-            <div 
-              key={section.id}
-              className="content-section-card"
-              onClick={() => handleSectionClick(section)}
-              role="button"
-              tabIndex={0}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSectionClick(section);
-                }
-              }}
-            >
-              {/* Card Header */}
-              <div className="section-card__header">
-                <h3 className="section-card__title">{section.title}</h3>
-                <span className="section-card__category">{section.category}</span>
-              </div>
+        <div className="content-main__table-container">
+          {/* Search Bar */}
+          <div className="content-main__search">
+            <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M14 14L10.344 10.344M11.3333 6.66667C11.3333 9.24671 9.24671 11.3333 6.66667 11.3333C4.08662 11.3333 2 9.24671 2 6.66667C2 4.08662 4.08662 2 6.66667 2C9.24671 2 11.3333 4.08662 11.3333 6.66667Z" 
+                    stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Искать по названию, ID, номеру страницы"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+          </div>
 
-              {/* Card Content */}
-              <div className="section-card__content">
-                <p className="section-card__description">{section.description}</p>
-                
-                <div className="section-card__stats">
-                  <div className="section-card__stat">
-                    <span className="stat__label">Количество действий</span>
-                    <span className="stat__value">{section.actionCount}</span>
+          {/* Table */}
+          <div className="content-main__table">
+            {/* Table Header */}
+            <div className="table-header">
+              <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
+              <div className="header-cell actions-count">Количество действии</div>
+              <div className="header-cell last-modified">Были изменения</div>
+              <div className="header-cell actions"></div>
+            </div>
+
+            {/* Table Body */}
+            <div className="table-body">
+              {displayedPages.map((page) => (
+                <div key={page.id} className="table-row">
+                  <div className="table-cell page-name">
+                    {page.title} Страница №{page.pageNumber}
                   </div>
-                  
-                  <div className="section-card__stat">
-                    <span className="stat__label">Последнее изменение</span>
-                    <span className="stat__value">{section.lastModified}</span>
+                  <div className="table-cell actions-count">
+                    {page.actionCount}
+                  </div>
+                  <div className="table-cell last-modified">
+                    {page.lastModified}
+                  </div>
+                  <div className="table-cell actions">
+                    <button 
+                      className="action-button"
+                      onClick={() => handlePageClick(page)}
+                      aria-label={`Navigate to ${page.title}`}
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
                   </div>
                 </div>
-              </div>
-
-              {/* Card Footer */}
-              <div className="section-card__footer">
-                <span className="section-card__link">
-                  Перейти к редактированию
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="content-main__pagination">
+            <span className="pagination-info">
+              Показывает {startIndex + 1}-{endIndex} из {totalItems}
+            </span>
+            <div className="pagination-controls">
+              <button 
+                className="pagination-btn prev"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              
+              <div className="pagination-numbers">
+                <button 
+                  className={`page-number ${currentPage === 1 ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(1)}
+                >
+                  1
+                </button>
+                {totalPages > 1 && (
+                  <button 
+                    className={`page-number ${currentPage === 2 ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(2)}
+                  >
+                    2
+                  </button>
+                )}
+                {totalPages > 2 && (
+                  <button 
+                    className={`page-number ${currentPage === 3 ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(3)}
+                  >
+                    3
+                  </button>
+                )}
+                {totalPages > 4 && (
+                  <span className="page-ellipsis">...</span>
+                )}
+                {totalPages > 3 && (
+                  <button 
+                    className={`page-number ${currentPage === totalPages ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(totalPages)}
+                  >
+                    {totalPages}
+                  </button>
+                )}
+              </div>
+              
+              <button 
+                className="pagination-btn next"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
