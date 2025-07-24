@@ -8,8 +8,8 @@
   flex-direction: column;
   gap: 40px;
   padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Header Section */
@@ -42,16 +42,19 @@
 .content-menu-edit-form {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 40px;
+  width: 100%;
 }
 
 .form-section {
   background-color: #1F2A37;
-  border-radius: 8px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 32px;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .form-section h2 {
@@ -63,15 +66,15 @@
 
 /* Info Section */
 .form-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 48px;
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
 }
 
 .info-label {
@@ -84,30 +87,34 @@
   font-size: 14px;
   color: #F9FAFB;
   font-weight: 500;
+  flex: 1;
 }
 
 /* Form Groups */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+  width: 100%;
 }
 
 .form-group label {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: #F9FAFB;
 }
 
 .form-input {
   background-color: #374151;
   border: 1px solid #4B5563;
-  border-radius: 6px;
-  padding: 12px 16px;
+  border-radius: 8px;
+  padding: 18px 24px;
   color: #FFFFFF;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.2s ease;
+  width: 100%;
+  min-height: 56px;
 }
 
 .form-input:focus {
@@ -129,14 +136,15 @@
 
 .btn-primary,
 .btn-secondary {
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
   outline: none;
+  min-height: 48px;
 }
 
 .btn-primary {
@@ -220,20 +228,48 @@
   font-size: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Desktop specific styles */
+@media (min-width: 1024px) {
+  .content-menu-edit {
+    padding: 60px 120px;
+  }
+  
+  .form-section {
+    padding: 48px 56px;
+  }
+  
+  .content-menu-edit-form {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* Medium screens */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .content-menu-edit {
+    padding: 40px;
+  }
+  
+  .form-section {
+    padding: 32px;
+  }
+}
+
+/* Mobile specific styles */
+@media (max-width: 767px) {
   .content-menu-edit {
     padding: 20px;
   }
 
   .form-section {
-    padding: 16px;
+    padding: 20px;
   }
 
   .info-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 8px;
   }
 
   .info-label {
@@ -243,10 +279,16 @@
   .form-actions {
     flex-direction: column;
     width: 100%;
+    gap: 12px;
   }
 
   .btn-primary,
   .btn-secondary {
     width: 100%;
+    padding: 14px 20px;
+  }
+  
+  .form-input {
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }

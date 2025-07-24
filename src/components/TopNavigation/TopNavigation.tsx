@@ -78,7 +78,8 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   selectedLanguage = 'ru',
   languages = [
     { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-    { code: 'he', name: 'עברית', flag: '🇮🇱' }
+    { code: 'he', name: 'עברית', flag: '🇮🇱' },
+    { code: 'en', name: 'English', flag: '🇺🇸' }
   ],
   userProfile = {
     id: '1',

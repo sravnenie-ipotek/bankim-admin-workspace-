@@ -266,7 +266,9 @@ const ContentMenu: React.FC = () => {
           <div className="table-header-controls">
             <div className="search-container">
               <div className="search-input-wrapper">
-                <img src="/src/assets/images/static/icons/search.svg" alt="Search" className="search-icon" />
+                <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
                 <input
                   type="text"
                   placeholder="Искать по названию, ID, номеру страницы"
@@ -276,10 +278,6 @@ const ContentMenu: React.FC = () => {
                 />
               </div>
             </div>
-            <button className="filters-btn">
-              <img src="/src/assets/images/static/icons/filters.svg" alt="Filters" />
-              <span>Фильтры</span>
-            </button>
           </div>
 
           {/* Table Content - Column Layout */}
@@ -382,12 +380,15 @@ const ContentMenu: React.FC = () => {
               Показывает 1-20 из 1000
             </span>
             <div className="row-view13">
-              <img
-                src="/src/assets/images/static/icons/chevron-left.svg" 
-                className="image9"
+              <div 
+                className="pagination-arrow left"
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-              />
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 12L6 8L10 4" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <div className="view5">
                 <span className="text19">1</span>
               </div>
@@ -403,12 +404,15 @@ const ContentMenu: React.FC = () => {
               <div className="view5">
                 <span className="text19">100</span>
               </div>
-              <img
-                src="/src/assets/images/static/icons/chevron-right.svg" 
-                className="image9"
+              <div 
+                className="pagination-arrow right"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 style={{ opacity: currentPage === totalPages ? 0.5 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
-              />
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 12L10 8L6 4" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
