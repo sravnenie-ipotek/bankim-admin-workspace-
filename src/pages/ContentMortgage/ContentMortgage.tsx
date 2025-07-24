@@ -1,24 +1,12 @@
 import React from 'react';
-import { ContentListBase } from '../ContentListBase';
+import ContentMortgageTable from '../ContentMortgageTable';
 
 /**
  * ContentMortgage component displays the mortgage content section
- * following Confluence Page 3 specification for "Рассчитать ипотеку"
- * 
- * This component reuses ContentListBase to avoid code duplication
- * and ensures consistent UI across all content sections
+ * with a specialized table view for dropdown and text content types
  */
 const ContentMortgage: React.FC = () => {
-  return (
-    <ContentListBase
-      sectionTitle="Рассчитать ипотеку"
-      contentType="mortgage"
-      breadcrumbItems={[
-        { label: 'Контент сайта', isActive: false },
-        { label: 'Рассчитать ипотеку', isActive: true }
-      ]}
-    />
-  );
+  return <ContentMortgageTable />;
 };
 
 export default ContentMortgage; 
