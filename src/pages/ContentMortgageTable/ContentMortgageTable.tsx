@@ -1,26 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { apiService } from '../../services/api';
+import { ContentListItem } from '../ContentListBase/types';
+import { useNavigate } from 'react-router-dom';
 import './ContentMortgageTable.css';
-
-// Interface for mortgage items (commented out since table currently uses hardcoded data)
-// interface MortgageItem {
-//   id: string;
-//   content_key: string;
-//   component_type: string;
-//   category: string;
-//   screen_location: string;
-//   description: string;
-//   is_active: boolean;
-//   translations: {
-//     ru: string;
-//     he: string;
-//     en: string;
-//   };
-//   last_modified: string;
-// }
 
 const ContentMortgageTable: React.FC = () => {
   const { hasPermission } = useAuth();
+  const navigate = useNavigate();
   
   // Quick login function for testing
   const quickLogin = (role: string) => {
@@ -73,77 +60,88 @@ const ContentMortgageTable: React.FC = () => {
     hasEditPermission
   });
 
-  // const [mortgageItems, setMortgageItems] = useState<MortgageItem[]>([]); // Commented out since table uses hardcoded data
+  const [mortgageItems, setMortgageItems] = useState<ContentListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null); // Commented out since not used with hardcoded data
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  // const itemsPerPage = 20; // Commented out since pagination is not currently used
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   useEffect(() => {
-    // Simulate loading since table currently uses hardcoded data
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
+    fetchMortgageContent();
   }, []);
 
-  // Commented out since table currently uses hardcoded data
-  // const fetchMortgageContent = async () => {
-  //   try {
-  //     setLoading(true);
-  //     setError(null);
-  //     
-  //     const response = await fetch('http://localhost:3001/api/content/mortgage');
-  //     const data = await response.json();
-  //     
-  //     if (data.success && data.data?.mortgage_content) {
-  //       setMortgageItems(data.data.mortgage_content);
-  //       console.log(`✅ Loaded ${data.data.mortgage_content.length} mortgage items`);
-  //     } else {
-  //       setError('Не удалось загрузить данные');
-  //     }
-  //   } catch (err) {
-  //     console.error('Error fetching mortgage content:', err);
-  //     setError('Ошибка при загрузке данных');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchMortgageContent = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await apiService.getContentByContentType('mortgage');
+      
+      if (response.success && response.data) {
+        setMortgageItems(response.data);
+        console.log(`✅ Loaded ${response.data.length} mortgage items`);
+      } else {
+        setError('Не удалось загрузить данные');
+      }
+    } catch (err) {
+      console.error('Error fetching mortgage content:', err);
+      setError('Ошибка при загрузке данных');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Filter items based on search
-  // Filter items based on search query (commented out since table currently uses hardcoded data)
-  // const filteredItems = useMemo(() => {
-  //   if (!searchQuery.trim()) return mortgageItems;
-  //   
-  //   const query = searchQuery.toLowerCase();
-  //   return mortgageItems.filter(item => 
-  //     item.content_key?.toLowerCase().includes(query) ||
-  //     item.translations.ru?.toLowerCase().includes(query) ||
-  //     item.translations.he?.includes(query) ||
-  //     item.translations.en?.toLowerCase().includes(query) ||
-  //     item.description?.toLowerCase().includes(query)
-  //   );
-  // }, [mortgageItems, searchQuery]);
+  // Filter items based on search query
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return mortgageItems;
+    
+    const query = searchQuery.toLowerCase();
+    return mortgageItems.filter(item => 
+      item.title?.toLowerCase().includes(query) ||
+      item.id?.toLowerCase().includes(query) ||
+      item.pageNumber?.toString().includes(query)
+    );
+  }, [mortgageItems, searchQuery]);
 
-  // Pagination logic (commented out since table currently uses hardcoded data)
-  // const currentPage = 1;
-  // const paginationData = useMemo(() => {
-  //   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  //   const startIndex = (currentPage - 1) * itemsPerPage;
-  //   const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
-  //   const currentItems = filteredItems.slice(startIndex, endIndex);
-  //   
-  //   return {
-  //     totalPages,
-  //     startIndex,
-  //     endIndex,
-  //     currentItems,
-  //     totalItems: filteredItems.length
-  //   };
-  // }, [filteredItems, currentPage]);
+  // Pagination logic
+  const paginationData = useMemo(() => {
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
+    const currentItems = filteredItems.slice(startIndex, endIndex);
+    
+    return {
+      totalPages,
+      startIndex,
+      endIndex,
+      currentItems,
+      totalItems: filteredItems.length
+    };
+  }, [filteredItems, currentPage, itemsPerPage]);
 
-  // These functions will be implemented when the table is converted to use dynamic data
-  // Currently the table uses hardcoded content
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleNavigate = (item: ContentListItem) => {
+    // Navigate to edit page for the specific mortgage content item
+    navigate(`/content/mortgage/edit/${item.id}`);
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day}.${month}.${year} | ${hours}:${minutes}`;
+    } catch {
+      return '01.08.2023 | 12:03';
+    }
+  };
 
   return (
     <div className="mortgage-table-container">
@@ -179,12 +177,11 @@ const ContentMortgageTable: React.FC = () => {
         <div className="loading-state">Загрузка...</div>
       )}
 
-      {/* Error state commented out since using hardcoded data */}
-      {/* {error && (
+      {error && (
         <div className="error-state">{error}</div>
-      )} */}
+      )}
 
-      {!loading && (
+      {!loading && !error && (
         <>
           {/* Header */}
           <div className="page-header">
@@ -221,201 +218,123 @@ const ContentMortgageTable: React.FC = () => {
 
               {/* Table Body */}
               <div className="table-body">
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">2.Калькулятор ипотеки.</span>
+                {paginationData.currentItems.length === 0 ? (
+                  <div className="empty-state" style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF' }}>
+                    <p>Нет данных для отображения</p>
                   </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">15</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">4.Анкета личных данных</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">23</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">7.Анкета доходов. Наемный работник</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">22</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">7.1 Добавление источника дохода</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">9</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">7.2 Добавление доп источника дохода</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">5</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">7.3 Добавление долгового обязательства</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">7</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">11. Выбор программ ипотеки</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">11</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">11.1 Детали банка. Описание</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">3</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-row">
-                  <div className="table-cell page-name-cell">
-                    <span className="page-name">11.2 Детали банка. Условия</span>
-                  </div>
-                  <div className="table-cell actions-count-cell">
-                    <span className="action-count">3</span>
-                  </div>
-                  <div className="table-cell last-modified-cell">
-                    <span className="last-modified">01.08.2023 | 12:03</span>
-                  </div>
-                  <div className="table-cell action-buttons-cell">
-                    <button className="navigate-button">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                ) : (
+                  paginationData.currentItems.map((item) => (
+                    <div key={item.id} className="table-row">
+                      <div className="table-cell page-name-cell">
+                        <span className="page-name">{item.title}</span>
+                      </div>
+                      <div className="table-cell actions-count-cell">
+                        <span className="action-count">{item.actionCount}</span>
+                      </div>
+                      <div className="table-cell last-modified-cell">
+                        <span className="last-modified">{formatDate(item.lastModified)}</span>
+                      </div>
+                      <div className="table-cell action-buttons-cell">
+                        <button 
+                          className="navigate-button"
+                          onClick={() => handleNavigate(item)}
+                          title={`Редактировать страницу ${item.pageNumber}`}
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
               
               {/* Pagination */}
-              <div className="pagination-container">
-                <span className="pagination-info">
-                  Показывает 1-20 из 1000
-                </span>
-                <div className="pagination-controls">
-                  <button className="pagination-arrow" disabled>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                  <button className="pagination-number">1</button>
-                  <button className="pagination-number active">2</button>
-                  <button className="pagination-number">3</button>
-                  <span className="pagination-ellipsis">...</span>
-                  <button className="pagination-number">100</button>
-                  <button className="pagination-arrow">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
+              {paginationData.totalPages > 1 && (
+                <div className="pagination-container">
+                  <span className="pagination-info">
+                    Показывает {paginationData.startIndex + 1}-{paginationData.endIndex} из {paginationData.totalItems}
+                  </span>
+                  <div className="pagination-controls">
+                    <button 
+                      className="pagination-arrow" 
+                      disabled={currentPage === 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    
+                    {/* Page numbers */}
+                    {(() => {
+                      const pages = [];
+                      const showEllipsisStart = currentPage > 3;
+                      const showEllipsisEnd = currentPage < paginationData.totalPages - 2;
+                      
+                      // Always show first page
+                      pages.push(
+                        <button 
+                          key={1}
+                          className={`pagination-number ${currentPage === 1 ? 'active' : ''}`}
+                          onClick={() => handlePageChange(1)}
+                        >
+                          1
+                        </button>
+                      );
+                      
+                      // Show ellipsis if needed
+                      if (showEllipsisStart && currentPage > 4) {
+                        pages.push(<span key="ellipsis-start" className="pagination-ellipsis">...</span>);
+                      }
+                      
+                      // Show pages around current page
+                      for (let i = Math.max(2, currentPage - 1); i <= Math.min(paginationData.totalPages - 1, currentPage + 1); i++) {
+                        pages.push(
+                          <button 
+                            key={i}
+                            className={`pagination-number ${currentPage === i ? 'active' : ''}`}
+                            onClick={() => handlePageChange(i)}
+                          >
+                            {i}
+                          </button>
+                        );
+                      }
+                      
+                      // Show ellipsis if needed
+                      if (showEllipsisEnd && currentPage < paginationData.totalPages - 3) {
+                        pages.push(<span key="ellipsis-end" className="pagination-ellipsis">...</span>);
+                      }
+                      
+                      // Always show last page if there's more than one page
+                      if (paginationData.totalPages > 1) {
+                        pages.push(
+                          <button 
+                            key={paginationData.totalPages}
+                            className={`pagination-number ${currentPage === paginationData.totalPages ? 'active' : ''}`}
+                            onClick={() => handlePageChange(paginationData.totalPages)}
+                          >
+                            {paginationData.totalPages}
+                          </button>
+                        );
+                      }
+                      
+                      return pages;
+                    })()}
+                    
+                    <button 
+                      className="pagination-arrow"
+                      disabled={currentPage === paginationData.totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </>

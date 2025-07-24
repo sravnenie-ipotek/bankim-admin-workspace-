@@ -19,34 +19,91 @@ npm run lint
 
 # Preview production build
 npm run preview
+
+# Backend commands (when backend is needed)
+npm run backend:dev      # Start backend dev server on port 3001
+npm run backend:migrate  # Run database migrations
+npm run full-dev        # Run both frontend and backend concurrently
 ```
 
 ## Architecture Overview
 
-This is a standalone React TypeScript management portal for a banking system with role-based access control. It operates independently from the main production application (which runs on port 5173).
+This is a React TypeScript management portal for a banking system with role-based access control. It operates independently from the main production application.
 
-### Key Architectural Decisions
+### Tech Stack
+- **Frontend**: React 18 + TypeScript + Vite
+- **Routing**: React Router v6
+- **Styling**: CSS with dark theme (no CSS-in-JS libraries)
+- **Backend**: Express + PostgreSQL (in `/backend` directory)
+- **API**: RESTful API with content management endpoints
 
-1. **Component Structure**: Components follow a pattern of `ComponentName.tsx` + `ComponentName.css` in the same directory. Shared components live in `src/components/` while page components are in `src/pages/`.
+### Key Architectural Patterns
 
-2. **Routing**: Uses React Router v6 with routes defined in `src/App.tsx`. The application has role-specific routes corresponding to 6 user roles:
-   - Director (`/director`)
-   - Administration (`/administration`)
-   - Sales Manager (`/sales-manager`)
-   - Bank Employee (`/bank-employee`)
-   - Content Manager (`/content-manager`)
-   - Brokers (`/brokers`)
+1. **Component Structure**: Components follow `ComponentName.tsx` + `ComponentName.css` pattern. Shared components in `src/components/`, page components in `src/pages/`.
 
-3. **Layout Pattern**: All pages use the `AdminLayout` wrapper component which provides consistent structure with `SharedHeader` and `SharedMenu` components.
+2. **Routing Pattern**: 
+   - Main routes defined in `src/App.tsx`
+   - Protected routes use `ProtectedRoute` component
+   - Content management routes follow `/content/{section}` pattern
 
-4. **TypeScript Usage**: Strict mode is enabled. All components should have typed props using interfaces. The project targets ES2020.
+3. **Layout System**: All pages wrapped in `AdminLayout` component providing consistent structure with `SharedHeader` and `SharedMenu`.
 
-5. **Styling**: Uses plain CSS files with a dark theme. The application follows a color scheme with primary colors like `#6366F1` (purple) and dark backgrounds.
+4. **API Integration**: 
+   - API service centralized in `src/services/api.ts`
+   - Supports caching with ETag headers
+   - Fallback to mock data when API unavailable
+   - Environment-based configuration via Vite env vars
+
+5. **Content Management Architecture**:
+   - Multilingual support (RU/HE/EN)
+   - Component-based content system (text, dropdown, link types)
+   - Real-time editing with ContentEditModals
+   - Database-driven content from `bankim_content` PostgreSQL
+
+## Database Architecture
+
+The system uses multiple PostgreSQL databases:
+- **bankim_content**: UI content and translations
+- **bankim_core**: Business logic, formulas, permissions
+- **bankim_management**: Portal-specific data
+
+Backend API connects to these databases and provides endpoints for content management.
+
+## Role-Based Access Control
+
+Six user roles with different permissions:
+- Director (super-admin)
+- Administration
+- Content Manager
+- Sales Manager
+- Bank Employee
+- Brokers
+
+Each role has specific routes and UI components based on permissions.
 
 ## Development Notes
 
-- The application is configured to be accessible on the network (`host: true` in Vite config)
-- No test framework is currently set up
-- Axios is installed for API calls but not yet implemented
-- No state management library is in use
-- ESLint is configured with TypeScript support but no explicit config file exists
+- TypeScript strict mode enabled
+- No test framework currently configured
+- API URL configuration via environment variables (see env.template)
+- Content caching implemented with 5-minute TTL
+- Mock data fallback for offline development
+- Port 3002 for frontend, 3001 for backend API
+
+## Common Patterns
+
+### Adding New Content Pages
+1. Create component in `src/pages/Content{Name}/`
+2. Add route in `App.tsx` with ProtectedRoute wrapper
+3. Update SharedMenu with navigation item
+4. Implement API calls using `apiService`
+
+### Working with Multilingual Content
+- Content stored with language codes: 'ru', 'he', 'en'
+- Use `apiService.getContentByScreen()` for fetching
+- Edit modals handle all three languages simultaneously
+
+### State Management
+- Using React Context for auth (`AuthContext`)
+- Navigation state via `NavigationContext`
+- No Redux/MobX - local component state preferred

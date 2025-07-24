@@ -796,14 +796,29 @@ class ApiService {
         
         if (contentArray.length > 0) {
           // Transform database response to ContentListItem format
-          const items: ContentListItem[] = contentArray.map((item: any, index: number) => ({
-            id: item.id?.toString() || `item-${index}`,
-            title: item.translations?.ru || item.title_ru || item.content_key || `Item ${index + 1}`,
-            actionCount: item.action_count || 1,
-            lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
-            contentType: item.component_type || item.content_type || 'text',
-            pageNumber: item.page_number || index + 1
-          }));
+          const items: ContentListItem[] = contentArray.map((item: any, index: number) => {
+            // Get the title
+            const title = item.translations?.ru || item.title_ru || item.content_key || `Item ${index + 1}`;
+            
+            // Extract page number from title if it starts with a number pattern (e.g., "2.", "4.", "7.1", "11.2")
+            let pageNumber = item.page_number || index + 1;
+            const pageMatch = title.match(/^(\d+(?:\.\d+)?)\./);
+            if (pageMatch) {
+              pageNumber = parseFloat(pageMatch[1]);
+            }
+            
+            return {
+              id: item.id?.toString() || `item-${index}`,
+              title: title,
+              actionCount: item.action_count || 1,
+              lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
+              contentType: item.component_type || item.content_type || 'text',
+              pageNumber: pageNumber
+            };
+          });
+          
+          // Sort items by page number
+          items.sort((a, b) => (a.pageNumber || 0) - (b.pageNumber || 0));
           
           console.log(`✅ Successfully fetched ${items.length} ${contentType} items from database`);
           return {
