@@ -1085,7 +1085,7 @@ app.get('/api/content/mortgage', async (req, res) => {
 app.get('/api/content/mortgage-refi', async (req, res) => {
   try {
     const result = await safeQuery(`
-      SELECT 
+      SELECT
         ci.id,
         ci.content_key,
         ci.component_type,
@@ -1102,12 +1102,17 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.is_active = TRUE
-        AND ci.screen_location = 'mortgage_refinancing'
-        AND ct_ru.content_value IS NOT NULL
-        AND ci.component_type != 'option'          -- Exclude individual dropdown options
-        AND ci.content_key NOT LIKE '%_option_%'   -- Exclude option patterns
-        AND ci.content_key NOT LIKE '%_ph'         -- Exclude placeholders
-      ORDER BY ci.content_key
+        AND ci.screen_location IN (
+          'refinance_step1',     -- for /services/refinance-mortgage/1
+          'refinance_step2',     -- for /services/refinance-mortgage/2
+          'refinance_step3',     -- for /services/refinance-mortgage/3
+          'mortgage_step4'       -- for /services/calculate-mortgage/4
+        )
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
+        AND ci.component_type != 'option'
+        AND ci.content_key NOT LIKE '%_option_%'
+        AND ci.content_key NOT LIKE '%_ph'
+      ORDER BY ci.screen_location, ci.content_key
     `);
 
     const refiContent = result.rows.map(row => ({

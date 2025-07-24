@@ -788,6 +788,8 @@ class ApiService {
         
         if (contentType === 'mortgage' && response.data.mortgage_content) {
           contentArray = response.data.mortgage_content;
+        } else if (contentType === 'mortgage-refi' && response.data.mortgage_refi_content) {
+          contentArray = response.data.mortgage_refi_content;
         } else if (contentType === 'menu' && response.data.menu_items) {
           contentArray = response.data.menu_items;
         } else if (Array.isArray(response.data)) {
