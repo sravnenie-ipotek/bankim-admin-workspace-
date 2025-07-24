@@ -129,31 +129,8 @@ const ContentMainText: React.FC = () => {
     setHasChanges(true);
   };
 
-  const handleStyleChange = (styleKey: string, value: any) => {
-    if (!textData) return;
-    
-    setTextData({
-      ...textData,
-      styling: {
-        ...textData.styling,
-        [styleKey]: value
-      }
-    });
-    setHasChanges(true);
-  };
-
-  const handlePositionChange = (axis: 'x' | 'y', value: number) => {
-    if (!textData) return;
-    
-    setTextData({
-      ...textData,
-      position: {
-        ...textData.position,
-        [axis]: value
-      }
-    });
-    setHasChanges(true);
-  };
+  // Note: handleStyleChange and handlePositionChange removed as they're not used in current implementation
+  // They were likely for future features that weren't implemented yet
 
   if (isLoading) {
     return (

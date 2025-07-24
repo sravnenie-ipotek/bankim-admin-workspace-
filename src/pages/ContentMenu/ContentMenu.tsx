@@ -129,11 +129,50 @@ const ContentMenu: React.FC = () => {
 
   const handleSave = async (itemId: string) => {
     try {
-      // TODO: Implement save functionality with real API
       console.log('Saving translations for item:', itemId, editedTranslations);
+      
+      // Find the item to get its current data
+      const item = menuData?.menu_items.find(i => i.id === itemId);
+      if (!item) {
+        console.error('Item not found');
+        return;
+      }
+      
+      // Save Russian translation
+      if (editedTranslations.ru !== item.translations.ru) {
+        const ruResponse = await apiService.updateMenuTranslation(itemId, 'ru', editedTranslations.ru);
+        if (!ruResponse.success) {
+          console.error('Failed to save Russian translation:', ruResponse.error);
+          alert('Ошибка при сохранении русского перевода');
+          return;
+        }
+      }
+      
+      // Save Hebrew translation
+      if (editedTranslations.he !== item.translations.he) {
+        const heResponse = await apiService.updateMenuTranslation(itemId, 'he', editedTranslations.he);
+        if (!heResponse.success) {
+          console.error('Failed to save Hebrew translation:', heResponse.error);
+          alert('Ошибка при сохранении перевода на иврите');
+          return;
+        }
+      }
+      
+      // Update local state
+      if (menuData) {
+        const updatedItems = menuData.menu_items.map(i => 
+          i.id === itemId 
+            ? { ...i, translations: { ...i.translations, ru: editedTranslations.ru, he: editedTranslations.he } }
+            : i
+        );
+        setMenuData({ ...menuData, menu_items: updatedItems });
+      }
+      
       setEditingId(null);
+      console.log('✅ Translations saved successfully');
     } catch (error) {
       console.error('Error saving translations:', error);
+      alert('Произошла ошибка при сохранении');
     }
   };
 
@@ -152,12 +191,8 @@ const ContentMenu: React.FC = () => {
     }
   };
 
-  const handleDeleteClick = (item: MenuTranslation) => {
-    if (window.confirm(`Вы уверены, что хотите удалить "${item.content_key}"?`)) {
-      // TODO: Implement delete functionality
-      console.log('Deleting item:', item.id);
-    }
-  };
+  // handleDeleteClick removed as it's not used in current implementation
+  // It was likely for a future feature that wasn't implemented yet
 
   const filteredItems = useMemo(() => {
     if (!menuData?.menu_items) return [];
@@ -370,7 +405,16 @@ const ContentMenu: React.FC = () => {
                       </div>
                     ) : (
                       <div className="row-actions">
-                        {/* Render only the primary action based on content type to match Figma */}
+                        {/* Edit button for inline editing */}
+                        <button
+                          className="action-btn edit-btn"
+                          onClick={() => handleEditClick(item)}
+                          title="Редактировать"
+                        >
+                          <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
+                        </button>
+                        
+                        {/* Additional action buttons based on content type */}
                         {item.category?.toLowerCase() === 'dropdown' && (
                           <button
                             className="action-btn view-btn"
@@ -382,11 +426,11 @@ const ContentMenu: React.FC = () => {
                         )}
                         {item.category?.toLowerCase() === 'text' && (
                           <button
-                            className="action-btn edit-btn"
+                            className="action-btn view-btn"
                             onClick={() => handleViewClick(item)}
-                            title="Редактировать текст"
+                            title="Редактировать текст подробно"
                           >
-                            <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
+                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="View" />
                           </button>
                         )}
                         {item.category?.toLowerCase() === 'link' && (

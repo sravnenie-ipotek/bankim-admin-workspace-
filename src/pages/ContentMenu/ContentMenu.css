@@ -544,6 +544,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .action-btn {
@@ -551,14 +552,24 @@
   border: none;
   padding: 4px;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
 }
 
 .action-btn:hover {
   opacity: 0.7;
+  background-color: rgba(75, 85, 99, 0.3);
+}
+
+.action-btn.edit-btn {
+  color: #FBBF24;
+}
+
+.action-btn.edit-btn:hover {
+  background-color: rgba(251, 191, 36, 0.1);
 }
 
 .action-btn img {

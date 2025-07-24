@@ -1,365 +1,264 @@
 .mortgage-table-container {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   background-color: #111928;
   min-height: 100vh;
 }
 
 /* Header */
 .page-header {
-  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  background-color: #1F2A37;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .page-title {
-  font-size: 1.875rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
+  font-size: 30px;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin: 0;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: #8c94a6;
+.tag-badge {
+  display: none;
 }
 
-.breadcrumb-item {
-  color: #8c94a6;
-}
-
-.breadcrumb-item.active {
-  color: #ffffff;
-}
-
-.breadcrumb-separator {
-  color: #4a4e5a;
-}
-
-/* Tabs */
+/* Tabs - Hidden */
 .content-tabs {
-  display: flex;
-  gap: 2rem;
-  border-bottom: 1px solid #3a3f4b;
-  margin-bottom: 2rem;
-}
-
-.tab {
-  padding: 0.75rem 0;
-  font-size: 0.875rem;
-  color: #8c94a6;
-  cursor: pointer;
-  position: relative;
-  transition: color 0.2s;
-}
-
-.tab:hover {
-  color: #ffffff;
-}
-
-.tab.active {
-  color: #6366f1;
-}
-
-.tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #6366f1;
+  display: none;
 }
 
 /* Content Section */
 .content-section {
-  background-color: #1a1f2a;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
 }
 
 .section-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
+  display: none;
 }
 
 /* Search */
 .search-container {
   position: relative;
-  margin-bottom: 1.5rem;
-  max-width: 600px;
+  margin: 16px;
 }
 
 .search-icon {
   position: absolute;
-  left: 1rem;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #8c94a6;
+  color: #9CA3AF;
+  width: 16px;
+  height: 16px;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.75rem;
-  background-color: #252b3b;
-  border: 1px solid #3a3f4b;
-  border-radius: 0.375rem;
-  color: #ffffff;
-  font-size: 0.875rem;
-  transition: border-color 0.2s;
+  padding: 12px 16px 12px 44px;
+  background-color: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  transition: all 0.2s;
 }
 
 .search-input::placeholder {
-  color: #6b7280;
+  color: #9CA3AF;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #6B7280;
+  background-color: #3F4451;
+}
+
+/* Content Section */
+.content-section {
+  background-color: #1F2A37;
+  border-radius: 8px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0 105px 40px 105px;
 }
 
 /* Table Container */
-.mortgage-table {
-  background-color: #1f2937;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  border: 1px solid #374151;
+.pages-table {
+  background-color: transparent;
+  border-radius: 0;
+  overflow: visible;
+  border: none;
 }
 
 /* Table Header */
 .table-header {
   display: flex;
-  background-color: #1a1f2a;
-  border-bottom: 1px solid #3a3f4b;
-  padding: 0;
+  background-color: #374151;
+  padding: 16px;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 .header-cell {
-  padding: 0.75rem 1rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #8c94a6;
+  font-size: 12px;
+  font-weight: bold;
+  color: #9CA3AF;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  box-sizing: border-box;
 }
 
-.header-cell.number-cell {
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.header-cell.id-cell {
-  width: 300px;
-  flex-shrink: 0;
-}
-
-.header-cell.type-cell {
-  width: 100px;
-  flex-shrink: 0;
-  justify-content: center;
-}
-
-.header-cell.ru-cell {
+.header-cell.page-name-cell {
   flex: 1;
-  min-width: 300px;
+  padding-left: 0;
 }
 
-.header-cell.he-cell {
-  flex: 1;
-  min-width: 300px;
+.header-cell.actions-count-cell {
+  width: 224px;
+  padding-left: 58px;
 }
 
-.header-cell.actions-cell {
-  width: 80px;
+.header-cell.last-modified-cell {
+  width: 224px;
+  padding-left: 58px;
+}
+
+.header-cell.action-buttons-cell {
+  width: 115px;
   flex-shrink: 0;
-  justify-content: center;
 }
 
 /* Table Body */
 .table-body {
-  max-height: 600px;
-  overflow-y: auto;
-  background-color: #1f2937;
+  background-color: transparent;
 }
 
 .table-row {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #3a3f4b;
+  background-color: transparent;
+  border-bottom: 1px solid #374151;
   transition: background-color 0.2s;
-  min-height: 60px;
+  min-height: 53px;
 }
 
 .table-row:hover {
-  background-color: rgba(99, 102, 241, 0.05);
-}
-
-.table-row:last-child {
-  border-bottom: none;
+  background-color: rgba(55, 65, 81, 0.3);
 }
 
 .table-cell {
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
-  box-sizing: border-box;
+  padding: 16px;
 }
 
-.table-cell.number-cell {
-  width: 200px;
-  flex-shrink: 0;
+.table-cell.page-name-cell {
+  flex: 1;
+  padding-left: 16px;
 }
 
-.table-cell.id-cell {
-  width: 300px;
-  flex-shrink: 0;
+.table-cell.actions-count-cell {
+  width: 224px;
+  padding-left: 16px;
 }
 
-.table-cell.type-cell {
-  width: 100px;
+.table-cell.last-modified-cell {
+  width: 224px;
+  padding-left: 16px;
+}
+
+.table-cell.action-buttons-cell {
+  width: 115px;
   flex-shrink: 0;
   justify-content: center;
-}
-
-.table-cell.ru-cell {
-  flex: 1;
-  min-width: 300px;
-}
-
-.table-cell.he-cell {
-  flex: 1;
-  min-width: 300px;
-  justify-content: flex-start;
-}
-
-.table-cell.actions-cell {
-  width: 80px;
-  flex-shrink: 0;
-  justify-content: center;
+  padding: 0;
 }
 
 /* Cell Content */
-.action-number {
-  font-weight: 600;
-  color: #8c94a6;
+.page-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
 }
 
-.content-id {
-  font-family: 'SF Mono', Monaco, monospace;
-  font-size: 0.75rem;
-  color: #60a5fa;
+.action-count {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  width: 14px;
 }
 
-.content-type {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background-color: #6366f1;
-  color: #ffffff;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+.last-modified {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  width: 115px;
 }
 
-.content-type.text,
-.content-type.label {
-  background-color: #10b981;
-}
-
-.content-type.option {
-  background-color: #f59e0b;
-}
-
-.content-type.placeholder {
-  background-color: #8b5cf6;
-}
-
-.content-type.button {
-  background-color: #ef4444;
-}
-
-.translation-text {
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-.heb-text {
-  font-family: 'Arial', sans-serif;
-  direction: rtl;
-  unicode-bidi: embed;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-button {
-  width: 32px;
-  height: 32px;
+/* Navigation Button */
+.navigate-button {
+  width: 115px;
+  height: 53px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
-  border-radius: 0.375rem;
   cursor: pointer;
   transition: all 0.2s;
+  padding: 0;
 }
 
-.action-button:hover {
-  background-color: #4b5563;
+.navigate-button:hover {
+  background-color: rgba(55, 65, 81, 0.5);
 }
 
-.action-button img,
-.action-button svg {
-  width: 16px;
-  height: 16px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.action-button:hover img,
-.action-button:hover svg {
-  opacity: 1;
-}
-
-.action-button svg {
-  stroke: #ffffff;
+.navigate-button svg {
+  width: 24px;
+  height: 24px;
+  stroke: #FFFFFF;
+  stroke-width: 2;
 }
 
 /* Empty State */
 .empty-state {
   padding: 3rem;
   text-align: center;
-  color: #8c94a6;
+  color: #9CA3AF;
+  background-color: transparent;
+  margin: 0 16px;
 }
 
 /* Loading State */
 .loading-state {
   padding: 3rem;
   text-align: center;
-  color: #8c94a6;
+  color: #9CA3AF;
+  background-color: #111928;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Error State */
 .error-state {
   padding: 3rem;
   text-align: center;
-  color: #ef4444;
+  color: #EF4444;
+  background-color: #111928;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Pagination */
@@ -367,43 +266,50 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #3a3f4b;
+  padding: 16px;
+  background-color: transparent;
 }
 
 .pagination-info {
-  font-size: 0.875rem;
-  color: #8c94a6;
+  font-size: 14px;
+  color: #9CA3AF;
+  flex: 1;
 }
 
 .pagination-controls {
   display: flex;
-  gap: 0.5rem;
+  gap: 0;
   align-items: center;
 }
 
 .pagination-arrow,
 .pagination-number {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 33px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: 1px solid #3a3f4b;
-  border-radius: 0.375rem;
-  color: #8c94a6;
-  font-size: 0.875rem;
+  background: #1F2A37;
+  border: 1px solid #374151;
+  color: #9CA3AF;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
 }
 
+.pagination-arrow:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.pagination-arrow:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
 .pagination-arrow:hover:not(:disabled),
 .pagination-number:hover {
-  background-color: #252b3b;
-  color: #ffffff;
-  border-color: #4b5563;
+  background-color: #374151;
+  color: #FFFFFF;
 }
 
 .pagination-arrow:disabled {
@@ -411,15 +317,28 @@
   cursor: not-allowed;
 }
 
+.pagination-number {
+  border-radius: 0;
+  padding: 6px 12px;
+  height: auto;
+  width: auto;
+}
+
 .pagination-number.active {
-  background-color: #6366f1;
-  color: #ffffff;
-  border-color: #6366f1;
+  background-color: #374151;
+  color: #FFFFFF;
+  border-color: #374151;
 }
 
 .pagination-ellipsis {
-  color: #8c94a6;
-  padding: 0 0.5rem;
+  color: #9CA3AF;
+  padding: 6px 12px;
+  background: #1F2A37;
+  border: 1px solid #374151;
+  border-left: none;
+  border-right: none;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 /* Scrollbar */
@@ -428,14 +347,137 @@
 }
 
 .table-body::-webkit-scrollbar-track {
-  background: #1a1f2a;
+  background: #1F2A37;
 }
 
 .table-body::-webkit-scrollbar-thumb {
-  background: #4a4e5a;
+  background: #4A4E5A;
   border-radius: 4px;
 }
 
 .table-body::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #6B7280;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1440px) {
+  .content-section {
+    margin: 0 40px 40px 40px;
+  }
+  
+  .page-header {
+    padding: 24px 30px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .content-section {
+    margin: 0 20px 20px 20px;
+  }
+  
+  .pages-table {
+    overflow-x: auto;
+  }
+  
+  .table-header,
+  .table-row {
+    min-width: 900px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .content-section {
+    margin: 0 10px 20px 10px;
+  }
+  
+  .page-header {
+    padding: 16px 20px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .search-container {
+    margin: 12px;
+  }
+  
+  .table-header {
+    padding: 12px;
+    font-size: 11px;
+  }
+  
+  .table-cell {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .navigate-button {
+    width: 50px;
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .pagination-info {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .content-section {
+    margin: 0 8px 16px 8px;
+    border-radius: 6px;
+  }
+  
+  .page-header {
+    padding: 12px 16px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .search-container {
+    margin: 8px;
+  }
+  
+  .search-input {
+    font-size: 13px;
+    padding: 10px 14px 10px 40px;
+  }
+  
+  .table-header {
+    padding: 10px;
+    font-size: 10px;
+  }
+  
+  .table-cell {
+    padding: 10px;
+    font-size: 12px;
+  }
+  
+  .navigate-button {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .navigate-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .pagination-container {
+    padding: 12px;
+  }
+  
+  .pagination-arrow,
+  .pagination-number {
+    width: 36px;
+    height: 28px;
+    font-size: 12px;
+  }
 }

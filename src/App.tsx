@@ -30,6 +30,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
 import ContentMortgageEdit from './pages/ContentMortgageEdit';
+import ContentVerification from './pages/ContentVerification';
 
 
 
@@ -518,6 +519,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Общие страницы" activeMenuItem="content-general">
                   <ContentGeneral />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/verification" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Data Flow Verification" activeMenuItem="content-mortgage">
+                  <ContentVerification />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

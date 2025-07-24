@@ -36,7 +36,6 @@ interface ContentSection {
 
 const ContentMain: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   // Content sections based on Confluence Page 3 specification
   const contentSections: ContentSection[] = [

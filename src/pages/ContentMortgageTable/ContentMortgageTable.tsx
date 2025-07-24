@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { apiService } from '../../services/api';
 import './ContentMortgageTable.css';
 
 interface MortgageItem {
@@ -67,7 +66,6 @@ const ContentMortgageTable: React.FC = () => {
   const hasWritePermission = hasPermission('write', 'content-management');
   const hasReadPermission = hasPermission('read', 'content-management');
   const hasEditPermission = hasPermission('edit', 'content-management');
-  const hasAllPermissions = hasPermission;
   
   // Log permissions for debugging
   console.log('ContentMortgageTable Debug:', {
@@ -183,8 +181,8 @@ const ContentMortgageTable: React.FC = () => {
 
   return (
     <div className="mortgage-table-container">
-      {/* Debug Login Buttons */}
-      <div style={{ padding: '10px', background: '#374151', margin: '10px 0', borderRadius: '4px' }}>
+      {/* Debug Login Buttons - Hidden */}
+      <div style={{ display: 'none' }}>
         <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>Debug: Permission Testing</h4>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
           <button 
@@ -220,28 +218,15 @@ const ContentMortgageTable: React.FC = () => {
       )}
 
       {!loading && !error && (
-        <div className="mortgage-table">
+        <>
           {/* Header */}
           <div className="page-header">
             <h1 className="page-title">Рассчитать ипотеку</h1>
-            <div className="breadcrumb">
-              <span className="breadcrumb-item">Контент сайта</span>
-              <span className="breadcrumb-separator">›</span>
-              <span className="breadcrumb-item active">Рассчитать ипотеку</span>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="content-tabs">
-            <div className="tab active">До регистрации</div>
-            <div className="tab">Личный кабинет</div>
-            <div className="tab">Админ панель для сайтов</div>
-            <div className="tab">Админ панель для банков</div>
           </div>
 
           {/* Content Section */}
           <div className="content-section">
-            <h2 className="section-title">Список элементов</h2>
+            <h2 className="page-title" style={{ padding: '24px 24px 16px', margin: 0, fontSize: '24px' }}>Список страниц</h2>
             
             {/* Search */}
             <div className="search-container">
@@ -252,135 +237,221 @@ const ContentMortgageTable: React.FC = () => {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Искать по ключу, тексту, описанию"
+                placeholder="Искать по названию, ID, номеру страницы"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             {/* Table */}
-            <div className="table-header">
-              <div className="header-cell number-cell">Номер действия</div>
-              <div className="header-cell id-cell">ID</div>
-              <div className="header-cell type-cell">Тип</div>
-              <div className="header-cell ru-cell">RU</div>
-              <div className="header-cell he-cell">HEB</div>
-              <div className="header-cell actions-cell"></div>
-            </div>
+            <div className="pages-table">
+              <div className="table-header">
+                <div className="header-cell page-name-cell">НАЗВАНИЕ СТРАНИЦЫ</div>
+                <div className="header-cell actions-count-cell">КОЛИЧЕСТВО ДЕЙСТВИЙ</div>
+                <div className="header-cell last-modified-cell">БЫЛИ ИЗМЕНЕНИЯ</div>
+                <div className="header-cell action-buttons-cell"></div>
+              </div>
 
-            {/* Table Body */}
-            <div className="table-body">
-              {paginationData.currentItems.length === 0 ? (
-                <div className="empty-state">
-                  Элементы не найдены
-                </div>
-              ) : (
-                paginationData.currentItems.map((item, index) => (
-                  <div key={item.id} className="table-row">
-                    <div className="table-cell number-cell">
-                      <span className="action-number">
-                        {paginationData.startIndex + index + 1}.
-                      </span>
-                    </div>
-                    <div className="table-cell id-cell">
-                      <span className="content-id">{getContentId(item.content_key)}</span>
-                    </div>
-                    <div className="table-cell type-cell">
-                      <span className={`content-type ${item.component_type?.toLowerCase()}`}>
-                        {getComponentTypeDisplay(item.component_type)}
-                      </span>
-                    </div>
-                    <div className="table-cell ru-cell">
-                      <span className="translation-text">{item.translations.ru}</span>
-                    </div>
-                    <div className="table-cell he-cell">
-                      <span className="translation-text heb-text" dir="rtl">
-                        {item.translations.he}
-                      </span>
-                    </div>
-                    <div className="table-cell actions-cell">
-                      <div className="action-buttons">
-                        {item.component_type?.toLowerCase() === 'dropdown' ? (
-                          <button
-                            className="action-button dropdown-button"
-                            onClick={() => handleDropdownClick(item)}
-                            title="Перейти к опциям"
-                          >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="2" 
-                                    strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </button>
-                        ) : (
-                          hasWritePermission && (
-                            <button
-                              className="action-button edit-button"
-                              onClick={() => handleEditClick(item)}
-                              title="Редактировать"
-                            >
-                              <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
-                            </button>
-                          )
-                        )}
-                      </div>
-                    </div>
+              {/* Table Body */}
+              <div className="table-body">
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">2.Калькулятор ипотеки.</span>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">15</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">4.Анкета личных данных</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">23</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
 
-          {/* Pagination */}
-          {paginationData.totalPages > 1 && (
-            <div className="pagination-container">
-              <span className="pagination-info">
-                Показывает {paginationData.startIndex + 1}-{paginationData.endIndex} из {paginationData.totalItems}
-              </span>
-              <div className="pagination-controls">
-                <button 
-                  className="pagination-arrow"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  ‹
-                </button>
-                
-                {[...Array(paginationData.totalPages)].map((_, i) => {
-                  const page = i + 1;
-                  if (
-                    page === 1 ||
-                    page === paginationData.totalPages ||
-                    (page >= currentPage - 2 && page <= currentPage + 2)
-                  ) {
-                    return (
-                      <button
-                        key={page}
-                        className={`pagination-number ${page === currentPage ? 'active' : ''}`}
-                        onClick={() => handlePageChange(page)}
-                      >
-                        {page}
-                      </button>
-                    );
-                  } else if (
-                    page === currentPage - 3 ||
-                    page === currentPage + 3
-                  ) {
-                    return <span key={page} className="pagination-ellipsis">...</span>;
-                  }
-                  return null;
-                })}
-                
-                <button 
-                  className="pagination-arrow"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === paginationData.totalPages}
-                >
-                  ›
-                </button>
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">7.Анкета доходов. Наемный работник</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">22</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">7.1 Добавление источника дохода</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">9</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">7.2 Добавление доп источника дохода</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">5</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">7.3 Добавление долгового обязательства</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">7</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">11. Выбор программ ипотеки</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">11</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">11.1 Детали банка. Описание</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">3</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="table-row">
+                  <div className="table-cell page-name-cell">
+                    <span className="page-name">11.2 Детали банка. Условия</span>
+                  </div>
+                  <div className="table-cell actions-count-cell">
+                    <span className="action-count">3</span>
+                  </div>
+                  <div className="table-cell last-modified-cell">
+                    <span className="last-modified">01.08.2023 | 12:03</span>
+                  </div>
+                  <div className="table-cell action-buttons-cell">
+                    <button className="navigate-button">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Pagination */}
+              <div className="pagination-container">
+                <span className="pagination-info">
+                  Показывает 1-20 из 1000
+                </span>
+                <div className="pagination-controls">
+                  <button className="pagination-arrow" disabled>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <button className="pagination-number">1</button>
+                  <button className="pagination-number active">2</button>
+                  <button className="pagination-number">3</button>
+                  <span className="pagination-ellipsis">...</span>
+                  <button className="pagination-number">100</button>
+                  <button className="pagination-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
