@@ -1265,6 +1265,74 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
   }
 });
 
+/**
+ * Get credit calculation content
+ * GET /api/content/credit
+ * Returns content for credit calculation screen with translations
+ */
+app.get('/api/content/credit', async (req, res) => {
+  try {
+    const result = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value AS title_ru,
+        ct_he.content_value AS title_he,
+        ct_en.content_value AS title_en,
+        ci.updated_at
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND ci.screen_location IN (
+          'credit_step1',        -- for /services/calculate-credit/1
+          'credit_step2',        -- for /services/calculate-credit/2
+          'credit_step3',        -- for /services/calculate-credit/3
+          'credit_step4'         -- for /services/calculate-credit/4
+        )
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
+        AND ci.component_type != 'option'
+        AND ci.content_key NOT LIKE '%_option_%'
+        AND ci.content_key NOT LIKE '%_ph'
+      ORDER BY ci.screen_location, ci.content_key
+    `);
+
+    const creditContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: creditContent.length,
+        credit_content: creditContent
+      }
+    });
+  } catch (error) {
+    console.error('Get credit content error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
