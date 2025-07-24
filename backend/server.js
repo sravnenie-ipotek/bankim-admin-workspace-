@@ -776,9 +776,33 @@ app.put('/api/content-items/:content_item_id/translations/:language_code', async
 });
 
 /**
- * REMOVED: Mock UI Settings endpoints
- * Mock implementation has been removed - implement real UI settings if needed
+ * Get UI settings
+ * GET /api/ui-settings
+ * Returns UI configuration settings
  */
+app.get('/api/ui-settings', async (req, res) => {
+  try {
+    // Return basic UI settings - can be expanded later
+    const uiSettings = {
+      theme: 'dark',
+      language: 'ru',
+      dateFormat: 'dd/mm/yyyy',
+      currency: 'ILS',
+      timezone: 'Asia/Jerusalem'
+    };
+
+    res.json({
+      success: true,
+      data: uiSettings
+    });
+  } catch (error) {
+    console.error('Get UI settings error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 
 /**
  * Get text content by action ID

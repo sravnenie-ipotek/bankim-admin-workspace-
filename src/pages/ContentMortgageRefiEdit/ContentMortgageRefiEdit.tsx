@@ -46,16 +46,22 @@ const ContentMortgageRefiEdit: React.FC = () => {
       setError(null);
 
       console.log('🔍 Fetching mortgage-refi content for item ID:', itemId);
+      console.log('🔍 ItemId type:', typeof itemId, 'Value:', itemId);
 
-      // Fetch mortgage-refi content using the specific API endpoint
-      const response = await fetch('/api/content/mortgage-refi');
-      const responseData = await response.json();
+      // Try direct API call first to bypass any caching issues
+      console.log('🔍 Making direct API call to bypass caching...');
+      const directResponse = await fetch(`http://localhost:3001/api/content/mortgage-refi?_t=${Date.now()}`);
+      const directData = await directResponse.json();
+      console.log('🔍 Direct API response:', directData);
+      
+      // Now also try the apiService
+      const response = await apiService.getContentByContentType('mortgage-refi');
+      console.log('🔍 ApiService response:', response);
 
-      if (responseData.success && responseData.data) {
-        console.log('📊 API Response structure:', responseData.data);
-        
-        // Handle the actual API response structure
-        const contentItems = responseData.data.mortgage_refi_content || [];
+      // Use direct API response temporarily for debugging
+      if (directData.success && directData.data && directData.data.mortgage_refi_content) {
+        console.log('📊 Using direct API response');
+        const contentItems = directData.data.mortgage_refi_content;
         console.log('📊 Available mortgage-refi items:', contentItems.length);
         console.log('🔢 Item IDs:', contentItems.map((i: any) => i.id));
         
@@ -66,7 +72,12 @@ const ContentMortgageRefiEdit: React.FC = () => {
         }
         
         // Convert itemId to string for comparison (API returns string IDs)
-        const item = contentItems.find((i: any) => i.id === itemId || i.id === parseInt(itemId));
+        console.log('🔍 Looking for itemId:', itemId, 'in items:', contentItems.map((i: any) => ({ id: i.id, idType: typeof i.id })));
+        const item = contentItems.find((i: any) => {
+          const match = i.id === itemId || i.id === parseInt(itemId) || String(i.id) === String(itemId);
+          console.log(`🔍 Comparing ${i.id} (${typeof i.id}) with ${itemId} (${typeof itemId}): ${match}`);
+          return match;
+        });
         
         if (item) {
           console.log('✅ Found item:', item);
@@ -79,8 +90,8 @@ const ContentMortgageRefiEdit: React.FC = () => {
           setError(`Элемент контента с ID ${itemId} не найден. Доступные ID: ${contentItems.map((i: any) => i.id).join(', ')}`);
         }
       } else {
-        console.error('❌ API response error:', responseData.error);
-        setError(responseData.error || 'Не удалось загрузить данные');
+        console.error('❌ Direct API response error or no data:', directData);
+        setError(directData.error || 'Не удалось загрузить данные');
       }
     } catch (err) {
       console.error('Error fetching mortgage-refi item:', err);
