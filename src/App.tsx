@@ -30,6 +30,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
 import ContentMortgageEdit from './pages/ContentMortgageEdit';
+import ContentMenuEdit from './pages/ContentMenuEdit';
 import ContentVerification from './pages/ContentVerification';
 
 
@@ -447,6 +448,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Меню" activeMenuItem="content-menu">
                   <ContentMenu />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/menu/edit/:itemId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование контента меню" activeMenuItem="content-menu">
+                  <ContentMenuEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

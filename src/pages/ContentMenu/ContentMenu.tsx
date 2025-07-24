@@ -46,6 +46,7 @@ const ContentMenu: React.FC = () => {
     ru: string;
     he: string;
   }>({ ru: '', he: '' });
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   useEffect(() => {
@@ -182,13 +183,8 @@ const ContentMenu: React.FC = () => {
   };
 
   const handleViewClick = (item: MenuTranslation) => {
-    if (item.category?.toLowerCase() === 'dropdown') {
-      navigate(`/content/main/action/${item.id}`);
-    } else if (item.category?.toLowerCase() === 'text') {
-      navigate(`/content/main/text/${item.id}`);
-    } else {
-      window.open(`/content/preview/${item.id}`, '_blank');
-    }
+    // Navigate to edit page using the same pattern as mortgage
+    navigate(`/content/menu/edit/${item.id}`);
   };
 
   // handleDeleteClick removed as it's not used in current implementation
@@ -228,97 +224,41 @@ const ContentMenu: React.FC = () => {
 
   return (
     <div className="content-menu-page">
-      {/* Top Navigation Bar - matches Figma Navbar Admin panel */}
-      <div className="navbar-admin-panel">
-        <div className="navbar-content">
-          <div className="language-selector">
-            <span className="language-text">Русский</span>
-            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" />
+      {/* Main Content Frame - wraps everything except sidebar */}
+      <div className="column2">
+        {/* Top Navigation Bar - matches Figma Navbar Admin panel */}
+        <div className="navbar-admin-panel">
+          <div className="language-selector" onClick={() => {
+            // Cycle through languages
+            if (selectedLanguage === 'ru') setSelectedLanguage('he');
+            else if (selectedLanguage === 'he') setSelectedLanguage('en');
+            else setSelectedLanguage('ru');
+          }}>
+            <span className="language-text">
+              {selectedLanguage === 'ru' ? 'Русский' : 
+               selectedLanguage === 'he' ? 'עברית' : 
+               'English'}
+            </span>
+            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="image2" />
           </div>
-          <div className="navbar-actions">
-            <div className="navbar-action techsupport">
-              <img src="/src/assets/images/static/icons/headset.svg" alt="Support" />
-            </div>
-            <div className="navbar-action notification">
-              <img src="/src/assets/images/static/icons/bell.svg" alt="Notifications" />
-              <div className="notification-badge">1</div>
-            </div>
-            <div className="profile-section">
-              <div className="profile-avatar">
-                <img src="/src/assets/images/static/profile-avatar.png" alt="Profile" />
-              </div>
+          <img src="/src/assets/images/static/icons/headset.svg" alt="Support" className="image5" />
+          <img src="/src/assets/images/static/icons/bell.svg" alt="Notifications" className="image5" />
+          <div className="profile-section">
+            <img src="/src/assets/images/static/profile-avatar.png" alt="Profile" className="image6" />
+            <div className="view">
               <span className="profile-name">Александр Пушкин</span>
-              <img src="/src/assets/images/static/icons/chevron-right.svg" alt="Profile Menu" />
             </div>
+            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="Profile Menu" className="image2" />
           </div>
         </div>
-      </div>
 
       {/* Main Content Frame */}
       <div className="main-content-frame">
-        {/* First Section with Breadcrumb and Title */}
-        <div className="first-section">
-          {/* Breadcrumb */}
-          <div className="breadcrumb">
-            <div className="breadcrumb-link">
-              <span>Контент сайта</span>
-            </div>
-            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" className="breadcrumb-chevron" />
-            <div className="breadcrumb-link">
-              <span>Главная</span>
-            </div>
-            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" className="breadcrumb-chevron" />
-            <div className="breadcrumb-link current">
-              <span>Калькулятор ипотеки Страница №2</span>
-            </div>
-          </div>
+        {/* Page Title */}
+        <h1 className="page-title">Меню</h1>
 
-          {/* Page Title and Info Cards */}
-          <div className="page-header">
-            <div className="page-title-section">
-              <h1 className="page-title">Калькулятор ипотеки Страница №2</h1>
-            </div>
-            <div className="info-cards">
-              <div className="info-card">
-                <div className="info-card-content">
-                  <span className="info-label">Количество действий</span>
-                  <span className="info-value">{menuData?.content_count || 0}</span>
-                </div>
-              </div>
-              <div className="info-card">
-                <div className="info-card-content">
-                  <span className="info-label">Последнее редактирование</span>
-                  <span className="info-value">01.08.2023 | 12:03</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gallery Sections */}
-        <div className="gallery-sections">
-          <div className="gallery-section">
-            <h2 className="gallery-title">Cтраница и ее состояния</h2>
-            <div className="gallery-container">
-              <div className="gallery-image"></div>
-            </div>
-          </div>
-          <div className="gallery-carousel">
-            <button className="carousel-btn prev">&lt;</button>
-            <div className="carousel-images">
-              <div className="carousel-image"></div>
-              <div className="carousel-image"></div>
-              <div className="carousel-image"></div>
-              <div className="carousel-image"></div>
-              <div className="carousel-image"></div>
-              <div className="carousel-image"></div>
-            </div>
-            <button className="carousel-btn next">&gt;</button>
-          </div>
-        </div>
-
-        {/* Actions List Title */}
-        <h2 className="actions-list-title">Cписок действий на странице</h2>
+        {/* List of Pages Title */}
+        <h2 className="page-list-title">Список страниц</h2>
 
         {/* Table Section */}
         <div className="table-section">
@@ -329,7 +269,7 @@ const ContentMenu: React.FC = () => {
                 <img src="/src/assets/images/static/icons/search.svg" alt="Search" className="search-icon" />
                 <input
                   type="text"
-                  placeholder="Искать по действию"
+                  placeholder="Искать по названию, ID, номеру страницы"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
@@ -342,139 +282,133 @@ const ContentMenu: React.FC = () => {
             </button>
           </div>
 
-          {/* Table Content */}
+          {/* Table Content - Column Layout */}
           <div className="menu-table">
-            {/* Table Headers */}
-            <div className="table-headers">
-              <div className="header-cell number-header">Номер действия</div>
-              <div className="header-cell id-header">ID</div>
-              <div className="header-cell type-header">Тип</div>
-              <div className="header-cell ru-header">RU</div>
-              <div className="header-cell he-header">HEb</div>
-              <div className="header-cell actions-header"></div>
+            {/* Table Header Row */}
+            <div className="table-header-row">
+              <div className="header-cell column6">
+                <span className="text8">НАЗВАНИЕ СТРАНИЦЫ</span>
+              </div>
+              <div className="header-cell column12">
+                <span className="text10">Количество действий</span>
+              </div>
+              <div className="header-cell column12">
+                <span className="text10">Были изменения</span>
+              </div>
+              <div className="header-cell column7"></div>
             </div>
-
-            {/* Table Rows */}
-            <div className="table-rows">
-              {currentItems.map((item, index) => (
-                <div key={item.id} className="table-row">
-                  <div className="table-cell number-cell">
-                    <span className="action-number">{`${startIndex + index + 1}.`}</span>
-                  </div>
-                  <div className="table-cell id-cell">
-                    <span className="content-id">{item.content_key}</span>
-                  </div>
-                  <div className="table-cell type-cell">
-                    <span className={`content-type ${item.category?.toLowerCase()}`}>
-                      {item.category === 'dropdown' ? 'Дропдаун' : 
-                       item.category === 'link' ? 'Ссылка' : 
-                       item.category === 'text' ? 'Текст' : 
-                       'Дропдаун'}
+            
+            <div className="table-divider"></div>
+            
+            <div className="row-view11">
+              {/* Column 1 - Page Names */}
+              <div className="column6">
+                {currentItems.map((item, index) => (
+                  <React.Fragment key={`name-${item.id}`}>
+                    <div className="box3"></div>
+                    <span className="text9">
+                      {`${startIndex + index + 1}. ${
+                        selectedLanguage === 'ru' ? item.translations.ru :
+                        selectedLanguage === 'he' ? item.translations.he :
+                        item.translations.en || item.content_key
+                      }`}
                     </span>
-                  </div>
-                  <div className="table-cell ru-cell">
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Column 2 - Number of Actions */}
+              <div className="column12">
+                {currentItems.map((item, index) => {
+                  // Mock data for number of actions - randomize between 2 and 46
+                  const actionCount = Math.floor(Math.random() * 44) + 2;
+                  return (
+                    <React.Fragment key={`actions-${item.id}`}>
+                      <div className="box4"></div>
+                      <span className="text15">{actionCount}</span>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+
+              {/* Column 3 - Last Modified */}
+              <div className="column12">
+                {currentItems.map((item, index) => (
+                  <React.Fragment key={`modified-${item.id}`}>
+                    <div className="box4"></div>
+                    <span className="text20">01.08.2023 | 12:03</span>
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Column 4 - Actions */}
+              <div className="column7">
+                {currentItems.map((item, index) => (
+                  <React.Fragment key={`action-${item.id}`}>
+                    <div className="box6"></div>
                     {editingId === item.id ? (
-                      <input
-                        type="text"
-                        value={editedTranslations.ru}
-                        onChange={(e) => handleTranslationChange('ru', e.target.value)}
-                        className="translation-input"
-                      />
-                    ) : (
-                      <span className="translation-text">{item.translations.ru}</span>
-                    )}
-                  </div>
-                  <div className="table-cell he-cell">
-                    {editingId === item.id ? (
-                      <input
-                        type="text"
-                        value={editedTranslations.he}
-                        onChange={(e) => handleTranslationChange('he', e.target.value)}
-                        className="translation-input heb-input"
-                        dir="rtl"
-                      />
-                    ) : (
-                      <span className="translation-text heb-text" dir="rtl">{item.translations.he}</span>
-                    )}
-                  </div>
-                  <div className="table-cell actions-cell">
-                    {editingId === item.id ? (
-                      <div className="edit-actions">
+                      <div style={{ display: 'flex', gap: '8px', padding: '8px' }}>
                         <button onClick={() => handleSave(item.id)} className="save-btn">✓</button>
                         <button onClick={handleCancelEdit} className="cancel-btn">✗</button>
                       </div>
                     ) : (
-                      <div className="row-actions">
-                        {/* Edit button for inline editing */}
-                        <button
-                          className="action-btn edit-btn"
-                          onClick={() => handleEditClick(item)}
-                          title="Редактировать"
-                        >
-                          <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
-                        </button>
-                        
-                        {/* Additional action buttons based on content type */}
-                        {item.category?.toLowerCase() === 'dropdown' && (
-                          <button
-                            className="action-btn view-btn"
-                            onClick={() => handleViewClick(item)}
-                            title="Перейти к действиям"
-                          >
-                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" />
-                          </button>
-                        )}
-                        {item.category?.toLowerCase() === 'text' && (
-                          <button
-                            className="action-btn view-btn"
-                            onClick={() => handleViewClick(item)}
-                            title="Редактировать текст подробно"
-                          >
-                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="View" />
-                          </button>
-                        )}
-                        {item.category?.toLowerCase() === 'link' && (
-                          <button
-                            className="action-btn view-btn"
-                            onClick={() => window.open(`/content/preview/${item.id}`, '_blank')}
-                            title="Просмотр"
-                          >
-                            <img src="/src/assets/images/static/icons/chevron-right.svg" alt=">" />
-                          </button>
-                        )}
+                      <div
+                        className="image8"
+                        onClick={() => handleViewClick(item)}
+                        style={{ 
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '24px',
+                          color: '#FFFFFF',
+                          backgroundColor: 'transparent',
+                          border: '1px solid #374151'
+                        }}
+                      >
+                        →
                       </div>
                     )}
-                  </div>
-                </div>
-              ))}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
             </div>
           </div>
 
           {/* Pagination */}
-          <div className="table-footer">
-            <span className="pagination-info">
-              Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
+          <div className="row-view12">
+            <span className="text18">
+              Показывает 1-20 из 1000
             </span>
-            <div className="pagination">
-              <button 
-                className="pagination-btn" 
+            <div className="row-view13">
+              <img
+                src="/src/assets/images/static/icons/chevron-left.svg" 
+                className="image9"
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-              >
-                &lt;
-              </button>
-              <span className="page-number current">1</span>
-              <span className="page-number">2</span>
-              <span className="page-number">3</span>
-              <span className="page-ellipsis">...</span>
-              <span className="page-number">{totalPages}</span>
-              <button 
-                className="pagination-btn" 
+                style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+              />
+              <div className="view5">
+                <span className="text19">1</span>
+              </div>
+              <div className="view6">
+                <span className="text20">2</span>
+              </div>
+              <div className="view5">
+                <span className="text19">3</span>
+              </div>
+              <div className="view5">
+                <span className="text19">...</span>
+              </div>
+              <div className="view5">
+                <span className="text19">100</span>
+              </div>
+              <img
+                src="/src/assets/images/static/icons/chevron-right.svg" 
+                className="image9"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-              >
-                &gt;
-              </button>
+                style={{ opacity: currentPage === totalPages ? 0.5 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+              />
             </div>
           </div>
         </div>
