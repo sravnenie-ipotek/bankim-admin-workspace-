@@ -10,7 +10,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
-import { ContentListItem } from './types';
 import './ContentListBase.css';
 
 interface ContentTranslation {
@@ -46,8 +45,7 @@ interface ContentListBaseProps {
 
 export const ContentListBase: React.FC<ContentListBaseProps> = ({
   sectionTitle,
-  contentType,
-  breadcrumbItems = []
+  contentType
 }) => {
   const navigate = useNavigate();
   const location = useLocation();

@@ -37,6 +37,7 @@ const ContentMortgageEdit: React.FC = () => {
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -227,10 +228,27 @@ const ContentMortgageEdit: React.FC = () => {
 
         {/* Header */}
         <div className="page-header-edit">
-          <h1 className="page-title-edit">
-            {contentItem?.content_key}
-          </h1>
-          <span className="page-subtitle">Mortgage_page</span>
+          <div className="header-content">
+            <h1 className="page-title-edit">
+              {selectedLanguage === 'ru' ? (contentItem?.translations?.ru || contentItem?.content_key) :
+               selectedLanguage === 'he' ? (contentItem?.translations?.he || contentItem?.content_key) :
+               (contentItem?.translations?.en || contentItem?.content_key)}
+            </h1>
+            <span className="page-subtitle">Mortgage_page</span>
+          </div>
+          <div className="language-selector-edit" onClick={() => {
+            // Cycle through languages
+            if (selectedLanguage === 'ru') setSelectedLanguage('he');
+            else if (selectedLanguage === 'he') setSelectedLanguage('en');
+            else setSelectedLanguage('ru');
+          }}>
+            <span className="language-text">
+              {selectedLanguage === 'ru' ? 'Русский' : 
+               selectedLanguage === 'he' ? 'עברית' : 
+               'English'}
+            </span>
+            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="language-chevron" />
+          </div>
         </div>
 
         {/* Last Edit Info */}

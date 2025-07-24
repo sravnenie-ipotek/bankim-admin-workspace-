@@ -114,20 +114,6 @@ const ContentMenu: React.FC = () => {
     fetchMenuData();
   }, []);
 
-  const handleEditClick = (item: MenuTranslation) => {
-    setEditingId(item.id);
-    setEditedTranslations({
-      ru: item.translations.ru,
-      he: item.translations.he
-    });
-  };
-
-  const handleTranslationChange = (field: 'ru' | 'he', value: string) => {
-    setEditedTranslations(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
 
   const handleSave = async (itemId: string) => {
     try {
@@ -333,7 +319,7 @@ const ContentMenu: React.FC = () => {
 
               {/* Column 2 - Number of Actions */}
               <div className="column12">
-                {currentItems.map((item, index) => {
+                {currentItems.map((item) => {
                   // Mock data for number of actions - randomize between 2 and 46
                   const actionCount = Math.floor(Math.random() * 44) + 2;
                   return (
@@ -347,7 +333,7 @@ const ContentMenu: React.FC = () => {
 
               {/* Column 3 - Last Modified */}
               <div className="column12">
-                {currentItems.map((item, index) => (
+                {currentItems.map((item) => (
                   <React.Fragment key={`modified-${item.id}`}>
                     <div className="box4"></div>
                     <span className="text20">01.08.2023 | 12:03</span>
@@ -357,7 +343,7 @@ const ContentMenu: React.FC = () => {
 
               {/* Column 4 - Actions */}
               <div className="column7">
-                {currentItems.map((item, index) => (
+                {currentItems.map((item) => (
                   <React.Fragment key={`action-${item.id}`}>
                     <div className="box6"></div>
                     {editingId === item.id ? (

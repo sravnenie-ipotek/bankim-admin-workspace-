@@ -34,6 +34,7 @@ const ContentMenuEdit: React.FC = () => {
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
   const [titleEn, setTitleEn] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -161,13 +162,32 @@ const ContentMenuEdit: React.FC = () => {
   return (
     <div className="content-menu-edit">
       <div className="content-menu-edit-header">
-        <h1>Edit Menu Item</h1>
-        <div className="breadcrumb">
-          <span onClick={() => navigate('/content/menu')} style={{ cursor: 'pointer', color: '#6366F1' }}>
-            Menu
+        <div className="header-content">
+          <h1>Edit Menu Item</h1>
+          <div className="breadcrumb">
+            <span onClick={() => navigate('/content/menu')} style={{ cursor: 'pointer', color: '#6366F1' }}>
+              Menu
+            </span>
+            <span> / </span>
+            <span>
+              {selectedLanguage === 'ru' ? (contentItem.translations?.ru || contentItem.content_key) :
+               selectedLanguage === 'he' ? (contentItem.translations?.he || contentItem.content_key) :
+               (contentItem.translations?.en || contentItem.content_key)}
+            </span>
+          </div>
+        </div>
+        <div className="language-selector-edit" onClick={() => {
+          // Cycle through languages
+          if (selectedLanguage === 'ru') setSelectedLanguage('he');
+          else if (selectedLanguage === 'he') setSelectedLanguage('en');
+          else setSelectedLanguage('ru');
+        }}>
+          <span className="language-text">
+            {selectedLanguage === 'ru' ? 'Русский' : 
+             selectedLanguage === 'he' ? 'עברית' : 
+             'English'}
           </span>
-          <span> / </span>
-          <span>{contentItem.content_key}</span>
+          <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="language-chevron" />
         </div>
       </div>
 
