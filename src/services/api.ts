@@ -921,6 +921,7 @@ class ApiService {
    * @param contentType - Type of content to generate data for
    * @returns Array of ContentPage objects
    */
+  // @ts-ignore - Keeping for potential future use
   private generateMockDataByContentType(contentType: string): ContentListItem[] {
     // Use ISO string date for mock lastModified fields
     const baseDate = '2023-08-01T12:03:00Z';

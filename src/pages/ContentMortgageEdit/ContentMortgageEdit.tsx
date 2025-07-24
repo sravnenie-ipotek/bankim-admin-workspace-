@@ -38,13 +38,18 @@ const ContentMortgageEdit: React.FC = () => {
       
       if (response.success && response.data) {
         const item = response.data.find(item => item.id === itemId);
+        console.log('Found item:', item);
+        
         if (item) {
           setContentItem(item);
           setTitleRu(item.title || '');
           
           // If it's a dropdown, fetch its options
           if (item.contentType === 'dropdown') {
+            console.log('Item is a dropdown, fetching options...');
             fetchDropdownOptions(item);
+          } else {
+            console.log('Item content type:', item.contentType);
           }
         } else {
           setError('Content item not found');
@@ -147,7 +152,7 @@ const ContentMortgageEdit: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Редактирование контента ипотеки">
         <div className="mortgage-edit-container">
           <div className="loading-state">Загрузка...</div>
         </div>
@@ -157,7 +162,7 @@ const ContentMortgageEdit: React.FC = () => {
 
   if (error) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Редактирование контента ипотеки">
         <div className="mortgage-edit-container">
           <div className="error-state">{error}</div>
         </div>
@@ -168,7 +173,7 @@ const ContentMortgageEdit: React.FC = () => {
   const isDropdown = contentItem?.contentType === 'dropdown';
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Редактирование контента ипотеки">
       <div className="mortgage-edit-container">
         {/* Breadcrumb */}
         <div className="breadcrumb-container">
@@ -235,62 +240,76 @@ const ContentMortgageEdit: React.FC = () => {
             </div>
 
             <div className="options-list">
-              {dropdownOptions.map((option, index) => (
-                <div key={option.id} className="option-row">
-                  <div className="option-number">{option.order}</div>
-                  
-                  <div className="option-inputs">
-                    <div className="option-input-group">
-                      <label className="input-label">RU</label>
-                      <input
-                        type="text"
-                        className="option-input"
-                        value={option.titleRu}
-                        onChange={(e) => handleUpdateOption(option.id, 'titleRu', e.target.value)}
-                        placeholder="Вариант на русском"
-                      />
-                    </div>
-                    
-                    <div className="option-input-group">
-                      <label className="input-label">HEB</label>
-                      <input
-                        type="text"
-                        className="option-input rtl"
-                        value={option.titleHe}
-                        onChange={(e) => handleUpdateOption(option.id, 'titleHe', e.target.value)}
-                        placeholder="אפשרות בעברית"
-                        dir="rtl"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="option-actions">
-                    <button 
-                      className="option-action-btn"
-                      onClick={() => handleMoveOption(option.id, 'up')}
-                      disabled={index === 0}
-                      title="Переместить вверх"
-                    >
-                      ↑
-                    </button>
-                    <button 
-                      className="option-action-btn"
-                      onClick={() => handleMoveOption(option.id, 'down')}
-                      disabled={index === dropdownOptions.length - 1}
-                      title="Переместить вниз"
-                    >
-                      ↓
-                    </button>
-                    <button 
-                      className="option-action-btn delete"
-                      onClick={() => handleDeleteOption(option.id)}
-                      title="Удалить"
-                    >
-                      🗑
-                    </button>
-                  </div>
+              {dropdownOptions.length === 0 ? (
+                <div className="no-options-message" style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#9CA3AF',
+                  backgroundColor: 'rgba(55, 65, 81, 0.3)',
+                  borderRadius: '8px',
+                  marginBottom: '20px'
+                }}>
+                  <p style={{ margin: 0, fontSize: '16px' }}>Для этого поля пока нет вариантов ответов</p>
+                  <p style={{ margin: '10px 0 0 0', fontSize: '14px' }}>Нажмите "Добавить вариант" чтобы создать первый вариант</p>
                 </div>
-              ))}
+              ) : (
+                dropdownOptions.map((option, index) => (
+                  <div key={option.id} className="option-row">
+                    <div className="option-number">{option.order}</div>
+                    
+                    <div className="option-inputs">
+                      <div className="option-input-group">
+                        <label className="input-label">RU</label>
+                        <input
+                          type="text"
+                          className="option-input"
+                          value={option.titleRu}
+                          onChange={(e) => handleUpdateOption(option.id, 'titleRu', e.target.value)}
+                          placeholder="Вариант на русском"
+                        />
+                      </div>
+                      
+                      <div className="option-input-group">
+                        <label className="input-label">HEB</label>
+                        <input
+                          type="text"
+                          className="option-input rtl"
+                          value={option.titleHe}
+                          onChange={(e) => handleUpdateOption(option.id, 'titleHe', e.target.value)}
+                          placeholder="אפשרות בעברית"
+                          dir="rtl"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="option-actions">
+                      <button 
+                        className="option-action-btn"
+                        onClick={() => handleMoveOption(option.id, 'up')}
+                        disabled={index === 0}
+                        title="Переместить вверх"
+                      >
+                        ↑
+                      </button>
+                      <button 
+                        className="option-action-btn"
+                        onClick={() => handleMoveOption(option.id, 'down')}
+                        disabled={index === dropdownOptions.length - 1}
+                        title="Переместить вниз"
+                      >
+                        ↓
+                      </button>
+                      <button 
+                        className="option-action-btn delete"
+                        onClick={() => handleDeleteOption(option.id)}
+                        title="Удалить"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
