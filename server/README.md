@@ -1,104 +1,88 @@
-# BankIM Test Database
+# BankIM Database Configuration
 
 ## Overview
-This is a simple SQLite test database setup for the BankIM Management Portal project.
+This directory contains database configuration for the BankIM Management Portal project.
 
 ## Database Details
-- **Database Type**: SQLite
-- **Database File**: `bankim_test.db`
-- **Location**: `/server/bankim_test.db`
+- **Database Type**: PostgreSQL
+- **Local Development**: PostgreSQL (localhost)
+- **Production**: Railway PostgreSQL
+- **Configuration**: Located in `backend/server.js`
 
-## Test Table: `test_users`
+## Available Configurations
 
-### Schema
-```sql
-CREATE TABLE test_users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  role TEXT DEFAULT 'user',
-  status TEXT DEFAULT 'active',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-```
+### 1. Local PostgreSQL (Development)
+- **Host**: localhost
+- **Port**: 5432  
+- **Database**: bankim_content_local
+- **Configuration**: `localConfig` in `backend/server.js`
 
-### Sample Data
-The database is automatically populated with 5 sample users:
-1. John Doe (admin, active)
-2. Jane Smith (manager, active) 
-3. Bob Johnson (user, inactive)
-4. Alice Brown (user, active)
-5. Charlie Wilson (manager, pending)
+### 2. Railway PostgreSQL (Production)
+- **Host**: Railway-provided endpoint
+- **Configuration**: `primaryConfig` in `backend/server.js`
+- **Connection**: Via `CONTENT_DATABASE_URL` environment variable
 
-## API Server
+## Server Files
 
-### Running the Server
-```bash
-npm run server
-# or
-npm run dev:server
-# or
-node server/server.js
-```
+- `server.js` - Main backend server with PostgreSQL connection
+- `server-railway.js` - Railway-specific server configuration
+- `database-railway.js` - Railway database utilities
+- `config/` - Additional configuration files
 
-### API Endpoints
+## Database Schema
 
-**Server Status**
-- `GET /health` - Health check
+The database schema is defined in:
+- `database/bankim_content_schema.sql` - Complete schema with tables, functions, and test data
 
-**Database Info**
-- `GET /api/db-info` - Database information
+## Setup Instructions
 
-**Users CRUD**
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create new user
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
+### Local Development
+1. Install PostgreSQL locally
+2. Create database: `createdb bankim_content_local`
+3. Load schema: `psql -d bankim_content_local -f database/bankim_content_schema.sql`
+4. Start server: `cd backend && node server.js`
 
-### Example API Calls
-
-```bash
-# Get all users
-curl http://localhost:3001/api/users
-
-# Get specific user
-curl http://localhost:3001/api/users/1
-
-# Create new user
-curl -X POST http://localhost:3001/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"New User","email":"new@bankim.com","role":"user","status":"active"}'
-
-# Update user
-curl -X PUT http://localhost:3001/api/users/1 \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Updated Name","email":"updated@bankim.com","role":"admin","status":"active"}'
-
-# Delete user
-curl -X DELETE http://localhost:3001/api/users/1
-```
+### Production (Railway)
+1. Database is automatically provisioned by Railway
+2. Schema is loaded via Railway deployment process
+3. Connection managed via environment variables
 
 ## Features
-- ✅ SQLite database with automatic initialization
-- ✅ Full CRUD operations for users
-- ✅ Sample data insertion
-- ✅ Error handling
-- ✅ CORS enabled for frontend integration
-- ✅ JSON API responses
-- ✅ Input validation
 
-## Files
-- `database.js` - Database setup and operations
-- `server.js` - Express API server
-- `bankim_test.db` - SQLite database file (auto-generated)
+### Database Connection
+- ✅ PostgreSQL with connection pooling
+- ✅ Automatic fallback between Railway and local databases
+- ✅ Graceful error handling and reconnection
+- ✅ Health checks and monitoring endpoints
 
-## Next Steps
-This test database can be extended with:
-- Additional tables
-- More complex relationships
-- Authentication middleware
-- Rate limiting
-- Logging
-- Connection to frontend React components 
+### Content Management
+- ✅ Multi-language content support (EN, RU, HE)
+- ✅ Content versioning and approval workflow
+- ✅ Category-based content organization
+- ✅ Real-time content updates
+
+### API Endpoints
+- `/health` - Server health check
+- `/api/database-status` - Database connection status
+- `/api/content/*` - Content management endpoints
+- `/api/ui-settings` - UI configuration endpoints
+
+## Migration Notes
+
+**Previous SQLite setup has been removed:**
+- All SQLite dependencies and files have been cleaned up
+- Project now uses PostgreSQL exclusively for better production compatibility
+- Local development mirrors production database structure
+
+## Troubleshooting
+
+### Database Connection Issues
+1. Check PostgreSQL service is running: `brew services list | grep postgresql`
+2. Verify database exists: `psql -l | grep bankim_content_local`
+3. Check server logs for connection details
+4. Use health endpoint: `curl http://localhost:3001/health`
+
+### Schema Issues
+1. Reload schema: `psql -d bankim_content_local -f database/bankim_content_schema.sql`
+2. Check table structure: `psql -d bankim_content_local -c "\dt"`
+3. Verify functions: `psql -d bankim_content_local -c "\df"` 

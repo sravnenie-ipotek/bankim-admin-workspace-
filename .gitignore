@@ -117,8 +117,5 @@ cypress/screenshots/
 cypress/videos/
 cypress/fixtures/example.json
 
-# SQLite database files (local only)
-*.db
-*.sqlite
-*.sqlite3
-server/bankim_test.db
+# Database files (if any local backups)
+*.sql.backup

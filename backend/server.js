@@ -21,10 +21,107 @@ console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('DATABASE_URL present:', !!process.env.DATABASE_URL);
 console.log('CONTENT_DATABASE_URL present:', !!process.env.CONTENT_DATABASE_URL);
 
-// Database connection configuration
-const pool = new Pool({
+// Database connection configuration with fallback
+let pool;
+let isConnected = false;
+let connectionAttempts = 0;
+const maxRetries = 3;
+
+// Primary database configuration (Railway)
+const primaryConfig = {
   connectionString: process.env.CONTENT_DATABASE_URL || process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 30000,
+  max: 10,
+};
+
+// Local fallback configuration
+const localConfig = {
+  user: 'postgres',
+  password: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  database: 'bankim_content_local',
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 30000,
+  max: 10,
+};
+
+// Initialize database connection with fallback
+async function initializeDatabase() {
+  console.log('🔌 Attempting database connection...');
+  
+  try {
+    // Try primary database first
+    pool = new Pool(primaryConfig);
+    
+    // Test connection
+    const client = await pool.connect();
+    await client.query('SELECT NOW()');
+    client.release();
+    
+    isConnected = true;
+    console.log('✅ Connected to primary database (Railway)');
+    return true;
+    
+  } catch (primaryError) {
+    console.log('⚠️  Primary database connection failed:', primaryError.message);
+    console.log('🔄 Attempting local database fallback...');
+    
+    try {
+      // Try local database
+      pool = new Pool(localConfig);
+      
+      const client = await pool.connect();
+      await client.query('SELECT NOW()');
+      client.release();
+      
+      isConnected = true;
+      console.log('✅ Connected to local database fallback');
+      return true;
+      
+    } catch (localError) {
+      console.log('❌ Local database connection also failed:', localError.message);
+      console.log('🔧 Running in offline mode - some features may be limited');
+      
+      isConnected = false;
+      return false;
+    }
+  }
+}
+
+// Graceful database query wrapper
+async function safeQuery(query, params = []) {
+  if (!isConnected || !pool) {
+    throw new Error('Database not available - running in offline mode');
+  }
+  
+  try {
+    const result = await pool.query(query, params);
+    return result;
+  } catch (error) {
+    console.error('Database query error:', error.message);
+    
+    // Try to reconnect on connection errors
+    if (error.code === 'ECONNREFUSED' || error.code === 'EADDRNOTAVAIL') {
+      console.log('🔄 Attempting to reconnect...');
+      isConnected = false;
+      await initializeDatabase();
+    }
+    
+    throw error;
+  }
+}
+
+// Handle database connection errors gracefully
+process.on('unhandledRejection', (error) => {
+  if (error.code === 'EADDRNOTAVAIL' || error.code === 'ECONNREFUSED') {
+    console.log('🔌 Database connection lost, will attempt reconnection on next request');
+    isConnected = false;
+  } else {
+    console.error('Unhandled promise rejection:', error);
+  }
 });
 
 // Middleware
@@ -48,24 +145,58 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.'
 });
-app.use('/api/', limiter);
 
-// Health check endpoint
+app.use(limiter);
+
+// Health check endpoint with database status
 app.get('/health', async (req, res) => {
+  const status = {
+    status: 'healthy',
+    message: 'bankim_content API is running',
+    timestamp: new Date().toISOString(),
+    database: isConnected ? 'connected' : 'offline'
+  };
+  
+  // Try to test database if it's supposed to be connected
+  if (isConnected && pool) {
+    try {
+      await pool.query('SELECT NOW()');
+      status.database = 'connected';
+    } catch (error) {
+      status.database = 'error';
+      status.database_error = error.message;
+      isConnected = false;
+    }
+  }
+  
+  res.json(status);
+});
+
+// Database status endpoint
+app.get('/api/database-status', async (req, res) => {
   try {
-    const result = await pool.query('SELECT NOW()');
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        error: 'Database not available',
+        message: 'Running in offline mode',
+        canRetry: true
+      });
+    }
+
+    const result = await safeQuery('SELECT NOW() as current_time');
     res.json({
-      status: 'healthy',
-      message: 'bankim_content API is running',
-      timestamp: result.rows[0].now,
-      database: 'connected'
+      success: true,
+      status: 'connected',
+      timestamp: result.rows[0].current_time,
+      message: 'Database connection healthy'
     });
+    
   } catch (error) {
-    console.error('Health check failed:', error);
     res.status(503).json({
-      status: 'unhealthy',
-      message: 'Database connection failed',
-      error: error.message
+      success: false,
+      error: error.message,
+      canRetry: true
     });
   }
 });
@@ -73,21 +204,21 @@ app.get('/health', async (req, res) => {
 // Database info endpoint
 app.get('/api/db-info', async (req, res) => {
   try {
-    const tablesResult = await pool.query(`
+    const tablesResult = await safeQuery(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
       ORDER BY table_name
     `);
     
-    const contentCountResult = await pool.query(`
+    const contentCountResult = await safeQuery(`
       SELECT 
         COUNT(*) as total_content_items,
         COUNT(CASE WHEN is_active = true THEN 1 END) as active_items
       FROM content_items
     `);
     
-    const translationsResult = await pool.query(`
+    const translationsResult = await safeQuery(`
       SELECT 
         language_code,
         COUNT(*) as translation_count,
@@ -124,7 +255,7 @@ app.get('/api/content/menu/translations', async (req, res) => {
   try {
     // Get navigation menu translations - these are the main site navigation items
     // Based on the content structure, we look for headings and titles that represent navigation
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         ci.id,
         ci.content_key,
@@ -190,7 +321,7 @@ app.get('/api/content/text/:actionId', async (req, res) => {
   
   try {
     // First, let's get some real content from the database to show the structure
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         ci.id,
         ci.content_key,
@@ -283,7 +414,7 @@ app.get('/api/content/:screen_location/:language_code', async (req, res) => {
   
   try {
     // Get content using the database function
-    const result = await pool.query(
+    const result = await safeQuery(
       'SELECT * FROM get_content_by_screen($1, $2)',
       [screen_location, language_code]
     );
@@ -343,7 +474,7 @@ app.get('/api/content/:content_key/:language_code', async (req, res) => {
   const { content_key, language_code } = req.params;
   
   try {
-    const result = await pool.query(
+    const result = await safeQuery(
       'SELECT * FROM get_content_with_fallback($1, $2)',
       [content_key, language_code]
     );
@@ -386,7 +517,7 @@ app.get('/api/content/:content_key/:language_code', async (req, res) => {
  */
 app.get('/api/languages', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT id, code, name, native_name, direction, is_active, is_default
       FROM languages 
       WHERE is_active = true 
@@ -413,7 +544,7 @@ app.get('/api/languages', async (req, res) => {
  */
 app.get('/api/content-categories', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT id, name, display_name, description, parent_id, sort_order, is_active
       FROM content_categories 
       WHERE is_active = true 
@@ -440,7 +571,7 @@ app.get('/api/content-categories', async (req, res) => {
  */
 app.get('/api/content/stats', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         screen_location,
         language_code,
@@ -473,7 +604,7 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
   
   try {
     // Get all options for this action
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         ci.id,
         ci.content_key,
@@ -533,7 +664,7 @@ app.put('/api/content-items/:content_item_id/translations/:language_code', async
   }
   
   try {
-    const result = await pool.query(`
+    const result = await safeQuery(`
       UPDATE content_translations 
       SET content_value = $1, updated_at = CURRENT_TIMESTAMP
       WHERE content_item_id = $2 AND language_code = $3
@@ -711,7 +842,7 @@ app.get('/api/content/text/:actionId', async (req, res) => {
   
   try {
     // First, let's get some real content from the database to show the structure
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         ci.id,
         ci.content_key,
@@ -801,7 +932,7 @@ app.get('/api/content/text/:actionId', async (req, res) => {
  */
 app.get('/api/content/mortgage', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         ci.id,
         ci.content_key,
@@ -879,25 +1010,49 @@ app.use((req, res) => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
-  pool.end(() => {
-    console.log('Database pool closed');
+  if (pool) {
+    pool.end(() => {
+      console.log('Database pool closed');
+      process.exit(0);
+    });
+  } else {
+    console.log('Database pool not initialized, skipping close.');
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   console.log('SIGINT signal received: closing HTTP server');
-  pool.end(() => {
-    console.log('Database pool closed');
+  if (pool) {
+    pool.end(() => {
+      console.log('Database pool closed');
+      process.exit(0);
+    });
+  } else {
+    console.log('Database pool not initialized, skipping close.');
     process.exit(0);
-  });
+  }
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`BankIM Content API server running on port ${port}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Database: ${process.env.CONTENT_DATABASE_URL ? 'Connected to bankim_content' : 'Using default DATABASE_URL'}`);
+// Start server with database initialization
+async function startServer() {
+  console.log(`🚀 Starting BankIM Content API server...`);
+  
+  // Initialize database connection
+  await initializeDatabase();
+  
+  app.listen(port, () => {
+    console.log(`BankIM Content API server running on port ${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Database: ${isConnected ? 'Connected' : 'Offline mode'}`);
+    console.log(`Health check: http://localhost:${port}/health`);
+  });
+}
+
+// Start the server
+startServer().catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 });
 
 module.exports = app;
