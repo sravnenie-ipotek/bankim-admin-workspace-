@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import './ContentMenu.css';
 
@@ -36,11 +36,12 @@ interface MenuData {
 
 const ContentMenu: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
+  const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedTranslations, setEditedTranslations] = useState<{
     ru: string;
@@ -183,8 +184,13 @@ const ContentMenu: React.FC = () => {
   };
 
   const handleViewClick = (item: MenuTranslation) => {
-    // Navigate to edit page using the same pattern as mortgage
-    navigate(`/content/menu/edit/${item.id}`);
+    // Navigate to edit page using the same pattern as mortgage, preserving current page
+    navigate(`/content/menu/edit/${item.id}`, { 
+      state: { 
+        fromPage: currentPage,
+        searchTerm: searchTerm 
+      } 
+    });
   };
 
   // handleDeleteClick removed as it's not used in current implementation
@@ -304,7 +310,17 @@ const ContentMenu: React.FC = () => {
                 {currentItems.map((item, index) => (
                   <React.Fragment key={`name-${item.id}`}>
                     <div className="box3"></div>
-                    <span className="text9">
+                    <span 
+                      className="text9" 
+                      title={(() => {
+                        const fullText = `${startIndex + index + 1}. ${
+                          selectedLanguage === 'ru' ? item.translations.ru :
+                          selectedLanguage === 'he' ? item.translations.he :
+                          item.translations.en || item.content_key
+                        }`;
+                        return fullText.length > 30 ? fullText : undefined;
+                      })()}
+                    >
                       {`${startIndex + index + 1}. ${
                         selectedLanguage === 'ru' ? item.translations.ru :
                         selectedLanguage === 'he' ? item.translations.he :
@@ -377,36 +393,71 @@ const ContentMenu: React.FC = () => {
           {/* Pagination */}
           <div className="row-view12">
             <span className="text18">
-              Показывает 1-20 из 1000
+              Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
             </span>
             <div className="row-view13">
               <div 
                 className="pagination-arrow left"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => setCurrentPage((prev: number) => Math.max(1, prev - 1))}
                 style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M10 12L6 8L10 4" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <div className="view5">
-                <span className="text19">1</span>
+              
+              {/* Page 1 */}
+              <div 
+                className={currentPage === 1 ? "view6" : "view5"}
+                onClick={() => setCurrentPage(1)}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className={currentPage === 1 ? "text20" : "text19"}>1</span>
               </div>
-              <div className="view6">
-                <span className="text20">2</span>
-              </div>
-              <div className="view5">
-                <span className="text19">3</span>
-              </div>
-              <div className="view5">
-                <span className="text19">...</span>
-              </div>
-              <div className="view5">
-                <span className="text19">100</span>
-              </div>
+              
+              {/* Show page 2 if total pages >= 2 */}
+              {totalPages >= 2 && (
+                <div 
+                  className={currentPage === 2 ? "view6" : "view5"}
+                  onClick={() => setCurrentPage(2)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className={currentPage === 2 ? "text20" : "text19"}>2</span>
+                </div>
+              )}
+              
+              {/* Show page 3 if total pages >= 3 */}
+              {totalPages >= 3 && (
+                <div 
+                  className={currentPage === 3 ? "view6" : "view5"}
+                  onClick={() => setCurrentPage(3)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className={currentPage === 3 ? "text20" : "text19"}>3</span>
+                </div>
+              )}
+              
+              {/* Show ellipsis if there are more than 4 pages */}
+              {totalPages > 4 && (
+                <div className="view5">
+                  <span className="text19">...</span>
+                </div>
+              )}
+              
+              {/* Show last page if there are more than 3 pages */}
+              {totalPages > 3 && (
+                <div 
+                  className={currentPage === totalPages ? "view6" : "view5"}
+                  onClick={() => setCurrentPage(totalPages)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className={currentPage === totalPages ? "text20" : "text19"}>{totalPages}</span>
+                </div>
+              )}
+              
               <div 
                 className="pagination-arrow right"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                onClick={() => setCurrentPage((prev: number) => Math.min(totalPages, prev + 1))}
                 style={{ opacity: currentPage === totalPages ? 0.5 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

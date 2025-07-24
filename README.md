@@ -149,6 +149,89 @@ const managementDb = databaseConfig.management;
 npm run test:server
 ```
 
+## 📝 Logging & Audit Requirements
+
+**КРИТИЧЕСКИ ВАЖНО:** Все операции с базой данных и аутентификация должны логироваться для обеспечения безопасности и соблюдения требований.
+
+### 🛡️ Обязательное логирование:
+
+#### **📊 Database Operations (Обязательно):**
+- **INSERT** - Все вставки новых записей
+- **DELETE** - Все удаления записей  
+- **CREATE** - Создание новых таблиц/структур
+- **UPDATE** - Изменения существующих записей
+
+#### **🔐 Authentication Events (Обязательно):**
+- **LOGIN** - Успешные и неудачные попытки входа
+- **LOGOUT** - Завершение сессий
+- **SESSION_TIMEOUT** - Автоматическое завершение сессий
+- **PASSWORD_CHANGE** - Изменения паролей
+
+### 🗄️ Audit Tables Structure:
+
+```sql
+-- Content audit logging
+content_audit_log:
+- user_id, user_email, user_name, user_role
+- content_item_id, content_key, screen_location
+- action_type: CREATE|UPDATE|DELETE
+- old_value, new_value
+- source_page, ip_address, user_agent
+- timestamp
+
+-- Login audit logging  
+login_audit_log:
+- email, user_id, session_id
+- success: true|false
+- failure_reason
+- ip_address, user_agent
+- timestamp
+```
+
+### 📍 Log Locations:
+
+```bash
+# Backend server logs
+backend/server.log          # Main application logs
+backend/backend.log         # Development logs with nodemon
+
+# Database audit logs
+PostgreSQL tables:
+- content_audit_log         # All content changes
+- login_audit_log          # Authentication events
+
+# Frontend logs
+Browser Console             # Component interactions
+```
+
+### 🔍 Log Monitoring:
+
+```bash
+# Real-time backend monitoring
+tail -f backend/server.log
+
+# Database audit queries
+SELECT * FROM content_audit_log WHERE action_type = 'DELETE' ORDER BY timestamp DESC;
+SELECT * FROM login_audit_log WHERE success = false ORDER BY timestamp DESC;
+
+# Development logs
+tail -f backend/backend.log
+```
+
+### ⚡ Implementation Status:
+- ✅ **Audit table structure** - Database tables created
+- ✅ **Authentication middleware** - Login/logout logging ready
+- ✅ **Content change tracking** - CRUD operations logging framework
+- 🚧 **Active logging** - Integration in progress
+- 📋 **Log analysis tools** - Planned for next phase
+
+### 🚨 Compliance Requirements:
+- **Retention**: Logs retained for minimum 12 months
+- **Immutability**: Audit logs cannot be modified after creation
+- **Completeness**: All user actions must be traceable
+- **Performance**: Logging must not impact application performance
+- **Security**: Log access restricted to administrators only
+
 ## 🚀 Доступные скрипты
 
 ```bash

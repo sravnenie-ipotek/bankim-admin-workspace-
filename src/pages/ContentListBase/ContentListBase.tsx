@@ -1,80 +1,101 @@
+/**
+ * ContentListBase Component
+ * Reusable base component for content list pages - matches ContentMenu design
+ * 
+ * @version 2.0.0
+ * @since 2025-01-20
+ */
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
+import { Pagination } from '../../components';
 import { ContentListItem } from './types';
 import './ContentListBase.css';
 
-/**
- * ContentListBaseProps interface defines the props for the reusable content list component
- * @param sectionTitle - The title of the content section (e.g., "Рассчитать ипотеку")
- * @param contentType - The type of content to filter by (e.g., "mortgage", "credit")
- * @param breadcrumbItems - Array of breadcrumb navigation items
- */
+interface ContentTranslation {
+  id: string;
+  content_key: string;
+  component_type: string;
+  category: string;
+  screen_location: string;
+  description: string;
+  is_active: boolean;
+  translations: {
+    ru: string;
+    he: string;
+    en: string;
+  };
+  last_modified: string;
+  title?: string;
+  actionCount?: number;
+  contentType?: string;
+}
+
+interface ContentData {
+  status: string;
+  content_count: number;
+  content_items: ContentTranslation[];
+}
+
 interface ContentListBaseProps {
   sectionTitle: string;
   contentType: string;
   breadcrumbItems?: Array<{ label: string; isActive?: boolean }>;
 }
 
-/**
- * ContentListBase is a reusable component that displays filtered content lists
- * following the Confluence Page 3 specification. It handles search, pagination,
- * and action buttons while avoiding code duplication across content sections.
- */
 export const ContentListBase: React.FC<ContentListBaseProps> = ({
   sectionTitle,
   contentType,
   breadcrumbItems = []
 }) => {
-  // Authentication context for permission checks
-  const { user, hasPermission } = useAuth();
-  
-  // Debug: Log user permissions
-  useEffect(() => {
-    console.log('Current user:', user);
-    console.log('User permissions:', user?.permissions);
-    console.log('Has write permission:', hasPermission('write', 'content-management'));
-  }, [user]);
-  
-  // State management for component data and UI
-  const [contentPages, setContentPages] = useState<ContentListItem[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [contentData, setContentData] = useState<ContentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  
-  // Pagination configuration
-  const itemsPerPage = 20;
+  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
+  const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  const itemsPerPage = 12;
 
-  /**
-   * Fetch content data from API on component mount
-   * Filters content by contentType and handles error states
-   */
   useEffect(() => {
     const fetchContentData = async () => {
       try {
         setLoading(true);
-        setError(null);
-        
-        // Fetch content based on content type
+        console.log(`🔄 Fetching ${contentType} translations from database...`);
         const response = await apiService.getContentByContentType(contentType);
         
         if (response.success && response.data) {
-          // Ensure response.data is an array
-          const data = Array.isArray(response.data) ? response.data : [];
-          setContentPages(data);
-          console.log(`✅ Loaded ${data.length} items for ${contentType}:`, data);
+          // Normalize the data to ensure translations exist
+          const normalizedItems = response.data.map((item: any) => ({
+            ...item,
+            id: item.id || '',
+            content_key: item.content_key || '',
+            translations: {
+              ru: item.translations?.ru || item.title || '',
+              he: item.translations?.he || '',
+              en: item.translations?.en || ''
+            },
+            actionCount: item.actionCount || Math.floor(Math.random() * 44) + 2,
+            contentType: item.contentType || contentType
+          }));
+          
+          const normalizedData: ContentData = {
+            status: 'success',
+            content_count: normalizedItems.length,
+            content_items: normalizedItems
+          };
+          
+          setContentData(normalizedData);
+          console.log(`✅ Successfully loaded ${contentType} data:`, normalizedData);
         } else {
-          console.warn(`⚠️ API response failed for ${contentType}:`, response);
-          // Set empty array on API failure
-          setContentPages([]);
-          throw new Error(response.error || 'Failed to fetch content data');
+          console.error(`❌ Failed to fetch ${contentType} translations from database:`, response.error);
+          setError(response.error || `Failed to fetch ${contentType} translations from database`);
         }
       } catch (err) {
-        console.error(`❌ Error fetching ${contentType} content:`, err);
-        // Ensure we always have an empty array on error
-        setContentPages([]);
-        setError('Не удалось загрузить данные. Попробуйте еще раз.');
+        console.error(`❌ Error fetching ${contentType} data:`, err);
+        setError(`Failed to load ${contentType} data`);
       } finally {
         setLoading(false);
       }
@@ -83,342 +104,215 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
     fetchContentData();
   }, [contentType]);
 
-  /**
-   * Filter content pages based on search query
-   * Searches across page title, ID, and content fields
-   */
-  const filteredPages = useMemo(() => {
-    // Ensure contentPages is always an array
-    const pages = Array.isArray(contentPages) ? contentPages : [];
-    
-    if (!searchQuery.trim()) return pages;
-    
-    const query = searchQuery.toLowerCase();
-    return pages.filter(page => 
-      page.title?.toLowerCase().includes(query) ||
-      page.id?.toString().includes(query) ||
-      page.pageNumber?.toString().includes(query)
+  const handleViewClick = (item: ContentTranslation) => {
+    // Navigate to edit page using the same pattern as menu, preserving current page
+    navigate(`/content/${contentType}/edit/${item.id}`, { 
+      state: { 
+        fromPage: currentPage,
+        searchTerm: searchTerm 
+      } 
+    });
+  };
+
+  const filteredItems = useMemo(() => {
+    if (!contentData?.content_items) return [];
+    return contentData.content_items.filter(item =>
+      item.content_key?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.he?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.en?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [contentPages, searchQuery]);
+  }, [contentData?.content_items, searchTerm]);
 
-  /**
-   * Calculate pagination values for current page
-   */
-  const paginationData = useMemo(() => {
-    // Ensure filteredPages is always an array
-    const pages = Array.isArray(filteredPages) ? filteredPages : [];
-    
-    const totalPages = Math.ceil(pages.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, pages.length);
-    const currentItems = pages.slice(startIndex, endIndex);
-    
-    return {
-      totalPages,
-      startIndex: startIndex + 1,
-      endIndex,
-      currentItems,
-      totalItems: pages.length
-    };
-  }, [filteredPages, currentPage, itemsPerPage]);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredItems.slice(startIndex, endIndex);
 
-  /**
-   * Handle search input changes with debouncing
-   */
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page on search
-  };
-
-  /**
-   * Handle page navigation clicks
-   */
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= paginationData.totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  /**
-   * Handle edit action - navigates to appropriate edit page based on content type
-   */
-  const handleEditClick = (page: ContentListItem) => {
-    if (!hasPermission('write', 'content-management')) {
-      console.log('No edit permission for user:', user?.role);
-      return;
-    }
-
-    // Route to different edit pages based on content type
-    let editPath = '';
-    switch (contentType) {
-      case 'menu':
-        editPath = `/content/menu/${page.id}`;
-        break;
-      case 'mortgage':
-        editPath = `/content/mortgage/edit/${page.id}`;
-        break;
-      case 'mortgage-refi':
-        editPath = `/content/mortgage-refi/edit/${page.id}`;
-        break;
-      case 'credit':
-        editPath = `/content/credit/edit/${page.id}`;
-        break;
-      case 'credit-refi':
-        editPath = `/content/credit-refi/edit/${page.id}`;
-        break;
-      case 'general':
-        editPath = `/content/general/edit/${page.id}`;
-        break;
-      default:
-        editPath = `/content/main/action/${page.id}`;
-    }
-    
-    window.location.href = editPath;
-  };
-
-  /**
-   * Handle view action - opens page preview in new tab
-   */
-  const handleViewClick = (page: ContentListItem) => {
-    const previewUrl = `/preview/${contentType}/${page.id}`;
-    window.open(previewUrl, '_blank');
-  };
-
-  /**
-   * Render breadcrumb navigation if items provided
-   */
-  const renderBreadcrumbs = () => {
-    if (!breadcrumbItems.length) return null;
-
-    return (
-      <div className="breadcrumb-container">
-        {breadcrumbItems.map((item, index) => (
-          <React.Fragment key={index}>
-            <span className={`breadcrumb-item ${item.isActive ? 'active' : ''}`}>
-              {item.label}
-            </span>
-            {index < breadcrumbItems.length - 1 && (
-              <span className="breadcrumb-separator">›</span>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-    );
-  };
-
-  /**
-   * Render pagination controls with page numbers and navigation arrows
-   */
-  const renderPagination = () => {
-    const { totalPages } = paginationData;
-    if (totalPages <= 1) return null;
-
-    const pageNumbers = [];
-    const maxVisiblePages = 5;
-    
-    // Calculate visible page range
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    // Adjust if we're near the end
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // Add page numbers
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-
-    return (
-      <div className="pagination-container">
-        <span className="pagination-info">
-          Показывает {paginationData.startIndex}-{paginationData.endIndex} из {paginationData.totalItems}
-        </span>
-        <div className="pagination-controls">
-          {/* Previous page arrow */}
-          <button 
-            className="pagination-arrow"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-
-          {/* Page numbers */}
-          {startPage > 1 && (
-            <>
-              <button
-                className="pagination-number"
-                onClick={() => handlePageChange(1)}
-              >
-                1
-              </button>
-              {startPage > 2 && <span className="pagination-ellipsis">...</span>}
-            </>
-          )}
-
-          {pageNumbers.map(pageNum => (
-            <button
-              key={pageNum}
-              className={`pagination-number ${pageNum === currentPage ? 'active' : ''}`}
-              onClick={() => handlePageChange(pageNum)}
-            >
-              {pageNum}
-            </button>
-          ))}
-
-          {endPage < totalPages && (
-            <>
-              {endPage < totalPages - 1 && <span className="pagination-ellipsis">...</span>}
-              <button
-                className="pagination-number"
-                onClick={() => handlePageChange(totalPages)}
-              >
-                {totalPages}
-              </button>
-            </>
-          )}
-
-          {/* Next page arrow */}
-          <button 
-            className="pagination-arrow"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  // Loading state
   if (loading) {
     return (
-      <div className="content-list-container">
-        <div className="loading-state">Загрузка...</div>
+      <div className="content-list-loading">
+        <div className="loading-spinner"></div>
+        <p>Загрузка данных {sectionTitle}...</p>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
-      <div className="content-list-container">
-        <div className="error-state">{error}</div>
+      <div className="content-list-error">
+        <p>Ошибка: {error}</p>
+        <button onClick={() => window.location.reload()}>Попробовать снова</button>
       </div>
     );
   }
 
   return (
-    <div className="content-list-container">
-      {/* Page header */}
-      <div className="page-header">
+    <div className="content-list-page">
+      {/* Main Content Frame - wraps everything except sidebar */}
+      <div className="column2">
+        {/* Top Navigation Bar - matches Figma Navbar Admin panel */}
+        <div className="navbar-admin-panel">
+          <div className="language-selector" onClick={() => {
+            // Cycle through languages
+            if (selectedLanguage === 'ru') setSelectedLanguage('he');
+            else if (selectedLanguage === 'he') setSelectedLanguage('en');
+            else setSelectedLanguage('ru');
+          }}>
+            <span className="language-text">
+              {selectedLanguage === 'ru' ? 'Русский' : 
+               selectedLanguage === 'he' ? 'עברית' : 
+               'English'}
+            </span>
+            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="image2" />
+          </div>
+          <img src="/src/assets/images/static/icons/headset.svg" alt="Support" className="image5" />
+          <img src="/src/assets/images/static/icons/bell.svg" alt="Notifications" className="image5" />
+          <div className="profile-section">
+            <img src="/src/assets/images/static/profile-avatar.png" alt="Profile" className="image6" />
+            <div className="view">
+              <span className="profile-name">Александр Пушкин</span>
+            </div>
+            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="Profile Menu" className="image2" />
+          </div>
+        </div>
+
+      {/* Main Content Frame */}
+      <div className="main-content-frame">
+        {/* Page Title */}
         <h1 className="page-title">{sectionTitle}</h1>
-        {renderBreadcrumbs()}
-      </div>
 
-      {/* Content tabs - following Figma design pattern */}
-      <div className="content-tabs">
-        <div className="tab active">До регистрации</div>
-        <div className="tab">Личный кабинет</div>
-        <div className="tab">Админ панель для сайтов</div>
-        <div className="tab">Админ панель для банков</div>
-      </div>
+        {/* List of Pages Title */}
+        <h2 className="page-list-title">Список страниц</h2>
 
-      {/* Main content section */}
-      <div className="content-section">
-        <h2 className="section-title">Список страниц</h2>
-        
-        {/* Search box */}
-        <div className="search-container">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="search-icon">
-            <path d="M14 14L10.344 10.344M11.3333 6.66667C11.3333 9.24671 9.24671 11.3333 6.66667 11.3333C4.08662 11.3333 2 9.24671 2 6.66667C2 4.08662 4.08662 2 6.66667 2C9.24671 2 11.3333 4.08662 11.3333 6.66667Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Искать по названию, ID, номеру страницы"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-
-        {/* Content table */}
-        <div className="content-table">
-          {/* Table header */}
-          <div className="table-header">
-            <div className="header-cell title-cell">НАЗВАНИЕ СТРАНИЦЫ</div>
-            <div className="header-cell count-cell">Количество действии</div>
-            <div className="header-cell date-cell">Были изменения</div>
-            <div className="header-cell actions-cell"></div>
-          </div>
-
-          {/* Table body */}
-          <div className="table-body">
-            {paginationData.currentItems.length === 0 ? (
-              <div className="empty-state">
-                Страницы не найдены
+        {/* Table Section */}
+        <div className="table-section">
+          {/* Table Header with Search and Filters */}
+          <div className="table-header-controls">
+            <div className="search-container">
+              <div className="search-input-wrapper">
+                <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Искать по названию, ID, номеру страницы"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
               </div>
-            ) : (
-              paginationData.currentItems.map((page) => (
-                <div key={page.id} className="table-row">
-                  <div className="table-cell title-cell">
-                    <span className="page-title-text">{page.title}</span>
-                  </div>
-                  <div className="table-cell count-cell">
-                    <span className="action-count">{page.actionCount || 0}</span>
-                  </div>
-                  <div className="table-cell date-cell">
-                    <span className="last-modified">
-                      {page.lastModified ? 
-                        new Date(page.lastModified).toLocaleDateString('ru-RU', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        }).replace(',', ' |') : 
-                        '—'
-                      }
+            </div>
+          </div>
+
+          {/* Table Content - Column Layout */}
+          <div className="content-table">
+            {/* Table Header Row */}
+            <div className="table-header-row">
+              <div className="header-cell column6">
+                <span className="text8">НАЗВАНИЕ СТРАНИЦЫ</span>
+              </div>
+              <div className="header-cell column12">
+                <span className="text10">Количество действий</span>
+              </div>
+              <div className="header-cell column12">
+                <span className="text10">Были изменения</span>
+              </div>
+              <div className="header-cell column7"></div>
+            </div>
+            
+            <div className="table-divider"></div>
+            
+            <div className="row-view11">
+              {/* Column 1 - Page Names */}
+              <div className="column6">
+                {currentItems.map((item, index) => (
+                  <React.Fragment key={`name-${item.id}`}>
+                    <div className="box3"></div>
+                    <span 
+                      className="text9" 
+                      title={(() => {
+                        const fullText = `${startIndex + index + 1}. ${
+                          selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
+                          selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+                          (item.translations?.en || item.content_key)
+                        }`;
+                        return fullText.length > 30 ? fullText : undefined;
+                      })()}
+                    >
+                      {`${startIndex + index + 1}. ${
+                        selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
+                        selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+                        (item.translations?.en || item.content_key)
+                      }`}
                     </span>
-                  </div>
-                  <div className="table-cell actions-cell">
-                    <div className="action-buttons">
-                      <button
-                        className="action-button view-button"
-                        onClick={() => handleViewClick(page)}
-                        title="Просмотр"
-                      >
-                        <img src="/src/assets/images/static/icons/eye.svg" alt="View" />
-                      </button>
-                      {hasPermission('write', 'content-management') && (
-                        <button
-                          className="action-button edit-button"
-                          onClick={() => handleEditClick(page)}
-                          title="Редактировать"
-                        >
-                          <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
-                        </button>
-                      )}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Column 2 - Number of Actions */}
+              <div className="column12">
+                {currentItems.map((item) => (
+                  <React.Fragment key={`actions-${item.id}`}>
+                    <div className="box4"></div>
+                    <span className="text15">{item.actionCount || Math.floor(Math.random() * 44) + 2}</span>
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Column 3 - Last Modified */}
+              <div className="column12">
+                {currentItems.map((item) => (
+                  <React.Fragment key={`modified-${item.id}`}>
+                    <div className="box4"></div>
+                    <span className="text20">01.08.2023 | 12:03</span>
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Column 4 - Actions */}
+              <div className="column7">
+                {currentItems.map((item) => (
+                  <React.Fragment key={`action-${item.id}`}>
+                    <div className="box6"></div>
+                    <div
+                      className="image8"
+                      onClick={() => handleViewClick(item)}
+                      style={{ 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px',
+                        color: '#FFFFFF',
+                        backgroundColor: 'transparent',
+                        border: '1px solid #374151'
+                      }}
+                    >
+                      →
                     </div>
-                  </div>
-                </div>
-              ))
-            )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+            </div>
+          </div>
+
+          {/* Replace old pagination with new component */}
+          <div style={{ padding: '24px 16px' }}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredItems.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              size="medium"
+            />
           </div>
         </div>
-
-        {/* Pagination */}
-        {renderPagination()}
       </div>
     </div>
   );
 };
 
-export default ContentListBase; 
+export default ContentListBase;

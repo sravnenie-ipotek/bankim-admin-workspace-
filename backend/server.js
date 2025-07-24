@@ -139,11 +139,17 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 
-// Rate limiting
+// Rate limiting - more lenient for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  max: 5000, // increased limit to 5000 requests per windowMs for development
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skip: (req) => {
+    // Skip rate limiting for health checks
+    return req.path === '/health';
+  }
 });
 
 app.use(limiter);
@@ -1070,6 +1076,119 @@ app.get('/api/content/mortgage', async (req, res) => {
     
   } catch (error) {
     console.error('Get mortgage content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Update mortgage content item
+ * PUT /api/content/mortgage/:id
+ * Updates translations and dropdown options for a mortgage content item
+ */
+app.put('/api/content/mortgage/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { translations, dropdown_options } = req.body;
+    
+    console.log(`Updating mortgage content item ${id}`, { translations, dropdown_options });
+    
+    // Start transaction
+    await safeQuery('BEGIN');
+    
+    try {
+      // Update translations
+      if (translations) {
+        for (const [lang, value] of Object.entries(translations)) {
+          await safeQuery(`
+            INSERT INTO content_translations (content_item_id, language_code, content_value)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (content_item_id, language_code)
+            DO UPDATE SET content_value = $3, updated_at = CURRENT_TIMESTAMP
+          `, [id, lang, value]);
+        }
+      }
+      
+      // Update dropdown options if provided
+      if (dropdown_options && Array.isArray(dropdown_options)) {
+        // First, get the content_key for this item
+        const itemResult = await safeQuery(
+          'SELECT content_key FROM content_items WHERE id = $1',
+          [id]
+        );
+        
+        if (itemResult.rows.length > 0) {
+          const contentKey = itemResult.rows[0].content_key;
+          
+          // Delete existing options
+          await safeQuery(`
+            DELETE FROM content_translations 
+            WHERE content_item_id IN (
+              SELECT id FROM content_items 
+              WHERE content_key LIKE $1 || '_option_%'
+            )
+          `, [contentKey]);
+          
+          await safeQuery(`
+            DELETE FROM content_items 
+            WHERE content_key LIKE $1 || '_option_%'
+          `, [contentKey]);
+          
+          // Insert new options
+          for (const option of dropdown_options) {
+            const optionKey = `${contentKey}_option_${option.order}`;
+            
+            // Create content item for option
+            const optionResult = await safeQuery(`
+              INSERT INTO content_items (content_key, component_type, category, screen_location, is_active)
+              VALUES ($1, 'option', 'mortgage', 'mortgage_calculation', true)
+              RETURNING id
+            `, [optionKey]);
+            
+            const optionId = optionResult.rows[0].id;
+            
+            // Insert translations for option
+            if (option.titleRu) {
+              await safeQuery(`
+                INSERT INTO content_translations (content_item_id, language_code, content_value)
+                VALUES ($1, 'ru', $2)
+              `, [optionId, option.titleRu]);
+            }
+            
+            if (option.titleHe) {
+              await safeQuery(`
+                INSERT INTO content_translations (content_item_id, language_code, content_value)
+                VALUES ($1, 'he', $2)
+              `, [optionId, option.titleHe]);
+            }
+          }
+        }
+      }
+      
+      // Update the main item's updated_at timestamp
+      await safeQuery(
+        'UPDATE content_items SET updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+        [id]
+      );
+      
+      // Commit transaction
+      await safeQuery('COMMIT');
+      
+      res.json({
+        success: true,
+        message: 'Mortgage content updated successfully'
+      });
+      
+    } catch (error) {
+      // Rollback on error
+      await safeQuery('ROLLBACK');
+      throw error;
+    }
+    
+  } catch (error) {
+    console.error('Update mortgage content error:', error);
     res.status(500).json({
       success: false,
       error: error.message

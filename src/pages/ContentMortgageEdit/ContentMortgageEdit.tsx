@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 
 import AdminLayout from '../../components/AdminLayout/AdminLayout';
@@ -31,6 +31,7 @@ interface MortgageContentItem {
 const ContentMortgageEdit: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [contentItem, setContentItem] = useState<MortgageContentItem | null>(null);
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
@@ -146,21 +147,48 @@ const ContentMortgageEdit: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      // TODO: Implement save functionality
-      console.log('Saving:', {
-        titleRu,
-        titleHe,
-        options: dropdownOptions
-      });
-      alert('Сохранено успешно!');
+      console.log('Saving mortgage content...');
+      
+      // Prepare the update data
+      const updateData = {
+        id: itemId,
+        translations: {
+          ru: titleRu,
+          he: titleHe,
+          en: contentItem?.translations?.en || ''
+        },
+        dropdown_options: dropdownOptions
+      };
+
+      // Call the API to update the content
+      const response = await apiService.updateMortgageContent(itemId!, updateData);
+      
+      if (response.success) {
+        console.log('✅ Mortgage content saved successfully');
+        // Navigate back to the same page and search state
+        navigate('/content/mortgage', { 
+          state: { 
+            fromPage: location.state?.fromPage || 1,
+            searchTerm: location.state?.searchTerm || ''
+          } 
+        });
+      } else {
+        console.error('❌ Failed to save mortgage content:', response.error);
+        alert(response.error || 'Ошибка при сохранении');
+      }
     } catch (err) {
-      console.error('Error saving:', err);
+      console.error('❌ Error saving:', err);
       alert('Ошибка при сохранении');
     }
   };
 
   const handleBack = () => {
-    navigate('/content/mortgage');
+    navigate('/content/mortgage', { 
+      state: { 
+        fromPage: location.state?.fromPage || 1,
+        searchTerm: location.state?.searchTerm || ''
+      } 
+    });
   };
 
   if (loading) {

@@ -714,6 +714,31 @@ class ApiService {
     }
   }
 
+  async updateMortgageContent(contentId: string, updateData: any): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Updating mortgage content...', { contentId, updateData });
+      const response = await this.request<any>(`/api/content/mortgage/${encodeURIComponent(contentId)}`, {
+        method: 'PUT',
+        body: JSON.stringify(updateData),
+      });
+      
+      if (response.success) {
+        console.log('✅ Successfully updated mortgage content');
+        // Cache will be automatically refreshed on next fetch
+        return response;
+      } else {
+        console.error('❌ Failed to update mortgage content:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error updating mortgage content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to update mortgage content'
+      };
+    }
+  }
+
   // Menu translations operations - using real bankim_content database
   async getMenuTranslations(): Promise<ApiResponse<any>> {
     try {

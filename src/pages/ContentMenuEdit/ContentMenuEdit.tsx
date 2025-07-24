@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import './ContentMenuEdit.css';
 
@@ -27,6 +27,7 @@ interface MenuTranslation {
 const ContentMenuEdit: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [contentItem, setContentItem] = useState<MenuTranslation | null>(null);
@@ -97,13 +98,23 @@ const ContentMenuEdit: React.FC = () => {
         const allSuccessful = results.every(result => result.success);
         
         if (allSuccessful) {
-          navigate('/content/menu');
+          navigate('/content/menu', { 
+            state: { 
+              fromPage: location.state?.fromPage || 1,
+              searchTerm: location.state?.searchTerm || ''
+            } 
+          });
         } else {
           setError('Some translations failed to save');
         }
       } else {
         // No changes to save
-        navigate('/content/menu');
+        navigate('/content/menu', { 
+          state: { 
+            fromPage: location.state?.fromPage || 1,
+            searchTerm: location.state?.searchTerm || ''
+          } 
+        });
       }
     } catch (err) {
       console.error('Error saving translations:', err);
@@ -114,7 +125,12 @@ const ContentMenuEdit: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/content/menu');
+    navigate('/content/menu', { 
+      state: { 
+        fromPage: location.state?.fromPage || 1,
+        searchTerm: location.state?.searchTerm || ''
+      } 
+    });
   };
 
   if (loading) {

@@ -32,6 +32,7 @@ import QAMortgage from './pages/QAMortgage';
 import ContentMortgageEdit from './pages/ContentMortgageEdit';
 import ContentMenuEdit from './pages/ContentMenuEdit';
 import ContentVerification from './pages/ContentVerification';
+import ContentMortgageRefiEdit from './pages/ContentMortgageRefiEdit';
 
 
 
@@ -497,6 +498,16 @@ const AppRouter: React.FC = () => {
                 <AdminLayout title="Рефинансирование ипотеки" activeMenuItem="content-mortgage-refi">
                   <ContentMortgageRefi />
                 </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/mortgage-refi/edit/:itemId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <ContentMortgageRefiEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
