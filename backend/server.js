@@ -256,7 +256,7 @@ app.get('/api/content/menu/translations', async (req, res) => {
     // Get navigation menu translations - these are the main site navigation items
     // Based on the content structure, we look for headings and titles that represent navigation
     const result = await safeQuery(`
-      SELECT 
+      SELECT
         ci.id,
         ci.content_key,
         ci.component_type,
@@ -273,8 +273,10 @@ app.get('/api/content/menu/translations', async (req, res) => {
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.is_active = TRUE
-        AND ct_ru.content_value IS NOT NULL
-      ORDER BY ci.screen_location, ci.content_key
+        AND ci.category = 'navigation'
+        AND ci.screen_location = 'sidebar'
+        AND (ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL OR ct_ru.content_value IS NOT NULL)
+      ORDER BY ci.content_key
     `);
     
     const menuItems = result.rows.map(row => ({
@@ -1072,6 +1074,69 @@ app.get('/api/content/mortgage', async (req, res) => {
       success: false,
       error: error.message
     });
+  }
+});
+
+/**
+ * Get mortgage refinancing content
+ * GET /api/content/mortgage-refi
+ * Returns content for mortgage refinancing screen with translations
+ */
+app.get('/api/content/mortgage-refi', async (req, res) => {
+  try {
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value AS title_ru,
+        ct_he.content_value AS title_he,
+        ct_en.content_value AS title_en,
+        ci.updated_at
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND ci.screen_location = 'mortgage_refinancing'
+        AND ct_ru.content_value IS NOT NULL
+        AND ci.component_type != 'option'          -- Exclude individual dropdown options
+        AND ci.content_key NOT LIKE '%_option_%'   -- Exclude option patterns
+        AND ci.content_key NOT LIKE '%_ph'         -- Exclude placeholders
+      ORDER BY ci.content_key
+    `);
+
+    const refiContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: refiContent.length,
+        mortgage_refi_content: refiContent
+      }
+    });
+  } catch (error) {
+    console.error('Get mortgage refi content error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
