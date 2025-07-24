@@ -956,6 +956,14 @@ app.get('/api/content/mortgage', async (req, res) => {
       ORDER BY ci.content_key
     `);
     
+    // Log the first few rows to debug component_type values
+    if (result.rows.length > 0) {
+      console.log('Sample mortgage content data:');
+      result.rows.slice(0, 3).forEach((row, index) => {
+        console.log(`Row ${index}: component_type="${row.component_type}", content_key="${row.content_key}"`);
+      });
+    }
+    
     const mortgageContent = result.rows.map(row => ({
       id: row.id,
       content_key: row.content_key,

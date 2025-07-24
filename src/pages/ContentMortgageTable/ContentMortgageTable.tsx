@@ -78,11 +78,15 @@ const ContentMortgageTable: React.FC = () => {
       
       const response = await apiService.getContentByContentType('mortgage');
       
-      if (response.success && response.data) {
+      if (response.success && response.data && response.data.length > 0) {
         setMortgageItems(response.data);
         console.log(`✅ Loaded ${response.data.length} mortgage items`);
+      } else if (response.success && response.data && response.data.length === 0) {
+        setError('Нет данных в базе данных');
+        setMortgageItems([]);
       } else {
-        setError('Не удалось загрузить данные');
+        setError(response.error || 'Не удалось загрузить данные из базы данных');
+        setMortgageItems([]);
       }
     } catch (err) {
       console.error('Error fetching mortgage content:', err);
@@ -211,6 +215,7 @@ const ContentMortgageTable: React.FC = () => {
             <div className="pages-table">
               <div className="table-header">
                 <div className="header-cell page-name-cell">НАЗВАНИЕ СТРАНИЦЫ</div>
+                <div className="header-cell" style={{ width: '150px', textAlign: 'center' }}>ТИП КОНТЕНТА</div>
                 <div className="header-cell actions-count-cell">КОЛИЧЕСТВО ДЕЙСТВИЙ</div>
                 <div className="header-cell last-modified-cell">БЫЛИ ИЗМЕНЕНИЯ</div>
                 <div className="header-cell action-buttons-cell"></div>
@@ -218,15 +223,46 @@ const ContentMortgageTable: React.FC = () => {
 
               {/* Table Body */}
               <div className="table-body">
-                {paginationData.currentItems.length === 0 ? (
+                {filteredItems.length === 0 ? (
                   <div className="empty-state" style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF' }}>
-                    <p>Нет данных для отображения</p>
+                    <p>{searchQuery ? 'Ничего не найдено по вашему запросу' : 'Нет данных в базе данных'}</p>
+                    {!searchQuery && (
+                      <p style={{ marginTop: '10px', fontSize: '14px' }}>
+                        Проверьте подключение к базе данных или обратитесь к администратору
+                      </p>
+                    )}
+                  </div>
+                ) : paginationData.currentItems.length === 0 ? (
+                  <div className="empty-state" style={{ padding: '40px', textAlign: 'center', color: '#9CA3AF' }}>
+                    <p>Нет данных для отображения на этой странице</p>
                   </div>
                 ) : (
                   paginationData.currentItems.map((item) => (
                     <div key={item.id} className="table-row">
                       <div className="table-cell page-name-cell">
                         <span className="page-name">{item.title}</span>
+                      </div>
+                      <div className="table-cell" style={{ width: '150px', textAlign: 'center' }}>
+                        <span 
+                          className="content-type-badge"
+                          style={{
+                            padding: '4px 12px',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            backgroundColor: 
+                              item.contentType === 'dropdown' ? '#3B82F6' :
+                              item.contentType === 'text' ? '#10B981' :
+                              item.contentType === 'link' ? '#F59E0B' :
+                              item.contentType === 'mixed' ? '#8B5CF6' : '#6B7280',
+                            color: '#FFFFFF'
+                          }}
+                        >
+                          {item.contentType === 'dropdown' ? 'Дропдаун' :
+                           item.contentType === 'text' ? 'Текст' :
+                           item.contentType === 'link' ? 'Ссылка' :
+                           item.contentType === 'mixed' ? 'Смешанный' : item.contentType}
+                        </span>
                       </div>
                       <div className="table-cell actions-count-cell">
                         <span className="action-count">{item.actionCount}</span>
@@ -251,7 +287,7 @@ const ContentMortgageTable: React.FC = () => {
               </div>
               
               {/* Pagination */}
-              {paginationData.totalPages > 1 && (
+              {paginationData.totalPages > 1 && filteredItems.length > 0 && (
                 <div className="pagination-container">
                   <span className="pagination-info">
                     Показывает {paginationData.startIndex + 1}-{paginationData.endIndex} из {paginationData.totalItems}

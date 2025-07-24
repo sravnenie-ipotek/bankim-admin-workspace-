@@ -766,11 +766,11 @@ class ApiService {
       const screenLocation = screenLocationMap[contentType];
       
       if (!screenLocation) {
-        console.warn(`Unknown content type: ${contentType}, using mock data`);
-        const mockData = this.generateMockDataByContentType(contentType);
+        console.error(`Unknown content type: ${contentType}`);
         return {
-          success: true,
-          data: mockData
+          success: false,
+          error: `Unknown content type: ${contentType}`,
+          data: []
         };
       }
 
@@ -807,12 +807,55 @@ class ApiService {
               pageNumber = parseFloat(pageMatch[1]);
             }
             
+            // Determine content type from various sources
+            let contentTypeValue: 'text' | 'dropdown' | 'link' | 'mixed' = 'text';
+            
+            // First check component_type field from database
+            if (item.component_type) {
+              const compType = item.component_type.toLowerCase();
+              if (compType === 'dropdown' || compType === 'select' || compType.includes('dropdown')) {
+                contentTypeValue = 'dropdown';
+              } else if (compType === 'link' || compType === 'button' || compType.includes('link')) {
+                contentTypeValue = 'link';
+              } else if (compType === 'text' || compType.includes('text')) {
+                contentTypeValue = 'text';
+              } else if (compType === 'mixed' || compType.includes('mixed')) {
+                contentTypeValue = 'mixed';
+              }
+            }
+            
+            // For mortgage content, also analyze based on title patterns
+            if (contentTypeValue === 'text' && contentType === 'mortgage') {
+              const lowerTitle = title.toLowerCase();
+              
+              // Known patterns for different content types in mortgage flow
+              if (lowerTitle.includes('калькулятор') || lowerTitle.includes('расчет')) {
+                contentTypeValue = 'mixed'; // Calculator pages usually have mixed content
+              } else if (lowerTitle.includes('выбор') || lowerTitle.includes('добавить партнера')) {
+                contentTypeValue = 'dropdown'; // Selection pages usually have dropdowns
+              } else if (lowerTitle.includes('показать предложения')) {
+                contentTypeValue = 'link'; // Action buttons
+              } else if (lowerTitle.includes('личные данные') || lowerTitle.includes('анкета')) {
+                contentTypeValue = 'mixed'; // Forms with various inputs
+              }
+            }
+            
+            // Count actions to determine if it might be mixed content
+            const actionCount = item.action_count || 1;
+            if (actionCount > 10 && contentTypeValue === 'text') {
+              // Pages with many actions likely have mixed content
+              contentTypeValue = 'mixed';
+            }
+            
+            // Debug logging
+            console.log(`Item ${index}: component_type=${item.component_type}, actionCount=${actionCount}, contentType=${contentTypeValue}, title=${title}`);
+            
             return {
               id: item.id?.toString() || `item-${index}`,
               title: title,
               actionCount: item.action_count || 1,
               lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
-              contentType: item.component_type || item.content_type || 'text',
+              contentType: contentTypeValue,
               pageNumber: pageNumber
             };
           });
@@ -828,20 +871,19 @@ class ApiService {
         }
       }
       
-      // Fallback to mock data if real API fails or returns empty
-      console.warn(`Real API failed or empty for ${contentType}, falling back to mock data`);
-      const mockData = this.generateMockDataByContentType(contentType);
+      // Return empty array if real API fails or returns empty
+      console.warn(`Real API failed or empty for ${contentType}`);
       return {
         success: true,
-        data: mockData
+        data: []
       };
     } catch (error) {
       console.error(`Error fetching ${contentType} content:`, error);
-      // Return mock data on error
-      const mockData = this.generateMockDataByContentType(contentType);
+      // Return error instead of mock data
       return {
-        success: true,
-        data: mockData
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch content',
+        data: []
       };
     }
   }

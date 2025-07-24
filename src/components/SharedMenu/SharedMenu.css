@@ -871,6 +871,11 @@
   transition: transform 0.2s ease;
 }
 
+/* Rotate arrow when expanded */
+.dropdown-arrow.expanded {
+  transform: rotate(180deg);
+}
+
 .navlink-sidebar.has-dropdown {
   justify-content: space-between;
 }
