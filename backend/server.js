@@ -656,6 +656,27 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
   const { contentKey } = req.params;
   
   try {
+    console.log('Fetching options for content key:', contentKey);
+    
+    // Build the pattern for options based on the content key
+    // If contentKey is an ID, we need to first get the actual content_key
+    let actualContentKey = contentKey;
+    
+    // Check if contentKey is numeric (ID)
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    console.log('Using content key pattern:', `${actualContentKey}_option_%`);
+    
     // Get all options for this mortgage dropdown
     const result = await safeQuery(`
       SELECT 
@@ -665,7 +686,7 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
         CAST(
-          SUBSTRING(ci.content_key FROM 'option\\.([0-9]+)')
+          SUBSTRING(ci.content_key FROM '_option_([0-9]+)')
           AS INTEGER
         ) as option_order
       FROM content_items ci
@@ -676,8 +697,8 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         AND ci.component_type = 'option'
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
-      ORDER BY option_order
-    `, [`${contentKey}.option.%`]);
+      ORDER BY option_order NULLS LAST, ci.content_key
+    `, [`${actualContentKey}_option_%`]);
     
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
@@ -1006,6 +1027,9 @@ app.get('/api/content/mortgage', async (req, res) => {
         AND ci.screen_location = 'mortgage_calculation'
         AND ct_ru.content_value IS NOT NULL
         AND ci.content_key NOT LIKE 'app.mortgage.form.%'
+        AND ci.component_type != 'option'  -- Exclude individual dropdown options
+        AND ci.content_key NOT LIKE '%_option_%'  -- Exclude option patterns
+        AND ci.content_key NOT LIKE '%_ph'  -- Exclude placeholders
       ORDER BY ci.content_key
     `);
     

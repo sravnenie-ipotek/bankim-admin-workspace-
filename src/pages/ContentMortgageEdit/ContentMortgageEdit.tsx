@@ -12,11 +12,15 @@ interface DropdownOption {
   titleHe: string;
 }
 
+interface MortgageContentItem extends ContentListItem {
+  contentKey?: string;
+}
+
 const ContentMortgageEdit: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [contentItem, setContentItem] = useState<ContentListItem | null>(null);
+  const [contentItem, setContentItem] = useState<MortgageContentItem | null>(null);
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
@@ -54,36 +58,23 @@ const ContentMortgageEdit: React.FC = () => {
     }
   };
 
-  const fetchDropdownOptions = async (item: ContentListItem) => {
+  const fetchDropdownOptions = async (item: MortgageContentItem) => {
     try {
-      // For mortgage content, we need to use the content_key to fetch options
-      // Extract the base content key (without .option suffix)
-      const contentKey = item.id; // Assuming the ID contains the content_key
+      // For mortgage content, we need to use the item's ID to fetch options
+      // The API will handle converting ID to content_key if needed
+      const response = await apiService.getMortgageDropdownOptions(item.id);
       
-      // First try to get options using the mortgage-specific endpoint
-      const response = await apiService.getMortgageDropdownOptions(contentKey);
+      console.log('Fetching options for item:', item.id, 'Response:', response);
+      
       if (response.success && response.data && response.data.length > 0) {
         setDropdownOptions(response.data);
       } else {
-        // If no options found, create mock data for demonstration
-        setDropdownOptions([
-          { id: '1', order: 1, titleRu: 'Наемный работник', titleHe: 'שכיר' },
-          { id: '2', order: 2, titleRu: 'Самозанятый', titleHe: 'עצמאי' },
-          { id: '3', order: 3, titleRu: 'Пенсионер', titleHe: 'גמלאי' },
-          { id: '4', order: 4, titleRu: 'Студент', titleHe: 'סטודנט' },
-          { id: '5', order: 5, titleRu: 'Безработный', titleHe: 'מובטל' }
-        ]);
+        // No options found - this dropdown might not have options yet
+        setDropdownOptions([]);
       }
     } catch (err) {
       console.error('Error fetching dropdown options:', err);
-      // Set mock data on error for demonstration
-      setDropdownOptions([
-        { id: '1', order: 1, titleRu: 'Наемный работник', titleHe: 'שכיר' },
-        { id: '2', order: 2, titleRu: 'Самозанятый', titleHe: 'עצמאי' },
-        { id: '3', order: 3, titleRu: 'Пенсионер', titleHe: 'גמלאי' },
-        { id: '4', order: 4, titleRu: 'Студент', titleHe: 'סטודנט' },
-        { id: '5', order: 5, titleRu: 'Безработный', titleHe: 'מובטל' }
-      ]);
+      setDropdownOptions([]);
     }
   };
 

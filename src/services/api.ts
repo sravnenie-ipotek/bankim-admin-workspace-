@@ -825,6 +825,26 @@ class ApiService {
                 contentTypeValue = 'text';
               } else if (compType === 'mixed' || compType.includes('mixed')) {
                 contentTypeValue = 'mixed';
+              } else if (compType === 'field_label') {
+                // Field labels in mortgage content are dropdowns
+                // Check content_key for known dropdown patterns
+                const contentKey = item.content_key || '';
+                if (contentKey.includes('.field.')) {
+                  // Known dropdown fields in mortgage calculation
+                  const dropdownFields = [
+                    'main_source', 'type', 'bank', 'borrowers', 'children18',
+                    'citizenship', 'city', 'debt_types', 'education', 'family_status',
+                    'first_home', 'has_additional', 'how_much_childrens', 'is_foreigner',
+                    'is_medinsurance', 'is_public', 'partner_pay_mortgage', 'property_ownership',
+                    'sphere', 'when_needed'
+                  ];
+                  
+                  // Check if this field is a known dropdown
+                  const isDropdownField = dropdownFields.some(field => contentKey.includes(field));
+                  if (isDropdownField) {
+                    contentTypeValue = 'dropdown';
+                  }
+                }
               }
             }
             
