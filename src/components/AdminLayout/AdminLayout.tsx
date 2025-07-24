@@ -135,7 +135,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         window.location.href = '/reports';
         break;
       case 'bank-employee':
-        window.location.href = '/bank-employee';
+        window.location.href = '/content-management';
         break;
       case 'user-registration':
         window.location.href = '/user-registration';

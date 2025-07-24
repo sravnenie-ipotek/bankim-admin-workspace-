@@ -60,8 +60,8 @@ const SalesManager = () => (
           </ul>
         </div>
         <div className="test-link">
-          <Link to="/bank-employee" className="btn-primary">
-            🧪 Перейти к тестовой странице компонентов
+          <Link to="/content-management" className="btn-primary">
+            📝 Перейти к управлению контентом
           </Link>
         </div>
       </div>
@@ -89,8 +89,8 @@ const Administration = () => (
           </ul>
         </div>
         <div className="test-link">
-          <Link to="/bank-employee" className="btn-primary">
-            🧪 Перейти к тестовой странице компонентов
+          <Link to="/content-management" className="btn-primary">
+            📝 Перейти к управлению контентом
           </Link>
         </div>
       </div>
@@ -118,8 +118,8 @@ const Brokers = () => (
           </ul>
         </div>
         <div className="test-link">
-          <Link to="/bank-employee" className="btn-primary">
-            🧪 Перейти к тестовой странице компонентов
+          <Link to="/content-management" className="btn-primary">
+            📝 Перейти к управлению контентом
           </Link>
         </div>
       </div>
@@ -147,8 +147,8 @@ const ContentManager = () => (
           </ul>
         </div>
         <div className="test-link">
-          <Link to="/bank-employee" className="btn-primary">
-            🧪 Перейти к тестовой странице компонентов
+          <Link to="/content-management" className="btn-primary">
+            📝 Перейти к управлению контентом
           </Link>
         </div>
       </div>
@@ -295,21 +295,21 @@ const Dashboard = () => (
           <p className="role-desc">External partner access</p>
         </Link>
 
-        <Link to="/bank-employee" className="role-card employee">
+        <Link to="/content-management" className="role-card employee">
           <div className="role-header">
             <span className="role-icon">🏛️</span>
             <h3>Bank Employee</h3>
           </div>
           <p className="role-permissions">21 permissions</p>
-          <p className="role-desc">Daily operations</p>
+          <p className="role-desc">Content management access</p>
         </Link>
       </div>
       
       <div className="main-test-link">
-        <Link to="/bank-employee" className="test-components-btn">
-          🧪 Go to Bank Employee Test Page
+        <Link to="/content-management" className="test-components-btn">
+          💼 Content Management
         </Link>
-        <p>Interactive testing environment for bank employee functionality</p>
+        <p>Manage site content and translations</p>
       </div>
       
       <div className="main-test-link">
@@ -320,10 +320,10 @@ const Dashboard = () => (
       </div>
       
       <div className="main-test-link">
-        <Link to="/table-demo" className="test-components-btn">
-          📊 Table Component Demo
+        <Link to="/content/mortgage" className="test-components-btn">
+          📊 Mortgage Content
         </Link>
-        <p>Interactive bank data table with exact Figma specifications</p>
+        <p>View and manage mortgage calculation content</p>
       </div>
     </div>
   </div>
