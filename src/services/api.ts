@@ -825,15 +825,17 @@ class ApiService {
             }
             
             // For mortgage content, also analyze based on title patterns
-            if (contentTypeValue === 'text' && contentType === 'mortgage') {
+            if (contentType === 'mortgage') {
               const lowerTitle = title.toLowerCase();
               
               // Known patterns for different content types in mortgage flow
               if (lowerTitle.includes('калькулятор') || lowerTitle.includes('расчет')) {
                 contentTypeValue = 'mixed'; // Calculator pages usually have mixed content
-              } else if (lowerTitle.includes('выбор') || lowerTitle.includes('добавить партнера')) {
+              } else if (lowerTitle.includes('выбор') || lowerTitle.includes('добавить партнера') || 
+                         lowerTitle.includes('самозанятый') || lowerTitle.includes('пенсионер') ||
+                         lowerTitle.includes('студент') || lowerTitle.includes('безработный')) {
                 contentTypeValue = 'dropdown'; // Selection pages usually have dropdowns
-              } else if (lowerTitle.includes('показать предложения')) {
+              } else if (lowerTitle.includes('показать предложения') || lowerTitle.includes('отпуск без содержания')) {
                 contentTypeValue = 'link'; // Action buttons
               } else if (lowerTitle.includes('личные данные') || lowerTitle.includes('анкета')) {
                 contentTypeValue = 'mixed'; // Forms with various inputs

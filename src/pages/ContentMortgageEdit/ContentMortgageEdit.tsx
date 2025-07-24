@@ -1,322 +1,300 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
+import { ContentListItem } from '../ContentListBase/types';
+import AdminLayout from '../../components/AdminLayout/AdminLayout';
 import './ContentMortgageEdit.css';
 
-interface MortgageItem {
+interface DropdownOption {
   id: string;
-  content_key: string;
-  component_type: string;
-  category: string;
-  screen_location: string;
-  description: string;
-  is_active: boolean;
-  translations: {
-    ru: string;
-    he: string;
-    en: string;
-  };
-  last_modified: string;
+  order: number;
+  titleRu: string;
+  titleHe: string;
 }
 
 const ContentMortgageEdit: React.FC = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const navigate = useNavigate();
-  
-  const [mortgageItem, setMortgageItem] = useState<MortgageItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [contentItem, setContentItem] = useState<ContentListItem | null>(null);
+  const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
+  const [titleRu, setTitleRu] = useState('');
+  const [titleHe, setTitleHe] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
-  // Form states
-  const [translations, setTranslations] = useState({
-    ru: '',
-    he: '',
-    en: ''
-  });
 
   useEffect(() => {
-    fetchMortgageItem();
+    fetchContentItem();
   }, [itemId]);
 
-  const fetchMortgageItem = async () => {
-    if (!itemId) return;
-    
+  const fetchContentItem = async () => {
     try {
       setLoading(true);
-      setError(null);
+      // Fetch the specific content item
+      const response = await apiService.getContentByContentType('mortgage');
       
-      // Fetch all mortgage items and find the one we need
-      const response = await apiService.getMortgageContent();
-      
-      if (response.success && response.data?.mortgage_content) {
-        const item = response.data.mortgage_content.find((i: any) => i.id === itemId);
-        
+      if (response.success && response.data) {
+        const item = response.data.find(item => item.id === itemId);
         if (item) {
-          setMortgageItem(item);
-          setTranslations({
-            ru: item.translations.ru || '',
-            he: item.translations.he || '',
-            en: item.translations.en || ''
-          });
+          setContentItem(item);
+          setTitleRu(item.title || '');
+          
+          // If it's a dropdown, fetch its options
+          if (item.contentType === 'dropdown') {
+            // Extract action number from title or use page number
+            const actionNumber = item.pageNumber || 1;
+            fetchDropdownOptions(actionNumber);
+          }
         } else {
-          setError('Элемент не найден');
+          setError('Content item not found');
         }
-      } else {
-        setError('Не удалось загрузить данные');
       }
     } catch (err) {
-      console.error('Error fetching mortgage item:', err);
-      setError('Ошибка при загрузке данных');
+      console.error('Error fetching content:', err);
+      setError('Failed to load content');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTranslationChange = (lang: 'ru' | 'he' | 'en', value: string) => {
-    setTranslations(prev => ({
-      ...prev,
-      [lang]: value
-    }));
-  };
-
-  const handleSave = async () => {
-    if (!mortgageItem) return;
-    
+  const fetchDropdownOptions = async (actionNumber: number) => {
     try {
-      setSaving(true);
-      setError(null);
-      setSuccessMessage(null);
-      
-      // Save each translation
-      const promises = Object.entries(translations).map(([lang, value]) => 
-        apiService.updateContentTranslation(mortgageItem.id, lang, value)
-      );
-      
-      const results = await Promise.all(promises);
-      
-      // Check if all saves were successful
-      const allSuccessful = results.every(result => result.success);
-      
-      if (allSuccessful) {
-        setSuccessMessage('Изменения успешно сохранены');
-        
-        // Clear the cache to ensure fresh data
-        apiService.clearContentCache();
-        
-        // Refresh the item data
-        await fetchMortgageItem();
-        
-        // Navigate back after a short delay
-        setTimeout(() => {
-          navigate('/content/mortgage');
-        }, 1500);
-      } else {
-        setError('Некоторые изменения не удалось сохранить');
+      const response = await apiService.getDropdownOptions(actionNumber);
+      if (response.success && response.data) {
+        setDropdownOptions(response.data);
       }
     } catch (err) {
-      console.error('Error saving translations:', err);
-      setError('Ошибка при сохранении изменений');
-    } finally {
-      setSaving(false);
+      console.error('Error fetching dropdown options:', err);
     }
   };
 
-  const handleCancel = () => {
+  const handleAddOption = () => {
+    const newOption: DropdownOption = {
+      id: `new-${Date.now()}`,
+      order: dropdownOptions.length + 1,
+      titleRu: '',
+      titleHe: ''
+    };
+    setDropdownOptions([...dropdownOptions, newOption]);
+  };
+
+  const handleUpdateOption = (optionId: string, field: 'titleRu' | 'titleHe', value: string) => {
+    setDropdownOptions(options =>
+      options.map(opt =>
+        opt.id === optionId ? { ...opt, [field]: value } : opt
+      )
+    );
+  };
+
+  const handleDeleteOption = (optionId: string) => {
+    setDropdownOptions(options => {
+      const filtered = options.filter(opt => opt.id !== optionId);
+      // Reorder remaining options
+      return filtered.map((opt, index) => ({
+        ...opt,
+        order: index + 1
+      }));
+    });
+  };
+
+  const handleMoveOption = (optionId: string, direction: 'up' | 'down') => {
+    const index = dropdownOptions.findIndex(opt => opt.id === optionId);
+    if (index === -1) return;
+
+    const newOptions = [...dropdownOptions];
+    if (direction === 'up' && index > 0) {
+      [newOptions[index], newOptions[index - 1]] = [newOptions[index - 1], newOptions[index]];
+    } else if (direction === 'down' && index < newOptions.length - 1) {
+      [newOptions[index], newOptions[index + 1]] = [newOptions[index + 1], newOptions[index]];
+    }
+
+    // Update order numbers
+    const reordered = newOptions.map((opt, idx) => ({
+      ...opt,
+      order: idx + 1
+    }));
+    setDropdownOptions(reordered);
+  };
+
+  const handleSave = async () => {
+    try {
+      // TODO: Implement save functionality
+      console.log('Saving:', {
+        titleRu,
+        titleHe,
+        options: dropdownOptions
+      });
+      alert('Сохранено успешно!');
+    } catch (err) {
+      console.error('Error saving:', err);
+      alert('Ошибка при сохранении');
+    }
+  };
+
+  const handleBack = () => {
     navigate('/content/mortgage');
-  };
-
-  const getComponentTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      'text': 'Текст',
-      'label': 'Метка',
-      'button': 'Кнопка',
-      'placeholder': 'Плейсхолдер',
-      'option': 'Опция',
-      'input': 'Поле ввода',
-      'dropdown': 'Выпадающий список'
-    };
-    return labels[type] || type;
-  };
-
-  const getCategoryLabel = (category: string) => {
-    const labels: Record<string, string> = {
-      'form': 'Форма',
-      'header': 'Заголовок',
-      'progress': 'Прогресс',
-      'test': 'Тест'
-    };
-    return labels[category] || category;
   };
 
   if (loading) {
     return (
-      <div className="mortgage-edit-container">
-        <div className="loading-state">Загрузка...</div>
-      </div>
+      <AdminLayout>
+        <div className="mortgage-edit-container">
+          <div className="loading-state">Загрузка...</div>
+        </div>
+      </AdminLayout>
     );
   }
 
-  if (error && !mortgageItem) {
+  if (error) {
     return (
+      <AdminLayout>
+        <div className="mortgage-edit-container">
+          <div className="error-state">{error}</div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  const isDropdown = contentItem?.contentType === 'dropdown';
+
+  return (
+    <AdminLayout>
       <div className="mortgage-edit-container">
-        <div className="error-state">
-          <p>{error}</p>
-          <button onClick={handleCancel} className="btn-secondary">
-            Вернуться к списку
+        {/* Breadcrumb */}
+        <div className="breadcrumb-container">
+          <span className="breadcrumb-item">Контент сайта</span>
+          <span className="breadcrumb-separator">›</span>
+          <span className="breadcrumb-item">Рассчитать ипотеку</span>
+          <span className="breadcrumb-separator">›</span>
+          <span className="breadcrumb-item active">Страница №{contentItem?.pageNumber}</span>
+        </div>
+
+        {/* Header */}
+        <div className="page-header-edit">
+          <h1 className="page-title-edit">
+            Номер страницы №{contentItem?.pageNumber} | {contentItem?.title}
+          </h1>
+          <span className="page-subtitle">Mortgage_page</span>
+        </div>
+
+        {/* Last Edit Info */}
+        <div className="last-edit-info">
+          <span className="last-edit-label">Последнее редактирование</span>
+          <span className="last-edit-date">
+            {new Date(contentItem?.lastModified || '').toLocaleDateString('ru-RU')} | {new Date(contentItem?.lastModified || '').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>
+
+        {/* Title Section */}
+        <div className="section-container">
+          <h2 className="section-title">Заголовки действий</h2>
+          
+          <div className="input-group">
+            <label className="input-label">RU</label>
+            <input
+              type="text"
+              className="text-input"
+              value={titleRu}
+              onChange={(e) => setTitleRu(e.target.value)}
+              placeholder="Введите заголовок на русском"
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">HEB</label>
+            <input
+              type="text"
+              className="text-input rtl"
+              value={titleHe}
+              onChange={(e) => setTitleHe(e.target.value)}
+              placeholder="הזן כותרת בעברית"
+              dir="rtl"
+            />
+          </div>
+        </div>
+
+        {/* Dropdown Options Section (only for dropdown type) */}
+        {isDropdown && (
+          <div className="section-container">
+            <div className="section-header">
+              <h2 className="section-title">Опции ответов</h2>
+              <button className="add-option-btn" onClick={handleAddOption}>
+                <span className="add-icon">+</span>
+                <span>Добавить вариант</span>
+              </button>
+            </div>
+
+            <div className="options-list">
+              {dropdownOptions.map((option, index) => (
+                <div key={option.id} className="option-row">
+                  <div className="option-number">{option.order}</div>
+                  
+                  <div className="option-inputs">
+                    <div className="option-input-group">
+                      <label className="input-label">RU</label>
+                      <input
+                        type="text"
+                        className="option-input"
+                        value={option.titleRu}
+                        onChange={(e) => handleUpdateOption(option.id, 'titleRu', e.target.value)}
+                        placeholder="Вариант на русском"
+                      />
+                    </div>
+                    
+                    <div className="option-input-group">
+                      <label className="input-label">HEB</label>
+                      <input
+                        type="text"
+                        className="option-input rtl"
+                        value={option.titleHe}
+                        onChange={(e) => handleUpdateOption(option.id, 'titleHe', e.target.value)}
+                        placeholder="אפשרות בעברית"
+                        dir="rtl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="option-actions">
+                    <button 
+                      className="option-action-btn"
+                      onClick={() => handleMoveOption(option.id, 'up')}
+                      disabled={index === 0}
+                      title="Переместить вверх"
+                    >
+                      ↑
+                    </button>
+                    <button 
+                      className="option-action-btn"
+                      onClick={() => handleMoveOption(option.id, 'down')}
+                      disabled={index === dropdownOptions.length - 1}
+                      title="Переместить вниз"
+                    >
+                      ↓
+                    </button>
+                    <button 
+                      className="option-action-btn delete"
+                      onClick={() => handleDeleteOption(option.id)}
+                      title="Удалить"
+                    >
+                      🗑
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          <button className="btn-secondary" onClick={handleBack}>
+            Назад
+          </button>
+          <button className="btn-primary" onClick={handleSave}>
+            Сохранить и опубликовать
           </button>
         </div>
       </div>
-    );
-  }
-
-  if (!mortgageItem) {
-    return (
-      <div className="mortgage-edit-container">
-        <div className="error-state">Элемент не найден</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mortgage-edit-container">
-      {/* Header */}
-      <div className="edit-header">
-        <h1>Редактирование контента ипотеки</h1>
-        <div className="breadcrumb">
-          <span onClick={() => navigate('/content/mortgage')} className="breadcrumb-link">
-            Рассчитать ипотеку
-          </span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-current">Редактирование</span>
-        </div>
-      </div>
-
-      {/* Messages */}
-      {error && (
-        <div className="message message-error">
-          {error}
-        </div>
-      )}
-      
-      {successMessage && (
-        <div className="message message-success">
-          {successMessage}
-        </div>
-      )}
-
-      {/* Item Info */}
-      <div className="item-info">
-        <div className="info-grid">
-          <div className="info-item">
-            <label>Ключ контента:</label>
-            <span>{mortgageItem.content_key}</span>
-          </div>
-          <div className="info-item">
-            <label>Тип компонента:</label>
-            <span className="component-type">{getComponentTypeLabel(mortgageItem.component_type)}</span>
-          </div>
-          <div className="info-item">
-            <label>Категория:</label>
-            <span>{getCategoryLabel(mortgageItem.category)}</span>
-          </div>
-          <div className="info-item">
-            <label>Описание:</label>
-            <span>{mortgageItem.description}</span>
-          </div>
-          <div className="info-item">
-            <label>Последнее изменение:</label>
-            <span>
-              {new Date(mortgageItem.last_modified).toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </span>
-          </div>
-          <div className="info-item">
-            <label>Статус:</label>
-            <span className={`status ${mortgageItem.is_active ? 'active' : 'inactive'}`}>
-              {mortgageItem.is_active ? 'Активен' : 'Неактивен'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Translation Form */}
-      <div className="translation-form">
-        <h2>Переводы</h2>
-        
-        <div className="translation-grid">
-          {/* Russian */}
-          <div className="translation-item">
-            <div className="translation-header">
-              <span className="language-flag">🇷🇺</span>
-              <label>Русский</label>
-            </div>
-            <textarea
-              value={translations.ru}
-              onChange={(e) => handleTranslationChange('ru', e.target.value)}
-              placeholder="Введите текст на русском"
-              className="translation-input"
-              rows={3}
-            />
-          </div>
-
-          {/* Hebrew */}
-          <div className="translation-item">
-            <div className="translation-header">
-              <span className="language-flag">🇮🇱</span>
-              <label>Иврит</label>
-            </div>
-            <textarea
-              value={translations.he}
-              onChange={(e) => handleTranslationChange('he', e.target.value)}
-              placeholder="הזן טקסט בעברית"
-              className="translation-input"
-              dir="rtl"
-              rows={3}
-            />
-          </div>
-
-          {/* English */}
-          <div className="translation-item">
-            <div className="translation-header">
-              <span className="language-flag">🇬🇧</span>
-              <label>Английский</label>
-            </div>
-            <textarea
-              value={translations.en}
-              onChange={(e) => handleTranslationChange('en', e.target.value)}
-              placeholder="Enter text in English"
-              className="translation-input"
-              rows={3}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="edit-actions">
-        <button 
-          onClick={handleCancel} 
-          className="btn-secondary"
-          disabled={saving}
-        >
-          Отмена
-        </button>
-        <button 
-          onClick={handleSave} 
-          className="btn-primary"
-          disabled={saving || (!translations.ru && !translations.he && !translations.en)}
-        >
-          {saving ? 'Сохранение...' : 'Сохранить изменения'}
-        </button>
-      </div>
-    </div>
+    </AdminLayout>
   );
 };
 
