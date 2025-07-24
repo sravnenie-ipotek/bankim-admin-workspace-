@@ -228,6 +228,22 @@
   stroke-width: 2;
 }
 
+/* Dropdown row styling */
+.table-row.dropdown-type {
+  cursor: pointer;
+}
+
+.table-row.dropdown-type:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.table-row.dropdown-type .page-name {
+  color: #60A5FA;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
 /* Empty State */
 .empty-state {
   padding: 3rem;

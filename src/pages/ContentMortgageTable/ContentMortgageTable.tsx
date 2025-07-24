@@ -238,7 +238,7 @@ const ContentMortgageTable: React.FC = () => {
                   </div>
                 ) : (
                   paginationData.currentItems.map((item) => (
-                    <div key={item.id} className="table-row">
+                    <div key={item.id} className={`table-row ${item.contentType === 'dropdown' ? 'dropdown-type' : ''}`}>
                       <div className="table-cell page-name-cell">
                         <span className="page-name">{item.title}</span>
                       </div>

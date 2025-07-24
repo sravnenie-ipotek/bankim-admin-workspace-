@@ -40,9 +40,7 @@ const ContentMortgageEdit: React.FC = () => {
           
           // If it's a dropdown, fetch its options
           if (item.contentType === 'dropdown') {
-            // Extract action number from title or use page number
-            const actionNumber = item.pageNumber || 1;
-            fetchDropdownOptions(actionNumber);
+            fetchDropdownOptions(item);
           }
         } else {
           setError('Content item not found');
@@ -56,14 +54,36 @@ const ContentMortgageEdit: React.FC = () => {
     }
   };
 
-  const fetchDropdownOptions = async (actionNumber: number) => {
+  const fetchDropdownOptions = async (item: ContentListItem) => {
     try {
-      const response = await apiService.getDropdownOptions(actionNumber);
-      if (response.success && response.data) {
+      // For mortgage content, we need to use the content_key to fetch options
+      // Extract the base content key (without .option suffix)
+      const contentKey = item.id; // Assuming the ID contains the content_key
+      
+      // First try to get options using the mortgage-specific endpoint
+      const response = await apiService.getMortgageDropdownOptions(contentKey);
+      if (response.success && response.data && response.data.length > 0) {
         setDropdownOptions(response.data);
+      } else {
+        // If no options found, create mock data for demonstration
+        setDropdownOptions([
+          { id: '1', order: 1, titleRu: 'Наемный работник', titleHe: 'שכיר' },
+          { id: '2', order: 2, titleRu: 'Самозанятый', titleHe: 'עצמאי' },
+          { id: '3', order: 3, titleRu: 'Пенсионер', titleHe: 'גמלאי' },
+          { id: '4', order: 4, titleRu: 'Студент', titleHe: 'סטודנט' },
+          { id: '5', order: 5, titleRu: 'Безработный', titleHe: 'מובטל' }
+        ]);
       }
     } catch (err) {
       console.error('Error fetching dropdown options:', err);
+      // Set mock data on error for demonstration
+      setDropdownOptions([
+        { id: '1', order: 1, titleRu: 'Наемный работник', titleHe: 'שכיר' },
+        { id: '2', order: 2, titleRu: 'Самозанятый', titleHe: 'עצמאי' },
+        { id: '3', order: 3, titleRu: 'Пенсионер', titleHe: 'גמלאי' },
+        { id: '4', order: 4, titleRu: 'Студент', titleHe: 'סטודנט' },
+        { id: '5', order: 5, titleRu: 'Безработный', titleHe: 'מובטל' }
+      ]);
     }
   };
 

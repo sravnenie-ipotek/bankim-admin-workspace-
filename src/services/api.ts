@@ -688,6 +688,10 @@ class ApiService {
     return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
   }
 
+  async getMortgageDropdownOptions(contentKey: string): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(`/api/content/mortgage/${encodeURIComponent(contentKey)}/options`);
+  }
+
   // Mortgage content operations
   async getMortgageContent(): Promise<ApiResponse<any>> {
     try {
