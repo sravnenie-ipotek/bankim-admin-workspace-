@@ -48,7 +48,7 @@ const ContentMortgageEdit: React.FC = () => {
       setError(null);
       
       // Fetch all mortgage items and find the one we need
-      const response = await apiService.requestWithCache('/api/content/mortgage');
+      const response = await apiService.getMortgageContent();
       
       if (response.success && response.data?.mortgage_content) {
         const item = response.data.mortgage_content.find((i: any) => i.id === itemId);

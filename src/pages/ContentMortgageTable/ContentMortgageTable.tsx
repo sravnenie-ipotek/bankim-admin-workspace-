@@ -1,26 +1,25 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import './ContentMortgageTable.css';
 
-interface MortgageItem {
-  id: string;
-  content_key: string;
-  component_type: string;
-  category: string;
-  screen_location: string;
-  description: string;
-  is_active: boolean;
-  translations: {
-    ru: string;
-    he: string;
-    en: string;
-  };
-  last_modified: string;
-}
+// Interface for mortgage items (commented out since table currently uses hardcoded data)
+// interface MortgageItem {
+//   id: string;
+//   content_key: string;
+//   component_type: string;
+//   category: string;
+//   screen_location: string;
+//   description: string;
+//   is_active: boolean;
+//   translations: {
+//     ru: string;
+//     he: string;
+//     en: string;
+//   };
+//   last_modified: string;
+// }
 
 const ContentMortgageTable: React.FC = () => {
-  const navigate = useNavigate();
   const { hasPermission } = useAuth();
   
   // Quick login function for testing
@@ -74,110 +73,77 @@ const ContentMortgageTable: React.FC = () => {
     hasEditPermission
   });
 
-  const [mortgageItems, setMortgageItems] = useState<MortgageItem[]>([]);
+  // const [mortgageItems, setMortgageItems] = useState<MortgageItem[]>([]); // Commented out since table uses hardcoded data
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null); // Commented out since not used with hardcoded data
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  // const itemsPerPage = 20; // Commented out since pagination is not currently used
 
   useEffect(() => {
-    fetchMortgageContent();
+    // Simulate loading since table currently uses hardcoded data
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, []);
 
-  const fetchMortgageContent = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch('http://localhost:3001/api/content/mortgage');
-      const data = await response.json();
-      
-      if (data.success && data.data?.mortgage_content) {
-        setMortgageItems(data.data.mortgage_content);
-        console.log(`✅ Loaded ${data.data.mortgage_content.length} mortgage items`);
-      } else {
-        setError('Не удалось загрузить данные');
-      }
-    } catch (err) {
-      console.error('Error fetching mortgage content:', err);
-      setError('Ошибка при загрузке данных');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Commented out since table currently uses hardcoded data
+  // const fetchMortgageContent = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+  //     
+  //     const response = await fetch('http://localhost:3001/api/content/mortgage');
+  //     const data = await response.json();
+  //     
+  //     if (data.success && data.data?.mortgage_content) {
+  //       setMortgageItems(data.data.mortgage_content);
+  //       console.log(`✅ Loaded ${data.data.mortgage_content.length} mortgage items`);
+  //     } else {
+  //       setError('Не удалось загрузить данные');
+  //     }
+  //   } catch (err) {
+  //     console.error('Error fetching mortgage content:', err);
+  //     setError('Ошибка при загрузке данных');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Filter items based on search
-  const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return mortgageItems;
-    
-    const query = searchQuery.toLowerCase();
-    return mortgageItems.filter(item => 
-      item.content_key?.toLowerCase().includes(query) ||
-      item.translations.ru?.toLowerCase().includes(query) ||
-      item.translations.he?.includes(query) ||
-      item.translations.en?.toLowerCase().includes(query) ||
-      item.description?.toLowerCase().includes(query)
-    );
-  }, [mortgageItems, searchQuery]);
+  // Filter items based on search query (commented out since table currently uses hardcoded data)
+  // const filteredItems = useMemo(() => {
+  //   if (!searchQuery.trim()) return mortgageItems;
+  //   
+  //   const query = searchQuery.toLowerCase();
+  //   return mortgageItems.filter(item => 
+  //     item.content_key?.toLowerCase().includes(query) ||
+  //     item.translations.ru?.toLowerCase().includes(query) ||
+  //     item.translations.he?.includes(query) ||
+  //     item.translations.en?.toLowerCase().includes(query) ||
+  //     item.description?.toLowerCase().includes(query)
+  //   );
+  // }, [mortgageItems, searchQuery]);
 
-  // Pagination
-  const paginationData = useMemo(() => {
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
-    const currentItems = filteredItems.slice(startIndex, endIndex);
-    
-    return {
-      totalPages,
-      startIndex,
-      endIndex,
-      currentItems,
-      totalItems: filteredItems.length
-    };
-  }, [filteredItems, currentPage]);
+  // Pagination logic (commented out since table currently uses hardcoded data)
+  // const currentPage = 1;
+  // const paginationData = useMemo(() => {
+  //   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  //   const startIndex = (currentPage - 1) * itemsPerPage;
+  //   const endIndex = Math.min(startIndex + itemsPerPage, filteredItems.length);
+  //   const currentItems = filteredItems.slice(startIndex, endIndex);
+  //   
+  //   return {
+  //     totalPages,
+  //     startIndex,
+  //     endIndex,
+  //     currentItems,
+  //     totalItems: filteredItems.length
+  //   };
+  // }, [filteredItems, currentPage]);
 
-  const handleEditClick = (item: MortgageItem) => {
-    navigate(`/content/mortgage/edit/${item.id}`);
-  };
-
-  const handleDropdownClick = (item: MortgageItem) => {
-    // Navigate to dropdown options page
-    navigate(`/content/mortgage/dropdown/${item.id}`);
-  };
-
-  const getComponentTypeDisplay = (type: string) => {
-    switch (type?.toLowerCase()) {
-      case 'dropdown':
-      case 'select':
-        return 'Дропдаун';
-      case 'text':
-      case 'label':
-        return 'Текст';
-      case 'button':
-        return 'Кнопка';
-      case 'link':
-        return 'Ссылка';
-      case 'option':
-        return 'Опция';
-      case 'placeholder':
-        return 'Плейсхолдер';
-      default:
-        return type || 'Текст';
-    }
-  };
-
-  const getContentId = (contentKey: string) => {
-    // Extract meaningful ID from content_key
-    const parts = contentKey.split('.');
-    return parts[parts.length - 1] || contentKey;
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= paginationData.totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  // These functions will be implemented when the table is converted to use dynamic data
+  // Currently the table uses hardcoded content
 
   return (
     <div className="mortgage-table-container">
@@ -213,11 +179,12 @@ const ContentMortgageTable: React.FC = () => {
         <div className="loading-state">Загрузка...</div>
       )}
 
-      {error && (
+      {/* Error state commented out since using hardcoded data */}
+      {/* {error && (
         <div className="error-state">{error}</div>
-      )}
+      )} */}
 
-      {!loading && !error && (
+      {!loading && (
         <>
           {/* Header */}
           <div className="page-header">

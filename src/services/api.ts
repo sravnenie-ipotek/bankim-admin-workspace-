@@ -688,6 +688,28 @@ class ApiService {
     return this.request<any[]>(`/api/content/main_page/action/${actionNumber}/options`);
   }
 
+  // Mortgage content operations
+  async getMortgageContent(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching mortgage content from database...');
+      const response = await this.requestWithCache<any>(`/api/content/mortgage`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched mortgage content from database');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch mortgage content:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching mortgage content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch mortgage content'
+      };
+    }
+  }
+
   // Menu translations operations - using real bankim_content database
   async getMenuTranslations(): Promise<ApiResponse<any>> {
     try {

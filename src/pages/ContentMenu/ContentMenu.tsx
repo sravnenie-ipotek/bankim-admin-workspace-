@@ -58,7 +58,7 @@ const ContentMenu: React.FC = () => {
         if (response.success && response.data) {
           const data = response.data;
           if (data.menu_items && Array.isArray(data.menu_items)) {
-            const normalizedItems = data.menu_items.map(item => {
+            const normalizedItems = data.menu_items.map((item: any) => {
               // Map component_type to category for display
               let category = 'text';
               if (item.component_type === 'nav_link' || item.component_type === 'service_card' || item.component_type === 'link') {
