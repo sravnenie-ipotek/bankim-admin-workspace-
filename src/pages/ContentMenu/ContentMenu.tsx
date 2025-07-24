@@ -320,8 +320,8 @@ const ContentMenu: React.FC = () => {
               {/* Column 2 - Number of Actions */}
               <div className="column12">
                 {currentItems.map((item) => {
-                  // Mock data for number of actions - randomize between 2 and 46
-                  const actionCount = Math.floor(Math.random() * 44) + 2;
+                  // Use real action count from database
+                  const actionCount = item.actionCount || 0;
                   return (
                     <React.Fragment key={`actions-${item.id}`}>
                       <div className="box4"></div>

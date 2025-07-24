@@ -10,7 +10,7 @@ interface MortgageRefiTranslation {
   component_type: string;
   category: string;
   screen_location: string;
-  description: string;
+  description: string | null;
   is_active: boolean;
   translations: {
     ru: string;
@@ -47,16 +47,26 @@ const ContentMortgageRefiEdit: React.FC = () => {
 
       console.log('🔍 Fetching mortgage-refi content for item ID:', itemId);
 
-      // Fetch mortgage-refi content list
-      const response = await apiService.getContentByContentType('mortgage-refi');
+      // Fetch mortgage-refi content using the specific API endpoint
+      const response = await fetch('/api/content/mortgage-refi');
+      const responseData = await response.json();
 
-      if (response.success && response.data) {
-        console.log('📊 Available mortgage-refi items:', response.data.length);
-        console.log('🔢 Item IDs:', response.data.map((i: any) => i.id));
+      if (responseData.success && responseData.data) {
+        console.log('📊 API Response structure:', responseData.data);
         
-        // Convert itemId to number for comparison
-        const itemIdNum = parseInt(itemId);
-        const item = response.data.find((i: any) => i.id === itemIdNum || i.id === itemId);
+        // Handle the actual API response structure
+        const contentItems = responseData.data.mortgage_refi_content || [];
+        console.log('📊 Available mortgage-refi items:', contentItems.length);
+        console.log('🔢 Item IDs:', contentItems.map((i: any) => i.id));
+        
+        if (contentItems.length === 0) {
+          console.error('❌ No mortgage-refi content found in database');
+          setError('В базе данных нет контента типа "Рефинансирование ипотеки". Обратитесь к администратору для добавления контента.');
+          return;
+        }
+        
+        // Convert itemId to string for comparison (API returns string IDs)
+        const item = contentItems.find((i: any) => i.id === itemId || i.id === parseInt(itemId));
         
         if (item) {
           console.log('✅ Found item:', item);
@@ -65,12 +75,12 @@ const ContentMortgageRefiEdit: React.FC = () => {
           setTitleHe((item as any).translations?.he || '');
           setTitleEn((item as any).translations?.en || '');
         } else {
-          console.error('❌ Item not found. Looking for ID:', itemId, 'Available IDs:', response.data.map((i: any) => i.id));
-          setError(`Элемент контента с ID ${itemId} не найден`);
+          console.error('❌ Item not found. Looking for ID:', itemId, 'Available IDs:', contentItems.map((i: any) => i.id));
+          setError(`Элемент контента с ID ${itemId} не найден. Доступные ID: ${contentItems.map((i: any) => i.id).join(', ')}`);
         }
       } else {
-        console.error('❌ API response error:', response.error);
-        setError(response.error || 'Не удалось загрузить данные');
+        console.error('❌ API response error:', responseData.error);
+        setError(responseData.error || 'Не удалось загрузить данные');
       }
     } catch (err) {
       console.error('Error fetching mortgage-refi item:', err);
@@ -207,6 +217,10 @@ const ContentMortgageRefiEdit: React.FC = () => {
               <div className="info-row">
                 <span className="info-label">Location:</span>
                 <span className="info-value">{contentItem.screen_location}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Description:</span>
+                <span className="info-value">{contentItem.description || 'N/A'}</span>
               </div>
             </div>
           </div>

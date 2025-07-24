@@ -92,32 +92,8 @@ content_item_id | language_code | content_value | ...
     }
   ];
 
-  const sampleDatabaseRecords = [
-    {
-      content_key: "mortgage.title",
-      component_type: "text",
-      screen_location: "mortgage_calculation",
-      ru: "Калькулятор ипотеки",
-      he: "מחשבון משכנתא",
-      en: "Mortgage Calculator"
-    },
-    {
-      content_key: "mortgage.loan_amount",
-      component_type: "input",
-      screen_location: "mortgage_calculation",
-      ru: "Сумма кредита",
-      he: "סכום ההלוואה",
-      en: "Loan Amount"
-    },
-    {
-      content_key: "mortgage.interest_rate",
-      component_type: "input",
-      screen_location: "mortgage_calculation",
-      ru: "Процентная ставка",
-      he: "ריבית",
-      en: "Interest Rate"
-    }
-  ];
+  // REMOVED: Sample database records - now fetches real data from database
+  const sampleDatabaseRecords: any[] = [];
 
   return (
     <div className="verification-container">

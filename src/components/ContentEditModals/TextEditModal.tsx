@@ -33,7 +33,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
   actionName,
 }) => {
   const [activeLang, setActiveLang] = useState<'ru' | 'he' | 'en'>('ru');
-  const [text, setText] = useState({ ru: 'Пример текста', he: 'טקסט לדוגמה', en: 'Sample text' });
+  const [text, setText] = useState({ ru: '', he: '', en: '' });
   const [style, setStyle] = useState({ font: 'Arimo', size: 16, color: '#FFFFFF', weight: '400' });
   const [position, setPosition] = useState({ x: 0, y: 0 });
 

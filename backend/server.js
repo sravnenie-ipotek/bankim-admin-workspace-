@@ -132,6 +132,7 @@ app.use(cors({
     'http://localhost:3002', 
     'http://localhost:3003',
     'http://localhost:3004',
+    'http://localhost:3005',
     'http://localhost:5173',
     'https://bankim-management-portal.railway.app'
   ],
@@ -775,144 +776,9 @@ app.put('/api/content-items/:content_item_id/translations/:language_code', async
 });
 
 /**
- * UI Settings endpoints - Mock implementation for development
- * These would normally connect to a separate UI settings database
+ * REMOVED: Mock UI Settings endpoints
+ * Mock implementation has been removed - implement real UI settings if needed
  */
-
-// Get all UI settings
-app.get('/api/ui-settings', async (req, res) => {
-  try {
-    // Mock UI settings data
-    const mockSettings = [
-      {
-        id: 1,
-        settingKey: 'font-size',
-        settingValue: '16px',
-        description: 'Default font size for the application',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: 2,
-        settingKey: 'theme',
-        settingValue: 'dark',
-        description: 'Application theme',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: 3,
-        settingKey: 'language',
-        settingValue: 'ru',
-        description: 'Default application language',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ];
-
-    res.json({
-      success: true,
-      data: mockSettings
-    });
-  } catch (error) {
-    console.error('Get UI settings error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Get UI setting by key
-app.get('/api/ui-settings/:key', async (req, res) => {
-  const { key } = req.params;
-  
-  try {
-    // Mock implementation
-    const mockSettings = {
-      'font-size': {
-        id: 1,
-        settingKey: 'font-size',
-        settingValue: '16px',
-        description: 'Default font size for the application',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      'theme': {
-        id: 2,
-        settingKey: 'theme',
-        settingValue: 'dark',
-        description: 'Application theme',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      'language': {
-        id: 3,
-        settingKey: 'language',
-        settingValue: 'ru',
-        description: 'Default application language',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    };
-
-    const setting = mockSettings[key];
-    
-    if (!setting) {
-      return res.status(404).json({
-        success: false,
-        error: 'Setting not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: setting
-    });
-  } catch (error) {
-    console.error('Get UI setting error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Update UI setting
-app.put('/api/ui-settings/:key', async (req, res) => {
-  const { key } = req.params;
-  const { settingValue } = req.body;
-  
-  if (!settingValue) {
-    return res.status(400).json({
-      success: false,
-      error: 'settingValue is required'
-    });
-  }
-  
-  try {
-    // Mock implementation - in real implementation this would update database
-    const mockResponse = {
-      id: Math.floor(Math.random() * 1000),
-      settingKey: key,
-      settingValue: settingValue,
-      description: `Updated setting for ${key}`,
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    res.json({
-      success: true,
-      data: mockResponse
-    });
-  } catch (error) {
-    console.error('Update UI setting error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
 
 /**
  * Get text content by action ID

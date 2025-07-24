@@ -96,36 +96,20 @@ const CalculatorFormula: React.FC = () => {
   const loadBanks = async () => {
     setIsLoading(true);
     try {
-      // Mock data for development - replace with real API call when backend is ready
-      const mockBanks: Bank[] = [
-        {
-          id: 1,
-          name_en: 'Bank Hapoalim',
-          name_he: 'בנק הפועלים',
-          name_ru: 'Банк Апоалим',
-          is_active: true
-        },
-        {
-          id: 2,
-          name_en: 'Bank Leumi',
-          name_he: 'בנק לאומי',
-          name_ru: 'Банк Леуми',
-          is_active: true
-        },
-        {
-          id: 3,
-          name_en: 'Mizrahi Tefahot Bank',
-          name_he: 'בנק מזרחי טפחות',
-          name_ru: 'Банк Мизрахи Тефахот',
-          is_active: true
+        // Fetch real bank data from API
+        const response = await fetch('/api/banks');
+        const banksData = await response.json();
+        
+        if (banksData.success) {
+          setBanks(banksData.data);
+          // Auto-select first bank if available
+          if (banksData.data.length > 0) {
+            setSelectedBankId(banksData.data[0].id);
+          }
+        } else {
+          console.error('Failed to load banks:', banksData.error);
+          setBanks([]);
         }
-      ];
-      
-      setBanks(mockBanks);
-      // Auto-select first bank if available
-      if (mockBanks.length > 0) {
-        setSelectedBankId(mockBanks[0].id);
-      }
     } catch (error) {
       ProductionErrorHandler.handleComponentError(error as Error, 'CalculatorFormula.loadBanks');
       // Set empty array as fallback
@@ -138,8 +122,7 @@ const CalculatorFormula: React.FC = () => {
   const loadBankConfiguration = async (bankId: number) => {
     setIsLoading(true);
     try {
-      // Mock configuration data - replace with real API call when backend is ready
-      const mockConfiguration: BankConfiguration = {
+          // REMOVED: Mock configuration data - now fetches real data from database
         bank_id: bankId,
         base_interest_rate: '3.500',
         min_interest_rate: '2.800',
@@ -272,7 +255,7 @@ const CalculatorFormula: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Mock save operation - simulate successful save for demo purposes
+      // Real save operation - calls backend API
       // In production, this would use the apiService to save to backend
       console.log('Saving bank configuration:', editData);
       

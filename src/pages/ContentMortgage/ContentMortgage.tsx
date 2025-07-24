@@ -78,7 +78,7 @@ const ContentMortgage: React.FC = () => {
           
           setMortgageData(normalizedData);
           console.log('✅ Successfully loaded mortgage data:', normalizedData);
-          console.log('Sample item:', normalizedItems[0]); // Log first item to see structure
+          console.log('First item:', normalizedItems[0]); // Log first item to see structure
         } else {
           console.error('❌ Failed to fetch mortgage translations from database:', response.error);
           setError(response.error || 'Failed to fetch mortgage translations from database');

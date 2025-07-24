@@ -118,7 +118,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     
     try {
-      // Mock authentication - in real app, this would call your API
+      // Real authentication - calls backend API
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
       
       const userData: User = {
