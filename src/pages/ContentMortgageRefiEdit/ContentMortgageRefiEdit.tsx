@@ -31,6 +31,7 @@ const ContentMortgageRefiEdit: React.FC = () => {
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
   const [titleEn, setTitleEn] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,20 +45,31 @@ const ContentMortgageRefiEdit: React.FC = () => {
       setLoading(true);
       setError(null);
 
+      console.log('🔍 Fetching mortgage-refi content for item ID:', itemId);
+
       // Fetch mortgage-refi content list
       const response = await apiService.getContentByContentType('mortgage-refi');
 
       if (response.success && response.data) {
-        const item = response.data.find((i: any) => i.id === itemId);
+        console.log('📊 Available mortgage-refi items:', response.data.length);
+        console.log('🔢 Item IDs:', response.data.map((i: any) => i.id));
+        
+        // Convert itemId to number for comparison
+        const itemIdNum = parseInt(itemId);
+        const item = response.data.find((i: any) => i.id === itemIdNum || i.id === itemId);
+        
         if (item) {
-          setContentItem(item as any);
-          setTitleRu(item.translations?.ru || '');
-          setTitleHe(item.translations?.he || '');
-          setTitleEn(item.translations?.en || '');
+          console.log('✅ Found item:', item);
+          setContentItem(item as unknown as MortgageRefiTranslation);
+          setTitleRu((item as any).translations?.ru || '');
+          setTitleHe((item as any).translations?.he || '');
+          setTitleEn((item as any).translations?.en || '');
         } else {
-          setError('Элемент контента не найден');
+          console.error('❌ Item not found. Looking for ID:', itemId, 'Available IDs:', response.data.map((i: any) => i.id));
+          setError(`Элемент контента с ID ${itemId} не найден`);
         }
       } else {
+        console.error('❌ API response error:', response.error);
         setError(response.error || 'Не удалось загрузить данные');
       }
     } catch (err) {
@@ -147,13 +159,32 @@ const ContentMortgageRefiEdit: React.FC = () => {
     <AdminLayout title="Редактирование контента (Рефинансирование ипотеки)" activeMenuItem="content-mortgage-refi">
       <div className="content-menu-edit">
         <div className="content-menu-edit-header">
-          <h1>Редактирование контента (Рефинансирование ипотеки)</h1>
-          <div className="breadcrumb">
-            <span onClick={() => handleCancel()} style={{ cursor: 'pointer', color: '#6366F1' }}>
-              Рефинансирование ипотеки
+          <div className="header-content">
+            <h1>Редактирование контента (Рефинансирование ипотеки)</h1>
+            <div className="breadcrumb">
+              <span onClick={() => handleCancel()} style={{ cursor: 'pointer', color: '#6366F1' }}>
+                Рефинансирование ипотеки
+              </span>
+              <span> / </span>
+              <span>
+                {selectedLanguage === 'ru' ? (contentItem.translations?.ru || contentItem.content_key) :
+                 selectedLanguage === 'he' ? (contentItem.translations?.he || contentItem.content_key) :
+                 (contentItem.translations?.en || contentItem.content_key)}
+              </span>
+            </div>
+          </div>
+          <div className="language-selector-edit" onClick={() => {
+            // Cycle through languages
+            if (selectedLanguage === 'ru') setSelectedLanguage('he');
+            else if (selectedLanguage === 'he') setSelectedLanguage('en');
+            else setSelectedLanguage('ru');
+          }}>
+            <span className="language-text">
+              {selectedLanguage === 'ru' ? 'Русский' : 
+               selectedLanguage === 'he' ? 'עברית' : 
+               'English'}
             </span>
-            <span> / </span>
-            <span>{contentItem.content_key}</span>
+            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="language-chevron" />
           </div>
         </div>
 
