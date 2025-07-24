@@ -19,8 +19,8 @@ const isPlaceholderUrl = (url: string): boolean => {
   }
   
   return url.includes('your-api-domain.railway.app') || 
-         url.includes('your-backend-domain.railway.app') ||
-         url.includes('localhost:3001'); // Default fallback that likely doesn't exist
+         url.includes('your-backend-domain.railway.app');
+         // Removed localhost:3001 check - this is our REAL backend!
 };
 
 interface ApiResponse<T> {
