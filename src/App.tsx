@@ -3,12 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import './App.css'
 
 // Import components
-import BankEmployee from './pages/BankEmployee'
 import ComponentShowcase from './pages/ComponentShowcase'
-import ContentListPage from './pages/ContentListPage';
 import ContentManagementPage from './pages/ContentManagementPage';
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
-import TableDemo from './pages/TableDemo'
 import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
 import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
@@ -361,7 +358,7 @@ const AppRouter: React.FC = () => {
         <Route path="/sales-manager" element={<SalesManager />} />
         <Route path="/brokers" element={<Brokers />} />
         <Route path="/content-manager" element={<ContentManager />} />
-        <Route path="/bank-employee" element={<BankEmployee />} />
+
         <Route 
           path="/calculator-formula" 
           element={
@@ -375,10 +372,8 @@ const AppRouter: React.FC = () => {
         <Route path="/chat" element={<Chat />} />
         <Route path="/components" element={<ComponentShowcase />} />
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
-        <Route path="/table-demo" element={<TableDemo />} />
         <Route path="/qa-showcase" element={<QAShowcase />} />
         <Route path="/qa-mortgage" element={<QAMortgage />} />
-        <Route path="/content" element={<ContentListPage />} />
         <Route path="/content/:pageId" element={<ContentManagementPage />} />
         <Route 
           path="/content-management" 
