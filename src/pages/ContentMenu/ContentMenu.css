@@ -1,19 +1,29 @@
 /* Content Menu Page - Matches Figma Design */
 .content-menu-page {
+  display: flex;
+  flex-direction: row;
+  align-self: stretch;
+  align-items: flex-start;
+  background: #111928;
   min-height: 100vh;
-  background-color: #111928;
-  color: #FFFFFF;
-  font-family: Arimo, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 /* Top Navigation Bar */
 .navbar-admin-panel {
-  position: fixed;
+  align-self: stretch;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: #1F2A37;
+  padding: 24px 40px 24px 667px;
+  gap: 32px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  position: absolute;
   top: 0;
-  left: 265px; /* Account for sidebar width */
+  left: 264px;
   right: 0;
-  background-color: #1F2A37;
-  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.05), 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+  height: 72px;
   z-index: 100;
 }
 
@@ -22,24 +32,20 @@
   justify-content: flex-end;
   align-items: center;
   gap: 32px;
-  padding: 24px;
-  width: 100%;
-  max-width: 1175px;
-  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .language-selector {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
+  flex-shrink: 0;
 }
 
 .language-text {
-  font-family: Arimo, sans-serif;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
   font-size: 14px;
-  line-height: 1.5em;
-  letter-spacing: -1%;
   color: #F9FAFB;
 }
 
@@ -47,6 +53,7 @@
   display: flex;
   align-items: center;
   gap: 32px;
+  flex-shrink: 0;
 }
 
 .navbar-action {
@@ -56,18 +63,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.navbar-action:hover {
-  background-color: #374151;
+  flex-shrink: 0;
 }
 
 .navbar-action img {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) saturate(100%) invert(82%) sepia(8%) saturate(284%) hue-rotate(169deg) brightness(98%) contrast(88%);
+  width: 40px;
+  height: 40px;
+  object-fit: fill;
 }
 
 .notification-badge {
@@ -90,45 +92,46 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .profile-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 100px;
-  overflow: hidden;
+  object-fit: fill;
 }
 
 .profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 32px;
+  height: 32px;
+  object-fit: fill;
 }
 
 .profile-name {
-  font-family: Arimo, sans-serif;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
   font-size: 14px;
-  line-height: 1.5em;
-  letter-spacing: -1%;
   color: #F9FAFB;
 }
 
 /* Main Content Frame */
 .main-content-frame {
-  margin-left: 265px; /* Account for sidebar */
-  margin-top: 95px; /* Account for navbar */
-  padding: 40px;
-  min-height: calc(100vh - 95px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-top: 72px; /* Account for navbar height */
+  padding: 40px 105px; /* 105px margins from design */
+  width: 100%;
 }
 
 /* First Section */
 .first-section {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  width: 925px;
-  margin-bottom: 40px;
+  align-items: flex-start;
+  gap: 40px;
 }
 
 /* Breadcrumb */
@@ -169,7 +172,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  width: 925px;
+  align-self: stretch;
   flex-wrap: wrap;
   gap: 20px;
 }
@@ -181,10 +184,9 @@
 }
 
 .page-title {
-  font-family: Arimo, sans-serif;
-  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
   font-size: 30px;
-  line-height: 1.5em;
   color: #FFFFFF;
   margin: 0;
 }
