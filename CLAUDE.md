@@ -59,15 +59,58 @@ This is a React TypeScript management portal for a banking system with role-base
    - Component-based content system (text, dropdown, link types)
    - Real-time editing with ContentEditModals
    - Database-driven content from `bankim_content` PostgreSQL
+   - **Application Context System**: Tab navigation for 4 distinct contexts
+
+6. **Tab Navigation System**:
+   - Added to all content list pages (CSS selector: `.tab-navigation`)
+   - 4 context tabs matching database application contexts
+   - Visual design based on `devHelp/contentMenu/cssPages/types.md`
+   - Active/inactive states with hover effects
+   - Responsive mobile stacking layout
 
 ## Database Architecture
 
 The system uses multiple PostgreSQL databases:
-- **bankim_content**: UI content and translations
+- **bankim_content**: UI content and translations (see detailed schema below)
 - **bankim_core**: Business logic, formulas, permissions
 - **bankim_management**: Portal-specific data
 
-Backend API connects to these databases and provides endpoints for content management.
+### Content Database Schema
+
+**Core Tables:**
+- `content_items` - Main content records with metadata
+- `content_translations` - Multilingual translations (RU/HE/EN)
+- `application_contexts` - **NEW**: Application context definitions
+- `languages` - Supported language configurations
+
+**Application Contexts System:**
+The database now supports 4 distinct application contexts that correspond to the tab navigation:
+
+1. **Public Website** (`public`) - "До регистрации" content
+2. **User Dashboard** (`user_portal`) - "Личный кабинет" content  
+3. **Content Management** (`cms`) - "Админ панель для сайтов" content
+4. **Banking Operations** (`bank_ops`) - "Админ панель для банков" content
+
+**Key Schema Changes:**
+- Added `application_contexts` table with context definitions
+- Added `app_context_id` column to `content_items` (foreign key)
+- All existing content assigned to 'public' context (ID=1)
+- Performance index on `app_context_id` for efficient filtering
+
+**Content Item Structure:**
+```sql
+content_items:
+- id (primary key)
+- content_key (unique identifier)
+- component_type (text, dropdown, link, etc.)
+- category (form, navigation, etc.)
+- screen_location (page/section identifier)
+- app_context_id (NEW: references application_contexts.id)
+- is_active (boolean)
+- created_at, updated_at (timestamps)
+```
+
+Backend API connects to these databases and provides context-aware content filtering.
 
 ## Role-Based Access Control
 
@@ -90,6 +133,26 @@ Each role has specific routes and UI components based on permissions.
 - Mock data fallback for offline development
 - Port 3002 for frontend, 3001 for backend API
 
+### Current Implementation Status
+
+**✅ Completed:**
+- Tab navigation UI added to all content list pages
+- Database schema updated with application contexts
+- All existing content migrated to 'public' context
+- Foreign key relationships established
+- Performance indexes added
+
+**🔄 In Progress:**
+- Tab functionality (currently visual-only, not functional)
+- Context-aware API filtering
+- Content management by application context
+
+**📋 Future Enhancements:**
+- Click handling for tab switching
+- Context-specific content creation
+- Role-based context access control
+- Content migration tools between contexts
+
 ## Common Patterns
 
 ### Adding New Content Pages
@@ -102,6 +165,23 @@ Each role has specific routes and UI components based on permissions.
 - Content stored with language codes: 'ru', 'he', 'en'
 - Use `apiService.getContentByScreen()` for fetching
 - Edit modals handle all three languages simultaneously
+
+### Working with Application Contexts
+- **Database Level**: Content filtered by `app_context_id` column
+- **Frontend Level**: Tab navigation shows 4 application contexts
+- **API Level**: Context-aware endpoints for content filtering
+- **Current State**: All existing content assigned to 'public' context (ID=1)
+- **Future Enhancement**: Tab functionality to switch between contexts
+
+**Context Mapping:**
+```javascript
+const contexts = {
+  1: { code: 'public', name: 'До регистрации' },
+  2: { code: 'user_portal', name: 'Личный кабинет' },
+  3: { code: 'cms', name: 'Админ панель для сайтов' },
+  4: { code: 'bank_ops', name: 'Админ панель для банков' }
+};
+```
 
 ### State Management
 - Using React Context for auth (`AuthContext`)
