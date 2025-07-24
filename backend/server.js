@@ -1225,6 +1225,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
           'refinance_step1',     -- for /services/refinance-mortgage/1
           'refinance_step2',     -- for /services/refinance-mortgage/2
           'refinance_step3',     -- for /services/refinance-mortgage/3
+          'refinance_step4',     -- for /services/refinance-mortgage/4
           'mortgage_step4'       -- for /services/calculate-mortgage/4
         )
         AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
