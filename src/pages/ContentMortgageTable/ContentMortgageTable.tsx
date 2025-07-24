@@ -312,21 +312,15 @@ const ContentMortgageTable: React.FC = () => {
                             </svg>
                           </button>
                         ) : (
-                          <div>
-                            {/* Always show edit button for debugging */}
+                          hasWritePermission && (
                             <button
                               className="action-button edit-button"
                               onClick={() => handleEditClick(item)}
                               title="Редактировать"
-                              style={{ opacity: hasWritePermission ? 1 : 0.5 }}
                             >
                               <img src="/src/assets/images/static/icons/pencil.svg" alt="Edit" />
                             </button>
-                            {/* Debug info */}
-                            <small style={{ display: 'block', fontSize: '10px', color: hasWritePermission ? 'green' : 'red' }}>
-                              {hasWritePermission ? 'Has Permission' : 'No Permission'}
-                            </small>
-                          </div>
+                          )
                         )}
                       </div>
                     </div>
