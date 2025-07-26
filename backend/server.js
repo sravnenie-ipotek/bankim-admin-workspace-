@@ -418,6 +418,86 @@ app.get('/api/content/text/:actionId', async (req, res) => {
 });
 
 /**
+ * Get a specific content item by ID
+ * Used for editing individual content items
+ */
+app.get('/api/content/item/:itemId', async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    console.log(`Fetching content item with ID: ${itemId}`);
+    
+    const contentResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (
+          PARTITION BY CASE 
+            WHEN ci.screen_location LIKE 'mortgage_step%' THEN 'mortgage'
+            ELSE ci.screen_location 
+          END
+          ORDER BY ci.screen_location, ci.content_key
+        ) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.id = $1
+    `, [itemId]);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Content item not found'
+      });
+    }
+
+    const row = contentResult.rows[0];
+    const contentItem = {
+      id: row.id,
+      action_number: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      updated_at: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    };
+
+    res.json({
+      success: true,
+      data: contentItem
+    });
+  } catch (error) {
+    console.error('Error fetching content item:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch content item' 
+    });
+  }
+});
+
+/**
  * Get all individual mortgage content items across all steps
  * GET /api/content/mortgage/all-items
  * Returns all content items from all mortgage steps for drill page fallback

@@ -23,6 +23,7 @@ import ContentVerification from './pages/ContentVerification';
 import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
 import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
+import MortgageTextEdit from './pages/MortgageTextEdit';
 
 
 
@@ -427,6 +428,20 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Страница ипотеки" activeMenuItem="content-mortgage">
                   <MortgageDrill />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage text edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/mortgage/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage">
+                  <MortgageTextEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

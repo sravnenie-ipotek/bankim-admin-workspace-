@@ -1,0 +1,88 @@
+/**
+ * MortgageTextEdit Component Styles
+ * Based on text_drill2_edit.md design structure
+ * 
+ * @version 1.0.0
+ * @since 2025-01-26
+ */
+
+/* Main Page Container */
+.text-edit-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--gray-900, #111928);
+  color: #F9FAFB;
+  padding-bottom: 100px; /* Space for fixed bottom actions */
+}
+
+/* Main Content */
+.text-edit-main {
+  flex: 1;
+  padding: 40px 370px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* Loading and Error States */
+.text-edit-loading,
+.text-edit-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background-color: #111827;
+  color: #F9FAFB;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #374151;
+  border-top: 4px solid #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.text-edit-error p {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #EF4444;
+}
+
+.text-edit-error button {
+  padding: 12px 24px;
+  background-color: #3B82F6;
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.text-edit-error button:hover {
+  background-color: #2563EB;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .text-edit-main {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .text-edit-main {
+    padding: 16px;
+  }
+}
