@@ -116,12 +116,21 @@
   margin-bottom: 24px;
 }
 
-.page-preview-image {
+.page-preview-placeholder {
   width: 100%;
-  height: auto;
-  max-height: 487px;
-  object-fit: contain;
+  height: 487px;
+  background-color: #374151;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #4B5563;
+}
+
+.page-preview-placeholder span {
+  color: #9CA3AF;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 /* Page State Thumbnails */
@@ -137,7 +146,14 @@
 .nav-thumbnail {
   width: 44px;
   height: 44px;
-  object-fit: contain;
+  background-color: #FBE54D;
+  color: #000000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
   transition: opacity 0.2s;
 }
@@ -149,9 +165,15 @@
 .state-thumbnail {
   width: 115px;
   height: 110px;
-  object-fit: cover;
+  background-color: #374151;
+  color: #FFFFFF;
   border-radius: 8px;
-  border: 2px solid #374151;
+  border: 2px solid #4B5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
   transition: border-color 0.2s, transform 0.2s;
 }

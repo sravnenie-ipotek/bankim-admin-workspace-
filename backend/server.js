@@ -133,6 +133,8 @@ app.use(cors({
     'http://localhost:3003',
     'http://localhost:3004',
     'http://localhost:3005',
+    'http://localhost:3006',
+    'http://localhost:3007',
     'http://localhost:5173',
     'https://bankim-management-portal.railway.app'
   ],
@@ -1024,29 +1026,15 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
       });
     }
 
-    // Get step info and count
-    const stepResult = await safeQuery(`
-      SELECT 
-        COUNT(*) as action_count,
-        CASE 
-          WHEN $1 = 'mortgage_step1' THEN 'Калькулятор ипотеки'
-          WHEN $1 = 'mortgage_step2' THEN 'Анкета личных данных'  
-          WHEN $1 = 'mortgage_step3' THEN 'Анкета доходов'
-          WHEN $1 = 'mortgage_step4' THEN 'Выбор программ ипотеки'
-        END as page_title
-      FROM content_items 
-      WHERE screen_location = $1 
-        AND is_active = TRUE
-    `, [screenLocation]);
+    // Get step title mapping
+    const stepTitles = {
+      'mortgage_step1': 'Калькулятор ипотеки',
+      'mortgage_step2': 'Анкета личных данных',  
+      'mortgage_step3': 'Анкета доходов',
+      'mortgage_step4': 'Выбор программ ипотеки'
+    };
 
-    if (!stepResult.rows[0] || stepResult.rows[0].action_count == 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No content found for this step'
-      });
-    }
-
-    // Get all individual content items for this step
+    // Use your suggested WHERE statement pattern with proper translation handling
     const contentResult = await safeQuery(`
       SELECT 
         ci.id,
@@ -1062,13 +1050,26 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
         ct_en.content_value as title_en,
         ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
       WHERE ci.screen_location = $1
-        AND ci.is_active = TRUE
+        AND ci.is_active = true
       ORDER BY ci.content_key
     `, [screenLocation]);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found for this step'
+      });
+    }
 
     const actions = contentResult.rows.map(row => ({
       id: row.id,
@@ -1090,9 +1091,9 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     res.json({
       success: true,
       data: {
-        pageTitle: stepResult.rows[0].page_title,
+        pageTitle: stepTitles[screenLocation],
         stepGroup: stepId,
-        actionCount: parseInt(stepResult.rows[0].action_count),
+        actionCount: actions.length,
         actions: actions
       }
     });

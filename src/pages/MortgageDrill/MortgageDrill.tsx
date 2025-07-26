@@ -56,44 +56,54 @@ const MortgageDrill: React.FC = () => {
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching drill data for step ID: ${pageId}`);
+      console.log(`🔍 Fetching drill data for page ID: ${pageId}`);
       
-      // Fetch specific content items for this step using the new drill API
-      const response = await apiService.request(`/api/content/mortgage/drill/${pageId}`, 'GET');
+      // Fetch all content by content type 'mortgage'
+      const response = await apiService.getContentByContentType('mortgage');
       
       if (response.success && response.data) {
-        const { pageTitle, stepGroup, actionCount, actions } = response.data;
+        // Find the main page item by ID
+        const pageItem = response.data.find((item: any) => item.id === pageId);
+        
+        if (pageItem) {
+          // For mortgage drill, show ALL mortgage content items
+          // This matches the behavior of the main mortgage list
+          const allMortgageItems = response.data;
 
-        // Transform to drill data format
-        const transformedActions: MortgageAction[] = actions.map((item: any) => ({
-          id: item.id,
-          actionNumber: item.actionNumber,
-          content_key: item.content_key || '',
-          component_type: item.component_type || 'text',
-          category: item.category || '',
-          screen_location: item.screen_location || '',
-          description: item.description || '',
-          is_active: item.is_active !== false,
-          translations: {
-            ru: item.translations?.ru || '',
-            he: item.translations?.he || '',
-            en: item.translations?.en || ''
-          },
-          last_modified: item.last_modified || new Date().toISOString()
-        }));
+          // Transform to drill data format and sort by content_key or some logical order
+          const actions: MortgageAction[] = allMortgageItems
+            .sort((a: any, b: any) => {
+              // Sort by content_key to maintain consistent order
+              return (a.content_key || '').localeCompare(b.content_key || '');
+            })
+            .map((item: any, index: number) => ({
+              id: item.id,
+              actionNumber: index + 1,
+              content_key: item.content_key || '',
+              component_type: item.component_type || 'text',
+              category: item.category || '',
+              screen_location: item.screen_location || '',
+              description: item.description || '',
+              is_active: item.is_active !== false,
+              translations: {
+                ru: item.translations?.ru || '',
+                he: item.translations?.he || '',
+                en: item.translations?.en || ''
+              },
+              last_modified: item.last_modified || new Date().toISOString()
+            }));
 
-        setDrillData({
-          pageTitle: pageTitle,
-          actionCount: actionCount,
-          lastModified: transformedActions.length > 0 ? 
-            transformedActions.reduce((latest, action) => 
-              new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
-              transformedActions[0].last_modified
-            ) : new Date().toISOString(),
-          actions: transformedActions
-        });
+          setDrillData({
+            pageTitle: pageItem.translations?.ru || pageItem.content_key || 'Калькулятор ипотеки',
+            actionCount: actions.length,
+            lastModified: pageItem.last_modified || new Date().toISOString(),
+            actions: actions
+          });
+        } else {
+          setError('Страница не найдена');
+        }
       } else {
-        setError('Шаг не найден или нет доступного контента');
+        setError(response.error || 'Не удалось загрузить данные');
       }
     } catch (err) {
       console.error('❌ Error fetching drill data:', err);
@@ -224,24 +234,22 @@ const MortgageDrill: React.FC = () => {
         <div className="page-preview-section">
           <h2 className="section-title">Страница и ее состояния</h2>
           <div className="page-preview-container">
-            <img 
-              src="https://via.placeholder.com/1200x600/1F2A37/FFFFFF?text=Mortgage+Calculator+Preview" 
-              alt="Страница калькулятора ипотеки"
-              className="page-preview-image"
-            />
+            <div className="page-preview-placeholder">
+              <span>Предварительный просмотр калькулятора ипотеки</span>
+            </div>
           </div>
         </div>
 
         {/* Page State Thumbnails */}
         <div className="page-state-thumbnails">
-          <img src="https://via.placeholder.com/44x44/FBE54D/000000?text=<" alt="Previous" className="nav-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+1" alt="State 1" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+2" alt="State 2" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+3" alt="State 3" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+4" alt="State 4" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+5" alt="State 5" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/115x110/374151/FFFFFF?text=State+6" alt="State 6" className="state-thumbnail" />
-          <img src="https://via.placeholder.com/44x44/FBE54D/000000?text=>" alt="Next" className="nav-thumbnail" />
+          <div className="nav-thumbnail nav-prev">‹</div>
+          <div className="state-thumbnail">1</div>
+          <div className="state-thumbnail">2</div>
+          <div className="state-thumbnail">3</div>
+          <div className="state-thumbnail">4</div>
+          <div className="state-thumbnail">5</div>
+          <div className="state-thumbnail">6</div>
+          <div className="nav-thumbnail nav-next">›</div>
         </div>
 
         {/* Actions List Title */}
