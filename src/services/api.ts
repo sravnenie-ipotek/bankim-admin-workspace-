@@ -639,6 +639,27 @@ class ApiService {
     }
   }
 
+  async getCreditContent(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching credit content from database...');
+      const response = await this.requestWithCache<any>(`/api/content/credit`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched credit content from database');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch credit content:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching credit content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch credit content'
+      };
+    }
+  }
+
   async updateMortgageContent(contentId: string, updateData: any): Promise<ApiResponse<any>> {
     try {
       console.log('🔄 Updating mortgage content...', { contentId, updateData });
