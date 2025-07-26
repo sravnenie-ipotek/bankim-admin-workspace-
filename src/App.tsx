@@ -22,6 +22,7 @@ import QAMortgage from './pages/QAMortgage';
 import ContentVerification from './pages/ContentVerification';
 import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
+import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
 
 
 
@@ -412,6 +413,20 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование текста" activeMenuItem="content-main">
                   <ContentMainText />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage drill route - specific drill page for mortgage content */}
+        <Route 
+          path="/content/mortgage/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Страница ипотеки" activeMenuItem="content-mortgage">
+                  <MortgageDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

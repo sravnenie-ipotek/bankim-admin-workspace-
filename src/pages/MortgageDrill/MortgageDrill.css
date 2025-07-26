@@ -1,0 +1,531 @@
+/**
+ * MortgageDrill Component Styles
+ * Based on calculateMortgrate_drill1.md design structure
+ * 
+ * @version 1.0.0
+ * @since 2025-01-26
+ */
+
+/* Main Page Container */
+.mortgage-drill-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #111827;
+  color: #F9FAFB;
+}
+
+/* Main Content */
+.mortgage-drill-main {
+  flex: 1;
+  padding: 0;
+  width: 100%;
+}
+
+/* Breadcrumb */
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding-top: 24px;
+}
+
+.breadcrumb-item {
+  font-size: 14px;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.breadcrumb-item:hover {
+  color: #F9FAFB;
+}
+
+.breadcrumb-item.active {
+  color: #F9FAFB;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  width: 1px;
+  height: 16px;
+  background-color: #4B5563;
+}
+
+/* Page Header */
+.page-header-row {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #F9FAFB;
+  margin: 0;
+}
+
+/* Info Cards Row */
+.info-cards-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  background-color: #1F2937;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  min-width: 200px;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #F9FAFB;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0 0 24px 0;
+}
+
+/* Page Preview Section */
+.page-preview-section {
+  margin-bottom: 32px;
+}
+
+.page-preview-container {
+  background-color: #1F2937;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.page-preview-image {
+  width: 100%;
+  height: auto;
+  max-height: 487px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Page State Thumbnails */
+.page-state-thumbnails {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 56px;
+  padding: 0;
+}
+
+.nav-thumbnail {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.nav-thumbnail:hover {
+  opacity: 0.8;
+}
+
+.state-thumbnail {
+  width: 115px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #374151;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.state-thumbnail:hover {
+  border-color: #FBE54D;
+  transform: scale(1.05);
+}
+
+/* Table Section */
+.table-section {
+  background-color: #1F2937;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  overflow: hidden;
+}
+
+/* Table Header Controls */
+.table-header-controls {
+  padding: 20px 24px;
+  border-bottom: 1px solid #374151;
+  background-color: #1F2937;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  background-color: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  color: #F9FAFB;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+  color: #9CA3AF;
+}
+
+.filters-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filters-button:hover {
+  background-color: #4B5563;
+}
+
+/* Drill Table */
+.drill-table {
+  width: 100%;
+}
+
+/* Table Header */
+.table-header-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 2fr 80px;
+  gap: 16px;
+  padding: 16px 24px;
+  background-color: #374151;
+  border-bottom: 1px solid #4B5563;
+}
+
+.header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.header-cell.action-buttons {
+  justify-content: center;
+}
+
+.header-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Table Body */
+.table-body {
+  background-color: #1F2937;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 2fr 80px;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #374151;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 20px;
+}
+
+.cell.action-buttons {
+  justify-content: center;
+}
+
+.cell-text {
+  font-size: 14px;
+  color: #F9FAFB;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.cell-text-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Edit Button */
+.edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: #3B82F6;
+  border: none;
+  border-radius: 6px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.edit-button:hover {
+  background-color: #2563EB;
+  transform: translateY(-1px);
+}
+
+.edit-button:active {
+  transform: translateY(0);
+}
+
+/* Pagination Container */
+.pagination-container {
+  padding: 24px;
+  border-top: 1px solid #374151;
+  background-color: #1F2937;
+}
+
+/* Loading and Error States */
+.mortgage-drill-loading,
+.mortgage-drill-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background-color: #111827;
+  color: #F9FAFB;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #374151;
+  border-top: 4px solid #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mortgage-drill-error p {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #EF4444;
+}
+
+.mortgage-drill-error button {
+  padding: 12px 24px;
+  background-color: #3B82F6;
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mortgage-drill-error button:hover {
+  background-color: #2563EB;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .mortgage-drill-main {
+    padding: 24px;
+  }
+  
+  .table-header-row,
+  .table-row {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr 1.5fr 60px;
+    gap: 12px;
+  }
+  
+  .info-cards-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .info-card {
+    min-width: auto;
+  }
+  
+  .page-state-thumbnails {
+    padding: 0 24px;
+    gap: 12px;
+  }
+  
+  .state-thumbnail {
+    width: 90px;
+    height: 85px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mortgage-drill-main {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+  }
+  
+  .table-header-controls {
+    padding: 16px;
+  }
+  
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-input-wrapper {
+    max-width: none;
+  }
+  
+  .table-header-row,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  
+  .header-cell,
+  .cell {
+    justify-content: flex-start;
+    border-bottom: 1px solid #374151;
+    padding: 8px 0;
+  }
+  
+  .header-cell:before,
+  .cell:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #9CA3AF;
+    margin-right: 8px;
+    min-width: 100px;
+  }
+  
+  .breadcrumb-container {
+    flex-wrap: wrap;
+  }
+  
+  .page-preview-container {
+    padding: 16px;
+  }
+  
+  .page-state-thumbnails {
+    padding: 0 16px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .state-thumbnail {
+    width: 70px;
+    height: 65px;
+  }
+  
+  .nav-thumbnail {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .table-row:hover {
+    background-color: #4B5563;
+  }
+  
+  .search-input:focus {
+    border-color: #FFFFFF;
+    box-shadow: 0 0 0 2px #FFFFFF;
+  }
+  
+  .edit-button {
+    border: 2px solid #FFFFFF;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+  }
+  
+  .edit-button,
+  .language-selector,
+  .filters-button {
+    transition: none;
+  }
+}

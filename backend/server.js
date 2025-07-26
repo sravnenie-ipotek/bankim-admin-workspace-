@@ -906,20 +906,43 @@ app.get('/api/content/text/:actionId', async (req, res) => {
  */
 app.get('/api/content/mortgage', async (req, res) => {
   try {
-    // Use the mortgage pages view to show page-level aggregation
+    // Map content to 4 logical steps based on Confluence specification
     const result = await safeQuery(`
-      WITH page_groups AS (
+      WITH step_groups AS (
         SELECT 
           CASE 
-            WHEN content_key LIKE 'app.mortgage.form.%' THEN 'app.mortgage.form'
-            WHEN content_key LIKE 'app.mortgage.step.mobile_step_1%' THEN 'app.mortgage.step.mobile_step_1'
-            WHEN content_key LIKE 'app.mortgage.step.mobile_step_2%' THEN 'app.mortgage.step.mobile_step_2'
-            WHEN content_key LIKE 'app.mortgage.header.%' THEN 'app.mortgage.header'
-            WHEN content_key LIKE 'mortgage_calculation.banner%' THEN 'mortgage_calculation.banner'
-            WHEN content_key LIKE 'mortgage_calculation.button%' THEN 'mortgage_calculation.button'
-            WHEN content_key LIKE 'mortgage_calculation.field%' THEN 'mortgage_calculation.field'
-            ELSE content_key
-          END as page_group,
+            -- Step 1: Калькулятор ипотеки (15 actions per Confluence)
+            WHEN content_key LIKE 'app.mortgage.form.%' 
+              OR content_key LIKE 'mortgage_calculation.field%'
+              OR content_key LIKE 'mortgage_calculation.button%'
+              OR content_key LIKE 'mortgage_calculation.banner%'
+              OR content_key LIKE 'mortgage_calculation.%'
+              THEN 'step.1.calculator'
+            
+            -- Step 2: Анкета личных данных (23 actions per Confluence)  
+            WHEN content_key LIKE 'app.mortgage.step.mobile_step_1%'
+              OR content_key LIKE '%personal_data%'
+              OR content_key LIKE '%personal%'
+              OR content_key LIKE '%step_1%'
+              THEN 'step.2.personal_data'
+            
+            -- Step 3: Анкета доходов (22 actions per Confluence)
+            WHEN content_key LIKE 'app.mortgage.step.mobile_step_2%'
+              OR content_key LIKE '%income%'
+              OR content_key LIKE '%salary%'
+              OR content_key LIKE '%step_2%'
+              THEN 'step.3.income_data'
+            
+            -- Step 4: Выбор программ ипотеки (11 actions per Confluence)
+            WHEN content_key LIKE 'app.mortgage.header.%'
+              OR content_key LIKE '%program%'
+              OR content_key LIKE '%selection%'
+              OR content_key LIKE '%choice%'
+              OR content_key ~ 'step[_.](3|4)'
+              THEN 'step.4.program_selection'
+            
+            ELSE 'step.1.calculator'  -- Default to calculator step
+          END as step_group,
           COUNT(*) as action_count,
           MIN(id) as representative_id,
           MAX(updated_at) as last_modified
@@ -929,27 +952,49 @@ app.get('/api/content/mortgage', async (req, res) => {
           AND component_type != 'option'
           AND content_key NOT LIKE '%_option_%'
           AND content_key NOT LIKE '%_ph'
-        GROUP BY page_group
+        GROUP BY step_group
+      ),
+      step_titles AS (
+        SELECT 
+          'step.1.calculator' as step_group, 
+          'Калькулятор ипотеки' as title_ru,
+          'משכנתא מחשבון' as title_he,
+          'Mortgage Calculator' as title_en
+        UNION ALL
+        SELECT 
+          'step.2.personal_data' as step_group,
+          'Анкета личных данных' as title_ru,
+          'טופס נתונים אישיים' as title_he, 
+          'Personal Data Form' as title_en
+        UNION ALL
+        SELECT 
+          'step.3.income_data' as step_group,
+          'Анкета доходов' as title_ru,
+          'טופס הכנסות' as title_he,
+          'Income Data Form' as title_en
+        UNION ALL
+        SELECT 
+          'step.4.program_selection' as step_group,
+          'Выбор программ ипотеки' as title_ru,
+          'בחירת תוכניות משכנתא' as title_he,
+          'Mortgage Program Selection' as title_en
       )
       SELECT 
-        pg.representative_id as id,
-        pg.page_group as content_key,
-        'page' as component_type,
-        'pages' as category,
+        sg.representative_id as id,
+        sg.step_group as content_key,
+        'step' as component_type,
+        'mortgage_steps' as category,
         'mortgage_calculation' as screen_location,
-        pg.page_group as description,
+        st.title_ru as description,
         true as is_active,
-        pg.action_count,
-        ct_ru.content_value as title_ru,
-        ct_he.content_value as title_he,  
-        ct_en.content_value as title_en,
-        pg.last_modified as updated_at
-      FROM page_groups pg
-      LEFT JOIN content_translations ct_ru ON ct_ru.content_item_id = pg.representative_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ct_he.content_item_id = pg.representative_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ct_en.content_item_id = pg.representative_id AND ct_en.language_code = 'en'
-      WHERE ct_ru.content_value IS NOT NULL
-      ORDER BY pg.page_group
+        sg.action_count,
+        st.title_ru,
+        st.title_he,  
+        st.title_en,
+        sg.last_modified as updated_at
+      FROM step_groups sg
+      INNER JOIN step_titles st ON sg.step_group = st.step_group
+      ORDER BY sg.step_group
     `);
     
     const mortgageContent = result.rows.map(row => ({

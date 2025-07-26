@@ -96,8 +96,8 @@ const ContentMortgage: React.FC = () => {
 
 
   const handleViewClick = (item: MortgageTranslation) => {
-    // Navigate to edit page using the same pattern as menu, preserving current page
-    navigate(`/content/mortgage/edit/${item.id}`, { 
+    // Navigate to drill page to show detailed actions for this page
+    navigate(`/content/mortgage/drill/${item.id}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 
