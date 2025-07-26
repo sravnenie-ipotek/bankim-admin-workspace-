@@ -96,42 +96,42 @@ const MortgageDrill: React.FC = () => {
           return;
         }
       } catch (drillError) {
-        console.warn('Drill endpoint failed, falling back to general mortgage content:', drillError);
+        console.warn('Drill endpoint failed, falling back to all mortgage content items:', drillError);
       }
       
-      // Fallback: get all mortgage content to show the same 15 items as the main page
-      const response = await apiService.getContentByContentType('mortgage');
+      // Fallback: get all individual mortgage content items across all steps
+      const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
       
       if (response.success && response.data) {
-        // Show ALL mortgage content items (same as main page)
-        const allMortgageItems = response.data;
+        // Use the data from the new all-items endpoint
+        const { pageTitle, actionCount, actions: allActions } = response.data;
 
-        // Transform to drill data format and sort by content_key
-        const actions: MortgageAction[] = allMortgageItems
-          .sort((a: any, b: any) => {
-            return (a.content_key || '').localeCompare(b.content_key || '');
-          })
-          .map((item: any, index: number) => ({
-            id: item.id,
-            actionNumber: index + 1,
-            content_key: item.content_key || '',
-            component_type: item.component_type || 'text',
-            category: item.category || '',
-            screen_location: item.screen_location || '',
-            description: item.description || '',
-            is_active: item.is_active !== false,
-            translations: {
-              ru: item.translations?.ru || '',
-              he: item.translations?.he || '',
-              en: item.translations?.en || ''
-            },
-            last_modified: item.last_modified || new Date().toISOString()
-          }));
+        // Transform to drill data format 
+        const actions: MortgageAction[] = allActions.map((item: any) => ({
+          id: item.id,
+          actionNumber: item.actionNumber,
+          content_key: item.content_key || '',
+          component_type: item.component_type || 'text',
+          category: item.category || '',
+          screen_location: item.screen_location || '',
+          description: item.description || '',
+          is_active: item.is_active !== false,
+          translations: {
+            ru: item.translations?.ru || '',
+            he: item.translations?.he || '',
+            en: item.translations?.en || ''
+          },
+          last_modified: item.last_modified || new Date().toISOString()
+        }));
 
         setDrillData({
-          pageTitle: 'Калькулятор ипотеки',
-          actionCount: actions.length,
-          lastModified: new Date().toISOString(),
+          pageTitle: pageTitle,
+          actionCount: actionCount,
+          lastModified: actions.length > 0 ? 
+            actions.reduce((latest, action) => 
+              new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
+              actions[0].last_modified
+            ) : new Date().toISOString(),
           actions: actions
         });
       } else {

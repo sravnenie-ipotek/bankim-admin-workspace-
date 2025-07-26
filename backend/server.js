@@ -418,6 +418,90 @@ app.get('/api/content/text/:actionId', async (req, res) => {
 });
 
 /**
+ * Get all individual mortgage content items across all steps
+ * GET /api/content/mortgage/all-items
+ * Returns all content items from all mortgage steps for drill page fallback
+ * NOTE: This route must be defined BEFORE the general /api/content/:screen_location/:language_code route
+ */
+app.get('/api/content/mortgage/all-items', async (req, res) => {
+  try {
+    console.log('Fetching all mortgage content items across all steps...');
+    
+    // Get all individual content items from all mortgage steps
+    const contentResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.screen_location, ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
+        AND ci.is_active = true
+      ORDER BY ci.screen_location, ci.content_key
+    `);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No mortgage content items found'
+      });
+    }
+
+    const actions = contentResult.rows.map(row => ({
+      id: row.id,
+      actionNumber: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      last_modified: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
+
+    res.json({
+      success: true,
+      data: {
+        pageTitle: 'Калькулятор ипотеки',
+        actionCount: actions.length,
+        actions: actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get all mortgage items error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get content by screen location and language
  * GET /api/content/{screen_location}/{language_code}
  * Returns all approved content for the specified screen and language
@@ -1106,6 +1190,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     });
   }
 });
+
 
 /**
  * Update mortgage content item
