@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
-
-import AdminLayout from '../../components/AdminLayout/AdminLayout';
 import './ContentCreditEdit.css';
 
 interface DropdownOption {
@@ -41,7 +39,6 @@ const ContentCreditEdit: React.FC = () => {
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
   const [titleEn, setTitleEn] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -194,61 +191,39 @@ const ContentCreditEdit: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout title="Редактирование контента кредита">
-        <div className="credit-edit-container">
-          <div className="loading-state">Загрузка...</div>
-        </div>
-      </AdminLayout>
+      <div className="credit-edit-container">
+        <div className="loading-state">Загрузка...</div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <AdminLayout title="Редактирование контента кредита">
-        <div className="credit-edit-container">
-          <div className="error-state">{error}</div>
-        </div>
-      </AdminLayout>
+      <div className="credit-edit-container">
+        <div className="error-state">{error}</div>
+      </div>
     );
   }
 
   const isDropdown = contentItem?.component_type === 'dropdown';
 
   return (
-    <AdminLayout title="Редактирование контента кредита">
-      <div className="credit-edit-container">
+    <div className="credit-edit-container">
         {/* Breadcrumb */}
         <div className="breadcrumb-container">
           <span className="breadcrumb-item">Контент сайта</span>
-          <span className="breadcrumb-separator">›</span>
+          <div className="breadcrumb-separator"></div>
           <span className="breadcrumb-item">Расчет кредита</span>
-          <span className="breadcrumb-separator">›</span>
+          <div className="breadcrumb-separator"></div>
           <span className="breadcrumb-item active">Редактирование</span>
         </div>
 
         {/* Header */}
         <div className="page-header-edit">
-          <div className="header-content">
-            <h1 className="page-title-edit">
-              {selectedLanguage === 'ru' ? (contentItem?.translations?.ru || contentItem?.content_key) :
-               selectedLanguage === 'he' ? (contentItem?.translations?.he || contentItem?.content_key) :
-               (contentItem?.translations?.en || contentItem?.content_key)}
-            </h1>
-            <span className="page-subtitle">Credit_page</span>
-          </div>
-          <div className="language-selector-edit" onClick={() => {
-            // Cycle through languages
-            if (selectedLanguage === 'ru') setSelectedLanguage('he');
-            else if (selectedLanguage === 'he') setSelectedLanguage('en');
-            else setSelectedLanguage('ru');
-          }}>
-            <span className="language-text">
-              {selectedLanguage === 'ru' ? 'Русский' : 
-               selectedLanguage === 'he' ? 'עברית' : 
-               'English'}
-            </span>
-            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="language-chevron" />
-          </div>
+          <h1 className="page-title-edit">
+            {contentItem?.title || contentItem?.translations?.ru || contentItem?.content_key || 'Загрузка...'}
+          </h1>
+          <span className="page-subtitle">Credit_page</span>
         </div>
 
         {/* Last Edit Info */}
@@ -260,8 +235,8 @@ const ContentCreditEdit: React.FC = () => {
         </div>
 
         {/* Title Section */}
+        <h2 className="section-title" style={{ marginBottom: '16px', marginLeft: '105px' }}>Заголовки действий</h2>
         <div className="section-container">
-          <h2 className="section-title">Заголовки действий</h2>
           
           <div className="input-group">
             <label className="input-label">RU</label>
@@ -300,14 +275,15 @@ const ContentCreditEdit: React.FC = () => {
 
         {/* Dropdown Options Section (only for dropdown type) */}
         {isDropdown && (
-          <div className="section-container">
-            <div className="section-header">
-              <h2 className="section-title">Опции ответов</h2>
-              <button className="add-option-btn" onClick={handleAddOption}>
-                <span className="add-icon">+</span>
-                <span>Добавить вариант</span>
-              </button>
-            </div>
+          <>
+            <h2 className="section-title" style={{ marginBottom: '32px', marginLeft: '105px' }}>Дополнительный текст</h2>
+            <div className="section-container">
+              <div className="section-header">
+                <button className="add-option-btn" onClick={handleAddOption}>
+                  <span className="add-icon">+</span>
+                  <span>Добавить вариант</span>
+                </button>
+              </div>
 
             <div className="options-list">
               {dropdownOptions.length === 0 ? (
@@ -381,20 +357,25 @@ const ContentCreditEdit: React.FC = () => {
                 ))
               )}
             </div>
-          </div>
+            </div>
+          </>
         )}
 
         {/* Action Buttons */}
         <div className="action-buttons">
-          <button className="btn-secondary" onClick={handleBack}>
-            Назад
-          </button>
-          <button className="btn-primary" onClick={handleSave}>
-            Сохранить и опубликовать
-          </button>
+          <div className="action-buttons-row">
+            <div className="box3" style={{ width: '225px', height: '41px' }}></div>
+            <div className="action-buttons-inner">
+              <button className="btn-secondary" onClick={handleBack}>
+                Назад
+              </button>
+              <button className="btn-primary" onClick={handleSave}>
+                Сохранить и опубликовать
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 

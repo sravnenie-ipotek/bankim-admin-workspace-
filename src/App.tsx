@@ -4,21 +4,14 @@ import './App.css'
 
 // Import components
 import ComponentShowcase from './pages/ComponentShowcase'
-import ContentManagementPage from './pages/ContentManagementPage';
+// import ContentManagementPage from './pages/ContentManagementPage'; // No longer used
 import SharedHeaderPreview from './pages/SharedHeaderPreview'
 import CalculatorFormula from './pages/CalculatorFormula'
 import Chat from './pages/Chat'
 import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
-import ContentMain from './pages/ContentMain'
 import ContentMainDrill from './pages/ContentMainDrill'
 import ContentMainConfirm from './pages/ContentMainConfirm'
 import ContentMainText from './pages/ContentMainText'
-import ContentMenu from './pages/ContentMenu'
-import ContentMortgage from './pages/ContentMortgage'
-import ContentMortgageRefi from './pages/ContentMortgageRefi'
-import ContentCredit from './pages/ContentCredit'
-import ContentCreditRefi from './pages/ContentCreditRefi'
-import ContentGeneral from './pages/ContentGeneral'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -26,12 +19,11 @@ import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
-import ContentMortgageEdit from './pages/ContentMortgageEdit';
-import ContentMenuEdit from './pages/ContentMenuEdit';
 import ContentVerification from './pages/ContentVerification';
 import ContentMortgageRefiEdit from './pages/ContentMortgageRefiEdit';
-import ContentCreditEdit from './pages/ContentCreditEdit';
 import ContentCreditRefiEdit from './pages/ContentCreditRefiEdit';
+import { SharedContentScreen } from './pages/SharedContentScreen';
+import { SharedContentEdit } from './pages/SharedContentEdit';
 
 
 
@@ -353,7 +345,7 @@ const AppRouter: React.FC = () => {
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<ContentManagementPage />} />
+        <Route path="/" element={<Navigate to="/content-management" replace />} />
         <Route path="/dev" element={<Dashboard />} />
         <Route path="/director" element={<Director />} />
         <Route path="/administration" element={<Administration />} />
@@ -376,7 +368,7 @@ const AppRouter: React.FC = () => {
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/qa-showcase" element={<QAShowcase />} />
         <Route path="/qa-mortgage" element={<QAMortgage />} />
-        <Route path="/content/:pageId" element={<ContentManagementPage />} />
+        {/* Removed old content/:pageId route - now handled by SharedContentScreen */}
         <Route 
           path="/content-management" 
           element={
@@ -390,19 +382,7 @@ const AppRouter: React.FC = () => {
           } 
         />
         
-        {/* Content submenu routes */}
-        <Route 
-          path="/content/main" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Главная" activeMenuItem="content-main">
-                  <ContentMain />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
+        {/* Content submenu routes - Special routes for main content */}
         <Route 
           path="/content/main/action/:actionId" 
           element={
@@ -439,108 +419,14 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
-        <Route 
-          path="/content/menu/:menuItem?" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Меню" activeMenuItem="content-menu">
-                  <ContentMenu />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/menu/edit/:itemId" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
-                <AdminLayout title="Редактирование контента меню" activeMenuItem="content-menu">
-                  <ContentMenuEdit />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/mortgage" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Рассчитать ипотеку" activeMenuItem="content-mortgage">
-                  <ContentMortgage />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/mortgage/edit/:itemId" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
-                <AdminLayout title="Редактирование контента ипотеки" activeMenuItem="content-mortgage">
-                  <ContentMortgageEdit />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/mortgage-refi" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Рефинансирование ипотеки" activeMenuItem="content-mortgage-refi">
-                  <ContentMortgageRefi />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
+        
+        {/* Specific routes for components with issues */}
         <Route 
           path="/content/mortgage-refi/edit/:itemId" 
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
                 <ContentMortgageRefiEdit />
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/credit" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Расчет Кредита" activeMenuItem="content-credit">
-                  <ContentCredit />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/credit/edit/:itemId" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
-                <AdminLayout title="Редактирование контента кредита" activeMenuItem="content-credit">
-                  <ContentCreditEdit />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/credit-refi" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Рефинансирование кредита" activeMenuItem="content-credit-refi">
-                  <ContentCreditRefi />
-                </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -557,14 +443,26 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+        
+        {/* Shared content edit route */}
         <Route 
-          path="/content/general" 
+          path="/content/:contentType/edit/:itemId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <SharedContentEdit />
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Shared content list route - must be after specific routes */}
+        <Route 
+          path="/content/:contentType" 
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
-                <AdminLayout title="Общие страницы" activeMenuItem="content-general">
-                  <ContentGeneral />
-                </AdminLayout>
+                <SharedContentScreen />
               </ProtectedRoute>
             </ErrorBoundary>
           } 

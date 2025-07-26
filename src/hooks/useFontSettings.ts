@@ -41,10 +41,14 @@ export const useFontSettings = () => {
       const response = await apiService.getUISettings();
       
       if (response.success && response.data) {
-        const settings = response.data as UISetting[];
+        // Check if response.data is an array or object
+        const settingsArray = Array.isArray(response.data) 
+          ? response.data as UISetting[]
+          : [];
+          
         const newFontSettings = { ...defaultFontSettings };
         
-        settings.forEach((setting) => {
+        settingsArray.forEach((setting) => {
           switch (setting.settingKey) {
             case 'menu_font_family':
               newFontSettings.menuFontFamily = setting.settingValue;
