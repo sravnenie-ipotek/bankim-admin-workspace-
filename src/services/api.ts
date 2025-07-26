@@ -209,7 +209,16 @@ const ACTION_COUNT_MAPPING: Record<string, number> = {
 
 // Function to get action count for content item
 const getActionCountForItem = (item: any): number => {
-  // Try exact match first
+  // FIRST: Use database value if available (prioritize real data!)
+  if (item.actionCount && item.actionCount > 0) {
+    return parseInt(item.actionCount);
+  }
+  
+  if (item.action_count && item.action_count > 0) {
+    return parseInt(item.action_count);
+  }
+  
+  // FALLBACK: Try exact match in hardcoded mapping
   if (item.content_key && ACTION_COUNT_MAPPING[item.content_key]) {
     return ACTION_COUNT_MAPPING[item.content_key];
   }
@@ -223,7 +232,7 @@ const getActionCountForItem = (item: any): number => {
     }
   }
   
-  // Try title-based matching
+  // Try title-based matching (last resort)
   const title = item.title_ru || item.translations?.ru || item.title || '';
   if (title) {
     const lowerTitle = title.toLowerCase();
@@ -232,16 +241,6 @@ const getActionCountForItem = (item: any): number => {
         return count;
       }
     }
-  }
-  
-  // Use database value if available
-  if (item.actionCount && item.actionCount > 1) {
-    return item.actionCount;
-  }
-  
-  // Use action_count field from backend if available
-  if (item.action_count && item.action_count > 1) {
-    return item.action_count;
   }
   
   // Default fallback
