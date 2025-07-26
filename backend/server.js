@@ -1000,9 +1000,9 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Калькулятор ипотеки' as title_ru,
           'משכנתא מחשבון' as title_he,
           'Mortgage Calculator' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as representative_id
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as representative_id
         UNION ALL
         SELECT 
           'step.2.personal_data' as step_group,
@@ -1096,7 +1096,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     
     // Map step IDs to screen_locations - much cleaner!
     const stepMapping = {
-      'step.1.calculator': 'mortgage_step1',
+      'step.1.calculator': 'mortgage_calculation',
       'step.2.personal_data': 'mortgage_step2', 
       'step.3.income_data': 'mortgage_step3',
       'step.4.program_selection': 'mortgage_step4'
@@ -1112,7 +1112,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
 
     // Get step title mapping
     const stepTitles = {
-      'mortgage_step1': 'Калькулятор ипотеки',
+      'mortgage_calculation': 'Калькулятор ипотеки',
       'mortgage_step2': 'Анкета личных данных',  
       'mortgage_step3': 'Анкета доходов',
       'mortgage_step4': 'Выбор программ ипотеки'
