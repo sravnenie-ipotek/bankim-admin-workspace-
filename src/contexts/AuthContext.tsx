@@ -60,6 +60,8 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     { action: 'manage', resource: 'content' },
     { action: 'read', resource: 'content-management' },
     { action: 'write', resource: 'content-management' },
+    { action: 'update', resource: 'content-management' },
+    { action: 'edit', resource: 'content-management' },
     { action: 'manage', resource: 'media' }
   ],
   brokers: [
@@ -69,7 +71,11 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   'bank-employee': [
     { action: 'read', resource: 'calculator-formula' },
     { action: 'view', resource: 'clients' },
-    { action: 'manage', resource: 'documents' }
+    { action: 'manage', resource: 'documents' },
+    { action: 'read', resource: 'content-management' },
+    { action: 'write', resource: 'content-management' },
+    { action: 'update', resource: 'content-management' },
+    { action: 'edit', resource: 'content-management' }
   ]
 };
 

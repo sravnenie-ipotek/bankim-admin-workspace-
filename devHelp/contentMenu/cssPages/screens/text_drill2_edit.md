@@ -1,535 +1,754 @@
-<div style="width: 1440px; height: 1419px; position: relative; background: var(--gray-900, #111928)">
-  <div style="left: 370px; top: 139px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 40px; display: inline-flex">
-    <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 32px; display: flex">
-      <div data-language="RU" style="width: 925px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: flex">
-        <div data-dark-mode="True" data-type="Default" style="border-radius: 6px; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
-          <div style="justify-content: center; align-items: center; display: flex">
-            <div style="color: var(--gray-400, #9CA3AF); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Контент сайта</div>
-          </div>
-          <div style="width: 20px; height: 20px; position: relative; overflow: hidden">
-            <div style="width: 6.67px; height: 11.67px; left: 6.67px; top: 4.17px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-          </div>
-          <div style="justify-content: center; align-items: center; display: flex">
-            <div style="color: var(--gray-400, #9CA3AF); font-size: 14px; font-family: Arimo; font-weight: 600; line-height: 21px; word-wrap: break-word">Главная страница Страница  №1</div>
-          </div>
-          <div style="width: 20px; height: 20px; position: relative; overflow: hidden">
-            <div style="width: 6.67px; height: 11.67px; left: 6.67px; top: 4.17px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-          </div>
-          <div style="justify-content: center; align-items: center; display: flex">
-            <div style="color: var(--gray-400, #9CA3AF); font-size: 14px; font-family: Arimo; font-weight: 600; line-height: 21px; word-wrap: break-word">Действие №3 </div>
-          </div>
-        </div>
-        <div style="width: 925px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
-          <div style="flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px; display: inline-flex">
-            <div style="justify-content: flex-start; align-items: center; gap: 12px; display: inline-flex">
-              <div style="justify-content: center; display: flex; flex-direction: column; color: var(--gray-50, #F9FAFB); font-size: 30px; font-family: Arimo; font-weight: 600; line-height: 45px; word-wrap: break-word">Номер дейcтвия №3 | Основной источник дохода</div>
-              <div style="justify-content: flex-start; align-items: center; gap: 8px; display: flex">
-                <div style="color: var(--gray-400, #9CA3AF); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Home_page</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div data-language="RU" data-show-bank-name="false" data-state="Default" style="width: 1175px; padding: 24px; left: 265px; top: 0px; position: absolute; background: var(--gray-800, #1F2A37); box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.05); flex-direction: column; justify-content: center; align-items: center; display: inline-flex">
-    <div style="width: 1095px; justify-content: flex-end; align-items: center; gap: 32px; display: inline-flex">
-      <div style="justify-content: center; align-items: center; gap: 12px; display: flex">
-        <div style="color: var(--gray-50, #F9FAFB); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Русский</div>
-        <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-          <div style="width: 14px; height: 8px; left: 5px; top: 8px; position: absolute; background: var(--gray-100, #F3F4F6)"></div>
-        </div>
-      </div>
-      <div style="width: 40px; height: 40px; position: relative; border-radius: 8px">
-        <div style="width: 24px; height: 24px; left: 8px; top: 8px; position: absolute; overflow: hidden">
-          <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--gray-300, #D1D5DB)"></div>
-        </div>
-      </div>
-      <div style="width: 40px; height: 40px; position: relative; border-radius: 8px">
-        <div style="width: 24px; height: 24px; left: 8px; top: 8px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 20px; left: 4px; top: 2px; position: absolute; background: var(--gray-300, #D1D5DB)"></div>
-        </div>
-        <div data-darkmode="True" data-icon="False" data-remove-button="False" data-size="Small" data-theme="Yellow" data-type="Circle" style="width: 20px; height: 20px; padding-left: 10px; padding-right: 10px; padding-top: 2px; padding-bottom: 2px; left: 20px; top: 0px; position: absolute; background: var(--primary-700, #FBE54D); border-radius: 9999px; justify-content: center; align-items: center; display: inline-flex">
-          <div style="text-align: center; color: var(--gray-900, #111928); font-size: 12px; font-family: Arimo; font-weight: 500; line-height: 18px; word-wrap: break-word">1</div>
-        </div>
-      </div>
-      <div style="justify-content: flex-start; align-items: center; gap: 12px; display: flex">
-        <div style="justify-content: flex-start; align-items: center; gap: 20px; display: flex">
-          <img data-notification-dot="False" data-placeholder="False" data-size="Regular" data-type="Circle" style="width: 32px; height: 32px; position: relative; border-radius: 100px" src="https://placehold.co/32x32" />
-        </div>
-        <div style="flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="text-align: center; color: var(--gray-50, #F9FAFB); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Александр пушкин</div>
-        </div>
-        <div style="width: 27.84px; height: 24px; position: relative; transform: rotate(90deg); transform-origin: top left; overflow: hidden">
-          <div style="width: 11.15px; height: 6.55px; left: 6.42px; top: 9.42px; position: absolute; background: white"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="true" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 289px; left: 370px; top: 439px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-    <div style="align-self: stretch; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">RU</div>
-    <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-      <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-        <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Основой источник дохода</div>
-      </div>
-    </div>
-  </div>
-  <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="true" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 289px; left: 688px; top: 439px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-    <div style="align-self: stretch; text-align: right; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">HEB</div>
-    <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-      <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-        <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">מקור הכנסה עיקרי</div>
-      </div>
-    </div>
-  </div>
-  <div style="left: 370px; top: 393px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: var(--gray-50, #F9FAFB); font-size: 20px; font-family: Arimo; font-weight: 600; line-height: 30px; word-wrap: break-word">Заголовки действий</div>
-  <div style="left: 370px; top: 545px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: var(--gray-50, #F9FAFB); font-size: 20px; font-family: Arimo; font-weight: 600; line-height: 30px; word-wrap: break-word">Опции ответов</div>
-  <div style="width: 925px; left: 370px; top: 615px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex">
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">1</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="true" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">RU</div>
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="true" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; text-align: right; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">HEB</div>
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">2</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">3</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">4</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">5</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">6</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">7</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div data-language="RU" data-state="Default" style="align-self: stretch; justify-content: center; align-items: center; gap: 48px; display: inline-flex">
-      <div style="width: 55px; height: 24px; position: relative">
-        <div style="left: 46px; top: 0px; position: absolute; color: white; font-size: 16px; font-family: Arimo; font-weight: 600; line-height: 24px; word-wrap: break-word">8</div>
-        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-          <div style="width: 16px; height: 14px; left: 4px; top: 5px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 20px; display: flex">
-        <div data-dark-mode="True" data-language="RU" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Cотрудник</div>
-            </div>
-          </div>
-        </div>
-        <div data-dark-mode="True" data-language="HEB" data-show-helper-text="false" data-show-label="false" data-show-left-icon="false" data-show-placeholder="true" data-show-right-icon="false" data-size="Small" data-state="Value" style="width: 295px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-          <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; background: var(--gray-700, #374151); border-radius: 8px; outline: 1px var(--gray-600, #4B5563) solid; outline-offset: -1px; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 10px; display: flex">
-              <div style="flex: 1 1 0; text-align: right; justify-content: center; display: flex; flex-direction: column; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">עוֹבֵד</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="justify-content: center; align-items: center; gap: 16px; display: flex">
-        <div data-color="Alternative Dark" data-icon-only="True" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--gray-700, #374151); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative">
-            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; overflow: hidden">
-              <div style="width: 16.83px; height: 16.83px; left: 3.60px; top: 3.57px; position: absolute; background: var(--gray-50, #F9FAFB)"></div>
-            </div>
-          </div>
-        </div>
-        <div data-color="Red" data-icon-only="True" data-outline="False" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="true" data-size="xs" data-state="Default" style="padding: 4px; background: var(--red-400, #F98080); border-radius: 9999px; justify-content: flex-start; align-items: flex-start; display: flex">
-          <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-            <div style="width: 18px; height: 20px; left: 3px; top: 2px; position: absolute; background: var(--white, white); border: 1px var(--white, white) solid"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div data-color="Alternative Dark" data-icon-only="False" data-outline="True" data-show-button-text="true" data-show-left-icon="true" data-show-right-icon="false" data-size="sm" data-state="Default" style="padding-left: 12px; padding-right: 12px; padding-top: 8px; padding-bottom: 8px; left: 1125px; top: 542px; position: absolute; border-radius: 8px; outline: 1px var(--gray-400, #9CA3AF) solid; outline-offset: -1px; justify-content: center; align-items: center; gap: 8px; display: inline-flex">
-    <div style="width: 16px; height: 16px; position: relative; overflow: hidden">
-      <div style="width: 9.33px; height: 9.33px; left: 3.33px; top: 3.33px; position: absolute; background: var(--gray-50, #F9FAFB); outline: 2px var(--gray-50, #F9FAFB) solid; outline-offset: -1px"></div>
-    </div>
-    <div style="color: var(--gray-50, #F9FAFB); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Добавить вариант</div>
-  </div>
-  <div data-language="RU" data-third-button="false" style="width: 1175px; padding-left: 145px; padding-right: 145px; padding-top: 24px; padding-bottom: 24px; left: 264px; top: 794px; position: absolute; background: var(--gray-800, #1F2A37); overflow: hidden; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
-    <div style="align-self: stretch; justify-content: space-between; align-items: flex-start; display: inline-flex">
-      <div style="width: 225px; padding: 10px; justify-content: space-between; align-items: flex-start; display: flex"></div>
-      <div style="justify-content: flex-start; align-items: flex-start; gap: 16px; display: flex">
-        <div data-color="Green" data-icon-only="False" data-outline="True" data-show-button-text="true" data-show-left-icon="false" data-show-right-icon="false" data-size="base" data-state="Default" style="width: 225px; padding-left: 20px; padding-right: 20px; padding-top: 10px; padding-bottom: 10px; border-radius: 8px; outline: 1px var(--gray-400, #9CA3AF) solid; outline-offset: -1px; justify-content: center; align-items: center; gap: 8px; display: flex">
-          <div style="color: var(--gray-50, #F9FAFB); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Назад</div>
-        </div>
-        <div data-color="Primary" data-icon-only="False" data-outline="False" data-show-button-text="true" data-show-left-icon="false" data-show-right-icon="false" data-size="base" data-state="Default" style="width: 225px; padding-left: 20px; padding-right: 20px; padding-top: 10px; padding-bottom: 10px; background: var(--primary-700, #FBE54D); overflow: hidden; border-radius: 8px; justify-content: center; align-items: center; gap: 8px; display: flex">
-          <div style="color: var(--gray-900, #111928); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Сохранить и опубликовать</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div data-language="RU" style="width: 295px; padding: 24px; left: 370px; top: 253px; position: absolute; background: var(--gray-800, #1F2A37); overflow: hidden; border-radius: 8px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
-    <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12px; display: inline-flex">
-      <div style="color: var(--gray-400, #9CA3AF); font-size: 14px; font-family: Arimo; font-weight: 400; line-height: 21px; word-wrap: break-word">Последнее редактирование</div>
-      <div style="color: var(--gray-50, #F9FAFB); font-size: 18px; font-family: Arimo; font-weight: 600; line-height: 27px; word-wrap: break-word">01.08.2023 | 12:03</div>
-    </div>
-  </div>
-  <div data-dark-mode="True" data-icons="True" data-item-10="false" data-item-11="false" data-item-6="false" data-item-7="false" data-item-8="false" data-item-9="false" data-logo="True" data-show-bank-name="false" data-type="Default" style="width: 265px; height: 1419px; left: 0px; top: 0px; position: absolute; background: var(--gray-800, #1F2A37); overflow: hidden; justify-content: flex-start; align-items: flex-start; display: inline-flex">
-    <div style="flex: 1 1 0; align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex">
-      <div style="align-self: stretch; padding-top: 20px; padding-left: 20px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: flex">
-        <div data-dark-mode="True" data-size="lg" style="flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; display: flex">
-          <div style="width: 64px; height: 28.58px; position: relative">
-            <div style="width: 4.48px; height: 6.25px; left: 0.03px; top: 22.22px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 5.55px; height: 6.25px; left: 5.14px; top: 22.23px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 5.02px; height: 6.26px; left: 11.59px; top: 22.23px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 4.81px; height: 6.25px; left: 17.97px; top: 22.23px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 0.94px; height: 6.25px; left: 23.65px; top: 22.23px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 6.31px; height: 6.26px; left: 25.95px; top: 22.23px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-            <div style="width: 5.60px; height: 6.42px; left: 33.42px; top: 22.15px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 5.02px; height: 6.26px; left: 40.18px; top: 22.24px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 3.75px; height: 6.25px; left: 46.56px; top: 22.24px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 0.94px; height: 6.25px; left: 51.38px; top: 22.25px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 5.02px; height: 6.26px; left: 53.68px; top: 22.25px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 3.93px; height: 6.25px; left: 60.06px; top: 22.25px; position: absolute; background: var(--white, white)"></div>
-            <div style="width: 64px; height: 18px; left: 0px; top: 0px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-          </div>
-        </div>
-      </div>
-      <div style="align-self: stretch; padding-top: 16px; padding-left: 12px; padding-right: 12px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: flex">
-        <div data-icon-left-visibility="true" data-icon-right="false" data-item-1="true" data-item-2="true" data-item-3="true" data-item-4="true" data-item-5="true" data-item-6="true" data-item-7="true" data-language="RU" data-notification="false" data-state="Default" style="align-self: stretch; padding-left: 8px; padding-right: 8px; justify-content: flex-start; align-items: center; display: inline-flex">
-          <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-            <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-              <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-            </div>
-            <div style="color: var(--white, white); font-size: 16px; font-family: Arimo; font-weight: 500; line-height: 24px; word-wrap: break-word">Главная</div>
-          </div>
-        </div>
-        <div data-icon-left-visibility="true" data-icon-right="false" data-item-1="true" data-item-2="true" data-item-3="true" data-item-4="true" data-item-5="true" data-item-6="true" data-item-7="true" data-language="RU" data-notification="false" data-state="Open" style="align-self: stretch; padding-left: 8px; padding-right: 8px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-          <div style="width: 225px; padding: 8px; background: var(--gray-700, #374151); border-radius: 4px; justify-content: flex-start; align-items: center; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-              <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-                <div style="width: 20px; height: 18px; left: 2px; top: 3px; position: absolute; background: var(--primary-700, #FBE54D)"></div>
-              </div>
-              <div style="color: var(--white, white); font-size: 16px; font-family: Arimo; font-weight: 500; line-height: 24px; word-wrap: break-word">Контент сайта</div>
-            </div>
-            <div style="justify-content: flex-end; align-items: center; display: flex">
-              <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-                <div style="width: 14px; height: 8px; left: 5px; top: 8px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-              </div>
-            </div>
-          </div>
-          <div style="width: 225px; padding-left: 48px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: flex">
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Open" style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: flex">
-              <div style="width: 177px; justify-content: flex-start; align-items: center; display: inline-flex">
-                <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                  <div style="color: var(--primary-700, #FBE54D); font-size: 14px; font-family: Arimo; font-weight: 600; line-height: 21px; word-wrap: break-word">Главная</div>
-                </div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 600; line-height: 21px; word-wrap: break-word">Меню</div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 600; line-height: 21px; word-wrap: break-word">Рассчитать ипотеку</div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="flex: 1 1 0; color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Рефинансирование Ипотеки</div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Расчет Кредита</div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Рефинансирование                Кредита</div>
-              </div>
-            </div>
-            <div data-language="RU" data-notification="false" data-show-open-icon-white="false" data-state="Default" style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
-              <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-                <div style="color: var(--white, white); font-size: 14px; font-family: Arimo; font-weight: 500; line-height: 21px; word-wrap: break-word">Общие страницы</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div data-icon-left-visibility="true" data-icon-right="false" data-item-1="true" data-item-2="true" data-item-3="true" data-item-4="true" data-item-5="true" data-item-6="true" data-item-7="true" data-language="RU" data-notification="false" data-state="Default" style="align-self: stretch; padding-left: 8px; padding-right: 8px; justify-content: flex-start; align-items: center; display: inline-flex">
-          <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-            <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-              <div style="width: 20px; height: 18px; left: 2px; top: 3px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-            </div>
-            <div style="color: var(--white, white); font-size: 16px; font-family: Arimo; font-weight: 500; line-height: 24px; word-wrap: break-word">Чат</div>
-          </div>
-        </div>
-      </div>
-      <div style="align-self: stretch; height: 1px; background: var(--gray-700, #374151)"></div>
-      <div style="align-self: stretch; padding-left: 12px; padding-right: 12px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: flex">
-        <div data-icon-left-visibility="true" data-icon-right="false" data-item-1="true" data-item-2="true" data-item-3="true" data-item-4="true" data-item-5="true" data-item-6="true" data-item-7="true" data-language="RU" data-notification="false" data-state="Default" style="align-self: stretch; padding-left: 8px; padding-right: 8px; justify-content: flex-start; align-items: center; display: inline-flex">
-          <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-            <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-              <div style="width: 18px; height: 18px; left: 3px; top: 3px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-            </div>
-            <div style="color: var(--white, white); font-size: 16px; font-family: Arimo; font-weight: 500; line-height: 24px; word-wrap: break-word">Настройки</div>
-          </div>
-        </div>
-        <div data-icon-left-visibility="true" data-icon-right="false" data-item-1="true" data-item-2="true" data-item-3="true" data-item-4="true" data-item-5="true" data-item-6="true" data-item-7="true" data-language="RU" data-notification="false" data-state="Default" style="align-self: stretch; padding-left: 8px; padding-right: 8px; justify-content: flex-start; align-items: center; display: inline-flex">
-          <div style="flex: 1 1 0; justify-content: flex-start; align-items: flex-start; gap: 12px; display: flex">
-            <div style="width: 24px; height: 24px; position: relative">
-              <div style="width: 16px; height: 16px; left: 4px; top: 4px; position: absolute; background: var(--gray-400, #9CA3AF)"></div>
-            </div>
-            <div style="color: var(--white, white); font-size: 16px; font-family: Arimo; font-weight: 500; line-height: 24px; word-wrap: break-word">Выйти</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div style="width: 1px; align-self: stretch; background: var(--gray-700, #374151)"></div>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Контентстраницы№13.2Text|Default|RU</title>
+	<style>
+		body {
+			font-family: system-ui;
+		}
+		.box {
+			width: 264px;
+			height: 1px;
+			background: #374151;
+			margin-bottom: 24px;
+		}
+		.box2 {
+			width: 1px;
+			height: 1188px;
+			background: #374151;
+		}
+		.box3 {
+			width: 225px;
+			height: 41px;
+		}
+		.button {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: none;
+			border-radius: 8px;
+			border: 1px solid #9CA3AF;
+			padding: 10px 92px;
+			text-align: left;
+		}
+		.button2 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #FBE54D;
+			border-radius: 8px;
+			border: none;
+			padding: 10px 23px;
+			text-align: left;
+		}
+		.column {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #111928;
+		}
+		.column2 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding-bottom: 518px;
+		}
+		.column3 {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			margin-bottom: 32px;
+			margin-left: 370px;
+			margin-right: 145px;
+			gap: 16px;
+		}
+		.column4 {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #1F2A37;
+			border-radius: 8px;
+			padding: 24px 89px 24px 24px;
+			margin-bottom: 32px;
+			margin-left: 370px;
+			gap: 12px;
+		}
+		.column5 {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			margin-left: 370px;
+			gap: 8px;
+		}
+		.column6 {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			margin-bottom: 40px;
+			margin-left: 688px;
+			margin-right: 463px;
+			gap: 8px;
+		}
+		.column7 {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			margin-bottom: 40px;
+			margin-left: 370px;
+			margin-right: 323px;
+			gap: 24px;
+		}
+		.column8 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+		}
+		.column9 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+		}
+		.contain {
+			background: #FFFFFF;
+		}
+		.image {
+			width: 264px;
+			height: 48px;
+			margin-bottom: 40px;
+			object-fit: fill;
+		}
+		.image2 {
+			width: 24px;
+			height: 24px;
+			object-fit: fill;
+		}
+		.image3 {
+			width: 24px;
+			height: 24px;
+			margin-right: 12px;
+			object-fit: fill;
+		}
+		.image4 {
+			width: 28px;
+			height: 28px;
+			object-fit: fill;
+		}
+		.image5 {
+			width: 40px;
+			height: 40px;
+			object-fit: fill;
+		}
+		.image6 {
+			width: 32px;
+			height: 32px;
+			object-fit: fill;
+		}
+		.image7 {
+			border-radius: 6px;
+			width: 20px;
+			height: 20px;
+			object-fit: fill;
+		}
+		.row-view {
+			display: flex;
+			align-items: flex-start;
+			background: #1F2A37;
+		}
+		.row-view2 {
+			display: flex;
+			align-items: flex-start;
+			margin-bottom: 24px;
+			margin-left: 20px;
+			gap: 12px;
+		}
+		.row-view3 {
+			display: flex;
+			align-items: flex-start;
+			margin-bottom: 24px;
+			margin-left: 20px;
+			margin-right: 20px;
+			gap: 12px;
+		}
+		.row-view4 {
+			display: flex;
+			align-items: center;
+			margin-bottom: 23px;
+			margin-left: 20px;
+			margin-right: 20px;
+		}
+		.row-view5 {
+			display: flex;
+			align-items: flex-start;
+			margin-left: 20px;
+			gap: 12px;
+		}
+		.row-view6 {
+			align-self: stretch;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			background: #1F2A37;
+			padding: 24px 40px 24px 667px;
+			margin-bottom: 51px;
+			margin-left: 265px;
+			gap: 32px;
+			box-shadow: 0px 2px 4px #0000000D;
+		}
+		.row-view7 {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+		.row-view8 {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+		.row-view9 {
+			display: flex;
+			align-items: center;
+			border-radius: 6px;
+			gap: 16px;
+		}
+		.row-view10 {
+			align-self: stretch;
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+		.row-view11 {
+			align-self: stretch;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.row-view12 {
+			flex-shrink: 0;
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+		}
+		.row-view13 {
+			width: 885px;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+		}
+		.row-view14 {
+			flex-shrink: 0;
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+		}
+		.text {
+			color: #FBE54D;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.text2 {
+			color: #FFFFFF;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.text3 {
+			color: #FFFFFF;
+			font-size: 16px;
+			font-weight: bold;
+			margin-right: 54px;
+		}
+		.text4 {
+			color: #F9FAFB;
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.text5 {
+			color: #9CA3AF;
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.text6 {
+			color: #F9FAFB;
+			font-size: 30px;
+			font-weight: bold;
+		}
+		.text7 {
+			color: #9CA3AF;
+			font-size: 14px;
+		}
+		.text8 {
+			color: #F9FAFB;
+			font-size: 18px;
+			font-weight: bold;
+		}
+		.text9 {
+			color: #F9FAFB;
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 16px;
+			margin-left: 370px;
+		}
+		.text10 {
+			color: #FFFFFF;
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.text11 {
+			color: #FFFFFF;
+			font-size: 14px;
+		}
+		.text12 {
+			color: #FFFFFF;
+			font-size: 14px;
+			text-align: right;
+		}
+		.text13 {
+			color: #F9FAFB;
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 32px;
+			margin-left: 370px;
+		}
+		.text14 {
+			color: #FFFFFF;
+			font-size: 16px;
+			width: 254px;
+		}
+		.text15 {
+			color: #FFFFFF;
+			font-size: 14px;
+			font-weight: bold;
+			text-align: right;
+			width: 256px;
+		}
+		.text16 {
+			color: #111928;
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.view {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.view2 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding-bottom: 1px;
+		}
+		.view3 {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 106px 9px 16px;
+		}
+		.view4 {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 16px 9px 16px;
+		}
+		.view5 {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 212px 9px 16px;
+		}
+		.view6 {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 16px 9px 16px;
+		}
+		.view7 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 16px 9px 16px;
+		}
+		.view8 {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			background: #374151;
+			border-radius: 8px;
+			border: 1px solid #4B5563;
+			padding: 8px 212px 9px 16px;
+		}
+		.view9 {
+			align-self: stretch;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #1F2A37;
+			padding-top: 24px;
+			padding-bottom: 24px;
+			margin-left: 264px;
+			margin-right: 1px;
+		}
+	</style>
+</head>
+<body>
+		<div class="contain">
+		<div class="column">
+			<div class="row-view">
+				<div class="column2">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/n14sqw25_expires_30_days.png" 
+						class="image"
+					/>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/r60awggi_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text" >
+							Главная
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/issdsagz_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Пользователи
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/vj4xrce5_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Клиенты
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/4bcz8cmg_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Предложения
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/ucvv2n01_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							История Действий
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/0562wxcy_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Банковские программы
+						</span>
+					</div>
+					<div class="row-view3">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/yh29bzf7_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Создание аудитории
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/pv31tdz0_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Формула калькулятора
+						</span>
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/07gaff9d_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Чат
+						</span>
+					</div>
+					<div class="row-view4">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/ji0fnqqp_expires_30_days.png" 
+							class="image3"
+						/>
+						<span class="text3" >
+							Контент сайта
+						</span>
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/tmw8ffrl_expires_30_days.png" 
+							class="image4"
+						/>
+					</div>
+					<div class="box">
+					</div>
+					<div class="row-view2">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/m81txeey_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Настройки
+						</span>
+					</div>
+					<div class="row-view5">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/sw9bv2eq_expires_30_days.png" 
+							class="image2"
+						/>
+						<span class="text2" >
+							Выйти
+						</span>
+					</div>
+				</div>
+				<div class="box2">
+				</div>
+			</div>
+			<div class="row-view6">
+				<div class="row-view7">
+					<span class="text4" >
+						Русский
+					</span>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/7wryeztu_expires_30_days.png" 
+						class="image2"
+					/>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/rt4hrano_expires_30_days.png" 
+					class="image5"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/7t5c2e00_expires_30_days.png" 
+					class="image5"
+				/>
+				<div class="row-view8">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/7gr0p1nt_expires_30_days.png" 
+						class="image6"
+					/>
+					<div class="view">
+						<span class="text4" >
+							Александр пушкин
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/o4x7s01x_expires_30_days.png" 
+						class="image2"
+					/>
+				</div>
+			</div>
+			<div class="column3">
+				<div class="row-view9">
+					<div class="view2">
+						<span class="text5" >
+							Страницы сайта
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/jl319xak_expires_30_days.png" 
+						class="image7"
+					/>
+					<div class="view2">
+						<span class="text5" >
+							Главная страница Страница  №1
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/fdr8oo0p_expires_30_days.png" 
+						class="image7"
+					/>
+					<div class="view2">
+						<span class="text5" >
+							Действие №3
+						</span>
+					</div>
+				</div>
+				<div class="row-view10">
+					<span class="text6" >
+						Номер дейcтвия №3 | Основной источник дохода
+					</span>
+					<div class="view2">
+						<span class="text7" >
+							Home_page
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="column4">
+				<span class="text7" >
+					Последнее редактирование
+				</span>
+				<span class="text8" >
+					01.08.2023 | 12:03
+				</span>
+			</div>
+			<span class="text9" >
+				Заголовки действия
+			</span>
+			<div class="column5">
+				<span class="text10" >
+					RU
+				</span>
+				<div class="view3">
+					<span class="text11" >
+						Основой источник дохода
+					</span>
+				</div>
+			</div>
+			<div class="column6">
+				<span class="text10" >
+					HEB
+				</span>
+				<div class="view4">
+					<span class="text12" >
+						מקור הכנסה עיקרי
+					</span>
+				</div>
+			</div>
+			<span class="text13" >
+				Дополнительный  текст
+			</span>
+			<div class="column7">
+				<div class="row-view11">
+					<span class="text2" >
+						1
+					</span>
+					<div class="row-view12">
+						<div class="column8">
+							<span class="text10" >
+								RU
+							</span>
+							<div class="view5">
+								<span class="text11" >
+									Cотрудник
+								</span>
+							</div>
+						</div>
+						<div class="column9">
+							<span class="text10" >
+								HEB
+							</span>
+							<div class="view6">
+								<span class="text11" >
+									עוֹבֵד
+								</span>
+							</div>
+						</div>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/x0pdqayv_expires_30_days.png" 
+						class="image6"
+					/>
+				</div>
+				<div class="row-view11">
+					<span class="text2" >
+						2
+					</span>
+					<div class="row-view12">
+						<div class="view7">
+							<span class="text14" >
+								Основная квартира: у заемщика нет квартиры ставка финансирования\nМаксимум до 75% \n\nАльтернативная квартира: Для заемщика квартира, которую он обязуется продать в течение двух лет ставка финансирования\nМаксимум до 70% \n\nВторая квартира или выше: у заемщика уже есть ставка финансирования квартирыМаксимум до 50%
+							</span>
+						</div>
+						<div class="view7">
+							<span class="text15" >
+								דירה ראשית: ללווה אין שיעור מימון דירה\nמקסימום עד 75%\n\nדירה חלופית: ללווה דירה שהוא מתחייב למכור תוך שנתיים, שיעור המימון\nמקסימום עד 70%\n\nדירה שנייה ומעלה: ללווה כבר יש שיעור מימון דירה עד מקסימום 50%
+							</span>
+						</div>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/q7wt6npw_expires_30_days.png" 
+						class="image6"
+					/>
+				</div>
+				<div class="row-view11">
+					<span class="text2" >
+						3
+					</span>
+					<div class="row-view12">
+						<div class="view8">
+							<span class="text11" >
+								Cотрудник
+							</span>
+						</div>
+						<div class="view7">
+							<span class="text11" >
+								עוֹבֵד
+							</span>
+						</div>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/kie9xiqx_expires_30_days.png" 
+						class="image6"
+					/>
+				</div>
+			</div>
+			<div class="view9">
+				<div class="row-view13">
+					<div class="box3">
+					</div>
+					<div class="row-view14">
+						<button class="button"
+							onclick="alert('Pressed!')"}>
+							<span class="text4" >
+								Назад
+							</span>
+						</button>
+						<button class="button2"
+							onclick="alert('Pressed!')"}>
+							<span class="text16" >
+								Сохранить и опубликовать
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

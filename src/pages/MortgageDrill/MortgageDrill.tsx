@@ -153,8 +153,15 @@ const MortgageDrill: React.FC = () => {
       description: action.description
     });
     
+    // Get the component type display value to check
+    const typeDisplay = getComponentTypeDisplay(action.component_type);
+    console.log('📋 Type display:', typeDisplay);
+    
     // Navigate to appropriate edit page based on component type
-    if (action.component_type?.toLowerCase() === 'text') {
+    // Check both the original type and the display type
+    if (action.component_type?.toLowerCase() === 'text' || 
+        action.component_type?.toLowerCase() === 'label' ||
+        typeDisplay === 'Текст') {
       // For text type, navigate to text edit page
       const textEditUrl = `/content/mortgage/text-edit/${action.id}`;
       console.log('✅ Navigating to text edit page:', textEditUrl);
@@ -216,12 +223,22 @@ const MortgageDrill: React.FC = () => {
       case 'dropdown':
       case 'select':
         return 'Дропдаун';
+      case 'option':
+        return 'Дропдаун';
       case 'link':
       case 'button':
         return 'Ссылка';
       case 'text':
       case 'label':
+      case 'field_label':
         return 'Текст';
+      case 'placeholder':
+        return 'Заполнитель';
+      case 'help_text':
+        return 'Справка';
+      case 'header':
+      case 'section_header':
+        return 'Заголовок';
       default:
         return 'Текст';
     }
