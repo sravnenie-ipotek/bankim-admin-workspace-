@@ -122,7 +122,7 @@ const ContentMortgage: React.FC = () => {
 
   const handleViewClick = (item: MortgageTranslation) => {
     // Navigate to drill page to show detailed actions for this page
-    navigate(`/content/mortgage/drill/${item.id}`, { 
+    navigate(`/content/mortgage/drill/${item.content_key}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 
