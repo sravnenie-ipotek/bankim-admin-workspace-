@@ -31,6 +31,7 @@ import ContentMenuEdit from './pages/ContentMenuEdit';
 import ContentVerification from './pages/ContentVerification';
 import ContentMortgageRefiEdit from './pages/ContentMortgageRefiEdit';
 import ContentCreditEdit from './pages/ContentCreditEdit';
+import ContentCreditRefiEdit from './pages/ContentCreditRefiEdit';
 
 
 
@@ -539,6 +540,18 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Рефинансирование кредита" activeMenuItem="content-credit-refi">
                   <ContentCreditRefi />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
+          path="/content/credit-refi/edit/:itemId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование контента рефинансирования кредита" activeMenuItem="content-credit-refi">
+                  <ContentCreditRefiEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

@@ -1226,6 +1226,71 @@ app.get('/api/content/credit', async (req, res) => {
   }
 });
 
+/**
+ * Get credit refinancing content
+ * GET /api/content/credit-refi
+ * Returns content for credit refinancing screens with translations
+ */
+app.get('/api/content/credit-refi', async (req, res) => {
+  try {
+    const result = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ct_ru.content_value AS title_ru,
+        ct_he.content_value AS title_he,
+        ct_en.content_value AS title_en,
+        ci.updated_at
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.is_active = TRUE
+        AND ci.screen_location IN (
+          'refinance_credit_1',    -- for /services/refinance-credit/1
+          'refinance_credit_2',    -- for /services/refinance-credit/2
+          'refinance_credit_3',    -- for /services/refinance-credit/3
+          'refinance_credit_4'     -- for /services/refinance-credit/4
+        )
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
+      ORDER BY ci.screen_location, ci.component_type, ci.content_key
+    `);
+
+    const creditRefiContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: creditRefiContent.length,
+        credit_refi_content: creditRefiContent
+      }
+    });
+  } catch (error) {
+    console.error('Get credit refi content error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
