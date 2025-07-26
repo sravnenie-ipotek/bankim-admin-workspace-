@@ -121,8 +121,23 @@ const ContentMortgage: React.FC = () => {
 
 
   const handleViewClick = (item: MortgageTranslation) => {
+    // Map mortgage page to proper step ID for backend drill endpoint
+    let stepId = item.content_key;
+    
+    // Map content based on Russian translation to ensure proper step routing
+    const russianTitle = item.translations?.ru?.toLowerCase() || '';
+    if (russianTitle.includes('калькулятор') || russianTitle.includes('рассчитать')) {
+      stepId = 'step.1.calculator';
+    } else if (russianTitle.includes('личн')) {
+      stepId = 'step.2.personal_data';
+    } else if (russianTitle.includes('доход')) {
+      stepId = 'step.3.income_data';
+    } else if (russianTitle.includes('программ')) {
+      stepId = 'step.4.program_selection';
+    }
+    
     // Navigate to drill page to show detailed actions for this page
-    navigate(`/content/mortgage/drill/${item.content_key}`, { 
+    navigate(`/content/mortgage/drill/${stepId}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 
