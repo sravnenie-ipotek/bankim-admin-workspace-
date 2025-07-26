@@ -20,8 +20,6 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
 import ContentVerification from './pages/ContentVerification';
-import ContentMortgageRefiEdit from './pages/ContentMortgageRefiEdit';
-import ContentCreditRefiEdit from './pages/ContentCreditRefiEdit';
 import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
 
@@ -420,31 +418,7 @@ const AppRouter: React.FC = () => {
           } 
         />
         
-        {/* Specific routes for components with issues */}
-        <Route 
-          path="/content/mortgage-refi/edit/:itemId" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
-                <ContentMortgageRefiEdit />
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        <Route 
-          path="/content/credit-refi/edit/:itemId" 
-          element={
-            <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
-                <AdminLayout title="Редактирование контента рефинансирования кредита" activeMenuItem="content-credit-refi">
-                  <ContentCreditRefiEdit />
-                </AdminLayout>
-              </ProtectedRoute>
-            </ErrorBoundary>
-          } 
-        />
-        
-        {/* Shared content edit route */}
+        {/* Shared content edit route - handles all content types */}
         <Route 
           path="/content/:contentType/edit/:itemId" 
           element={

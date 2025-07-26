@@ -1,45 +1,39 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { AdminLayout } from '../../components';
-import ContentMortgageEdit from '../ContentMortgageEdit';
-import ContentMenuEdit from '../ContentMenuEdit';
-// import ContentMortgageRefiEdit from '../ContentMortgageRefiEdit'; // Has specific route in App.tsx
-import ContentCreditEdit from '../ContentCreditEdit';
-// import ContentCreditRefiEdit from '../ContentCreditRefiEdit'; // Has TypeScript issues, needs fixing
+import { SharedContentEditForm } from '../SharedContentEditForm';
 
-// Configuration for each content type's edit component
+// Configuration for each content type
 interface ContentEditConfig {
   title: string;
   activeMenuItem: string;
-  component: React.ComponentType;
 }
 
 const contentEditConfig: Record<string, ContentEditConfig> = {
   'menu': {
     title: 'Редактирование контента меню',
-    activeMenuItem: 'content-menu',
-    component: ContentMenuEdit
+    activeMenuItem: 'content-menu'
   },
   'mortgage': {
     title: 'Редактирование контента ипотеки',
-    activeMenuItem: 'content-mortgage',
-    component: ContentMortgageEdit
+    activeMenuItem: 'content-mortgage'
   },
-  // 'mortgage-refi': {
-  //   title: 'Редактирование контента рефинансирования ипотеки',
-  //   activeMenuItem: 'content-mortgage-refi',
-  //   component: ContentMortgageRefiEdit
-  // },
+  'mortgage-refi': {
+    title: 'Редактирование контента рефинансирования ипотеки',
+    activeMenuItem: 'content-mortgage-refi'
+  },
   'credit': {
     title: 'Редактирование контента кредита',
-    activeMenuItem: 'content-credit',
-    component: ContentCreditEdit
+    activeMenuItem: 'content-credit'
   },
-  // 'credit-refi': {
-  //   title: 'Редактирование контента рефинансирования кредита',
-  //   activeMenuItem: 'content-credit-refi',
-  //   component: ContentCreditRefiEdit
-  // }
+  'credit-refi': {
+    title: 'Редактирование контента рефинансирования кредита',
+    activeMenuItem: 'content-credit-refi'
+  },
+  'general': {
+    title: 'Редактирование общего контента',
+    activeMenuItem: 'content-general'
+  }
 };
 
 /**
@@ -55,11 +49,10 @@ const SharedContentEdit: React.FC = () => {
   }
 
   const config = contentEditConfig[contentType];
-  const EditComponent = config.component;
 
   return (
     <AdminLayout title={config.title} activeMenuItem={config.activeMenuItem}>
-      <EditComponent />
+      <SharedContentEditForm contentType={contentType} />
     </AdminLayout>
   );
 };

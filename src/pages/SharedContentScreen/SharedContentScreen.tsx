@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import { AdminLayout } from '../../components';
+import { AdminLayout, ContentPageWrapper } from '../../components';
 import { ContentListBase } from '../ContentListBase';
 import ContentMain from '../ContentMain';
 import ContentMenu from '../ContentMenu';
@@ -82,18 +82,20 @@ const SharedContentScreen: React.FC = () => {
 
   return (
     <AdminLayout title={config.title} activeMenuItem={config.activeMenuItem}>
-      {config.useContentListBase ? (
-        <ContentListBase
-          sectionTitle={config.title}
-          contentType={actualContentType}
-          breadcrumbItems={[
-            { label: 'Контент сайта', isActive: false },
-            { label: config.breadcrumbLabel, isActive: true }
-          ]}
-        />
-      ) : (
-        config.customComponent && <config.customComponent />
-      )}
+      <ContentPageWrapper title={config.title}>
+        {config.useContentListBase ? (
+          <ContentListBase
+            sectionTitle={config.title}
+            contentType={actualContentType}
+            breadcrumbItems={[
+              { label: 'Контент сайта', isActive: false },
+              { label: config.breadcrumbLabel, isActive: true }
+            ]}
+          />
+        ) : (
+          config.customComponent && <config.customComponent />
+        )}
+      </ContentPageWrapper>
     </AdminLayout>
   );
 };

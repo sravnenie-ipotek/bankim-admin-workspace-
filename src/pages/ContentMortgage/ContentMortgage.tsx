@@ -168,11 +168,8 @@ const ContentMortgage: React.FC = () => {
           </div>
         </div>
 
-      {/* Main Content Frame */}
-      <div className="main-content-frame">
-        {/* Page Title */}
-        <h1 className="page-title">Рассчитать ипотеку</h1>
-
+      {/* Main Content */}
+      <div className="content-mortgage-main">
         {/* List of Pages Title */}
         <h2 className="page-list-title">Список страниц</h2>
 
@@ -246,7 +243,7 @@ const ContentMortgage: React.FC = () => {
                 {currentItems.map((item) => (
                   <React.Fragment key={`actions-${item.id}`}>
                     <div className="box4"></div>
-                    <span className="text15">{item.actionCount || Math.floor(Math.random() * 44) + 2}</span>
+                                          <span className="text15">{item.actionCount || 1}</span>
                   </React.Fragment>
                 ))}
               </div>

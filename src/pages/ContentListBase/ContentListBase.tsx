@@ -75,7 +75,7 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
               he: item.translations?.he || '',
               en: item.translations?.en || ''
             },
-            actionCount: item.actionCount || Math.floor(Math.random() * 44) + 2,
+            actionCount: item.actionCount || 1, // Use real actionCount from database
             contentType: item.contentType || contentType
           }));
           
@@ -175,31 +175,8 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
           </div>
         </div>
 
-      {/* Main Content Frame */}
-      <div className="main-content-frame">
-        {/* Page Title */}
-        <h1 className="page-title">{sectionTitle}</h1>
-
-        {/* Tab Navigation */}
-        <div className="tab-navigation">
-          <div className="tab-item active">
-            <span className="tab-text">До регистрации</span>
-          </div>
-          <div className="tab-separator"></div>
-          <div className="tab-item">
-            <span className="tab-text">Личный кабинет</span>
-          </div>
-          <div className="tab-separator"></div>
-          <div className="tab-item">
-            <span className="tab-text">Админ панель для сайтов</span>
-          </div>
-          <div className="tab-separator"></div>
-          <div className="tab-item">
-            <span className="tab-text">Админ панель для банков</span>
-          </div>
-          <div className="tab-separator"></div>
-        </div>
-
+      {/* Main Content */}
+      <div className="content-list-main">
         {/* List of Pages Title */}
         <h2 className="page-list-title">Список страниц</h2>
 
@@ -273,7 +250,7 @@ export const ContentListBase: React.FC<ContentListBaseProps> = ({
                 {currentItems.map((item) => (
                   <React.Fragment key={`actions-${item.id}`}>
                     <div className="box4"></div>
-                    <span className="text15">{item.actionCount || Math.floor(Math.random() * 44) + 2}</span>
+                    <span className="text15">{item.actionCount || 1}</span>
                   </React.Fragment>
                 ))}
               </div>

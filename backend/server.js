@@ -127,7 +127,7 @@ process.on('unhandledRejection', (error) => {
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || [
+  origin: [
     'http://localhost:3000', 
     'http://localhost:3002', 
     'http://localhost:3003',
@@ -136,7 +136,9 @@ app.use(cors({
     'http://localhost:5173',
     'https://bankim-management-portal.railway.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 
@@ -904,40 +906,51 @@ app.get('/api/content/text/:actionId', async (req, res) => {
  */
 app.get('/api/content/mortgage', async (req, res) => {
   try {
+    // Use the mortgage pages view to show page-level aggregation
     const result = await safeQuery(`
+      WITH page_groups AS (
+        SELECT 
+          CASE 
+            WHEN content_key LIKE 'app.mortgage.form.%' THEN 'app.mortgage.form'
+            WHEN content_key LIKE 'app.mortgage.step.mobile_step_1%' THEN 'app.mortgage.step.mobile_step_1'
+            WHEN content_key LIKE 'app.mortgage.step.mobile_step_2%' THEN 'app.mortgage.step.mobile_step_2'
+            WHEN content_key LIKE 'app.mortgage.header.%' THEN 'app.mortgage.header'
+            WHEN content_key LIKE 'mortgage_calculation.banner%' THEN 'mortgage_calculation.banner'
+            WHEN content_key LIKE 'mortgage_calculation.button%' THEN 'mortgage_calculation.button'
+            WHEN content_key LIKE 'mortgage_calculation.field%' THEN 'mortgage_calculation.field'
+            ELSE content_key
+          END as page_group,
+          COUNT(*) as action_count,
+          MIN(id) as representative_id,
+          MAX(updated_at) as last_modified
+        FROM content_items 
+        WHERE screen_location = 'mortgage_calculation' 
+          AND is_active = TRUE
+          AND component_type != 'option'
+          AND content_key NOT LIKE '%_option_%'
+          AND content_key NOT LIKE '%_ph'
+        GROUP BY page_group
+      )
       SELECT 
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.description,
-        ci.is_active,
+        pg.representative_id as id,
+        pg.page_group as content_key,
+        'page' as component_type,
+        'pages' as category,
+        'mortgage_calculation' as screen_location,
+        pg.page_group as description,
+        true as is_active,
+        pg.action_count,
         ct_ru.content_value as title_ru,
-        ct_he.content_value as title_he,
+        ct_he.content_value as title_he,  
         ct_en.content_value as title_en,
-        ci.updated_at
-      FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.is_active = TRUE
-        AND ci.screen_location = 'mortgage_calculation'
-        AND ct_ru.content_value IS NOT NULL
-        AND ci.content_key NOT LIKE 'app.mortgage.form.%'
-        AND ci.component_type != 'option'  -- Exclude individual dropdown options
-        AND ci.content_key NOT LIKE '%_option_%'  -- Exclude option patterns
-        AND ci.content_key NOT LIKE '%_ph'  -- Exclude placeholders
-      ORDER BY ci.content_key
+        pg.last_modified as updated_at
+      FROM page_groups pg
+      LEFT JOIN content_translations ct_ru ON ct_ru.content_item_id = pg.representative_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ct_he.content_item_id = pg.representative_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ct_en.content_item_id = pg.representative_id AND ct_en.language_code = 'en'
+      WHERE ct_ru.content_value IS NOT NULL
+      ORDER BY pg.page_group
     `);
-    
-    // Log the first few rows to debug component_type values
-    if (result.rows.length > 0) {
-      console.log('Sample mortgage content data:');
-      result.rows.slice(0, 3).forEach((row, index) => {
-        console.log(`Row ${index}: component_type="${row.component_type}", content_key="${row.content_key}"`);
-      });
-    }
     
     const mortgageContent = result.rows.map(row => ({
       id: row.id,
@@ -947,6 +960,7 @@ app.get('/api/content/mortgage', async (req, res) => {
       screen_location: row.screen_location,
       description: row.description,
       is_active: row.is_active,
+      actionCount: row.action_count || 1,
       translations: {
         ru: row.title_ru || '',
         he: row.title_he || '',

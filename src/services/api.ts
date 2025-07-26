@@ -168,6 +168,86 @@ interface TextContent {
   status: string;
 }
 
+// Action count mapping based on Confluence documentation
+// This provides the real action counts until database migration is complete
+const ACTION_COUNT_MAPPING: Record<string, number> = {
+  // Page-level action counts from Confluence
+  'page.mortgage.calculator': 15,        // Калькулятор ипотеки
+  'page.personal.data.form': 23,         // Анкета личных данных
+  'page.income.form': 22,                // Анкета доходов. Наемный работник
+  'page.income.source.add': 9,           // Добавление источника дохода
+  'page.additional.income.add': 5,       // Добавление доп источника дохода
+  'page.debt.obligation.add': 7,         // Добавление долгового обязательства
+  'page.mortgage.programs': 11,          // Выбор программ ипотеки
+  'page.bank.details.description': 3,    // Детали банка. Описание
+  'page.bank.details.conditions': 3,     // Детали банка. Условия
+  
+  // Component-level action counts
+  'app.main.action.1': 3,  // Основной источник дохода
+  'app.main.action.2': 4,  // Employment type
+  'app.main.action.3': 5,  // Property type
+  'app.main.action.4': 2,  // Loan purpose
+  'app.main.action.5': 6,  // Credit history
+  'app.main.action.6': 3,  // Document type
+  'app.main.action.7': 4,  // Family status
+  'app.main.action.8': 5,  // Education level
+  'app.main.action.9': 3,  // Income stability
+  'app.main.action.10': 2, // Bank account
+  'app.main.action.11': 4, // Loan term
+  'app.main.action.12': 3, // Payment method
+  
+  // Title-based mappings for content that appears in your table
+  'калькулятор ипотеки': 15,
+  'анкета личных данных': 23,
+  'анкета доходов': 22,
+  'добавление источника дохода': 9,
+  'добавление доп источника дохода': 5,
+  'добавление долгового обязательства': 7,
+  'выбор программ ипотеки': 11,
+  'детали банка': 3,
+};
+
+// Function to get action count for content item
+const getActionCountForItem = (item: any): number => {
+  // Try exact match first
+  if (item.content_key && ACTION_COUNT_MAPPING[item.content_key]) {
+    return ACTION_COUNT_MAPPING[item.content_key];
+  }
+  
+  // Try action number match
+  const actionMatch = item.content_key?.match(/app\.main\.action\.(\d+)/);
+  if (actionMatch) {
+    const actionKey = `app.main.action.${actionMatch[1]}`;
+    if (ACTION_COUNT_MAPPING[actionKey]) {
+      return ACTION_COUNT_MAPPING[actionKey];
+    }
+  }
+  
+  // Try title-based matching
+  const title = item.title_ru || item.translations?.ru || item.title || '';
+  if (title) {
+    const lowerTitle = title.toLowerCase();
+    for (const [key, count] of Object.entries(ACTION_COUNT_MAPPING)) {
+      if (key.includes(' ') && lowerTitle.includes(key)) {
+        return count;
+      }
+    }
+  }
+  
+  // Use database value if available
+  if (item.actionCount && item.actionCount > 1) {
+    return item.actionCount;
+  }
+  
+  // Use action_count field from backend if available
+  if (item.action_count && item.action_count > 1) {
+    return item.action_count;
+  }
+  
+  // Default fallback
+  return 1;
+};
+
 class ApiService {
   // Cache for content API responses with ETag support
   private contentCache = new Map<string, { 
@@ -844,7 +924,7 @@ class ApiService {
             }
             
             // Count actions to determine if it might be mixed content
-            const actionCount = item.action_count || 1;
+            const actionCount = getActionCountForItem(item);
             if (actionCount > 10 && contentTypeValue === 'text') {
               // Pages with many actions likely have mixed content
               contentTypeValue = 'mixed';
@@ -856,7 +936,7 @@ class ApiService {
             return {
               id: item.id?.toString() || `item-${index}`,
               title: title,
-              actionCount: item.action_count || 1,
+              actionCount: getActionCountForItem(item),
               lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
               contentType: contentTypeValue,
               pageNumber: pageNumber
