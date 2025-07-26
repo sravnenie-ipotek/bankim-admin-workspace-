@@ -906,95 +906,60 @@ app.get('/api/content/text/:actionId', async (req, res) => {
  */
 app.get('/api/content/mortgage', async (req, res) => {
   try {
-    // Map content to 4 logical steps based on Confluence specification
+    // Use clean screen_location based approach - much simpler!
     const result = await safeQuery(`
-      WITH step_groups AS (
+      WITH step_counts AS (
         SELECT 
-          CASE 
-            -- Step 1: Калькулятор ипотеки (15 actions per Confluence)
-            WHEN content_key LIKE 'app.mortgage.form.%' 
-              OR content_key LIKE 'mortgage_calculation.field%'
-              OR content_key LIKE 'mortgage_calculation.button%'
-              OR content_key LIKE 'mortgage_calculation.banner%'
-              OR content_key LIKE 'mortgage_calculation.%'
-              THEN 'step.1.calculator'
-            
-            -- Step 2: Анкета личных данных (23 actions per Confluence)  
-            WHEN content_key LIKE 'app.mortgage.step.mobile_step_1%'
-              OR content_key LIKE '%personal_data%'
-              OR content_key LIKE '%personal%'
-              OR content_key LIKE '%step_1%'
-              THEN 'step.2.personal_data'
-            
-            -- Step 3: Анкета доходов (22 actions per Confluence)
-            WHEN content_key LIKE 'app.mortgage.step.mobile_step_2%'
-              OR content_key LIKE '%income%'
-              OR content_key LIKE '%salary%'
-              OR content_key LIKE '%step_2%'
-              THEN 'step.3.income_data'
-            
-            -- Step 4: Выбор программ ипотеки (11 actions per Confluence)
-            WHEN content_key LIKE 'app.mortgage.header.%'
-              OR content_key LIKE '%program%'
-              OR content_key LIKE '%selection%'
-              OR content_key LIKE '%choice%'
-              OR content_key ~ 'step[_.](3|4)'
-              THEN 'step.4.program_selection'
-            
-            ELSE 'step.1.calculator'  -- Default to calculator step
-          END as step_group,
-          COUNT(*) as action_count,
-          MIN(id) as representative_id,
-          MAX(updated_at) as last_modified
-        FROM content_items 
-        WHERE screen_location = 'mortgage_calculation' 
-          AND is_active = TRUE
-          AND component_type != 'option'
-          AND content_key NOT LIKE '%_option_%'
-          AND content_key NOT LIKE '%_ph'
-        GROUP BY step_group
-      ),
-      step_titles AS (
-        SELECT 
-          'step.1.calculator' as step_group, 
+          'step.1.calculator' as step_group,
           'Калькулятор ипотеки' as title_ru,
           'משכנתא מחשבון' as title_he,
-          'Mortgage Calculator' as title_en
+          'Mortgage Calculator' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step1' AND is_active = TRUE) as representative_id
         UNION ALL
         SELECT 
           'step.2.personal_data' as step_group,
           'Анкета личных данных' as title_ru,
-          'טופס נתונים אישיים' as title_he, 
-          'Personal Data Form' as title_en
+          'טופס נתונים אישיים' as title_he,
+          'Personal Data Form' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as representative_id
         UNION ALL
         SELECT 
           'step.3.income_data' as step_group,
           'Анкета доходов' as title_ru,
           'טופס הכנסות' as title_he,
-          'Income Data Form' as title_en
+          'Income Data Form' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as representative_id
         UNION ALL
         SELECT 
           'step.4.program_selection' as step_group,
           'Выбор программ ипотеки' as title_ru,
           'בחירת תוכניות משכנתא' as title_he,
-          'Mortgage Program Selection' as title_en
+          'Mortgage Program Selection' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id
       )
       SELECT 
-        sg.representative_id as id,
-        sg.step_group as content_key,
+        sc.representative_id as id,
+        sc.step_group as content_key,
         'step' as component_type,
         'mortgage_steps' as category,
         'mortgage_calculation' as screen_location,
-        st.title_ru as description,
+        sc.title_ru as description,
         true as is_active,
-        sg.action_count,
-        st.title_ru,
-        st.title_he,  
-        st.title_en,
-        sg.last_modified as updated_at
-      FROM step_groups sg
-      INNER JOIN step_titles st ON sg.step_group = st.step_group
-      ORDER BY sg.step_group
+        sc.action_count,
+        sc.title_ru,
+        sc.title_he,  
+        sc.title_en,
+        sc.last_modified as updated_at
+      FROM step_counts sc
+      ORDER BY sc.step_group
     `);
     
     const mortgageContent = result.rows.map(row => ({
@@ -1013,7 +978,7 @@ app.get('/api/content/mortgage', async (req, res) => {
       },
       last_modified: row.updated_at
     }));
-    
+
     res.json({
       success: true,
       data: {
@@ -1022,9 +987,118 @@ app.get('/api/content/mortgage', async (req, res) => {
         mortgage_content: mortgageContent
       }
     });
-    
+
   } catch (error) {
     console.error('Get mortgage content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get detailed content items for a specific mortgage step
+ * GET /api/content/mortgage/drill/:stepId
+ * Returns individual content items that belong to a specific step
+ */
+app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
+  try {
+    const { stepId } = req.params;
+    
+    console.log(`Fetching drill content for step ID: ${stepId}`);
+    
+    // Map step IDs to screen_locations - much cleaner!
+    const stepMapping = {
+      'step.1.calculator': 'mortgage_step1',
+      'step.2.personal_data': 'mortgage_step2', 
+      'step.3.income_data': 'mortgage_step3',
+      'step.4.program_selection': 'mortgage_step4'
+    };
+
+    const screenLocation = stepMapping[stepId];
+    if (!screenLocation) {
+      return res.status(404).json({
+        success: false,
+        error: `Invalid step ID: ${stepId}`
+      });
+    }
+
+    // Get step info and count
+    const stepResult = await safeQuery(`
+      SELECT 
+        COUNT(*) as action_count,
+        CASE 
+          WHEN $1 = 'mortgage_step1' THEN 'Калькулятор ипотеки'
+          WHEN $1 = 'mortgage_step2' THEN 'Анкета личных данных'  
+          WHEN $1 = 'mortgage_step3' THEN 'Анкета доходов'
+          WHEN $1 = 'mortgage_step4' THEN 'Выбор программ ипотеки'
+        END as page_title
+      FROM content_items 
+      WHERE screen_location = $1 
+        AND is_active = TRUE
+    `, [screenLocation]);
+
+    if (!stepResult.rows[0] || stepResult.rows[0].action_count == 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found for this step'
+      });
+    }
+
+    // Get all individual content items for this step
+    const contentResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.screen_location = $1
+        AND ci.is_active = TRUE
+      ORDER BY ci.content_key
+    `, [screenLocation]);
+
+    const actions = contentResult.rows.map(row => ({
+      id: row.id,
+      actionNumber: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      last_modified: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        pageTitle: stepResult.rows[0].page_title,
+        stepGroup: stepId,
+        actionCount: parseInt(stepResult.rows[0].action_count),
+        actions: actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get drill content error:', error);
     res.status(500).json({
       success: false,
       error: error.message

@@ -47,7 +47,7 @@ const MortgageDrill: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
-  const itemsPerPage = 12;
+  const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
 
   useEffect(() => {
     fetchDrillData();
@@ -56,54 +56,44 @@ const MortgageDrill: React.FC = () => {
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching drill data for page ID: ${pageId}`);
+      console.log(`🔍 Fetching drill data for step ID: ${pageId}`);
       
-      // Fetch all content by content type 'mortgage'
-      const response = await apiService.getContentByContentType('mortgage');
+      // Fetch specific content items for this step using the new drill API
+      const response = await apiService.request(`/api/content/mortgage/drill/${pageId}`, 'GET');
       
       if (response.success && response.data) {
-        // Find the main page item by ID
-        const pageItem = response.data.find((item: any) => item.id === pageId);
-        
-        if (pageItem) {
-          // For mortgage drill, show ALL mortgage content items
-          // This matches the behavior of the main mortgage list
-          const allMortgageItems = response.data;
+        const { pageTitle, stepGroup, actionCount, actions } = response.data;
 
-          // Transform to drill data format and sort by content_key or some logical order
-          const actions: MortgageAction[] = allMortgageItems
-            .sort((a: any, b: any) => {
-              // Sort by content_key to maintain consistent order
-              return (a.content_key || '').localeCompare(b.content_key || '');
-            })
-            .map((item: any, index: number) => ({
-              id: item.id,
-              actionNumber: index + 1,
-              content_key: item.content_key || '',
-              component_type: item.component_type || 'text',
-              category: item.category || '',
-              screen_location: item.screen_location || '',
-              description: item.description || '',
-              is_active: item.is_active !== false,
-              translations: {
-                ru: item.translations?.ru || '',
-                he: item.translations?.he || '',
-                en: item.translations?.en || ''
-              },
-              last_modified: item.last_modified || new Date().toISOString()
-            }));
+        // Transform to drill data format
+        const transformedActions: MortgageAction[] = actions.map((item: any) => ({
+          id: item.id,
+          actionNumber: item.actionNumber,
+          content_key: item.content_key || '',
+          component_type: item.component_type || 'text',
+          category: item.category || '',
+          screen_location: item.screen_location || '',
+          description: item.description || '',
+          is_active: item.is_active !== false,
+          translations: {
+            ru: item.translations?.ru || '',
+            he: item.translations?.he || '',
+            en: item.translations?.en || ''
+          },
+          last_modified: item.last_modified || new Date().toISOString()
+        }));
 
-          setDrillData({
-            pageTitle: pageItem.translations?.ru || pageItem.content_key || 'Калькулятор ипотеки',
-            actionCount: actions.length,
-            lastModified: pageItem.last_modified || new Date().toISOString(),
-            actions: actions
-          });
-        } else {
-          setError('Страница не найдена');
-        }
+        setDrillData({
+          pageTitle: pageTitle,
+          actionCount: actionCount,
+          lastModified: transformedActions.length > 0 ? 
+            transformedActions.reduce((latest, action) => 
+              new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
+              transformedActions[0].last_modified
+            ) : new Date().toISOString(),
+          actions: transformedActions
+        });
       } else {
-        setError(response.error || 'Не удалось загрузить данные');
+        setError('Шаг не найден или нет доступного контента');
       }
     } catch (err) {
       console.error('❌ Error fetching drill data:', err);

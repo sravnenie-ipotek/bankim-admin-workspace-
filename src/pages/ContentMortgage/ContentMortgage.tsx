@@ -13,6 +13,30 @@ import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
 import './ContentMortgage.css';
 
+// Helper function to format date for display
+const formatLastModified = (dateString: string | null | undefined): string => {
+  if (!dateString) {
+    return 'Не изменялось';
+  }
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Не изменялось';
+    }
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    return `${day}.${month}.${year} | ${hours}:${minutes}`;
+  } catch (error) {
+    return 'Не изменялось';
+  }
+};
+
 interface MortgageTranslation {
   id: string;
   content_key: string;
@@ -67,7 +91,8 @@ const ContentMortgage: React.FC = () => {
               en: item.translations?.en || ''
             },
             actionCount: item.actionCount || 0,
-            contentType: item.contentType || 'text'
+            contentType: item.contentType || 'text',
+            last_modified: item.last_modified || null
           }));
           
           const normalizedData: MortgageData = {
@@ -253,7 +278,7 @@ const ContentMortgage: React.FC = () => {
                 {currentItems.map((item) => (
                   <React.Fragment key={`modified-${item.id}`}>
                     <div className="box4"></div>
-                    <span className="text20">01.08.2023 | 12:03</span>
+                    <span className="text20">{formatLastModified(item.last_modified)}</span>
                   </React.Fragment>
                 ))}
               </div>
