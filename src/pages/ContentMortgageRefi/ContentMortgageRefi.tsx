@@ -120,23 +120,13 @@ const ContentMortgageRefi: React.FC = () => {
   }, []);
 
   const handleViewClick = (item: MortgageRefiTranslation) => {
-    // Map mortgage-refi page to proper step ID for backend drill endpoint
-    let stepId = item.content_key;
+    // Use the actual screen_location directly instead of fragile text-based mapping
+    const screenLocation = item.content_key; // This is now the real screen_location from database
     
-    // Map content based on Russian translation to ensure proper step routing
-    const russianTitle = item.translations?.ru?.toLowerCase() || '';
-    if (russianTitle.includes('калькулятор') || russianTitle.includes('рассчитать') || russianTitle.includes('рефинанс')) {
-      stepId = 'step.1.calculator';
-    } else if (russianTitle.includes('личн')) {
-      stepId = 'step.2.personal_data';
-    } else if (russianTitle.includes('доход')) {
-      stepId = 'step.3.income_data';
-    } else if (russianTitle.includes('программ')) {
-      stepId = 'step.4.program_selection';
-    }
+    console.log(`📍 Navigating to mortgage-refi drill for screen_location: ${screenLocation}`);
     
-    // Navigate to drill page to show detailed actions for this page
-    navigate(`/content/mortgage-refi/drill/${stepId}`, { 
+    // Navigate to drill page using the actual screen_location
+    navigate(`/content/mortgage-refi/drill/${screenLocation}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 

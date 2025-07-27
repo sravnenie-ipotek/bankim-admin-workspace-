@@ -1548,29 +1548,30 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     
     console.log(`Fetching mortgage-refi drill content for step ID: ${stepId}`);
     
-    // Map step IDs to screen_locations for refinancing
-    const stepMapping = {
-      'step.1.calculator': 'refinance_step1',
-      'step.2.personal_data': 'refinance_step2', 
-      'step.3.income_data': 'refinance_step3',
-      'step.4.program_selection': 'refinance_step4'
+    // Handle both old step IDs and new screen_location directly
+    let screenLocation = stepId;
+    
+    // Map old step IDs to actual screen_locations if needed (for backwards compatibility)
+    const legacyStepMapping = {
+      'step.1.calculator': 'refinance_credit_1',
+      'step.2.personal_data': 'refinance_credit_2', 
+      'step.3.income_data': 'refinance_credit_3',
+      'step.4.program_selection': 'mortgage_step4'
     };
 
-    const screenLocation = stepMapping[stepId];
-    if (!screenLocation) {
+    // If it's a legacy step ID, map it to the real screen_location
+    if (legacyStepMapping[stepId]) {
+      screenLocation = legacyStepMapping[stepId];
+    }
+    
+    // Validate that this screen_location exists in our known refinancing screens
+    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4'];
+    if (!validScreenLocations.includes(screenLocation)) {
       return res.status(404).json({
         success: false,
-        error: `Invalid step ID: ${stepId}`
+        error: `Invalid step ID or screen location: ${stepId}`
       });
     }
-
-    // Get step title mapping for refinancing
-    const stepTitles = {
-      'refinance_step1': 'Калькулятор рефинансирования',
-      'refinance_step2': 'Анкета личных данных',  
-      'refinance_step3': 'Анкета доходов',
-      'refinance_step4': 'Выбор программ рефинансирования'
-    };
 
     // Get individual content items for this refinancing step
     const contentResult = await safeQuery(`
@@ -1626,10 +1627,27 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
       }
     }));
 
+    // Get the page title from the first available title translation or use a fallback
+    let pageTitle = 'Unnamed Step';
+    if (contentResult.rows.length > 0) {
+      const firstTitle = contentResult.rows.find(row => 
+        row.content_key && row.content_key.includes('.title') && row.title_ru
+      );
+      if (firstTitle) {
+        pageTitle = firstTitle.title_ru;
+      } else {
+        // Fallback: use first available Russian translation
+        const fallback = contentResult.rows.find(row => row.title_ru);
+        if (fallback) {
+          pageTitle = fallback.title_ru;
+        }
+      }
+    }
+
     res.json({
       success: true,
       data: {
-        pageTitle: stepTitles[screenLocation],
+        pageTitle: pageTitle,
         stepGroup: stepId,
         actionCount: actions.length,
         actions: actions
