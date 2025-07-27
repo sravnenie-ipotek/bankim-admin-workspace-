@@ -1,7 +1,7 @@
 /**
  * ContentCredit Component
  * Credit calculation translations management - displays and allows editing of credit component translations
- * Based on ContentMortgageRefi design structure
+ * Based on ContentMain design structure (same as ContentMenu)
  * 
  * @version 2.0.0
  * @since 2025-01-20
@@ -10,33 +10,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
-import { Pagination } from '../../components';
+import { ContentPageWrapper } from '../../components/ContentPageWrapper';
 import { ContentListItem } from '../ContentListBase/types';
-import '../ContentMortgage/ContentMortgage.css'; // Reuse mortgage styles
-
-// Helper function to format date for display
-const formatLastModified = (dateString: string | null | undefined): string => {
-  if (!dateString) {
-    return 'Не изменялось';
-  }
-  
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return 'Не изменялось';
-    }
-    
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    
-    return `${day}.${month}.${year} | ${hours}:${minutes}`;
-  } catch (error) {
-    return 'Не изменялось';
-  }
-};
+import './ContentCredit.css';
 
 interface CreditData {
   status: string;
@@ -54,6 +30,30 @@ const ContentCredit: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
+
+  // Helper function to format date for display
+  const formatLastModified = (dateString: string | null | undefined): string => {
+    if (!dateString) {
+      return 'Не изменялось';
+    }
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Не изменялось';
+      }
+      
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      
+      return `${day}.${month}.${year} | ${hours}:${minutes}`;
+    } catch (error) {
+      return 'Не изменялось';
+    }
+  };
 
   useEffect(() => {
     const fetchCreditData = async () => {
@@ -127,63 +127,52 @@ const ContentCredit: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="content-mortgage-loading">
-        <div className="loading-spinner"></div>
-        <p>Загрузка данных расчета кредита...</p>
-      </div>
+      <ContentPageWrapper title="Расчет кредита">
+        <div className="content-main">
+          <div className="content-main__content">
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Загрузка данных расчета кредита...</p>
+            </div>
+          </div>
+        </div>
+      </ContentPageWrapper>
     );
   }
 
   if (error) {
     return (
-      <div className="content-mortgage-error">
-        <p>Ошибка: {error}</p>
-        <button onClick={() => window.location.reload()}>Попробовать снова</button>
-      </div>
+      <ContentPageWrapper title="Расчет кредита">
+        <div className="content-main">
+          <div className="content-main__content">
+            <div className="error-container">
+              <p>Ошибка: {error}</p>
+              <button onClick={() => window.location.reload()}>Попробовать снова</button>
+            </div>
+          </div>
+        </div>
+      </ContentPageWrapper>
     );
   }
 
   return (
-    <div className="content-mortgage-page">
-      {/* Main Content Frame - wraps everything except sidebar */}
-      <div className="column2">
-        {/* Top Navigation Bar - matches Figma Navbar Admin panel */}
-        <div className="navbar-admin-panel">
-          <div className="language-selector" onClick={() => {
-            // Cycle through languages
-            if (selectedLanguage === 'ru') setSelectedLanguage('he');
-            else if (selectedLanguage === 'he') setSelectedLanguage('en');
-            else setSelectedLanguage('ru');
-          }}>
-            <span className="language-text">
-              {selectedLanguage === 'ru' ? 'Русский' : 
-               selectedLanguage === 'he' ? 'עברית' : 
-               'English'}
-            </span>
-            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="image2" />
-          </div>
-          <img src="/src/assets/images/static/icons/headset.svg" alt="Support" className="image5" />
-          <img src="/src/assets/images/static/icons/bell.svg" alt="Notifications" className="image5" />
-          <div className="profile-section">
-            <img src="/src/assets/images/static/profile-avatar.png" alt="Profile" className="image6" />
-            <div className="view">
-              <span className="profile-name">Александр Пушкин</span>
-            </div>
-            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="Profile Menu" className="image2" />
-          </div>
+    <ContentPageWrapper title="Расчет кредита">
+      <div className="content-main">
+        {/* Page Header */}
+        <div className="content-main__header">
+          <h1 className="content-main__title">Расчет кредита</h1>
         </div>
 
-      {/* Main Content */}
-      <div className="content-mortgage-main">
-        {/* List of Pages Title */}
-        <h2 className="page-list-title">Список страниц</h2>
-
-        {/* Search Section - moved to top level */}
-        <div className="table-header-controls">
-          <div className="search-container">
-            <div className="search-input-wrapper">
+        {/* Content Section */}
+        <div className="content-main__content">
+          <h2 className="content-main__subtitle">Список страниц</h2>
+          
+          <div className="content-main__table-container">
+            {/* Search Bar */}
+            <div className="content-main__search">
               <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M14 14L10.344 10.344M11.3333 6.66667C11.3333 9.24671 9.24671 11.3333 6.66667 11.3333C4.08662 11.3333 2 9.24671 2 6.66667C2 4.08662 4.08662 2 6.66667 2C9.24671 2 11.3333 4.08662 11.3333 6.66667Z" 
+                      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input
                 type="text"
@@ -193,122 +182,138 @@ const ContentCredit: React.FC = () => {
                 className="search-input"
               />
             </div>
-          </div>
-        </div>
 
-        {/* Table Section */}
-        <div className="table-section">
-          {/* Table Content - Column Layout */}
-          <div className="mortgage-table">
-            {/* Table Header Row */}
-            <div className="table-header-row">
-              <div className="header-cell column6">
-                <span className="text8">НАЗВАНИЕ СТРАНИЦЫ</span>
+            {/* Language Selector */}
+            <div className="language-selector-container">
+              <div className="language-selector" onClick={() => {
+                // Cycle through languages
+                if (selectedLanguage === 'ru') setSelectedLanguage('he');
+                else if (selectedLanguage === 'he') setSelectedLanguage('en');
+                else setSelectedLanguage('ru');
+              }}>
+                <span className="language-text">
+                  {selectedLanguage === 'ru' ? 'Русский' : 
+                   selectedLanguage === 'he' ? 'עברית' : 
+                   'English'}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
-              <div className="header-cell column12">
-                <span className="text10">Количество действий</span>
-              </div>
-              <div className="header-cell column12">
-                <span className="text10">Были изменения</span>
-              </div>
-              <div className="header-cell column7"></div>
             </div>
-            
-            <div className="table-divider"></div>
-            
-            <div className="row-view11">
-              {/* Column 1 - Page Names */}
-              <div className="column6">
+
+            {/* Table */}
+            <div className="content-main__table">
+              {/* Table Header */}
+              <div className="table-header">
+                <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
+                <div className="header-cell actions-count">Количество действий</div>
+                <div className="header-cell last-modified">Были изменения</div>
+                <div className="header-cell actions"></div>
+              </div>
+
+              {/* Table Body */}
+              <div className="table-body">
                 {currentItems.map((item, index) => (
-                  <React.Fragment key={`name-${item.id}`}>
-                    <div className="box3"></div>
-                    <span 
-                      className="text9" 
-                      title={(() => {
-                        const pageNum = (item as any).page_number ?? (startIndex + index + 1);
-                        const fullText = `${pageNum}. ${
-                          selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                          selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
-                          (item.translations?.en || item.content_key)
-                        }`;
-                        return fullText.length > 30 ? fullText : undefined;
-                      })()}
-                    >
+                  <div key={item.id} className="table-row">
+                    <div className="table-cell page-name">
                       {(() => {
                         const pageNum = (item as any).page_number ?? (startIndex + index + 1);
-                        return `${pageNum}. ${
-                          selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                          selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
-                          (item.translations?.en || item.content_key)
-                        }`;
+                        const title = selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
+                                     selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+                                     (item.translations?.en || item.content_key);
+                        return `${pageNum}. ${title}`;
                       })()}
-                    </span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 2 - Number of Actions */}
-              <div className="column12">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`actions-${item.id}`}>
-                    <div className="box4"></div>
-                    <span className="text15">{item.actionCount || 1}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 3 - Last Modified */}
-              <div className="column12">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`modified-${item.id}`}>
-                    <div className="box4"></div>
-                    <span className="text20">{formatLastModified(item.lastModified)}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 4 - Actions */}
-              <div className="column7">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`action-${item.id}`}>
-                    <div className="box6"></div>
-                    <div
-                      className="image8"
-                      onClick={() => handleViewClick(item)}
-                      style={{ 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '24px',
-                        color: '#FFFFFF',
-                        backgroundColor: 'transparent',
-                        border: '1px solid #374151'
-                      }}
-                    >
-                      →
                     </div>
-                  </React.Fragment>
+                    <div className="table-cell actions-count">
+                      {item.actionCount || 1}
+                    </div>
+                    <div className="table-cell last-modified">
+                      {formatLastModified(item.lastModified)}
+                    </div>
+                    <div className="table-cell actions">
+                      <button 
+                        className="action-button"
+                        onClick={() => handleViewClick(item)}
+                        aria-label={`Navigate to credit item`}
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-            </div>
-          </div>
 
-          {/* Modern UX-Friendly Pagination */}
-          <div style={{ padding: '24px 16px' }}>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={filteredItems.length}
-              itemsPerPage={itemsPerPage}
-              onPageChange={setCurrentPage}
-              size="medium"
-            />
+            {/* Pagination */}
+            <div className="content-main__pagination">
+              <span className="pagination-info">
+                Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
+              </span>
+              <div className="pagination-controls">
+                <button 
+                  className="pagination-btn prev"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                
+                <div className="pagination-numbers">
+                  <button 
+                    className={`page-number ${currentPage === 1 ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(1)}
+                  >
+                    1
+                  </button>
+                  {totalPages > 1 && (
+                    <button 
+                      className={`page-number ${currentPage === 2 ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(2)}
+                    >
+                      2
+                    </button>
+                  )}
+                  {totalPages > 2 && (
+                    <button 
+                      className={`page-number ${currentPage === 3 ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(3)}
+                    >
+                      3
+                    </button>
+                  )}
+                  {totalPages > 4 && (
+                    <span className="page-ellipsis">...</span>
+                  )}
+                  {totalPages > 3 && (
+                    <button 
+                      className={`page-number ${currentPage === totalPages ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(totalPages)}
+                    >
+                      {totalPages}
+                    </button>
+                  )}
+                </div>
+                
+                <button 
+                  className="pagination-btn next"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ContentPageWrapper>
   );
 };
 
