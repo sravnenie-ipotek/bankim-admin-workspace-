@@ -150,6 +150,10 @@ const MortgageTextEdit: React.FC = () => {
   const [additionalTexts, setAdditionalTexts] = useState<Array<{ ru: string; he: string }>>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
 
+  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
+  const isRefiMode = location.pathname.includes('/mortgage-refi/');
+  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+
   useEffect(() => {
     fetchContentData();
   }, [actionId]);
@@ -193,9 +197,11 @@ const MortgageTextEdit: React.FC = () => {
           const related = await findRelatedContentItems(
             targetContent,
             async () => {
-              // Fetch all individual mortgage content items for related content search
-              console.log('📋 Fetching all individual mortgage content items...');
-              return await apiService.getMortgageAllItems();
+              // Fetch all individual content items for related content search
+              console.log(`📋 Fetching all individual ${contentType} content items...`);
+              return isRefiMode ? 
+                await apiService.getMortgageRefiAllItems() : 
+                await apiService.getMortgageAllItems();
             }
           );
           

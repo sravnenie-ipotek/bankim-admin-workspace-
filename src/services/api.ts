@@ -731,6 +731,27 @@ class ApiService {
     }
   }
 
+  async getMortgageRefiContent(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching mortgage-refi content from database...');
+      const response = await this.requestWithCache<any>(`/api/content/mortgage-refi`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched mortgage-refi content from database');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch mortgage-refi content:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching mortgage-refi content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch mortgage-refi content'
+      };
+    }
+  }
+
   async getCreditContent(): Promise<ApiResponse<any>> {
     try {
       console.log('🔄 Fetching credit content from database...');
@@ -794,6 +815,27 @@ class ApiService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch all mortgage items'
+      };
+    }
+  }
+
+  async getMortgageRefiAllItems(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching all individual mortgage-refi content items...');
+      const response = await this.requestWithCache<any>(`/api/content/mortgage-refi/all-items`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched all mortgage-refi items');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch all mortgage-refi items:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching all mortgage-refi items:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch all mortgage-refi items'
       };
     }
   }

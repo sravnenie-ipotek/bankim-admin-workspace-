@@ -44,6 +44,10 @@ const MortgageDropdownEdit: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   
+  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
+  const isRefiMode = location.pathname.includes('/mortgage-refi/');
+  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+  
   // Form states
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
@@ -63,12 +67,15 @@ const MortgageDropdownEdit: React.FC = () => {
       
       // If that fails, try fetching from mortgage content
       if (!response.success || !response.data) {
-        console.log(`📋 Trying to fetch from mortgage content...`);
-        const mortgageResponse = await apiService.getMortgageContent();
-        
+        console.log(`📋 Trying to fetch from ${contentType} content...`);
+        const mortgageResponse = isRefiMode ? 
+          await apiService.getMortgageRefiContent() : 
+          await apiService.getMortgageContent();
+         
         if (mortgageResponse.success && mortgageResponse.data) {
-          // Find the item in the mortgage content
-          const mortgageContent = mortgageResponse.data.mortgage_content || [];
+          // Find the item in the content
+          const contentKey = isRefiMode ? 'mortgage_refi_content' : 'mortgage_content';
+          const mortgageContent = mortgageResponse.data[contentKey] || [];
           const item = mortgageContent.find((c: any) => c.id === actionId || c.id === parseInt(actionId));
           
           if (item) {
@@ -170,9 +177,12 @@ const MortgageDropdownEdit: React.FC = () => {
         const baseKey = content.content_key;
         
         // Fetch existing options to update/delete
-        const existingResponse = await apiService.getMortgageContent();
+        const existingResponse = isRefiMode ? 
+          await apiService.getMortgageRefiContent() : 
+          await apiService.getMortgageContent();
         if (existingResponse.success && existingResponse.data) {
-          const contentItems = existingResponse.data.mortgage_content || [];
+          const contentKey = isRefiMode ? 'mortgage_refi_content' : 'mortgage_content';
+          const contentItems = existingResponse.data[contentKey] || [];
           const optionPattern = new RegExp(`^${baseKey}\\.option\\.\\d+`);
           const existingOptions = contentItems.filter((item: any) => 
             item.content_key && optionPattern.test(item.content_key)

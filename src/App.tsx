@@ -473,7 +473,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Страница рефинансирования" activeMenuItem="content-mortgage-refi">
-                  <MortgageRefiDrill />
+                  <MortgageDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -487,7 +487,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
-                  <MortgageRefiTextEdit />
+                  <MortgageTextEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -501,7 +501,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage-refi">
-                  <MortgageRefiDropdownEdit />
+                  <MortgageDropdownEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

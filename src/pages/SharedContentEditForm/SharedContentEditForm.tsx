@@ -194,6 +194,42 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
     try {
       setLoading(true);
       console.log(`🔍 Fetching ${contentType} content for item ID: ${itemId}`);
+      
+      // First try to fetch the specific item by ID using the dedicated endpoint
+      try {
+        const itemResponse = await apiService.getContentItemById(itemId!);
+        console.log(`📦 Direct item fetch response:`, itemResponse);
+        
+        if (itemResponse.success && itemResponse.data) {
+          const item = itemResponse.data;
+          setContentItem(item);
+          setTranslations({
+            ru: item.translations?.ru || '',
+            he: item.translations?.he || '',
+            en: item.translations?.en || ''
+          });
+          console.log(`✅ Found item via direct fetch:`, item);
+          console.log(`🌐 Set translations:`, {
+            ru: item.translations?.ru || '',
+            he: item.translations?.he || '',
+            en: item.translations?.en || ''
+          });
+          
+          // Fetch dropdown options if supported
+          if (config.supportsDropdown && item.component_type === 'dropdown' && config.apiMethods.fetchDropdownOptions) {
+            console.log(`📊 Fetching dropdown options for ${contentType}`);
+            const optionsResponse = await config.apiMethods.fetchDropdownOptions(itemId!);
+            if (optionsResponse.success && optionsResponse.data) {
+              setDropdownOptions(optionsResponse.data);
+            }
+          }
+          return; // Success - exit early
+        }
+      } catch (directFetchError) {
+        console.warn('Direct item fetch failed, falling back to list search:', directFetchError);
+      }
+      
+      // Fallback: fetch all items and search
       const response = await config.apiMethods.fetch();
       console.log(`📦 API Response for ${contentType}:`, response);
       

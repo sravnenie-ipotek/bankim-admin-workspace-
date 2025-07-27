@@ -49,18 +49,22 @@ const MortgageDrill: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
 
+  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
+  const isRefiMode = location.pathname.includes('/mortgage-refi/');
+  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+
   useEffect(() => {
     fetchDrillData();
-  }, [pageId]);
+  }, [pageId, isRefiMode]);
 
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching drill data for step ID: ${pageId}`);
+      console.log(`🔍 Fetching ${contentType} drill data for step ID: ${pageId}`);
       
       // Try the backend drill endpoint first
       try {
-        const drillResponse = await apiService.request(`/api/content/mortgage/drill/${pageId}`, 'GET');
+        const drillResponse = await apiService.request(`/api/content/${contentType}/drill/${pageId}`, 'GET');
         
         if (drillResponse.success && drillResponse.data) {
           const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
@@ -165,7 +169,7 @@ const MortgageDrill: React.FC = () => {
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
         typeDisplay === 'Текст') {
-      const textEditUrl = `/content/mortgage/text-edit/${action.id}`;
+      const textEditUrl = `/content/${contentType}/text-edit/${action.id}`;
       console.log('✅ Navigating to text edit page:', textEditUrl);
       navigate(textEditUrl, { 
         state: { 
@@ -173,7 +177,7 @@ const MortgageDrill: React.FC = () => {
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`,
+          returnPath: `/content/${contentType}/drill/${pageId}`,
           baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
@@ -183,7 +187,7 @@ const MortgageDrill: React.FC = () => {
              componentTypeLower === 'select' ||
              componentTypeLower === 'option' ||
              typeDisplay === 'Дропдаун') {
-      const dropdownEditUrl = `/content/mortgage/dropdown-edit/${action.id}`;
+      const dropdownEditUrl = `/content/${contentType}/dropdown-edit/${action.id}`;
       console.log('📋 Navigating to dropdown edit page:', dropdownEditUrl);
       navigate(dropdownEditUrl, { 
         state: { 
@@ -191,7 +195,7 @@ const MortgageDrill: React.FC = () => {
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`,
+          returnPath: `/content/${contentType}/drill/${pageId}`,
           baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
@@ -199,13 +203,13 @@ const MortgageDrill: React.FC = () => {
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(`/content/mortgage/edit/${action.id}`, { 
+      navigate(`/content/${contentType}/edit/${action.id}`, { 
         state: { 
           fromPage: location.state?.fromPage || 1,
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`,
+          returnPath: `/content/${contentType}/drill/${pageId}`,
           baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
@@ -213,7 +217,7 @@ const MortgageDrill: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/content/mortgage', { 
+    navigate(`/content/${contentType}`, { 
       state: { 
         fromPage: location.state?.fromPage || 1,
         searchTerm: location.state?.searchTerm || ''
