@@ -120,8 +120,8 @@ const ContentMortgageRefi: React.FC = () => {
   }, []);
 
   const handleViewClick = (item: MortgageRefiTranslation) => {
-    // Use the actual screen_location directly instead of fragile text-based mapping
-    const screenLocation = item.content_key; // This is now the real screen_location from database
+    // Use the actual screen_location from the item
+    const screenLocation = item.screen_location;
     
     console.log(`📍 Navigating to mortgage-refi drill for screen_location: ${screenLocation}`);
     
