@@ -173,7 +173,8 @@ const MortgageDrill: React.FC = () => {
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage/drill/${pageId}`,
+          baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
     } 
@@ -190,7 +191,8 @@ const MortgageDrill: React.FC = () => {
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage/drill/${pageId}`,
+          baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
     } 
@@ -203,7 +205,8 @@ const MortgageDrill: React.FC = () => {
           searchTerm: location.state?.searchTerm || '',
           drillPage: currentPage,
           drillSearchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage/drill/${pageId}`,
+          baseActionNumber: location.state?.baseActionNumber || 0
         } 
       });
     }
@@ -424,8 +427,8 @@ const MortgageDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`action-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
-                      {startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
+                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${(location.state?.baseActionNumber || 0) + startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
+                      {(location.state?.baseActionNumber || 0) + startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
                     </div>
                   </div>
                   <div className="column-divider"></div>

@@ -299,7 +299,8 @@ const MortgageTextEdit: React.FC = () => {
     navigate(returnPath, {
       state: {
         fromPage: location.state?.drillPage || location.state?.fromPage || 1,
-        searchTerm: location.state?.drillSearchTerm || location.state?.searchTerm || ''
+        searchTerm: location.state?.drillSearchTerm || location.state?.searchTerm || '',
+        baseActionNumber: location.state?.baseActionNumber || 0
       }
     });
   };

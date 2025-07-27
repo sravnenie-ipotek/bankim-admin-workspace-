@@ -132,7 +132,7 @@ const ContentMortgage: React.FC = () => {
   }, []);
 
 
-  const handleViewClick = (item: MortgageTranslation) => {
+  const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
     // Map mortgage page to proper step ID for backend drill endpoint
     let stepId = item.content_key;
     
@@ -148,11 +148,20 @@ const ContentMortgage: React.FC = () => {
       stepId = 'step.4.program_selection';
     }
     
+    // Calculate the base action number for continuous numbering
+    // Sum up all action counts of items before this one
+    let baseActionNumber = 0;
+    for (let i = 0; i < itemIndex; i++) {
+      baseActionNumber += filteredItems[i].actionCount || 0;
+    }
+    
     // Navigate to drill page to show detailed actions for this page
     navigate(`/content/mortgage/drill/${stepId}`, { 
       state: { 
         fromPage: currentPage,
-        searchTerm: searchTerm 
+        searchTerm: searchTerm,
+        baseActionNumber: baseActionNumber,
+        parentItemNumber: itemIndex + 1
       } 
     });
   };
@@ -312,12 +321,16 @@ const ContentMortgage: React.FC = () => {
 
               {/* Column 4 - Actions */}
               <div className="column7">
-                {currentItems.map((item) => (
+                {currentItems.map((item, index) => (
                   <React.Fragment key={`action-${item.id}`}>
                     <div className="box6"></div>
                     <div
                       className="image8"
-                      onClick={() => handleViewClick(item)}
+                      onClick={() => {
+                        // Calculate the actual index in the full filtered list
+                        const actualIndex = startIndex + index;
+                        handleViewClick(item, actualIndex);
+                      }}
                       style={{ 
                         cursor: 'pointer',
                         display: 'flex',
