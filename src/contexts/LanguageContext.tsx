@@ -52,18 +52,32 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   useEffect(() => {
     const loadTranslations = async () => {
       try {
-        const translationModule = await import(`../locales/${language}.json`);
-        setTranslations(translationModule.default);
+        let translationData;
+        
+        // Import translations based on language
+        switch (language) {
+          case 'ru':
+            translationData = (await import('../locales/ru.json')).default;
+            break;
+          case 'he':
+            translationData = (await import('../locales/he.json')).default;
+            break;
+          case 'en':
+            translationData = (await import('../locales/en.json')).default;
+            break;
+          default:
+            translationData = (await import('../locales/ru.json')).default;
+        }
+        
+        setTranslations(translationData);
       } catch (error) {
         console.error(`Failed to load translations for ${language}:`, error);
-        // Fallback to Russian if loading fails
-        if (language !== 'ru') {
-          try {
-            const fallbackModule = await import('../locales/ru.json');
-            setTranslations(fallbackModule.default);
-          } catch (fallbackError) {
-            console.error('Failed to load fallback translations:', fallbackError);
-          }
+        // Try to load Russian as fallback
+        try {
+          const fallbackData = (await import('../locales/ru.json')).default;
+          setTranslations(fallbackData);
+        } catch (fallbackError) {
+          console.error('Failed to load fallback translations:', fallbackError);
         }
       }
     };

@@ -364,8 +364,8 @@ const MenuDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`action-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
-                      {startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
+                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${action.page_number || (startIndex + index + 1)}.${action.description || action.translations.ru || action.content_key}`}>
+                      {action.page_number || (startIndex + index + 1)}.{action.description || action.translations.ru || action.content_key}
                     </div>
                   </div>
                   <div className="column-divider"></div>

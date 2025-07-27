@@ -20,6 +20,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
 import ContentVerification from './pages/ContentVerification';
+import QALanguage from './pages/QALanguage/QALanguage';
 import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
 import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
@@ -374,6 +375,7 @@ const AppRouter: React.FC = () => {
         <Route path="/components/shared-header" element={<SharedHeaderPreview />} />
         <Route path="/qa-showcase" element={<QAShowcase />} />
         <Route path="/qa-mortgage" element={<QAMortgage />} />
+        <Route path="/qa-language" element={<QALanguage />} />
         {/* Removed old content/:pageId route - now handled by SharedContentScreen */}
         <Route 
           path="/content-management" 
