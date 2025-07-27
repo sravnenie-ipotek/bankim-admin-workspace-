@@ -43,7 +43,11 @@ const CONTENT_TYPE_CONFIGS: Record<ContentType, ContentTypeConfig> = {
  * Detect content type from URL pathname
  */
 export function detectContentTypeFromPath(pathname: string): ContentType {
-  for (const [type, config] of Object.entries(CONTENT_TYPE_CONFIGS)) {
+  // Sort configs by basePath length (longest first) to match more specific paths first
+  const sortedConfigs = Object.entries(CONTENT_TYPE_CONFIGS)
+    .sort(([, a], [, b]) => b.basePath.length - a.basePath.length);
+  
+  for (const [type, config] of sortedConfigs) {
     if (pathname.includes(config.basePath)) {
       return type as ContentType;
     }

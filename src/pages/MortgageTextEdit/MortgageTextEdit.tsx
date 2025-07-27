@@ -226,8 +226,6 @@ const MortgageTextEdit: React.FC = () => {
             }));
             setAdditionalTexts(texts);
           }
-          
-          setRelatedContent(related);
         } else {
           setError('Content not found');
         }
