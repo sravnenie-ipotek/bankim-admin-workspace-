@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageDropdownEdit.css';
 import { apiService } from '../../services/api';
+import { AdminLayout } from '../../components';
 import { detectContentTypeFromPath, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
 
 interface DropdownContent {

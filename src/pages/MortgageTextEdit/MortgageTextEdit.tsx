@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageTextEdit.css';
 import { apiService } from '../../services/api';
+import { SharedHeader, SharedMenu } from '../../components';
 import { detectContentTypeFromPath, generateApiEndpoints, type ContentType } from '../../utils/contentTypeUtils';
 
 interface ContentItem {
