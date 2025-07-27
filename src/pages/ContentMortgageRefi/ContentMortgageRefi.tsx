@@ -225,7 +225,8 @@ const ContentMortgageRefi: React.FC = () => {
                     <span 
                       className="text9" 
                       title={(() => {
-                        const fullText = `${startIndex + index + 1}. ${
+                        const pageNum = (item as any).page_number ?? (startIndex + index + 1);
+                        const fullText = `${pageNum}. ${
                           selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
                           selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
                           (item.translations?.en || item.content_key)
@@ -233,11 +234,14 @@ const ContentMortgageRefi: React.FC = () => {
                         return fullText.length > 30 ? fullText : undefined;
                       })()}
                     >
-                      {`${startIndex + index + 1}. ${
-                        selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                        selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
-                        (item.translations?.en || item.content_key)
-                      }`}
+                      {(() => {
+                        const pageNum = (item as any).page_number ?? (startIndex + index + 1);
+                        return `${pageNum}. ${
+                          selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
+                          selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+                          (item.translations?.en || item.content_key)
+                        }`;
+                      })()}
                     </span>
                   </React.Fragment>
                 ))}

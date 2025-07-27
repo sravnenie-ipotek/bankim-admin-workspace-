@@ -57,6 +57,7 @@ interface MortgageTranslation {
   screen_location: string;
   description: string;
   is_active: boolean;
+  page_number?: number;
   translations: {
     ru: string;
     he: string;
@@ -281,7 +282,8 @@ const ContentMortgage: React.FC = () => {
                     <span 
                       className="text9" 
                       title={(() => {
-                        const fullText = `${startIndex + index + 1}. ${
+                        const pageNum = item.page_number ?? (startIndex + index + 1);
+                        const fullText = `${pageNum}. ${
                           selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
                           selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
                           (item.translations?.en || item.content_key)
@@ -289,11 +291,14 @@ const ContentMortgage: React.FC = () => {
                         return fullText.length > 30 ? fullText : undefined;
                       })()}
                     >
-                      {`${startIndex + index + 1}. ${
-                        selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                        selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
-                        (item.translations?.en || item.content_key)
-                      }`}
+                      {(() => {
+                        const pageNum = item.page_number ?? (startIndex + index + 1);
+                        return `${pageNum}. ${
+                          selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
+                          selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+                          (item.translations?.en || item.content_key)
+                        }`;
+                      })()}
                     </span>
                   </React.Fragment>
                 ))}

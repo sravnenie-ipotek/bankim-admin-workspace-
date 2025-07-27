@@ -31,6 +31,8 @@ import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
 import ContentMortgageRefi from './pages/ContentMortgageRefi';
 import MenuDrill from './pages/MenuDrill';
+import LanguageDemo from './components/LanguageDemo/LanguageDemo';
+import LanguageTest from './components/LanguageTest/LanguageTest';
 
 
 
@@ -169,6 +171,10 @@ const Director = () => (
           </h1>
           <p className="director-subtitle">Исполнительная панель управления и стратегический контроль</p>
         </div>
+        
+        {/* Language Demo for Testing */}
+        <LanguageDemo />
+        <LanguageTest />
         
         {/* Ready Components Panel */}
         <div className="ready-components-panel">

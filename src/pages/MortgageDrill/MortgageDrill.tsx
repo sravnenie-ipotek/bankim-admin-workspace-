@@ -29,6 +29,7 @@ interface MortgageAction {
     en: string;
   };
   last_modified: string;
+  page_number?: number; // Added for action numbering
 }
 
 interface MortgageDrillData {
@@ -85,7 +86,8 @@ const MortgageDrill: React.FC = () => {
               he: item.translations?.he || '',
               en: item.translations?.en || ''
             },
-            last_modified: item.last_modified || new Date().toISOString()
+            last_modified: item.last_modified || new Date().toISOString(),
+            page_number: item.page_number // Assuming page_number is part of the response
           }));
 
           setDrillData({
@@ -126,7 +128,8 @@ const MortgageDrill: React.FC = () => {
             he: item.translations?.he || '',
             en: item.translations?.en || ''
           },
-          last_modified: item.last_modified || new Date().toISOString()
+          last_modified: item.last_modified || new Date().toISOString(),
+          page_number: item.page_number // Assuming page_number is part of the response
         }));
 
         setDrillData({
@@ -423,8 +426,8 @@ const MortgageDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`action-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${(location.state?.baseActionNumber || 0) + startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
-                      {(location.state?.baseActionNumber || 0) + startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
+                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${(action.page_number ?? ((location.state?.baseActionNumber || 0) + startIndex + index + 1))}.${action.description || action.translations.ru || action.content_key}`}>
+                      {(action.page_number ?? ((location.state?.baseActionNumber || 0) + startIndex + index + 1))}.{action.description || action.translations.ru || action.content_key}
                     </div>
                   </div>
                   <div className="column-divider"></div>

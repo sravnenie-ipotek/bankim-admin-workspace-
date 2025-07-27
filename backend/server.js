@@ -339,6 +339,7 @@ app.get('/api/content/menu', async (req, res) => {
           COUNT(*) as action_count,
           MAX(ci.updated_at) as last_modified,
           MIN(ci.id) as representative_id,
+          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = ci.screen_location AND is_active = TRUE LIMIT 1) as page_number,
           -- Get title translations from the main title content for each screen
           COALESCE(
             (SELECT ct_ru.content_value 
@@ -416,6 +417,7 @@ app.get('/api/content/menu', async (req, res) => {
         COALESCE(ms.title_ru, ms.title_en, 'Unnamed Menu') as description,
         true as is_active,
         ms.action_count,
+        ms.page_number,
         ms.title_ru,
         ms.title_he,
         ms.title_en,
@@ -433,6 +435,7 @@ app.get('/api/content/menu', async (req, res) => {
       description: row.description,
       is_active: row.is_active,
       actionCount: row.action_count || 1,
+      page_number: row.page_number,
       translations: {
         ru: row.title_ru || '',
         he: row.title_he || '',
@@ -1346,7 +1349,8 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Mortgage Calculator' as title_en,
           (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as representative_id
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as representative_id,
+          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE LIMIT 1) as page_number
         UNION ALL
         SELECT 
           'step.2.personal_data' as step_group,
@@ -1355,7 +1359,8 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Personal Data Form' as title_en,
           (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as representative_id
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as representative_id,
+          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE LIMIT 1) as page_number
         UNION ALL
         SELECT 
           'step.3.income_data' as step_group,
@@ -1364,7 +1369,8 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Income Data Form' as title_en,
           (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as representative_id
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as representative_id,
+          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE LIMIT 1) as page_number
         UNION ALL
         SELECT 
           'step.4.program_selection' as step_group,
@@ -1373,7 +1379,8 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Mortgage Program Selection' as title_en,
           (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id,
+          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE LIMIT 1) as page_number
       )
       SELECT 
         sc.representative_id as id,
@@ -1387,7 +1394,8 @@ app.get('/api/content/mortgage', async (req, res) => {
         sc.title_ru,
         sc.title_he,  
         sc.title_en,
-        sc.last_modified as updated_at
+        sc.last_modified as updated_at,
+        sc.page_number
       FROM step_counts sc
       ORDER BY sc.step_group
     `);
@@ -1401,6 +1409,7 @@ app.get('/api/content/mortgage', async (req, res) => {
       description: row.description,
       is_active: row.is_active,
       actionCount: row.action_count || 1,
+      page_number: row.page_number,
       translations: {
         ru: row.title_ru || '',
         he: row.title_he || '',
@@ -1472,6 +1481,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
         ci.screen_location,
         ci.description,
         ci.is_active,
+        ci.page_number,
         ci.updated_at,
         ct_ru.content_value as title_ru,
         ct_he.content_value as title_he,
@@ -1506,6 +1516,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
+      page_number: row.page_number,
       description: row.description,
       is_active: row.is_active,
       last_modified: row.updated_at,

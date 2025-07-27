@@ -21,6 +21,7 @@ interface MenuSection {
   description: string;
   is_active: boolean;
   actionCount: number;
+  page_number?: number;
   translations: {
     ru: string;
     he: string;
@@ -244,7 +245,8 @@ const ContentMenu: React.FC = () => {
                     <span 
                       className="text9" 
                       title={(() => {
-                        const fullText = `${startIndex + index + 1}. ${
+                        const pageNum = item.page_number ?? (startIndex + index + 1);
+                        const fullText = `${pageNum}. ${
                           selectedLanguage === 'ru' ? item.translations.ru :
                           selectedLanguage === 'he' ? item.translations.he :
                           item.translations.en || item.content_key
@@ -252,11 +254,14 @@ const ContentMenu: React.FC = () => {
                         return fullText.length > 30 ? fullText : undefined;
                       })()}
                     >
-                      {`${startIndex + index + 1}. ${
-                        selectedLanguage === 'ru' ? item.translations.ru :
-                        selectedLanguage === 'he' ? item.translations.he :
-                        item.translations.en || item.content_key
-                      }`}
+                      {(() => {
+                        const pageNum = item.page_number ?? (startIndex + index + 1);
+                        return `${pageNum}. ${
+                          selectedLanguage === 'ru' ? item.translations.ru :
+                          selectedLanguage === 'he' ? item.translations.he :
+                          item.translations.en || item.content_key
+                        }`;
+                      })()}
                     </span>
                   </React.Fragment>
                 ))}

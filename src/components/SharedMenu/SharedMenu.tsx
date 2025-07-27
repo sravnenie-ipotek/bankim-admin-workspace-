@@ -25,6 +25,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useFontSettings } from '../../hooks/useFontSettings';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { useLocation } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface SubMenuItem {
   id: string;
@@ -50,6 +51,7 @@ export interface SharedMenuProps {
 
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
   const { hasPermission } = useAuth();
+  const { t } = useLanguage();
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { fontSettings, loading: fontLoading } = useFontSettings();
   const { setCurrentSubmenu } = useNavigation();
@@ -95,13 +97,13 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
 
   // Content site sub-menu items
   const contentSubItems: SubMenuItem[] = [
-    { id: 'content-main', label: 'Главная', path: '/content/main' },
-    { id: 'content-menu', label: 'Меню', path: '/content/menu' },
-    { id: 'content-mortgage', label: 'Рассчитать ипотеку', path: '/content/mortgage' },
-    { id: 'content-mortgage-refi', label: 'Рефинансирование ипо...', path: '/content/mortgage-refi' },
-    { id: 'content-credit', label: 'Расчет Кредита', path: '/content/credit' },
-    { id: 'content-credit-refi', label: 'Рефинансирован...', path: '/content/credit-refi' },
-    { id: 'content-general', label: 'Общие страницы', path: '/content/general' }
+    { id: 'content-main', label: t('menu.main'), path: '/content/main' },
+    { id: 'content-menu', label: t('menu.menu'), path: '/content/menu' },
+    { id: 'content-mortgage', label: t('menu.mortgage'), path: '/content/mortgage' },
+    { id: 'content-mortgage-refi', label: t('menu.mortgageRefi'), path: '/content/mortgage-refi' },
+    { id: 'content-credit', label: t('menu.credit'), path: '/content/credit' },
+    { id: 'content-credit-refi', label: t('menu.creditRefi'), path: '/content/credit-refi' },
+    { id: 'content-general', label: t('menu.general'), path: '/content/general' }
   ];
 
   // Main navigation items per Confluence business logic
@@ -109,43 +111,43 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     {
       id: 'dashboard',
       icon: 'chart-pie',
-      label: 'Главная страница', // Action #2: Dashboard
+      label: t('menu.dashboard'), // Action #2: Dashboard
       active: activeItem === 'dashboard'
     },
     {
       id: 'users',
       icon: 'users-group',
-      label: 'Клиенты' // Action #3: Clients/Users
+      label: t('menu.clients') // Action #3: Clients/Users
     },
     {
       id: 'bank-employee',
       icon: 'bank',
-      label: 'Банк сотрудник' // Action #4: Bank Employee
+      label: t('menu.bankEmployee') // Action #4: Bank Employee
     },
     {
       id: 'component-showcase',
       icon: 'ui-kit',
-      label: 'Компоненты' // Action #5: Components
+      label: t('menu.components') // Action #5: Components
     },
     {
       id: 'shared-header-preview',
       icon: 'computer-header',
-      label: 'Заголовок' // Action #6: Header
+      label: t('menu.header') // Action #6: Header
     },
     {
       id: 'calculator-formula',
       icon: 'calculator',
-      label: 'Формула калькулятора' // Action #7: Calculator Formula
+      label: t('menu.calculatorFormula') // Action #7: Calculator Formula
     },
     {
       id: 'chat',
       icon: 'messages',
-      label: 'Чат' // Action #8: Chat
+      label: t('menu.chat') // Action #8: Chat
     },
     {
       id: 'content-management',
       icon: 'file-edit',
-      label: 'Контент сайта', // Action #9: Content Management (standalone)
+      label: t('menu.contentSite'), // Action #9: Content Management (standalone)
       requiredPermission: { action: 'read', resource: 'content-management' },
       hasDropdown: true,
       subItems: contentSubItems
@@ -157,12 +159,12 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     {
       id: 'settings',
       icon: 'cog',
-      label: 'Настройки' // Action #8: Settings
+      label: t('menu.settings') // Action #8: Settings
     },
     {
       id: 'logout',
       icon: 'arrow-right-to-bracket-outline',
-      label: 'Выйти' // Action #9: Logout
+      label: t('auth.logout') // Action #9: Logout
     }
   ];
 
