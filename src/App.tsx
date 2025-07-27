@@ -28,6 +28,7 @@ import MortgageDropdownEdit from './pages/MortgageDropdownEdit';
 import MortgageRefiDrill from './pages/MortgageRefiDrill';
 import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
+import ContentMortgageRefi from './pages/ContentMortgageRefi';
 
 
 
@@ -473,7 +474,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Страница рефинансирования" activeMenuItem="content-mortgage-refi">
-                  <MortgageDrill />
+                  <MortgageRefiDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -487,7 +488,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
-                  <MortgageTextEdit />
+                  <MortgageRefiTextEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -501,7 +502,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage-refi">
-                  <MortgageDropdownEdit />
+                  <MortgageRefiDropdownEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -515,6 +516,20 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
                 <SharedContentEdit />
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Explicit mortgage-refi list route (prevents accidental redirect to /admin/login) */}
+        <Route 
+          path="/content/mortgage-refi" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Рефинансирование ипотеки" activeMenuItem="content-mortgage-refi">
+                  <ContentMortgageRefi />
+                </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
           } 
