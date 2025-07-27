@@ -205,6 +205,9 @@ const ContentListBase: React.FC<ContentListBaseProps> = ({
 
       {/* Table Section */}
       <div className="table-section">
+        {/* List of Pages Title */}
+        <h2 className="page-list-title">Список страниц</h2>
+
         {/* Table Content - Column Layout */}
         <div className="content-table">
           {/* Table Header Row */}
