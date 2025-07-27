@@ -1409,70 +1409,97 @@ app.put('/api/content/mortgage/:id', async (req, res) => {
 /**
  * Get mortgage refinancing content
  * GET /api/content/mortgage-refi
- * Returns content for mortgage refinancing screen with step-based translations like mortgage
+ * Returns content for mortgage refinancing screen with dynamic translations from database
  */
 app.get('/api/content/mortgage-refi', async (req, res) => {
   try {
-    // Use step-based structure like mortgage API
+    // Dynamic query that gets actual content from database instead of hard-coded titles
     const result = await safeQuery(`
-      WITH step_counts AS (
+      WITH screen_summaries AS (
         SELECT 
-          'step.1.calculator' as step_group,
-          'Калькулятор рефинансирования' as title_ru,
-          'מחשבון מימון מחדש' as title_he,
-          'Refinancing Calculator' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as representative_id
-        UNION ALL
-        SELECT 
-          'step.2.personal_data' as step_group,
-          'Анкета личных данных' as title_ru,
-          'טופס נתונים אישיים' as title_he,
-          'Personal Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as representative_id
-        UNION ALL
-        SELECT 
-          'step.3.income_data' as step_group,
-          'Анкета доходов' as title_ru,
-          'טופס הכנסות' as title_he,
-          'Income Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as representative_id
-        UNION ALL
-        SELECT 
-          'step.4.program_selection' as step_group,
-          'Выбор программ рефинансирования' as title_ru,
-          'בחירת תוכניות מימון מחדש' as title_he,
-          'Refinancing Program Selection' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id
+          ci.screen_location,
+          COUNT(*) as action_count,
+          MAX(ci.updated_at) as last_modified,
+          MIN(ci.id) as representative_id,
+          -- Get title translations from the main title content for each screen
+          COALESCE(
+            (SELECT ct_ru.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_ru ON title_ci.id = ct_ru.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_ru.language_code = 'ru'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Russian translation
+            (SELECT ct_ru.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_ru ON fallback_ci.id = ct_ru.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_ru.language_code = 'ru'
+               AND ct_ru.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1)
+          ) as title_ru,
+          COALESCE(
+            (SELECT ct_he.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_he ON title_ci.id = ct_he.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_he.language_code = 'he'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Hebrew translation
+            (SELECT ct_he.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_he ON fallback_ci.id = ct_he.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_he.language_code = 'he'
+               AND ct_he.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1)
+          ) as title_he,
+          COALESCE(
+            (SELECT ct_en.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_en ON title_ci.id = ct_en.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_en.language_code = 'en'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available English translation
+            (SELECT ct_en.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_en ON fallback_ci.id = ct_en.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_en.language_code = 'en'
+               AND ct_en.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1)
+          ) as title_en
+        FROM content_items ci
+        WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4')
+          AND ci.is_active = TRUE
+        GROUP BY ci.screen_location
+        HAVING COUNT(*) > 0
       )
       SELECT 
-        sc.representative_id as id,
-        sc.step_group as content_key,
+        ss.representative_id as id,
+        ss.screen_location as content_key,
         'step' as component_type,
         'mortgage_refi_steps' as category,
-        CASE 
-          WHEN sc.step_group = 'step.1.calculator' THEN 'refinance_step1'
-          WHEN sc.step_group = 'step.2.personal_data' THEN 'refinance_step2' 
-          WHEN sc.step_group = 'step.3.income_data' THEN 'refinance_step3'
-          WHEN sc.step_group = 'step.4.program_selection' THEN 'mortgage_step4'
-        END as screen_location,
-        sc.title_ru as description,
+        ss.screen_location,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
         true as is_active,
-        sc.action_count,
-        sc.title_ru,
-        sc.title_he,  
-        sc.title_en,
-        sc.last_modified as updated_at
-      FROM step_counts sc
-      WHERE sc.action_count > 0
-      ORDER BY sc.step_group
+        ss.action_count,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as title_ru,
+        COALESCE(ss.title_he, ss.title_en, 'Unnamed Step') as title_he,
+        COALESCE(ss.title_en, ss.title_ru, 'Unnamed Step') as title_en,
+        ss.last_modified as updated_at
+      FROM screen_summaries ss
+      ORDER BY ss.screen_location
     `);
     
     const mortgageRefiContent = result.rows.map(row => ({
