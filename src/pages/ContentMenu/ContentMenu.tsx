@@ -1,15 +1,16 @@
 /**
  * ContentMenu Component
  * Menu translations management - displays and allows editing of menu component translations
- * Based on Figma design node-id=79-78410
+ * Based on ContentMain design structure
  * 
- * @version 1.1.0
+ * @version 2.0.0
  * @since 2025-01-20
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
+import { ContentPageWrapper } from '../../components/ContentPageWrapper';
 import './ContentMenu.css';
 
 interface MenuSection {
@@ -44,7 +45,6 @@ const ContentMenu: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
-
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
@@ -104,9 +104,6 @@ const ContentMenu: React.FC = () => {
     fetchMenuData();
   }, []);
 
-
-
-
   const handleViewClick = (item: MenuSection) => {
     // Use the actual screen_location from the item
     const screenLocation = item.screen_location;
@@ -146,63 +143,52 @@ const ContentMenu: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="content-menu-loading">
-        <div className="loading-spinner"></div>
-        <p>Загрузка данных меню...</p>
-      </div>
+      <ContentPageWrapper title="Меню">
+        <div className="content-main">
+          <div className="content-main__content">
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Загрузка данных меню...</p>
+            </div>
+          </div>
+        </div>
+      </ContentPageWrapper>
     );
   }
 
   if (error) {
     return (
-      <div className="content-menu-error">
-        <p>Ошибка: {error}</p>
-        <button onClick={() => window.location.reload()}>Попробовать снова</button>
-      </div>
+      <ContentPageWrapper title="Меню">
+        <div className="content-main">
+          <div className="content-main__content">
+            <div className="error-container">
+              <p>Ошибка: {error}</p>
+              <button onClick={() => window.location.reload()}>Попробовать снова</button>
+            </div>
+          </div>
+        </div>
+      </ContentPageWrapper>
     );
   }
 
   return (
-    <div className="content-menu-page">
-      {/* Main Content Frame - wraps everything except sidebar */}
-      <div className="column2">
-        {/* Top Navigation Bar - matches Figma Navbar Admin panel */}
-        <div className="navbar-admin-panel">
-          <div className="language-selector" onClick={() => {
-            // Cycle through languages
-            if (selectedLanguage === 'ru') setSelectedLanguage('he');
-            else if (selectedLanguage === 'he') setSelectedLanguage('en');
-            else setSelectedLanguage('ru');
-          }}>
-            <span className="language-text">
-              {selectedLanguage === 'ru' ? 'Русский' : 
-               selectedLanguage === 'he' ? 'עברית' : 
-               'English'}
-            </span>
-            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="image2" />
-          </div>
-          <img src="/src/assets/images/static/icons/headset.svg" alt="Support" className="image5" />
-          <img src="/src/assets/images/static/icons/bell.svg" alt="Notifications" className="image5" />
-          <div className="profile-section">
-            <img src="/src/assets/images/static/profile-avatar.png" alt="Profile" className="image6" />
-            <div className="view">
-              <span className="profile-name">Александр Пушкин</span>
-            </div>
-            <img src="/src/assets/images/static/icons/chevron-right.svg" alt="Profile Menu" className="image2" />
-          </div>
+    <ContentPageWrapper title="Меню">
+      <div className="content-main">
+        {/* Page Header */}
+        <div className="content-main__header">
+          <h1 className="content-main__title">Меню</h1>
         </div>
 
-      {/* Main Content */}
-      <div className="content-menu-main">
-        {/* List of Pages Title */}
-        <h2 className="page-list-title">Список страниц</h2>
-
-        {/* Search Section - moved to top level */}
-        <div className="table-header-controls">
-          <div className="search-container">
-            <div className="search-input-wrapper">
+        {/* Content Section */}
+        <div className="content-main__content">
+          <h2 className="content-main__subtitle">Список страниц</h2>
+          
+          <div className="content-main__table-container">
+            {/* Search Bar */}
+            <div className="content-main__search">
               <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M14 14L10.344 10.344M11.3333 6.66667C11.3333 9.24671 9.24671 11.3333 6.66667 11.3333C4.08662 11.3333 2 9.24671 2 6.66667C2 4.08662 4.08662 2 6.66667 2C9.24671 2 11.3333 4.08662 11.3333 6.66667Z" 
+                      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input
                 type="text"
@@ -212,188 +198,138 @@ const ContentMenu: React.FC = () => {
                 className="search-input"
               />
             </div>
-          </div>
-        </div>
 
-        {/* Table Section */}
-        <div className="table-section">
-
-          {/* Table Content - Column Layout */}
-          <div className="menu-table">
-            {/* Table Header Row */}
-            <div className="table-header-row">
-              <div className="header-cell column6">
-                <span className="text8">НАЗВАНИЕ СТРАНИЦЫ</span>
+            {/* Language Selector */}
+            <div className="language-selector-container">
+              <div className="language-selector" onClick={() => {
+                // Cycle through languages
+                if (selectedLanguage === 'ru') setSelectedLanguage('he');
+                else if (selectedLanguage === 'he') setSelectedLanguage('en');
+                else setSelectedLanguage('ru');
+              }}>
+                <span className="language-text">
+                  {selectedLanguage === 'ru' ? 'Русский' : 
+                   selectedLanguage === 'he' ? 'עברית' : 
+                   'English'}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
-              <div className="header-cell column12">
-                <span className="text10">Количество действий</span>
-              </div>
-              <div className="header-cell column12">
-                <span className="text10">Были изменения</span>
-              </div>
-              <div className="header-cell column7"></div>
             </div>
-            
-            <div className="table-divider"></div>
-            
-            <div className="row-view11">
-              {/* Column 1 - Page Names */}
-              <div className="column6">
+
+            {/* Table */}
+            <div className="content-main__table">
+              {/* Table Header */}
+              <div className="table-header">
+                <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
+                <div className="header-cell actions-count">Количество действий</div>
+                <div className="header-cell last-modified">Были изменения</div>
+                <div className="header-cell actions"></div>
+              </div>
+
+              {/* Table Body */}
+              <div className="table-body">
                 {currentItems.map((item, index) => (
-                  <React.Fragment key={`name-${item.id}`}>
-                    <div className="box3"></div>
-                    <span 
-                      className="text9" 
-                      title={(() => {
-                        const pageNum = item.page_number ?? (startIndex + index + 1);
-                        const fullText = `${pageNum}. ${
-                          selectedLanguage === 'ru' ? item.translations.ru :
-                          selectedLanguage === 'he' ? item.translations.he :
-                          item.translations.en || item.content_key
-                        }`;
-                        return fullText.length > 30 ? fullText : undefined;
-                      })()}
-                    >
+                  <div key={item.id} className="table-row">
+                    <div className="table-cell page-name">
                       {(() => {
                         const pageNum = item.page_number ?? (startIndex + index + 1);
-                        return `${pageNum}. ${
-                          selectedLanguage === 'ru' ? item.translations.ru :
-                          selectedLanguage === 'he' ? item.translations.he :
-                          item.translations.en || item.content_key
-                        }`;
+                        const title = selectedLanguage === 'ru' ? item.translations.ru :
+                                     selectedLanguage === 'he' ? item.translations.he :
+                                     item.translations.en || item.content_key;
+                        return `${pageNum}. ${title}`;
                       })()}
-                    </span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 2 - Number of Actions */}
-              <div className="column12">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`actions-${item.id}`}>
-                    <div className="box4"></div>
-                    <span className="text15">{item.actionCount || 1}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 3 - Last Modified */}
-              <div className="column12">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`modified-${item.id}`}>
-                    <div className="box4"></div>
-                    <span className="text20">{formatLastModified(item.last_modified)}</span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Column 4 - Actions */}
-              <div className="column7">
-                {currentItems.map((item) => (
-                  <React.Fragment key={`action-${item.id}`}>
-                    <div className="box6"></div>
-                    <div
-                      className="image8"
-                      onClick={() => handleViewClick(item)}
-                      style={{ 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '24px',
-                        color: '#FFFFFF',
-                        backgroundColor: 'transparent',
-                        border: '1px solid #374151'
-                      }}
-                    >
-                      →
                     </div>
-                  </React.Fragment>
+                    <div className="table-cell actions-count">
+                      {item.actionCount || 1}
+                    </div>
+                    <div className="table-cell last-modified">
+                      {formatLastModified(item.last_modified)}
+                    </div>
+                    <div className="table-cell actions">
+                      <button 
+                        className="action-button"
+                        onClick={() => handleViewClick(item)}
+                        aria-label={`Navigate to menu item`}
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-            </div>
-          </div>
 
-          {/* Pagination */}
-          <div className="row-view12">
-            <span className="text18">
-              Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
-            </span>
-            <div className="row-view13">
-              <div 
-                className="pagination-arrow left"
-                onClick={() => setCurrentPage((prev: number) => Math.max(1, prev - 1))}
-                style={{ opacity: currentPage === 1 ? 0.5 : 1, cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M10 12L6 8L10 4" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              
-              {/* Page 1 */}
-              <div 
-                className={currentPage === 1 ? "view6" : "view5"}
-                onClick={() => setCurrentPage(1)}
-                style={{ cursor: 'pointer' }}
-              >
-                <span className={currentPage === 1 ? "text20" : "text19"}>1</span>
-              </div>
-              
-              {/* Show page 2 if total pages >= 2 */}
-              {totalPages >= 2 && (
-                <div 
-                  className={currentPage === 2 ? "view6" : "view5"}
-                  onClick={() => setCurrentPage(2)}
-                  style={{ cursor: 'pointer' }}
+            {/* Pagination */}
+            <div className="content-main__pagination">
+              <span className="pagination-info">
+                Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
+              </span>
+              <div className="pagination-controls">
+                <button 
+                  className="pagination-btn prev"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
                 >
-                  <span className={currentPage === 2 ? "text20" : "text19"}>2</span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                
+                <div className="pagination-numbers">
+                  <button 
+                    className={`page-number ${currentPage === 1 ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(1)}
+                  >
+                    1
+                  </button>
+                  {totalPages > 1 && (
+                    <button 
+                      className={`page-number ${currentPage === 2 ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(2)}
+                    >
+                      2
+                    </button>
+                  )}
+                  {totalPages > 2 && (
+                    <button 
+                      className={`page-number ${currentPage === 3 ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(3)}
+                    >
+                      3
+                    </button>
+                  )}
+                  {totalPages > 4 && (
+                    <span className="page-ellipsis">...</span>
+                  )}
+                  {totalPages > 3 && (
+                    <button 
+                      className={`page-number ${currentPage === totalPages ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(totalPages)}
+                    >
+                      {totalPages}
+                    </button>
+                  )}
                 </div>
-              )}
-              
-              {/* Show page 3 if total pages >= 3 */}
-              {totalPages >= 3 && (
-                <div 
-                  className={currentPage === 3 ? "view6" : "view5"}
-                  onClick={() => setCurrentPage(3)}
-                  style={{ cursor: 'pointer' }}
+                
+                <button 
+                  className="pagination-btn next"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
                 >
-                  <span className={currentPage === 3 ? "text20" : "text19"}>3</span>
-                </div>
-              )}
-              
-              {/* Show ellipsis if there are more than 4 pages */}
-              {totalPages > 4 && (
-                <div className="view5">
-                  <span className="text19">...</span>
-                </div>
-              )}
-              
-              {/* Show last page if there are more than 3 pages */}
-              {totalPages > 3 && (
-                <div 
-                  className={currentPage === totalPages ? "view6" : "view5"}
-                  onClick={() => setCurrentPage(totalPages)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <span className={currentPage === totalPages ? "text20" : "text19"}>{totalPages}</span>
-                </div>
-              )}
-              
-              <div 
-                className="pagination-arrow right"
-                onClick={() => setCurrentPage((prev: number) => Math.min(totalPages, prev + 1))}
-                style={{ opacity: currentPage === totalPages ? 0.5 : 1, cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M6 12L10 8L6 4" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ContentPageWrapper>
   );
 };
 
