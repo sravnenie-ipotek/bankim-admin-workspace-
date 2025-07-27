@@ -11,6 +11,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
+import { ContentListItem } from '../ContentListBase/types';
 import '../ContentMortgage/ContentMortgage.css'; // Reuse mortgage styles
 
 // Helper function to format date for display
@@ -37,28 +38,10 @@ const formatLastModified = (dateString: string | null | undefined): string => {
   }
 };
 
-interface MortgageRefiTranslation {
-  id: string;
-  content_key: string;
-  component_type: string;
-  category: string;
-  screen_location: string;
-  description: string;
-  is_active: boolean;
-  translations: {
-    ru: string;
-    he: string;
-    en: string;
-  };
-  last_modified: string;
-  actionCount: number;
-  contentType: string;
-}
-
 interface MortgageRefiData {
   status: string;
   content_count: number;
-  mortgage_items: MortgageRefiTranslation[];
+  mortgage_items: ContentListItem[];
 }
 
 const ContentMortgageRefi: React.FC = () => {
@@ -80,30 +63,16 @@ const ContentMortgageRefi: React.FC = () => {
         const response = await apiService.getContentByContentType('mortgage-refi');
         
         if (response.success && response.data) {
-          // Normalize the data to ensure translations exist
-          const normalizedItems = response.data.map((item: any) => ({
-            ...item,
-            id: item.id || '',
-            content_key: item.content_key || '',
-            translations: {
-              ru: item.translations?.ru || item.title || '',
-              he: item.translations?.he || '',
-              en: item.translations?.en || ''
-            },
-            actionCount: item.actionCount || 0,
-            contentType: item.contentType || 'text',
-            last_modified: item.last_modified || null
-          }));
-          
+          // Data is already normalized by apiService.getContentByContentType
           const normalizedData: MortgageRefiData = {
             status: 'success',
-            content_count: normalizedItems.length,
-            mortgage_items: normalizedItems
+            content_count: response.data.length,
+            mortgage_items: response.data
           };
           
           setMortgageRefiData(normalizedData);
           console.log('✅ Successfully loaded mortgage-refi data:', normalizedData);
-          console.log('First item:', normalizedItems[0]); // Log first item to see structure
+          console.log('First item:', response.data[0]); // Log first item to see structure
         } else {
           console.error('❌ Failed to fetch mortgage-refi translations from database:', response.error);
           setError(response.error || 'Failed to fetch mortgage-refi translations from database');
@@ -119,11 +88,18 @@ const ContentMortgageRefi: React.FC = () => {
     fetchMortgageRefiData();
   }, []);
 
-  const handleViewClick = (item: MortgageRefiTranslation) => {
+  const handleViewClick = (item: ContentListItem) => {
     // Use the actual screen_location from the item
     const screenLocation = item.screen_location;
     
-    console.log(`📍 Navigating to mortgage-refi drill for screen_location: ${screenLocation}`);
+    console.log(`📍 Navigating to mortgage-refi drill for item:`, item);
+    console.log(`📍 Screen location: "${screenLocation}"`);
+    console.log(`📍 Content key: "${item.content_key}"`);
+    
+    if (!screenLocation) {
+      console.error('❌ No screen_location found for item:', item);
+      return;
+    }
     
     // Navigate to drill page using the actual screen_location
     navigate(`/content/mortgage-refi/drill/${screenLocation}`, { 
@@ -282,7 +258,7 @@ const ContentMortgageRefi: React.FC = () => {
                 {currentItems.map((item) => (
                   <React.Fragment key={`modified-${item.id}`}>
                     <div className="box4"></div>
-                    <span className="text20">{formatLastModified(item.last_modified)}</span>
+                    <span className="text20">{formatLastModified(item.lastModified)}</span>
                   </React.Fragment>
                 ))}
               </div>

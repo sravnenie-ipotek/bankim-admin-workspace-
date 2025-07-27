@@ -1057,7 +1057,15 @@ class ApiService {
               actionCount: getActionCountForItem(item),
               lastModified: item.last_modified || item.updated_at || new Date().toISOString(),
               contentType: contentTypeValue,
-              pageNumber: pageNumber
+              pageNumber: pageNumber,
+              // Preserve additional fields for content management
+              screen_location: item.screen_location,
+              content_key: item.content_key,
+              component_type: item.component_type,
+              category: item.category,
+              description: item.description,
+              is_active: item.is_active,
+              translations: item.translations
             };
           });
           
