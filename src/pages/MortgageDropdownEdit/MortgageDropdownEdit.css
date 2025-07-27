@@ -1,0 +1,35 @@
+/* MortgageDropdownEdit Component Styles */
+
+.dropdown-edit-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--gray-900, #111928);
+}
+
+.dropdown-edit-main {
+  padding: 40px 145px;
+  padding-bottom: 120px;
+}
+
+.dropdown-edit-loading,
+.dropdown-edit-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--gray-50, #F9FAFB);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-700, #374151);
+  border-top-color: var(--primary-700, #FBE54D);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

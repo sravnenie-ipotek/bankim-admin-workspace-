@@ -24,6 +24,10 @@ import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
 import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
 import MortgageTextEdit from './pages/MortgageTextEdit';
+import MortgageDropdownEdit from './pages/MortgageDropdownEdit';
+import MortgageRefiDrill from './pages/MortgageRefiDrill';
+import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
+import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
 
 
 
@@ -442,6 +446,62 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage">
                   <MortgageTextEdit />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage dropdown edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/mortgage/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage">
+                  <MortgageDropdownEdit />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage-refi drill route - specific drill page for mortgage refinancing content */}
+        <Route 
+          path="/content/mortgage-refi/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Страница рефинансирования" activeMenuItem="content-mortgage-refi">
+                  <MortgageRefiDrill />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage-refi text edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/mortgage-refi/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
+                  <MortgageRefiTextEdit />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Mortgage-refi dropdown edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/mortgage-refi/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage-refi">
+                  <MortgageRefiDropdownEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

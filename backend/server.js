@@ -789,7 +789,7 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
         CAST(
-          SUBSTRING(ci.content_key FROM 'option\\.([0-9]+)\\.')
+          SUBSTRING(ci.content_key FROM '\\.option\\.([0-9]+)$')
           AS INTEGER
         ) as option_order
       FROM content_items ci
@@ -852,7 +852,7 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       }
     }
     
-    console.log('Using content key pattern:', `${actualContentKey}_option_%`);
+    console.log('Using content key pattern:', `${actualContentKey}.option.%`);
     
     // Get all options for this mortgage dropdown
     const result = await safeQuery(`
@@ -863,7 +863,7 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
         CAST(
-          SUBSTRING(ci.content_key FROM '_option_([0-9]+)')
+          SUBSTRING(ci.content_key FROM '\\.option\\.([0-9]+)$')
           AS INTEGER
         ) as option_order
       FROM content_items ci
@@ -875,14 +875,19 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
-    `, [`${actualContentKey}_option_%`]);
+    `, [`${actualContentKey}.option.%`]);
     
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
       id: row.id.toString(),
       order: row.option_order || (index + 1),
       titleRu: row.title_ru || '',
-      titleHe: row.title_he || ''
+      titleHe: row.title_he || '',
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
     }));
     
     res.json({
@@ -1316,18 +1321,18 @@ app.put('/api/content/mortgage/:id', async (req, res) => {
             DELETE FROM content_translations 
             WHERE content_item_id IN (
               SELECT id FROM content_items 
-              WHERE content_key LIKE $1 || '_option_%'
+              WHERE content_key LIKE $1 || '.option.%'
             )
           `, [contentKey]);
           
           await safeQuery(`
             DELETE FROM content_items 
-            WHERE content_key LIKE $1 || '_option_%'
+            WHERE content_key LIKE $1 || '.option.%'
           `, [contentKey]);
           
           // Insert new options
           for (const option of dropdown_options) {
-            const optionKey = `${contentKey}_option_${option.order}`;
+            const optionKey = `${contentKey}.option.${option.order}`;
             
             // Create content item for option
             const optionResult = await safeQuery(`
@@ -1388,43 +1393,73 @@ app.put('/api/content/mortgage/:id', async (req, res) => {
 /**
  * Get mortgage refinancing content
  * GET /api/content/mortgage-refi
- * Returns content for mortgage refinancing screen with translations
+ * Returns content for mortgage refinancing screen with step-based translations like mortgage
  */
 app.get('/api/content/mortgage-refi', async (req, res) => {
   try {
+    // Use step-based structure like mortgage API
     const result = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.description,
-        ci.is_active,
-        ct_ru.content_value AS title_ru,
-        ct_he.content_value AS title_he,
-        ct_en.content_value AS title_en,
-        ci.updated_at
-      FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.is_active = TRUE
-        AND ci.screen_location IN (
-          'refinance_step1',     -- for /services/refinance-mortgage/1
-          'refinance_step2',     -- for /services/refinance-mortgage/2
-          'refinance_step3',     -- for /services/refinance-mortgage/3
-          'refinance_step4',     -- for /services/refinance-mortgage/4
-          'mortgage_step4'       -- for /services/calculate-mortgage/4
-        )
-        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
-        AND ci.component_type != 'option'
-        AND ci.content_key NOT LIKE '%_option_%'
-        AND ci.content_key NOT LIKE '%_ph'
-      ORDER BY ci.screen_location, ci.content_key
+      WITH step_counts AS (
+        SELECT 
+          'step.1.calculator' as step_group,
+          'Калькулятор рефинансирования' as title_ru,
+          'מחשבון מימון מחדש' as title_he,
+          'Refinancing Calculator' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step1' AND is_active = TRUE) as representative_id
+        UNION ALL
+        SELECT 
+          'step.2.personal_data' as step_group,
+          'Анкета личных данных' as title_ru,
+          'טופס נתונים אישיים' as title_he,
+          'Personal Data Form' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step2' AND is_active = TRUE) as representative_id
+        UNION ALL
+        SELECT 
+          'step.3.income_data' as step_group,
+          'Анкета доходов' as title_ru,
+          'טופס הכנסות' as title_he,
+          'Income Data Form' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'refinance_step3' AND is_active = TRUE) as representative_id
+        UNION ALL
+        SELECT 
+          'step.4.program_selection' as step_group,
+          'Выбор программ рефинансирования' as title_ru,
+          'בחירת תוכניות מימון מחדש' as title_he,
+          'Refinancing Program Selection' as title_en,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as action_count,
+          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
+          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id
+      )
+      SELECT 
+        sc.representative_id as id,
+        sc.step_group as content_key,
+        'step' as component_type,
+        'mortgage_refi_steps' as category,
+        CASE 
+          WHEN sc.step_group = 'step.1.calculator' THEN 'refinance_step1'
+          WHEN sc.step_group = 'step.2.personal_data' THEN 'refinance_step2' 
+          WHEN sc.step_group = 'step.3.income_data' THEN 'refinance_step3'
+          WHEN sc.step_group = 'step.4.program_selection' THEN 'mortgage_step4'
+        END as screen_location,
+        sc.title_ru as description,
+        true as is_active,
+        sc.action_count,
+        sc.title_ru,
+        sc.title_he,  
+        sc.title_en,
+        sc.last_modified as updated_at
+      FROM step_counts sc
+      WHERE sc.action_count > 0
+      ORDER BY sc.step_group
     `);
-
-    const refiContent = result.rows.map(row => ({
+    
+    const mortgageRefiContent = result.rows.map(row => ({
       id: row.id,
       content_key: row.content_key,
       component_type: row.component_type,
@@ -1432,6 +1467,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       screen_location: row.screen_location,
       description: row.description,
       is_active: row.is_active,
+      actionCount: row.action_count || 1,
       translations: {
         ru: row.title_ru || '',
         he: row.title_he || '',
@@ -1444,13 +1480,205 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       success: true,
       data: {
         status: 'success',
-        content_count: refiContent.length,
-        mortgage_refi_content: refiContent
+        content_count: mortgageRefiContent.length,
+        mortgage_content: mortgageRefiContent
       }
     });
+
   } catch (error) {
     console.error('Get mortgage refi content error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get detailed content items for a specific mortgage refinancing step
+ * GET /api/content/mortgage-refi/drill/:stepId
+ * Returns individual content items that belong to a specific refinancing step
+ */
+app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
+  try {
+    const { stepId } = req.params;
+    
+    console.log(`Fetching mortgage-refi drill content for step ID: ${stepId}`);
+    
+    // Map step IDs to screen_locations for refinancing
+    const stepMapping = {
+      'step.1.calculator': 'refinance_step1',
+      'step.2.personal_data': 'refinance_step2', 
+      'step.3.income_data': 'refinance_step3',
+      'step.4.program_selection': 'refinance_step4'
+    };
+
+    const screenLocation = stepMapping[stepId];
+    if (!screenLocation) {
+      return res.status(404).json({
+        success: false,
+        error: `Invalid step ID: ${stepId}`
+      });
+    }
+
+    // Get step title mapping for refinancing
+    const stepTitles = {
+      'refinance_step1': 'Калькулятор рефинансирования',
+      'refinance_step2': 'Анкета личных данных',  
+      'refinance_step3': 'Анкета доходов',
+      'refinance_step4': 'Выбор программ рефинансирования'
+    };
+
+    // Get individual content items for this refinancing step
+    const contentResult = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.screen_location = $1
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [screenLocation]);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found for this refinancing step'
+      });
+    }
+
+    const actions = contentResult.rows.map(row => ({
+      id: row.id,
+      actionNumber: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      last_modified: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        pageTitle: stepTitles[screenLocation],
+        stepGroup: stepId,
+        actionCount: actions.length,
+        actions: actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get mortgage-refi drill content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get dropdown options for mortgage-refi content
+ * GET /api/content/mortgage-refi/{contentKey}/options
+ */
+app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
+  const { contentKey } = req.params;
+  
+  try {
+    console.log('Fetching options for mortgage-refi content key:', contentKey);
+    
+    // Build the pattern for options based on the content key
+    // If contentKey is an ID, we need to first get the actual content_key
+    let actualContentKey = contentKey;
+    
+    // Check if contentKey is numeric (ID)
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    console.log('Using mortgage-refi content key pattern:', `${actualContentKey}.option.%`);
+    
+    // Get all options for this mortgage-refi dropdown
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        CAST(
+          SUBSTRING(ci.content_key FROM '\\.option\\.([0-9]+)$')
+          AS INTEGER
+        ) as option_order
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.screen_location IN ('refinance_step1', 'refinance_step2', 'refinance_step3', 'refinance_step4')
+        AND ci.component_type = 'option'
+        AND ci.content_key LIKE $1
+        AND ci.is_active = TRUE
+      ORDER BY option_order NULLS LAST, ci.content_key
+    `, [`${actualContentKey}.option.%`]);
+
+    const options = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      option_order: row.option_order,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        content_key: actualContentKey,
+        options: options
+      }
+    });
+
+  } catch (error) {
+    console.error('Get mortgage-refi options error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 

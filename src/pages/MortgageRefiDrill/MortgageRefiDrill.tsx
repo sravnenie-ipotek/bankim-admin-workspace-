@@ -1,19 +1,19 @@
 /**
- * MortgageDrill Component
- * Drill-down page showing detailed actions for a specific mortgage page
- * Based on calculateMortgrate_drill1.md design structure
+ * MortgageRefiDrill Component
+ * Drill-down page showing detailed actions for a specific mortgage refinancing page
+ * Based on MortgageDrill design structure
  * 
  * @version 1.0.0
- * @since 2025-01-26
+ * @since 2025-01-20
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
-import './MortgageDrill.css';
+import '../MortgageDrill/MortgageDrill.css'; // Reuse drill styles
 
-interface MortgageAction {
+interface MortgageRefiAction {
   id: string;
   actionNumber: number;
   content_key: string;
@@ -30,24 +30,24 @@ interface MortgageAction {
   last_modified: string;
 }
 
-interface MortgageDrillData {
+interface MortgageRefiDrillData {
   pageTitle: string;
   actionCount: number;
   lastModified: string;
-  actions: MortgageAction[];
+  actions: MortgageRefiAction[];
 }
 
-const MortgageDrill: React.FC = () => {
+const MortgageRefiDrill: React.FC = () => {
   const { pageId } = useParams<{ pageId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const [drillData, setDrillData] = useState<MortgageDrillData | null>(null);
+  const [drillData, setDrillData] = useState<MortgageRefiDrillData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
-  const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
+  const itemsPerPage = 20; // Show more items per page to accommodate all mortgage-refi content
 
   useEffect(() => {
     fetchDrillData();
@@ -56,58 +56,16 @@ const MortgageDrill: React.FC = () => {
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching drill data for step ID: ${pageId}`);
+      console.log(`🔍 Fetching mortgage-refi drill data for step ID: ${pageId}`);
       
-      // Try the backend drill endpoint first
-      try {
-        const drillResponse = await apiService.request(`/api/content/mortgage/drill/${pageId}`, 'GET');
-        
-        if (drillResponse.success && drillResponse.data) {
-          const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
-
-          // Transform to drill data format
-          const transformedActions: MortgageAction[] = actions.map((item: any) => ({
-            id: item.id,
-            actionNumber: item.actionNumber,
-            content_key: item.content_key || '',
-            component_type: item.component_type || 'text',
-            category: item.category || '',
-            screen_location: item.screen_location || '',
-            description: item.description || '',
-            is_active: item.is_active !== false,
-            translations: {
-              ru: item.translations?.ru || '',
-              he: item.translations?.he || '',
-              en: item.translations?.en || ''
-            },
-            last_modified: item.last_modified || new Date().toISOString()
-          }));
-
-          setDrillData({
-            pageTitle: pageTitle,
-            actionCount: actionCount,
-            lastModified: transformedActions.length > 0 ? 
-              transformedActions.reduce((latest, action) => 
-                new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
-                transformedActions[0].last_modified
-              ) : new Date().toISOString(),
-            actions: transformedActions
-          });
-          return;
-        }
-      } catch (drillError) {
-        console.warn('Drill endpoint failed, falling back to all mortgage content items:', drillError);
-      }
+      // Use the backend drill endpoint for mortgage-refi
+      const drillResponse = await apiService.request(`/api/content/mortgage-refi/drill/${pageId}`, 'GET');
       
-      // Fallback: get all individual mortgage content items across all steps
-      const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
-      
-      if (response.success && response.data) {
-        // Use the data from the new all-items endpoint
-        const { pageTitle, actionCount, actions: allActions } = response.data;
+      if (drillResponse.success && drillResponse.data) {
+        const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
 
-        // Transform to drill data format 
-        const actions: MortgageAction[] = allActions.map((item: any) => ({
+        // Transform to drill data format
+        const transformedActions: MortgageRefiAction[] = actions.map((item: any) => ({
           id: item.id,
           actionNumber: item.actionNumber,
           content_key: item.content_key || '',
@@ -127,26 +85,26 @@ const MortgageDrill: React.FC = () => {
         setDrillData({
           pageTitle: pageTitle,
           actionCount: actionCount,
-          lastModified: actions.length > 0 ? 
-            actions.reduce((latest, action) => 
+          lastModified: transformedActions.length > 0 ? 
+            transformedActions.reduce((latest, action) => 
               new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
-              actions[0].last_modified
+              transformedActions[0].last_modified
             ) : new Date().toISOString(),
-          actions: actions
+          actions: transformedActions
         });
       } else {
-        setError('Не удалось загрузить данные');
+        setError('Не удалось загрузить данные рефинансирования');
       }
     } catch (err) {
-      console.error('❌ Error fetching drill data:', err);
-      setError('Ошибка загрузки данных');
+      console.error('❌ Error fetching mortgage-refi drill data:', err);
+      setError('Ошибка загрузки данных рефинансирования');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEditClick = (action: MortgageAction) => {
-    console.log('🔍 Clicked action:', {
+  const handleEditClick = (action: MortgageRefiAction) => {
+    console.log('🔍 Clicked mortgage-refi action:', {
       id: action.id,
       component_type: action.component_type,
       content_key: action.content_key,
@@ -165,13 +123,13 @@ const MortgageDrill: React.FC = () => {
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
         typeDisplay === 'Текст') {
-      const textEditUrl = `/content/mortgage/text-edit/${action.id}`;
-      console.log('✅ Navigating to text edit page:', textEditUrl);
+      const textEditUrl = `/content/mortgage-refi/text-edit/${action.id}`;
+      console.log('✅ Navigating to mortgage-refi text edit page:', textEditUrl);
       navigate(textEditUrl, { 
         state: { 
           fromPage: currentPage,
           searchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage-refi/drill/${pageId}`
         } 
       });
     } 
@@ -180,31 +138,31 @@ const MortgageDrill: React.FC = () => {
              componentTypeLower === 'select' ||
              componentTypeLower === 'option' ||
              typeDisplay === 'Дропдаун') {
-      const dropdownEditUrl = `/content/mortgage/dropdown-edit/${action.id}`;
-      console.log('📋 Navigating to dropdown edit page:', dropdownEditUrl);
+      const dropdownEditUrl = `/content/mortgage-refi/dropdown-edit/${action.id}`;
+      console.log('📋 Navigating to mortgage-refi dropdown edit page:', dropdownEditUrl);
       navigate(dropdownEditUrl, { 
         state: { 
           fromPage: currentPage,
           searchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage-refi/drill/${pageId}`
         } 
       });
     } 
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(`/content/mortgage/edit/${action.id}`, { 
+      navigate(`/content/mortgage-refi/edit/${action.id}`, { 
         state: { 
           fromPage: currentPage,
           searchTerm: searchTerm,
-          returnPath: `/content/mortgage/drill/${pageId}`
+          returnPath: `/content/mortgage-refi/drill/${pageId}`
         } 
       });
     }
   };
 
   const handleBack = () => {
-    navigate('/content/mortgage', { 
+    navigate('/content/mortgage-refi', { 
       state: { 
         fromPage: location.state?.fromPage || 1,
         searchTerm: location.state?.searchTerm || ''
@@ -289,7 +247,7 @@ const MortgageDrill: React.FC = () => {
     return (
       <div className="mortgage-drill-loading">
         <div className="loading-spinner"></div>
-        <p>Загрузка данных страницы...</p>
+        <p>Загрузка данных страницы рефинансирования...</p>
       </div>
     );
   }
@@ -320,7 +278,7 @@ const MortgageDrill: React.FC = () => {
         <div className="breadcrumb-container">
           <span className="breadcrumb-item" onClick={handleBack}>Контент сайта</span>
           <div className="breadcrumb-separator"></div>
-          <span className="breadcrumb-item" onClick={handleBack}>Главная</span>
+          <span className="breadcrumb-item" onClick={handleBack}>Рефинансирование ипотеки</span>
           <div className="breadcrumb-separator"></div>
           <span className="breadcrumb-item active">{drillData.pageTitle}</span>
         </div>
@@ -347,7 +305,7 @@ const MortgageDrill: React.FC = () => {
           <h2 className="section-title">Страница и ее состояния</h2>
           <div className="page-preview-container">
             <div className="page-preview-placeholder">
-              <span>Предварительный просмотр калькулятора ипотеки</span>
+              <span>Предварительный просмотр рефинансирования ипотеки</span>
             </div>
           </div>
         </div>
@@ -497,7 +455,7 @@ const MortgageDrill: React.FC = () => {
                     <div 
                       className="edit-icon-button"
                       onClick={() => {
-                        console.log('🚀 Arrow clicked for action:', action);
+                        console.log('🚀 Arrow clicked for mortgage-refi action:', action);
                         handleEditClick(action);
                       }}
                       title="Редактировать"
@@ -536,4 +494,4 @@ const MortgageDrill: React.FC = () => {
   );
 };
 
-export default MortgageDrill;
+export default MortgageRefiDrill; 

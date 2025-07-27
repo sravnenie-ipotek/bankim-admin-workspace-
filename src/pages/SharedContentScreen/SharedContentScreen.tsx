@@ -5,6 +5,7 @@ import { ContentListBase } from '../ContentListBase';
 import ContentMain from '../ContentMain';
 import ContentMenu from '../ContentMenu';
 import ContentMortgage from '../ContentMortgage';
+import ContentMortgageRefi from '../ContentMortgageRefi';
 
 // Configuration for each content type
 interface ContentTypeConfig {
@@ -41,7 +42,8 @@ const contentTypeConfig: Record<string, ContentTypeConfig> = {
     title: 'Рефинансирование ипотеки',
     breadcrumbLabel: 'Рефинансирование ипотеки',
     activeMenuItem: 'content-mortgage-refi',
-    useContentListBase: true
+    useContentListBase: false,
+    customComponent: ContentMortgageRefi
   },
   'credit': {
     title: 'Расчет Кредита',

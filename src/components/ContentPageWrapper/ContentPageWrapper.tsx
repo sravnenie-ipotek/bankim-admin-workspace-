@@ -22,11 +22,14 @@ const ContentPageWrapper: React.FC<ContentPageWrapperProps> = ({
       {/* Page Title */}
       <h1 className="page-title">{title}</h1>
       
-      {/* Tab Navigation */}
-      {showTabNavigation && <TabNavigation />}
-      
-      {/* Content */}
-      {children}
+      {/* Content Container with Tab Navigation */}
+      <div className="content-with-tabs">
+        {/* Tab Navigation */}
+        {showTabNavigation && <TabNavigation />}
+        
+        {/* Content */}
+        {children}
+      </div>
     </div>
   );
 };

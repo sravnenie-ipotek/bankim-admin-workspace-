@@ -451,7 +451,7 @@ class ApiService {
   }
 
   async getContentItemById(id: string): Promise<ApiResponse<ContentItem>> {
-    return this.request<ContentItem>(`/api/content-items/${id}`);
+    return this.request<ContentItem>(`/api/content/item/${id}`);
   }
 
   async updateContentTranslation(
@@ -696,6 +696,10 @@ class ApiService {
     return this.request<any[]>(`/api/content/mortgage/${encodeURIComponent(contentKey)}/options`);
   }
 
+  async getMortgageRefiDropdownOptions(contentKey: string): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(`/api/content/mortgage-refi/${encodeURIComponent(contentKey)}/options`);
+  }
+
   // Mortgage content operations
   async getMortgageContent(): Promise<ApiResponse<any>> {
     try {
@@ -760,6 +764,27 @@ class ApiService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update mortgage content'
+      };
+    }
+  }
+
+  async getMortgageAllItems(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching all individual mortgage content items...');
+      const response = await this.requestWithCache<any>(`/api/content/mortgage/all-items`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched all mortgage items');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch all mortgage items:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching all mortgage items:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch all mortgage items'
       };
     }
   }
@@ -838,8 +863,8 @@ class ApiService {
         
         if (contentType === 'mortgage' && response.data.mortgage_content) {
           contentArray = response.data.mortgage_content;
-        } else if (contentType === 'mortgage-refi' && response.data.mortgage_refi_content) {
-          contentArray = response.data.mortgage_refi_content;
+        } else if (contentType === 'mortgage-refi' && response.data.mortgage_content) {
+          contentArray = response.data.mortgage_content;
         } else if (contentType === 'credit' && response.data.credit_content) {
           contentArray = response.data.credit_content;
         } else if (contentType === 'credit-refi' && response.data.credit_refi_content) {

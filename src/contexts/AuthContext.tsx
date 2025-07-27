@@ -39,6 +39,7 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     { action: 'manage', resource: 'content' },
     { action: 'read', resource: 'content-management' },
     { action: 'write', resource: 'content-management' },
+    { action: 'update', resource: 'content-management' },
     { action: 'edit', resource: 'content-management' },
     { action: 'delete', resource: 'content-management' },
     { action: 'manage', resource: 'sales' },
