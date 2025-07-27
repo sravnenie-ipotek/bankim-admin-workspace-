@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import './ContentMenu.css';
 
-interface MenuTranslation {
+interface MenuSection {
   id: string;
   content_key: string;
   component_type: string;
@@ -20,6 +20,7 @@ interface MenuTranslation {
   screen_location: string;
   description: string;
   is_active: boolean;
+  actionCount: number;
   translations: {
     ru: string;
     he: string;
@@ -31,7 +32,7 @@ interface MenuTranslation {
 interface MenuData {
   status: string;
   content_count: number;
-  menu_items: MenuTranslation[];
+  menu_content: MenuSection[];
 }
 
 const ContentMenu: React.FC = () => {
@@ -42,63 +43,51 @@ const ContentMenu: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editedTranslations, setEditedTranslations] = useState<{
-    ru: string;
-    he: string;
-  }>({ ru: '', he: '' });
+
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
+
+  // Helper function to format date for display
+  const formatLastModified = (dateString: string | null | undefined): string => {
+    if (!dateString) {
+      return 'Не изменялось';
+    }
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Не изменялось';
+      }
+      
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      
+      return `${day}.${month}.${year} | ${hours}:${minutes}`;
+    } catch (error) {
+      return 'Не изменялось';
+    }
+  };
 
   useEffect(() => {
     const fetchMenuData = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching menu translations from database...');
-        const response = await apiService.getMenuTranslations();
+        console.log('🔄 Fetching menu content from database...');
+        const response = await apiService.getMenuContent();
         
         if (response.success && response.data) {
-          const data = response.data;
-          if (data.menu_items && Array.isArray(data.menu_items)) {
-            const normalizedItems = data.menu_items.map((item: any) => {
-              // Map component_type to category for display
-              let category = 'text';
-              if (item.component_type === 'nav_link' || item.component_type === 'service_card' || item.component_type === 'link') {
-                category = 'link';
-              } else if (item.component_type === 'menu_item' || item.component_type === 'dropdown') {
-                category = 'dropdown';
-              } else if (item.component_type === 'heading' || item.component_type === 'title') {
-                category = 'dropdown';
-              } else {
-                category = 'text';
-              }
-              
-              return {
-                id: item.id || '',
-                content_key: item.content_key || '',
-                component_type: item.component_type || 'menu',
-                category: category,
-                screen_location: item.screen_location || '',
-                description: item.description || '',
-                is_active: item.is_active ?? true,
-                translations: {
-                  ru: item.translations?.ru || '',
-                  he: item.translations?.he || '',
-                  en: item.translations?.en || ''
-                },
-                last_modified: item.last_modified || new Date().toISOString()
-              };
-            });
-            
-            const normalizedData: MenuData = {
-              status: data.status || 'success',
-              content_count: data.content_count || normalizedItems.length,
-              menu_items: normalizedItems
-            };
-            
-            setMenuData(normalizedData);
-            console.log('✅ Successfully loaded menu data:', normalizedData);
-          }
+          // Data is already normalized by apiService.getMenuContent
+          const normalizedData: MenuData = {
+            status: 'success',
+            content_count: response.data.content_count,
+            menu_content: response.data.menu_content
+          };
+          
+          setMenuData(normalizedData);
+          console.log('✅ Successfully loaded menu content:', normalizedData);
         } else {
           console.error('❌ Failed to fetch menu translations from database:', response.error);
           setError(response.error || 'Failed to fetch menu translations from database');
@@ -115,63 +104,23 @@ const ContentMenu: React.FC = () => {
   }, []);
 
 
-  const handleSave = async (itemId: string) => {
-    try {
-      console.log('Saving translations for item:', itemId, editedTranslations);
-      
-      // Find the item to get its current data
-      const item = menuData?.menu_items.find(i => i.id === itemId);
-      if (!item) {
-        console.error('Item not found');
-        return;
-      }
-      
-      // Save Russian translation
-      if (editedTranslations.ru !== item.translations.ru) {
-        const ruResponse = await apiService.updateMenuTranslation(itemId, 'ru', editedTranslations.ru);
-        if (!ruResponse.success) {
-          console.error('Failed to save Russian translation:', ruResponse.error);
-          alert('Ошибка при сохранении русского перевода');
-          return;
-        }
-      }
-      
-      // Save Hebrew translation
-      if (editedTranslations.he !== item.translations.he) {
-        const heResponse = await apiService.updateMenuTranslation(itemId, 'he', editedTranslations.he);
-        if (!heResponse.success) {
-          console.error('Failed to save Hebrew translation:', heResponse.error);
-          alert('Ошибка при сохранении перевода на иврите');
-          return;
-        }
-      }
-      
-      // Update local state
-      if (menuData) {
-        const updatedItems = menuData.menu_items.map(i => 
-          i.id === itemId 
-            ? { ...i, translations: { ...i.translations, ru: editedTranslations.ru, he: editedTranslations.he } }
-            : i
-        );
-        setMenuData({ ...menuData, menu_items: updatedItems });
-      }
-      
-      setEditingId(null);
-      console.log('✅ Translations saved successfully');
-    } catch (error) {
-      console.error('Error saving translations:', error);
-      alert('Произошла ошибка при сохранении');
+
+
+  const handleViewClick = (item: MenuSection) => {
+    // Use the actual screen_location from the item
+    const screenLocation = item.screen_location;
+    
+    console.log(`📍 Navigating to menu drill for item:`, item);
+    console.log(`📍 Screen location: "${screenLocation}"`);
+    console.log(`📍 Content key: "${item.content_key}"`);
+    
+    if (!screenLocation) {
+      console.error('❌ No screen_location found for item:', item);
+      return;
     }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditedTranslations({ ru: '', he: '' });
-  };
-
-  const handleViewClick = (item: MenuTranslation) => {
-    // Navigate to edit page using the same pattern as mortgage, preserving current page
-    navigate(`/content/menu/edit/${item.id}`, { 
+    
+    // Navigate to drill page using the actual screen_location
+    navigate(`/content/menu/drill/${screenLocation}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 
@@ -179,17 +128,15 @@ const ContentMenu: React.FC = () => {
     });
   };
 
-  // handleDeleteClick removed as it's not used in current implementation
-  // It was likely for a future feature that wasn't implemented yet
-
   const filteredItems = useMemo(() => {
-    if (!menuData?.menu_items) return [];
-    return menuData.menu_items.filter(item =>
-      item.content_key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.translations.ru.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.translations.he.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!menuData?.menu_content) return [];
+    return menuData.menu_content.filter(item =>
+      item.content_key?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.he?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.translations?.en?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [menuData?.menu_items, searchTerm]);
+  }, [menuData?.menu_content, searchTerm]);
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -249,25 +196,26 @@ const ContentMenu: React.FC = () => {
         {/* List of Pages Title */}
         <h2 className="page-list-title">Список страниц</h2>
 
-        {/* Table Section */}
-        <div className="table-section">
-          {/* Table Header with Search and Filters */}
-          <div className="table-header-controls">
-            <div className="search-container">
-              <div className="search-input-wrapper">
-                <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Искать по названию, ID, номеру страницы"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-              </div>
+        {/* Search Section - moved to top level */}
+        <div className="table-header-controls">
+          <div className="search-container">
+            <div className="search-input-wrapper">
+              <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Искать по названию, ID, номеру страницы"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
             </div>
           </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="table-section">
 
           {/* Table Content - Column Layout */}
           <div className="menu-table">
@@ -316,16 +264,12 @@ const ContentMenu: React.FC = () => {
 
               {/* Column 2 - Number of Actions */}
               <div className="column12">
-                {currentItems.map((item) => {
-                  // Use calculated action count based on menu item type
-                  const actionCount = item.component_type === 'menu_item' ? 1 : 0;
-                  return (
-                    <React.Fragment key={`actions-${item.id}`}>
-                      <div className="box4"></div>
-                      <span className="text15">{actionCount}</span>
-                    </React.Fragment>
-                  );
-                })}
+                {currentItems.map((item) => (
+                  <React.Fragment key={`actions-${item.id}`}>
+                    <div className="box4"></div>
+                    <span className="text15">{item.actionCount || 1}</span>
+                  </React.Fragment>
+                ))}
               </div>
 
               {/* Column 3 - Last Modified */}
@@ -333,7 +277,7 @@ const ContentMenu: React.FC = () => {
                 {currentItems.map((item) => (
                   <React.Fragment key={`modified-${item.id}`}>
                     <div className="box4"></div>
-                    <span className="text20">01.08.2023 | 12:03</span>
+                    <span className="text20">{formatLastModified(item.last_modified)}</span>
                   </React.Fragment>
                 ))}
               </div>
@@ -343,29 +287,22 @@ const ContentMenu: React.FC = () => {
                 {currentItems.map((item) => (
                   <React.Fragment key={`action-${item.id}`}>
                     <div className="box6"></div>
-                    {editingId === item.id ? (
-                      <div style={{ display: 'flex', gap: '8px', padding: '8px' }}>
-                        <button onClick={() => handleSave(item.id)} className="save-btn">✓</button>
-                        <button onClick={handleCancelEdit} className="cancel-btn">✗</button>
-                      </div>
-                    ) : (
-                      <div
-                        className="image8"
-                        onClick={() => handleViewClick(item)}
-                        style={{ 
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '24px',
-                          color: '#FFFFFF',
-                          backgroundColor: 'transparent',
-                          border: '1px solid #374151'
-                        }}
-                      >
-                        →
-                      </div>
-                    )}
+                    <div
+                      className="image8"
+                      onClick={() => handleViewClick(item)}
+                      style={{ 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px',
+                        color: '#FFFFFF',
+                        backgroundColor: 'transparent',
+                        border: '1px solid #374151'
+                      }}
+                    >
+                      →
+                    </div>
                   </React.Fragment>
                 ))}
               </div>

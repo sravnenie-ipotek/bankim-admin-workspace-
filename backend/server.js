@@ -325,6 +325,246 @@ app.get('/api/content/menu/translations', async (req, res) => {
 });
 
 /**
+ * Get menu content
+ * GET /api/content/menu
+ * Returns content for menu screen with dynamic translations from database
+ */
+app.get('/api/content/menu', async (req, res) => {
+  try {
+    // Dynamic query that gets actual menu content from database
+    const result = await safeQuery(`
+      WITH menu_summaries AS (
+        SELECT 
+          ci.screen_location,
+          COUNT(*) as action_count,
+          MAX(ci.updated_at) as last_modified,
+          MIN(ci.id) as representative_id,
+          -- Get title translations from the main title content for each screen
+          COALESCE(
+            (SELECT ct_ru.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_ru ON title_ci.id = ct_ru.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_ru.language_code = 'ru'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Russian translation
+            (SELECT ct_ru.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_ru ON fallback_ci.id = ct_ru.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_ru.language_code = 'ru'
+               AND ct_ru.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            'Sidebar Menu'
+          ) as title_ru,
+          COALESCE(
+            (SELECT ct_he.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_he ON title_ci.id = ct_he.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_he.language_code = 'he'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Hebrew translation
+            (SELECT ct_he.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_he ON fallback_ci.id = ct_he.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_he.language_code = 'he'
+               AND ct_he.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            'תפריט צדדי'
+          ) as title_he,
+          COALESCE(
+            (SELECT ct_en.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_en ON title_ci.id = ct_en.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND title_ci.content_key LIKE '%.title'
+               AND ct_en.language_code = 'en'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available English translation
+            (SELECT ct_en.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_en ON fallback_ci.id = ct_en.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_en.language_code = 'en'
+               AND ct_en.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            'Sidebar Menu'
+          ) as title_en
+        FROM content_items ci
+        WHERE ci.screen_location IN ('sidebar', 'navigation', 'menu_navigation')
+          AND ci.is_active = TRUE
+          AND ci.component_type != 'option'
+        GROUP BY ci.screen_location
+        HAVING COUNT(*) > 0
+      )
+      SELECT 
+        ms.representative_id as id,
+        ms.screen_location as content_key,
+        'menu' as component_type,
+        'menu_sections' as category,
+        ms.screen_location,
+        COALESCE(ms.title_ru, ms.title_en, 'Unnamed Menu') as description,
+        true as is_active,
+        ms.action_count,
+        ms.title_ru,
+        ms.title_he,
+        ms.title_en,
+        ms.last_modified as updated_at
+      FROM menu_summaries ms
+      ORDER BY ms.screen_location
+    `);
+    
+    const menuContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      actionCount: row.action_count || 1,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: menuContent.length,
+        menu_content: menuContent
+      }
+    });
+
+  } catch (error) {
+    console.error('Get menu content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get detailed content items for a specific menu section
+ * GET /api/content/menu/drill/:sectionId
+ * Returns individual content items that belong to a specific menu section
+ */
+app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
+  try {
+    const { sectionId } = req.params;
+    
+    console.log(`Fetching menu drill content for section ID: ${sectionId}`);
+    
+    // Validate that this screen_location exists in our known menu sections
+    const validScreenLocations = ['sidebar', 'navigation', 'menu_navigation'];
+    if (!validScreenLocations.includes(sectionId)) {
+      return res.status(404).json({
+        success: false,
+        error: `Invalid menu section ID: ${sectionId}`
+      });
+    }
+
+    // Get section title mapping
+    const sectionTitles = {
+      'sidebar': 'Панель управления',
+      'navigation': 'Навигация',
+      'menu_navigation': 'Навигация меню'
+    };
+
+    // Get individual content items for this menu section
+    const contentResult = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.page_number,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.screen_location = $1
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [sectionId]);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found for this menu section'
+      });
+    }
+
+    const actions = contentResult.rows.map(row => ({
+      id: row.id,
+      actionNumber: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      page_number: row.page_number,
+      description: row.description,
+      is_active: row.is_active,
+      last_modified: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+
+    res.json({
+      success: true,
+      data: {
+        pageTitle: sectionTitles[sectionId],
+        stepGroup: sectionId,
+        actionCount: visibleActionCount,
+        actions: actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get menu drill content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get text content by action ID
  * GET /api/content/text/{actionId}
  * Returns text content for a specific action with translations
@@ -563,11 +803,14 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
 
     console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
 
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+
     res.json({
       success: true,
       data: {
         pageTitle: 'Калькулятор ипотеки',
-        actionCount: actions.length,
+        actionCount: visibleActionCount,
         actions: actions
       }
     });
@@ -1101,7 +1344,7 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Калькулятор ипотеки' as title_ru,
           'משכנתא מחשבון' as title_he,
           'Mortgage Calculator' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as action_count,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as last_modified,
           (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as representative_id
         UNION ALL
@@ -1110,7 +1353,7 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Анкета личных данных' as title_ru,
           'טופס נתונים אישיים' as title_he,
           'Personal Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as action_count,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as last_modified,
           (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as representative_id
         UNION ALL
@@ -1119,7 +1362,7 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Анкета доходов' as title_ru,
           'טופס הכנסות' as title_he,
           'Income Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as action_count,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as last_modified,
           (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as representative_id
         UNION ALL
@@ -1128,7 +1371,7 @@ app.get('/api/content/mortgage', async (req, res) => {
           'Выбор программ ипотеки' as title_ru,
           'בחירת תוכניות משכנתא' as title_he,
           'Mortgage Program Selection' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as action_count,
+          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE AND component_type != 'option') as action_count,
           (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
           (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id
       )
@@ -1273,12 +1516,15 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
       }
     }));
 
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+
     res.json({
       success: true,
       data: {
         pageTitle: stepTitles[screenLocation],
         stepGroup: stepId,
-        actionCount: actions.length,
+        actionCount: visibleActionCount,
         actions: actions
       }
     });
@@ -1421,6 +1667,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
           COUNT(*) as action_count,
           MAX(ci.updated_at) as last_modified,
           MIN(ci.id) as representative_id,
+          MIN(ci.page_number) as page_number,
           -- Get title translations from the main title content for each screen
           COALESCE(
             (SELECT ct_ru.content_value 
@@ -1480,8 +1727,9 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
              LIMIT 1)
           ) as title_en
         FROM content_items ci
-        WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4')
+        WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4')
           AND ci.is_active = TRUE
+          AND ci.component_type != 'option'
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )
@@ -1491,6 +1739,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
         'step' as component_type,
         'mortgage_refi_steps' as category,
         ss.screen_location,
+        ss.page_number,
         COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
         true as is_active,
         ss.action_count,
@@ -1508,6 +1757,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
+      page_number: row.page_number,
       description: row.description,
       is_active: row.is_active,
       actionCount: row.action_count || 1,
@@ -1556,7 +1806,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
       'step.1.calculator': 'refinance_credit_1',
       'step.2.personal_data': 'refinance_credit_2', 
       'step.3.income_data': 'refinance_credit_3',
-      'step.4.program_selection': 'mortgage_step4'
+      'step.4.program_selection': 'refinance_credit_4'
     };
 
     // If it's a legacy step ID, map it to the real screen_location
@@ -1565,7 +1815,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     }
     
     // Validate that this screen_location exists in our known refinancing screens
-    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4'];
+    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4'];
     if (!validScreenLocations.includes(screenLocation)) {
       return res.status(404).json({
         success: false,
@@ -1581,6 +1831,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
+        ci.page_number,
         ci.description,
         ci.is_active,
         ci.updated_at,
@@ -1617,6 +1868,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
+      page_number: row.page_number,
       description: row.description,
       is_active: row.is_active,
       last_modified: row.updated_at,
@@ -1644,12 +1896,15 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
       }
     }
 
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+
     res.json({
       success: true,
       data: {
         pageTitle: pageTitle,
         stepGroup: stepId,
-        actionCount: actions.length,
+        actionCount: visibleActionCount,
         actions: actions
       }
     });

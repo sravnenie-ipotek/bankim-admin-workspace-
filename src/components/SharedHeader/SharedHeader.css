@@ -223,6 +223,11 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.nav-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid #F59E0B;
+}
+
 /* Flag Icons */
 .flag-icon {
   width: 18px;
@@ -305,6 +310,58 @@
   top: 76.09%;
   bottom: 10.87%;
   background: #0052B4;
+}
+
+/* USA Flag */
+.usa-flag {
+  position: relative;
+  overflow: hidden;
+}
+
+.usa-flag .flag-stripes {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: linear-gradient(
+    to bottom,
+    #B22234 0%,
+    #B22234 7.69%,
+    #FFFFFF 7.69%,
+    #FFFFFF 15.38%,
+    #B22234 15.38%,
+    #B22234 23.08%,
+    #FFFFFF 23.08%,
+    #FFFFFF 30.77%,
+    #B22234 30.77%,
+    #B22234 38.46%,
+    #FFFFFF 38.46%,
+    #FFFFFF 46.15%,
+    #B22234 46.15%,
+    #B22234 53.85%,
+    #FFFFFF 53.85%,
+    #FFFFFF 61.54%,
+    #B22234 61.54%,
+    #B22234 69.23%,
+    #FFFFFF 69.23%,
+    #FFFFFF 76.92%,
+    #B22234 76.92%,
+    #B22234 84.62%,
+    #FFFFFF 84.62%,
+    #FFFFFF 92.31%,
+    #B22234 92.31%,
+    #B22234 100%
+  );
+}
+
+.usa-flag .flag-canton {
+  position: absolute;
+  left: 0%;
+  right: 60%;
+  top: 0%;
+  bottom: 46.15%;
+  background: #3C3B6E;
 }
 
 /* Language Text */

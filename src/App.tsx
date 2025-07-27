@@ -29,6 +29,7 @@ import MortgageRefiDrill from './pages/MortgageRefiDrill';
 import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
 import ContentMortgageRefi from './pages/ContentMortgageRefi';
+import MenuDrill from './pages/MenuDrill';
 
 
 
@@ -475,6 +476,20 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Страница рефинансирования" activeMenuItem="content-mortgage-refi">
                   <MortgageRefiDrill />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Menu drill route - specific drill page for menu sections */}
+        <Route 
+          path="/content/menu/drill/:sectionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Раздел меню" activeMenuItem="content-menu">
+                  <MenuDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

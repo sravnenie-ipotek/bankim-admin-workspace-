@@ -170,14 +170,23 @@ const MortgageRefiDrill: React.FC = () => {
     });
   };
 
-  const filteredActions = useMemo(() => {
+  // First filter out options, then apply search
+  const visibleActions = useMemo(() => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
       // Hide individual dropdown option values, only show dropdown headers
       if (action.component_type?.toLowerCase() === 'option') {
         return false;
       }
-      
+      return true;
+    });
+  }, [drillData?.actions]);
+
+  const filteredActions = useMemo(() => {
+    if (!visibleActions) return [];
+    if (!searchTerm) return visibleActions;
+    
+    return visibleActions.filter(action => {
       return (
         action.content_key?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         action.translations?.ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -185,7 +194,7 @@ const MortgageRefiDrill: React.FC = () => {
         action.component_type?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-  }, [drillData?.actions, searchTerm]);
+  }, [visibleActions, searchTerm]);
 
   const totalPages = Math.ceil(filteredActions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -292,7 +301,7 @@ const MortgageRefiDrill: React.FC = () => {
         <div className="info-cards-row">
           <div className="info-card">
             <span className="info-label">Количество действий</span>
-            <span className="info-value">{drillData.actionCount}</span>
+            <span className="info-value">{visibleActions.length}</span>
           </div>
           <div className="info-card">
             <span className="info-label">Последнее редактирование</span>

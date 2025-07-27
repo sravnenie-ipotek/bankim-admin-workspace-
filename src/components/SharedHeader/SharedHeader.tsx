@@ -12,6 +12,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage, Language, LANGUAGES } from '../../contexts/LanguageContext';
 import './SharedHeader.css';
 
 interface SharedHeaderProps {
@@ -36,8 +37,8 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   onLogoClick
 }) => {
   const navigate = useNavigate();
+  const { language, setLanguage } = useLanguage();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('Русский');
 
   /**
    * Handle logo click with optional confirmation
@@ -62,10 +63,9 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   /**
    * Handle language selection
    */
-  const handleLanguageSelect = (language: string) => {
-    setSelectedLanguage(language);
+  const handleLanguageSelect = (lang: Language) => {
+    setLanguage(lang);
     setIsLanguageDropdownOpen(false);
-    // TODO: Implement actual language switching logic
   };
 
   /**
@@ -107,7 +107,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
               onClick={toggleLanguageDropdown}
               aria-label="Select language"
             >
-              <span className="selected-language">{selectedLanguage}</span>
+              <span className="selected-language">{LANGUAGES[language].name}</span>
               <div className={`dropdown-arrow ${isLanguageDropdownOpen ? 'open' : ''}`}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path 
@@ -127,8 +127,8 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
                 <div className="dropdown-content">
                   {/* Russian Option */}
                   <button 
-                    className="nav-link"
-                    onClick={() => handleLanguageSelect('Русский')}
+                    className={`nav-link ${language === 'ru' ? 'active' : ''}`}
+                    onClick={() => handleLanguageSelect('ru')}
                   >
                     <div className="flag-icon russia-flag">
                       <div className="flag-white"></div>
@@ -140,8 +140,8 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
 
                   {/* Hebrew/Israeli Option */}
                   <button 
-                    className="nav-link"
-                    onClick={() => handleLanguageSelect('עברית')}
+                    className={`nav-link ${language === 'he' ? 'active' : ''}`}
+                    onClick={() => handleLanguageSelect('he')}
                   >
                     <div className="flag-icon israel-flag">
                       <div className="flag-white-bg"></div>
@@ -150,6 +150,18 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
                       <div className="flag-blue-stripe-bottom"></div>
                     </div>
                     <span className="language-text">עברית</span>
+                  </button>
+
+                  {/* English Option */}
+                  <button 
+                    className={`nav-link ${language === 'en' ? 'active' : ''}`}
+                    onClick={() => handleLanguageSelect('en')}
+                  >
+                    <div className="flag-icon usa-flag">
+                      <div className="flag-stripes"></div>
+                      <div className="flag-canton"></div>
+                    </div>
+                    <span className="language-text">English</span>
                   </button>
               </div>
             </div>

@@ -1,26 +1,26 @@
 /**
- * MortgageDrill Component
- * Drill-down page showing detailed actions for a specific mortgage page
- * Based on calculateMortgrate_drill1.md design structure
+ * MenuDrill Component
+ * Drill-down page showing detailed actions for a specific menu section
+ * Based on MortgageDrill design structure
  * 
  * @version 1.0.0
- * @since 2025-01-26
+ * @since 2025-01-20
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import './MortgageDrill.css';
 import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
-import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
+import '../MortgageDrill/MortgageDrill.css'; // Reuse drill styles
 
-interface MortgageAction {
+interface MenuAction {
   id: string;
   actionNumber: number;
   content_key: string;
   component_type: string;
   category: string;
   screen_location: string;
+  page_number: number;
   description: string;
   is_active: boolean;
   translations: {
@@ -31,94 +31,49 @@ interface MortgageAction {
   last_modified: string;
 }
 
-interface MortgageDrillData {
+interface MenuDrillData {
   pageTitle: string;
   actionCount: number;
   lastModified: string;
-  actions: MortgageAction[];
+  actions: MenuAction[];
 }
 
-const MortgageDrill: React.FC = () => {
-  const { pageId } = useParams<{ pageId: string }>();
+const MenuDrill: React.FC = () => {
+  const { sectionId } = useParams<{ sectionId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const [drillData, setDrillData] = useState<MortgageDrillData | null>(null);
+  const [drillData, setDrillData] = useState<MenuDrillData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
-  const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
-
-  // Detect content type from URL path
-  const contentType = detectContentTypeFromPath(location.pathname);
+  const itemsPerPage = 20; // Show more items per page to accommodate all menu content
 
   useEffect(() => {
     fetchDrillData();
-  }, [pageId, contentType]);
+  }, [sectionId]);
 
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching drill data for ${contentType} step ID: ${pageId}`);
+      console.log(`🔍 Fetching menu drill data for section ID: ${sectionId}`);
       
-      // Try the backend drill endpoint first
-      try {
-        const { drillEndpoint } = generateApiEndpoints(contentType, pageId);
-        const drillResponse = await apiService.request(drillEndpoint, 'GET');
-        
-        if (drillResponse.success && drillResponse.data) {
-          const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
-
-          // Transform to drill data format
-          const transformedActions: MortgageAction[] = actions.map((item: any) => ({
-            id: item.id,
-            actionNumber: item.actionNumber,
-            content_key: item.content_key || '',
-            component_type: item.component_type || 'text',
-            category: item.category || '',
-            screen_location: item.screen_location || '',
-            description: item.description || '',
-            is_active: item.is_active !== false,
-            translations: {
-              ru: item.translations?.ru || '',
-              he: item.translations?.he || '',
-              en: item.translations?.en || ''
-            },
-            last_modified: item.last_modified || new Date().toISOString()
-          }));
-
-          setDrillData({
-            pageTitle: pageTitle,
-            actionCount: actionCount,
-            lastModified: transformedActions.length > 0 ? 
-              transformedActions.reduce((latest, action) => 
-                new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
-                transformedActions[0].last_modified
-              ) : new Date().toISOString(),
-            actions: transformedActions
-          });
-          return;
-        }
-      } catch (drillError) {
-        console.warn('Drill endpoint failed, falling back to all mortgage content items:', drillError);
-      }
+      // Use the backend drill endpoint for menu
+      const drillResponse = await apiService.request(`/api/content/menu/drill/${sectionId}`, 'GET');
       
-      // Fallback: get all individual mortgage content items across all steps
-      const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
-      
-      if (response.success && response.data) {
-        // Use the data from the new all-items endpoint
-        const { pageTitle, actionCount, actions: allActions } = response.data;
+      if (drillResponse.success && drillResponse.data) {
+        const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
 
-        // Transform to drill data format 
-        const actions: MortgageAction[] = allActions.map((item: any) => ({
+        // Transform to drill data format
+        const transformedActions: MenuAction[] = actions.map((item: any) => ({
           id: item.id,
           actionNumber: item.actionNumber,
           content_key: item.content_key || '',
           component_type: item.component_type || 'text',
           category: item.category || '',
           screen_location: item.screen_location || '',
+          page_number: item.page_number || 0,
           description: item.description || '',
           is_active: item.is_active !== false,
           translations: {
@@ -132,26 +87,26 @@ const MortgageDrill: React.FC = () => {
         setDrillData({
           pageTitle: pageTitle,
           actionCount: actionCount,
-          lastModified: actions.length > 0 ? 
-            actions.reduce((latest, action) => 
+          lastModified: transformedActions.length > 0 ? 
+            transformedActions.reduce((latest, action) => 
               new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 
-              actions[0].last_modified
+              transformedActions[0].last_modified
             ) : new Date().toISOString(),
-          actions: actions
+          actions: transformedActions
         });
       } else {
-        setError('Не удалось загрузить данные');
+        setError('Не удалось загрузить данные меню');
       }
     } catch (err) {
-      console.error('❌ Error fetching drill data:', err);
-      setError('Ошибка загрузки данных');
+      console.error('❌ Error fetching menu drill data:', err);
+      setError('Ошибка загрузки данных меню');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEditClick = (action: MortgageAction) => {
-    console.log('🔍 Clicked action:', {
+  const handleEditClick = (action: MenuAction) => {
+    console.log('🔍 Clicked menu action:', {
       id: action.id,
       component_type: action.component_type,
       content_key: action.content_key,
@@ -165,42 +120,36 @@ const MortgageDrill: React.FC = () => {
     // Navigate based on component type
     const componentTypeLower = action.component_type?.toLowerCase();
     
-    const paths = generateContentPaths(contentType, action.id, pageId);
-    const navigationState = {
-      fromPage: location.state?.fromPage || 1,
-      searchTerm: location.state?.searchTerm || '',
-      drillPage: currentPage,
-      drillSearchTerm: searchTerm,
-      returnPath: paths.drillPath,
-      baseActionNumber: location.state?.baseActionNumber || 0
-    };
-
-    // For text types - navigate to the special text edit page
+    // For text types - navigate to edit page
     if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
         typeDisplay === 'Текст') {
-      console.log('✅ Navigating to text edit page:', paths.textEditPath);
-      navigate(paths.textEditPath, { state: navigationState });
-    } 
-    // For dropdown types - navigate to the special dropdown edit page
-    else if (componentTypeLower === 'dropdown' || 
-             componentTypeLower === 'select' ||
-             componentTypeLower === 'option' ||
-             typeDisplay === 'Дропдаун') {
-      console.log('📋 Navigating to dropdown edit page:', paths.dropdownEditPath);
-      navigate(paths.dropdownEditPath, { state: navigationState });
+      const textEditUrl = `/content/menu/text-edit/${action.id}`;
+      console.log('✅ Navigating to menu text edit page:', textEditUrl);
+      navigate(textEditUrl, { 
+        state: { 
+          fromPage: currentPage,
+          searchTerm: searchTerm,
+          returnPath: `/content/menu/drill/${sectionId}`
+        } 
+      });
     } 
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(paths.editPath, { state: navigationState });
+      navigate(`/content/menu/edit/${action.id}`, { 
+        state: { 
+          fromPage: currentPage,
+          searchTerm: searchTerm,
+          returnPath: `/content/menu/drill/${sectionId}`
+        } 
+      });
     }
   };
 
   const handleBack = () => {
-    const paths = generateContentPaths(contentType);
-    navigate(paths.listPath, { 
+    navigate('/content/menu', { 
       state: { 
         fromPage: location.state?.fromPage || 1,
         searchTerm: location.state?.searchTerm || ''
@@ -252,17 +201,7 @@ const MortgageDrill: React.FC = () => {
     // Check if this is a dropdown-related field based on content patterns
     const isDropdownField = contentKey.includes('_option') || 
                             contentKey.includes('_ph') || 
-                            contentKey.includes('citizenship') ||
-                            contentKey.includes('education') ||
-                            contentKey.includes('family_status') ||
-                            contentKey.includes('main_source') ||
-                            contentKey.includes('debt_types') ||
-                            contentKey.includes('has_additional') ||
-                            contentKey.includes('property_ownership') ||
-                            contentKey.includes('first_home') ||
-                            contentKey.includes('sphere') ||
-                            contentKey.includes('type') ||
-                            contentKey.includes('when_needed');
+                            contentKey.includes('menu_item');
 
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
@@ -285,6 +224,8 @@ const MortgageDrill: React.FC = () => {
       case 'header':
       case 'section_header':
         return 'Заголовок';
+      case 'menu_item':
+        return 'Пункт меню';
       default:
         return 'Текст';
     }
@@ -294,7 +235,7 @@ const MortgageDrill: React.FC = () => {
     return (
       <div className="mortgage-drill-loading">
         <div className="loading-spinner"></div>
-        <p>Загрузка данных страницы...</p>
+        <p>Загрузка данных меню...</p>
       </div>
     );
   }
@@ -325,7 +266,7 @@ const MortgageDrill: React.FC = () => {
         <div className="breadcrumb-container">
           <span className="breadcrumb-item" onClick={handleBack}>Контент сайта</span>
           <div className="breadcrumb-separator"></div>
-          <span className="breadcrumb-item" onClick={handleBack}>Главная</span>
+          <span className="breadcrumb-item" onClick={handleBack}>Меню</span>
           <div className="breadcrumb-separator"></div>
           <span className="breadcrumb-item active">{drillData.pageTitle}</span>
         </div>
@@ -352,7 +293,7 @@ const MortgageDrill: React.FC = () => {
           <h2 className="section-title">Страница и ее состояния</h2>
           <div className="page-preview-container">
             <div className="page-preview-placeholder">
-              <span>Предварительный просмотр калькулятора ипотеки</span>
+              <span>Предварительный просмотр {drillData.pageTitle.toLowerCase()}</span>
             </div>
           </div>
         </div>
@@ -423,8 +364,8 @@ const MortgageDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`action-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${(location.state?.baseActionNumber || 0) + startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
-                      {(location.state?.baseActionNumber || 0) + startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
+                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${startIndex + index + 1}.${action.description || action.translations.ru || action.content_key}`}>
+                      {startIndex + index + 1}.{action.description || action.translations.ru || action.content_key}
                     </div>
                   </div>
                   <div className="column-divider"></div>
@@ -440,10 +381,10 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
+              {currentActions.map((action) => (
                 <React.Fragment key={`type-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '500', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={getComponentTypeDisplay(action.component_type, action.content_key)}>
+                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px' }}>
                       {getComponentTypeDisplay(action.component_type, action.content_key)}
                     </div>
                   </div>
@@ -452,19 +393,19 @@ const MortgageDrill: React.FC = () => {
               ))}
             </div>
 
-            {/* Column 3: RU */}
-            <div className="table-column" style={{ width: '188px' }}>
+            {/* Column 3: ЯЗЫК */}
+            <div className="table-column" style={{ width: '146px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
-                  RU
+                  ЯЗЫК
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
-                <React.Fragment key={`ru-${action.id}`}>
+              {currentActions.map((action) => (
+                <React.Fragment key={`lang-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={action.translations.ru}>
-                      {action.translations.ru}
+                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px' }}>
+                      {action.translations.ru ? 'Ru' : ''} {action.translations.he ? 'He' : ''} {action.translations.en ? 'En' : ''}
                     </div>
                   </div>
                   <div className="column-divider"></div>
@@ -472,19 +413,19 @@ const MortgageDrill: React.FC = () => {
               ))}
             </div>
 
-            {/* Column 4: HEB */}
-            <div className="table-column" style={{ width: '188px' }}>
+            {/* Column 4: ПОСЛЕДНЕЕ РЕДАКТИРОВАНИЕ */}
+            <div className="table-column" style={{ width: '269px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
-                  HEB
+                  ПОСЛЕДНЕЕ РЕДАКТИРОВАНИЕ
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
-                <React.Fragment key={`he-${action.id}`}>
+              {currentActions.map((action) => (
+                <React.Fragment key={`modified-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', textAlign: 'right', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', direction: 'rtl' }} title={action.translations.he}>
-                      {action.translations.he}
+                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px' }}>
+                      {formatLastModified(action.last_modified)}
                     </div>
                   </div>
                   <div className="column-divider"></div>
@@ -492,17 +433,21 @@ const MortgageDrill: React.FC = () => {
               ))}
             </div>
 
-            {/* Column 5: Action Buttons */}
-            <div className="table-column" style={{ width: '125px' }}>
-              <div className="column-header" style={{ height: '50px' }}></div>
+            {/* Column 5: РЕДАКТИРОВАТЬ */}
+            <div className="table-column" style={{ width: '161px' }}>
+              <div className="column-header">
+                <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
+                  РЕДАКТИРОВАТЬ
+                </div>
+              </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
+              {currentActions.map((action) => (
                 <React.Fragment key={`edit-${action.id}`}>
                   <div className="column-cell">
                     <div 
                       className="edit-icon-button"
                       onClick={() => {
-                        console.log('🚀 Arrow clicked for action:', action);
+                        console.log('🚀 Arrow clicked for menu action:', action);
                         handleEditClick(action);
                       }}
                       title="Редактировать"
@@ -515,25 +460,19 @@ const MortgageDrill: React.FC = () => {
                 </React.Fragment>
               ))}
             </div>
+            </div>
           </div>
 
-            {/* Pagination */}
-            <div style={{ alignSelf: 'stretch', padding: '16px', borderTop: '1px var(--gray-700, #374151) solid', justifyContent: 'space-between', alignItems: 'center', display: 'inline-flex' }}>
-              <div>
-                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}>Показывает </span>
-                <span style={{ color: 'white', fontSize: '14px', fontFamily: 'Inter', fontWeight: '600', lineHeight: '21px' }}>{startIndex + 1}-{Math.min(endIndex, filteredActions.length)}</span>
-                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}> из </span>
-                <span style={{ color: 'white', fontSize: '14px', fontFamily: 'Inter', fontWeight: '600', lineHeight: '21px' }}>{filteredActions.length}</span>
-              </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={filteredActions.length}
-                itemsPerPage={itemsPerPage}
-                onPageChange={setCurrentPage}
-                size="medium"
-              />
-            </div>
+          {/* Modern UX-Friendly Pagination */}
+          <div style={{ padding: '24px 16px' }}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredActions.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              size="medium"
+            />
           </div>
         </div>
       </div>
@@ -541,4 +480,4 @@ const MortgageDrill: React.FC = () => {
   );
 };
 
-export default MortgageDrill;
+export default MenuDrill; 

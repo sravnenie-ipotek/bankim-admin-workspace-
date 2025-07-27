@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Mortgage-Refi Counts</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .match { background-color: #90EE90; }
+        .mismatch { background-color: #FFB6C1; }
+        button { padding: 10px 20px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Debug Mortgage-Refi Count Issue</h1>
+    <button onclick="runTest()">Run Test</button>
+    <div id="results"></div>
+
+    <script>
+        async function runTest() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                // 1. Fetch list data
+                const listResponse = await fetch('http://localhost:3001/api/content/mortgage-refi');
+                const listData = await listResponse.json();
+                
+                if (!listData.success) {
+                    results.innerHTML = '<p class="result mismatch">Failed to load list data</p>';
+                    return;
+                }
+                
+                let html = '<h2>List View Data:</h2>';
+                const items = listData.data.mortgage_content;
+                
+                for (const item of items) {
+                    html += `<div class="result">
+                        <strong>${item.screen_location}</strong>: ${item.actionCount} actions (${item.translations.ru})
+                    </div>`;
+                }
+                
+                // 2. Test each drill endpoint
+                html += '<h2>Drill View Comparison:</h2>';
+                
+                for (const item of items) {
+                    const drillResponse = await fetch(`http://localhost:3001/api/content/mortgage-refi/drill/${item.screen_location}`);
+                    const drillData = await drillResponse.json();
+                    
+                    if (drillData.success) {
+                        const listCount = parseInt(item.actionCount);
+                        const drillCount = drillData.data.actionCount;
+                        const match = listCount === drillCount;
+                        
+                        html += `<div class="result ${match ? 'match' : 'mismatch'}">
+                            <strong>${item.screen_location}</strong><br>
+                            List: ${listCount} | Drill: ${drillCount} | 
+                            ${match ? '✅ MATCH' : '❌ MISMATCH'}<br>
+                            <small>Title: ${item.translations.ru}</small>
+                        </div>`;
+                        
+                        // If mismatch, show some items
+                        if (!match && drillData.data.actions) {
+                            html += '<ul>';
+                            drillData.data.actions.slice(0, 5).forEach(action => {
+                                html += `<li>${action.content_key}</li>`;
+                            });
+                            html += '</ul>';
+                        }
+                    } else {
+                        html += `<div class="result mismatch">
+                            <strong>${item.screen_location}</strong>: Failed to load drill data
+                        </div>`;
+                    }
+                }
+                
+                results.innerHTML = html;
+                
+            } catch (error) {
+                results.innerHTML = `<p class="result mismatch">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

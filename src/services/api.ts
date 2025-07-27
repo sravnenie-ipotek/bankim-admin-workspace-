@@ -883,7 +883,28 @@ class ApiService {
     }
   }
 
-  // Menu translations operations - using real bankim_content database
+  // Menu content operations - using real bankim_content database
+  async getMenuContent(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching menu content from database...');
+      const response = await this.requestWithCache<any>(`/api/content/menu`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched menu content from database');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch menu content:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching menu content:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch menu content'
+      };
+    }
+  }
+
   async getMenuTranslations(): Promise<ApiResponse<any>> {
     try {
       console.log('🔄 Fetching menu translations from bankim_content database...');
