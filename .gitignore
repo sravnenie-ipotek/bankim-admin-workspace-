@@ -116,6 +116,7 @@ cypress/downloads/
 cypress/screenshots/
 cypress/videos/
 cypress/fixtures/example.json
+cypress/reports/
 
 # Database files (if any local backups)
 *.sql.backup

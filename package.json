@@ -25,6 +25,7 @@
     "cypress:run": "cypress run",
     "test:mortgage": "cypress run --spec 'cypress/e2e/mortgage-drill-navigation.cy.ts'",
     "test:content-errors": "cypress run --spec 'cypress/e2e/content-not-found-check.cy.ts'",
+    "test:full-drill": "cypress run --spec 'cypress/e2e/full-drill-depth-test.cy.ts'",
     "test:all": "cypress run"
   },
   "dependencies": {

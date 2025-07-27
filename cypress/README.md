@@ -14,6 +14,13 @@ npm install --save-dev cypress @types/cypress
 npm run full-dev
 ```
 
+## Installing Cypress
+
+First, install Cypress and its dependencies:
+```bash
+npm install --save-dev cypress @types/cypress
+```
+
 ## Running Tests
 
 ### Open Cypress Test Runner (Interactive Mode)
@@ -39,6 +46,21 @@ npm run test:mortgage
 npm run test:content-errors
 ```
 
+#### Run FULL drill depth test (checks EVERY action to the bottom):
+```bash
+npm run test:full-drill
+```
+This test will:
+- Navigate through ALL mortgage pages
+- Click on EVERY action item in EVERY drill page
+- Check ALL pagination pages (up to 10 pages per drill)
+- Generate a comprehensive error report
+
+#### Quick smoke test (tests first action of each page):
+```bash
+npx cypress run --spec 'cypress/e2e/quick-drill-check.cy.ts'
+```
+
 ## Test Files
 
 1. **mortgage-drill-navigation.cy.ts**
@@ -52,6 +74,25 @@ npm run test:content-errors
    - Specifically looks for ID: 1370 error
    - Creates a report of all problematic IDs
    - Tests both mortgage and mortgage-refi content
+
+3. **full-drill-depth-test.cy.ts** (COMPREHENSIVE TEST)
+   - Tests EVERY mortgage page
+   - Clicks EVERY action item on EVERY drill page
+   - Navigates through ALL pagination pages
+   - Generates detailed error report with:
+     - Page name
+     - Action number
+     - Action ID
+     - Error type
+     - URL where error occurred
+   - Takes screenshots of all errors
+   - Saves report to `cypress/reports/full-drill-test-report.txt`
+
+4. **quick-drill-check.cy.ts**
+   - Quick smoke test
+   - Tests only the first action of each page
+   - Validates API endpoints
+   - Good for quick validation before running full tests
 
 ## Understanding Test Results
 
