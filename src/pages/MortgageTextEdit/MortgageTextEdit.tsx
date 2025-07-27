@@ -148,6 +148,7 @@ const MortgageTextEdit: React.FC = () => {
   const [ruText, setRuText] = useState('');
   const [heText, setHeText] = useState('');
   const [additionalTexts, setAdditionalTexts] = useState<Array<{ ru: string; he: string }>>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
 
   useEffect(() => {
     fetchContentData();
@@ -297,8 +298,8 @@ const MortgageTextEdit: React.FC = () => {
     
     navigate(returnPath, {
       state: {
-        fromPage: location.state?.fromPage,
-        searchTerm: location.state?.searchTerm
+        fromPage: location.state?.drillPage || location.state?.fromPage || 1,
+        searchTerm: location.state?.drillSearchTerm || location.state?.searchTerm || ''
       }
     });
   };
@@ -324,9 +325,27 @@ const MortgageTextEdit: React.FC = () => {
   const formatLastModified = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return `${date.toLocaleDateString('ru-RU')} | ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+      // Format date in Israel timezone using Intl.DateTimeFormat
+      const formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Jerusalem',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      
+      const parts = formatter.formatToParts(date);
+      const day = parts.find(p => p.type === 'day')?.value || '00';
+      const month = parts.find(p => p.type === 'month')?.value || '00';
+      const year = parts.find(p => p.type === 'year')?.value || '0000';
+      const hours = parts.find(p => p.type === 'hour')?.value || '00';
+      const minutes = parts.find(p => p.type === 'minute')?.value || '00';
+      
+      return `${day}.${month}.${year} | ${hours}:${minutes}`;
     } catch {
-      return '22.07.2025 | 19:36';
+      return 'Не изменялось';
     }
   };
 
@@ -354,6 +373,25 @@ const MortgageTextEdit: React.FC = () => {
       <div className="text-edit-content">
         <SharedHeader />
         <div className="text-edit-main">
+          {/* Language Selector */}
+          <div className="language-selector-container">
+            <div className="language-selector" onClick={() => {
+              // Cycle through languages
+              if (selectedLanguage === 'ru') setSelectedLanguage('he');
+              else if (selectedLanguage === 'he') setSelectedLanguage('en');
+              else setSelectedLanguage('ru');
+            }}>
+              <span className="language-text">
+                {selectedLanguage === 'ru' ? 'Русский' : 
+                 selectedLanguage === 'he' ? 'עברית' : 
+                 'English'}
+              </span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6L8 10L12 6" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
           {/* Breadcrumb */}
           <div className="breadcrumb-container">
             <span className="breadcrumb-item" onClick={() => navigate('/content/mortgage')}>
@@ -372,7 +410,11 @@ const MortgageTextEdit: React.FC = () => {
           {/* Page Title */}
           <div className="page-title-section">
             <h1 className="page-title">
-              Номер действия №{content.action_number || 1} | {content.description || content.content_key}
+              Номер действия №{content.action_number || 1} | {
+                selectedLanguage === 'ru' ? content.translations.ru :
+                selectedLanguage === 'he' ? content.translations.he :
+                content.translations.en || content.translations.ru || content.description || content.content_key
+              }
             </h1>
             <div className="page-info">
               <span className="page-info-text">{content.screen_location || 'Home_page'}</span>

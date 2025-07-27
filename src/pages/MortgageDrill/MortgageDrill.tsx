@@ -44,8 +44,8 @@ const MortgageDrill: React.FC = () => {
   const [drillData, setDrillData] = useState<MortgageDrillData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
+  const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
 
@@ -169,8 +169,10 @@ const MortgageDrill: React.FC = () => {
       console.log('✅ Navigating to text edit page:', textEditUrl);
       navigate(textEditUrl, { 
         state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
+          fromPage: location.state?.fromPage || 1,
+          searchTerm: location.state?.searchTerm || '',
+          drillPage: currentPage,
+          drillSearchTerm: searchTerm,
           returnPath: `/content/mortgage/drill/${pageId}`
         } 
       });
@@ -184,8 +186,10 @@ const MortgageDrill: React.FC = () => {
       console.log('📋 Navigating to dropdown edit page:', dropdownEditUrl);
       navigate(dropdownEditUrl, { 
         state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
+          fromPage: location.state?.fromPage || 1,
+          searchTerm: location.state?.searchTerm || '',
+          drillPage: currentPage,
+          drillSearchTerm: searchTerm,
           returnPath: `/content/mortgage/drill/${pageId}`
         } 
       });
@@ -195,8 +199,10 @@ const MortgageDrill: React.FC = () => {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
       navigate(`/content/mortgage/edit/${action.id}`, { 
         state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
+          fromPage: location.state?.fromPage || 1,
+          searchTerm: location.state?.searchTerm || '',
+          drillPage: currentPage,
+          drillSearchTerm: searchTerm,
           returnPath: `/content/mortgage/drill/${pageId}`
         } 
       });

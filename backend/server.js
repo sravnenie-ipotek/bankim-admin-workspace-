@@ -934,6 +934,22 @@ app.put('/api/content-items/:content_item_id/translations/:language_code', async
       });
     }
     
+    // Also update the main content item's updated_at timestamp
+    // This ensures step-level summaries show the correct last modified time
+    console.log(`🔄 Updating content_items.updated_at for item ${content_item_id}`);
+    const itemUpdateResult = await safeQuery(`
+      UPDATE content_items 
+      SET updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $1
+      RETURNING id, updated_at
+    `, [content_item_id]);
+    
+    if (itemUpdateResult.rows.length > 0) {
+      console.log(`✅ Updated content item ${content_item_id} updated_at:`, itemUpdateResult.rows[0].updated_at);
+    } else {
+      console.log(`⚠️ No content item found with id ${content_item_id}`);
+    }
+    
     res.json({
       success: true,
       data: result.rows[0]

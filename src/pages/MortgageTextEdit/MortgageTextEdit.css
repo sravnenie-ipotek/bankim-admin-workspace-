@@ -32,6 +32,37 @@
   background-color: #111928;
 }
 
+/* Language Selector */
+.language-selector-container {
+  position: absolute;
+  top: 20px;
+  right: 145px;
+  z-index: 10;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1F2A37;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-selector:hover {
+  background: #374151;
+  border-color: #4B5563;
+}
+
+.language-text {
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* Breadcrumb Styles */
 .breadcrumb-container {
   display: inline-flex;

@@ -459,10 +459,19 @@ class ApiService {
     languageCode: string, 
     contentValue: string
   ): Promise<ApiResponse<ContentTranslation>> {
-    return this.request<ContentTranslation>(`/api/content-items/${contentItemId}/translations/${languageCode}`, {
+    const response = await this.request<ContentTranslation>(`/api/content-items/${contentItemId}/translations/${languageCode}`, {
       method: 'PUT',
       body: JSON.stringify({ content_value: contentValue }),
-    });
+     });
+    
+    // Clear cache after successful translation update
+    // This ensures subsequent API calls get fresh data with updated timestamps
+    if (response.success) {
+      console.log('🗑️ Clearing content cache after translation update');
+      this.clearContentCache();
+    }
+    
+    return response;
   }
 
   async getContentCategories(): Promise<ApiResponse<ContentCategory[]>> {
