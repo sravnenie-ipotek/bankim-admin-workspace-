@@ -20,7 +20,12 @@
     "backend:test": "cd backend && node test-api.js",
     "setup": "npm install && npm run backend:install && npm run backend:migrate",
     "full-dev": "concurrently \"npm run dev\" \"npm run backend:dev\"",
-    "test:integration": "npm run backend:migrate && npm run backend:test"
+    "test:integration": "npm run backend:migrate && npm run backend:test",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:mortgage": "cypress run --spec 'cypress/e2e/mortgage-drill-navigation.cy.ts'",
+    "test:content-errors": "cypress run --spec 'cypress/e2e/content-not-found-check.cy.ts'",
+    "test:all": "cypress run"
   },
   "dependencies": {
     "@figma/code-connect": "^1.3.4",

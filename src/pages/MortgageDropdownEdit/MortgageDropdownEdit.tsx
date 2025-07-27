@@ -9,9 +9,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { apiService } from '../../services/api';
-import { AdminLayout } from '../../components';
 import './MortgageDropdownEdit.css';
+import { apiService } from '../../services/api';
+import { detectContentTypeFromPath, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
 
 interface DropdownContent {
   id: string;
@@ -44,9 +44,8 @@ const MortgageDropdownEdit: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   
-  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
-  const isRefiMode = location.pathname.includes('/mortgage-refi/');
-  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+  // Detect content type from URL path
+  const contentType = detectContentTypeFromPath(location.pathname);
   
   // Form states
   const [titleRu, setTitleRu] = useState('');
@@ -68,13 +67,13 @@ const MortgageDropdownEdit: React.FC = () => {
       // If that fails, try fetching from mortgage content
       if (!response.success || !response.data) {
         console.log(`📋 Trying to fetch from ${contentType} content...`);
-        const mortgageResponse = isRefiMode ? 
-          await apiService.getMortgageRefiContent() : 
-          await apiService.getMortgageContent();
+        const endpoints = generateApiEndpoints(contentType);
+        const apiPath = endpoints.contentEndpoint.replace('/api/content/', '');
+        const mortgageResponse = await apiService.getContentByType(apiPath);
          
         if (mortgageResponse.success && mortgageResponse.data) {
           // Find the item in the content
-          const contentKey = isRefiMode ? 'mortgage_refi_content' : 'mortgage_content';
+          const contentKey = getContentDataKey(contentType);
           const mortgageContent = mortgageResponse.data[contentKey] || [];
           const item = mortgageContent.find((c: any) => c.id === actionId || c.id === parseInt(actionId));
           
@@ -177,11 +176,11 @@ const MortgageDropdownEdit: React.FC = () => {
         const baseKey = content.content_key;
         
         // Fetch existing options to update/delete
-        const existingResponse = isRefiMode ? 
-          await apiService.getMortgageRefiContent() : 
-          await apiService.getMortgageContent();
+        const endpoints = generateApiEndpoints(contentType);
+        const apiPath = endpoints.contentEndpoint.replace('/api/content/', '');
+        const existingResponse = await apiService.getContentByType(apiPath);
         if (existingResponse.success && existingResponse.data) {
-          const contentKey = isRefiMode ? 'mortgage_refi_content' : 'mortgage_content';
+          const contentKey = getContentDataKey(contentType);
           const contentItems = existingResponse.data[contentKey] || [];
           const optionPattern = new RegExp(`^${baseKey}\\.option\\.\\d+`);
           const existingOptions = contentItems.filter((item: any) => 

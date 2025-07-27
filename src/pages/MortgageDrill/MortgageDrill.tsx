@@ -9,9 +9,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import './MortgageDrill.css';
 import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
-import './MortgageDrill.css';
+import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
 
 interface MortgageAction {
   id: string;
@@ -49,22 +50,22 @@ const MortgageDrill: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
 
-  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
-  const isRefiMode = location.pathname.includes('/mortgage-refi/');
-  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+  // Detect content type from URL path
+  const contentType = detectContentTypeFromPath(location.pathname);
 
   useEffect(() => {
     fetchDrillData();
-  }, [pageId, isRefiMode]);
+  }, [pageId, contentType]);
 
   const fetchDrillData = async () => {
     try {
       setLoading(true);
-      console.log(`🔍 Fetching ${contentType} drill data for step ID: ${pageId}`);
+      console.log(`🔍 Fetching drill data for ${contentType} step ID: ${pageId}`);
       
       // Try the backend drill endpoint first
       try {
-        const drillResponse = await apiService.request(`/api/content/${contentType}/drill/${pageId}`, 'GET');
+        const { drillEndpoint } = generateApiEndpoints(contentType, pageId);
+        const drillResponse = await apiService.request(drillEndpoint, 'GET');
         
         if (drillResponse.success && drillResponse.data) {
           const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
@@ -164,60 +165,42 @@ const MortgageDrill: React.FC = () => {
     // Navigate based on component type
     const componentTypeLower = action.component_type?.toLowerCase();
     
+    const paths = generateContentPaths(contentType, action.id, pageId);
+    const navigationState = {
+      fromPage: location.state?.fromPage || 1,
+      searchTerm: location.state?.searchTerm || '',
+      drillPage: currentPage,
+      drillSearchTerm: searchTerm,
+      returnPath: paths.drillPath,
+      baseActionNumber: location.state?.baseActionNumber || 0
+    };
+
     // For text types - navigate to the special text edit page
     if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
         typeDisplay === 'Текст') {
-      const textEditUrl = `/content/${contentType}/text-edit/${action.id}`;
-      console.log('✅ Navigating to text edit page:', textEditUrl);
-      navigate(textEditUrl, { 
-        state: { 
-          fromPage: location.state?.fromPage || 1,
-          searchTerm: location.state?.searchTerm || '',
-          drillPage: currentPage,
-          drillSearchTerm: searchTerm,
-          returnPath: `/content/${contentType}/drill/${pageId}`,
-          baseActionNumber: location.state?.baseActionNumber || 0
-        } 
-      });
+      console.log('✅ Navigating to text edit page:', paths.textEditPath);
+      navigate(paths.textEditPath, { state: navigationState });
     } 
     // For dropdown types - navigate to the special dropdown edit page
     else if (componentTypeLower === 'dropdown' || 
              componentTypeLower === 'select' ||
              componentTypeLower === 'option' ||
              typeDisplay === 'Дропдаун') {
-      const dropdownEditUrl = `/content/${contentType}/dropdown-edit/${action.id}`;
-      console.log('📋 Navigating to dropdown edit page:', dropdownEditUrl);
-      navigate(dropdownEditUrl, { 
-        state: { 
-          fromPage: location.state?.fromPage || 1,
-          searchTerm: location.state?.searchTerm || '',
-          drillPage: currentPage,
-          drillSearchTerm: searchTerm,
-          returnPath: `/content/${contentType}/drill/${pageId}`,
-          baseActionNumber: location.state?.baseActionNumber || 0
-        } 
-      });
+      console.log('📋 Navigating to dropdown edit page:', paths.dropdownEditPath);
+      navigate(paths.dropdownEditPath, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(`/content/${contentType}/edit/${action.id}`, { 
-        state: { 
-          fromPage: location.state?.fromPage || 1,
-          searchTerm: location.state?.searchTerm || '',
-          drillPage: currentPage,
-          drillSearchTerm: searchTerm,
-          returnPath: `/content/${contentType}/drill/${pageId}`,
-          baseActionNumber: location.state?.baseActionNumber || 0
-        } 
-      });
+      navigate(paths.editPath, { state: navigationState });
     }
   };
 
   const handleBack = () => {
-    navigate(`/content/${contentType}`, { 
+    const paths = generateContentPaths(contentType);
+    navigate(paths.listPath, { 
       state: { 
         fromPage: location.state?.fromPage || 1,
         searchTerm: location.state?.searchTerm || ''

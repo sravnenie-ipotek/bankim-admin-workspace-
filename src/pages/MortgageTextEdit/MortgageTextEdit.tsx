@@ -9,9 +9,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { apiService } from '../../services/api';
-import { SharedHeader, SharedMenu } from '../../components';
 import './MortgageTextEdit.css';
+import { apiService } from '../../services/api';
+import { detectContentTypeFromPath, generateApiEndpoints, type ContentType } from '../../utils/contentTypeUtils';
+
+interface ContentItem {
+  id: string;
+  content_key: string;
+  component_type: string;
+  screen_location: string;
+  description: string;
+  is_active: boolean;
+  action_number?: number;
+  last_modified: string;
+  translations: {
+    ru: string;
+    he: string;
+    en?: string;
+  };
+}
 
 /**
  * Generic function to find related content items for any given content item
@@ -138,21 +154,17 @@ const MortgageTextEdit: React.FC = () => {
   const { actionId } = useParams<{ actionId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const [content, setContent] = useState<ContentTranslation | null>(null);
-  const [relatedContent, setRelatedContent] = useState<ContentTranslation[]>([]);
+  const [content, setContent] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
-  
-  // Form state
   const [ruText, setRuText] = useState('');
   const [heText, setHeText] = useState('');
   const [additionalTexts, setAdditionalTexts] = useState<Array<{ ru: string; he: string }>>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
 
-  // Detect if we're working with mortgage-refi or regular mortgage based on URL path
-  const isRefiMode = location.pathname.includes('/mortgage-refi/');
-  const contentType = isRefiMode ? 'mortgage-refi' : 'mortgage';
+  // Detect content type from URL path
+  const contentType = detectContentTypeFromPath(location.pathname);
 
   useEffect(() => {
     fetchContentData();
@@ -199,9 +211,9 @@ const MortgageTextEdit: React.FC = () => {
             async () => {
               // Fetch all individual content items for related content search
               console.log(`📋 Fetching all individual ${contentType} content items...`);
-              return isRefiMode ? 
-                await apiService.getMortgageRefiAllItems() : 
-                await apiService.getMortgageAllItems();
+              const endpoints = generateApiEndpoints(contentType);
+              const apiPath = endpoints.contentEndpoint.replace('/api/content/', '');
+              return await apiService.getAllItemsByType(apiPath);
             }
           );
           

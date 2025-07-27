@@ -709,6 +709,49 @@ class ApiService {
     return this.request<any[]>(`/api/content/mortgage-refi/${encodeURIComponent(contentKey)}/options`);
   }
 
+  // Generic content operations - handles any content type
+  async getContentByType(contentType: string): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Fetching ${contentType} content from database...`);
+      const response = await this.requestWithCache<any>(`/api/content/${contentType}`);
+      
+      if (response.success && response.data) {
+        console.log(`✅ Successfully fetched ${contentType} content from database`);
+        return response;
+      } else {
+        console.error(`❌ Failed to fetch ${contentType} content:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error fetching ${contentType} content:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to fetch ${contentType} content`
+      };
+    }
+  }
+
+  async getAllItemsByType(contentType: string): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Fetching all individual ${contentType} content items...`);
+      const response = await this.requestWithCache<any>(`/api/content/${contentType}/all-items`);
+      
+      if (response.success && response.data) {
+        console.log(`✅ Successfully fetched all ${contentType} items`);
+        return response;
+      } else {
+        console.error(`❌ Failed to fetch all ${contentType} items:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error fetching all ${contentType} items:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to fetch all ${contentType} items`
+      };
+    }
+  }
+
   // Mortgage content operations
   async getMortgageContent(): Promise<ApiResponse<any>> {
     try {
