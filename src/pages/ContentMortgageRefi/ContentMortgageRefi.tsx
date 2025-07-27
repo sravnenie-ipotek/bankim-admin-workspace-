@@ -212,26 +212,26 @@ const ContentMortgageRefi: React.FC = () => {
         {/* List of Pages Title */}
         <h2 className="page-list-title">Список страниц</h2>
 
-        {/* Table Section */}
-        <div className="table-section">
-          {/* Table Header with Search and Filters */}
-          <div className="table-header-controls">
-            <div className="search-container">
-              <div className="search-input-wrapper">
-                <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Искать по названию, ID, номеру страницы"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-              </div>
+        {/* Search Section - moved to top level */}
+        <div className="table-header-controls">
+          <div className="search-container">
+            <div className="search-input-wrapper">
+              <svg className="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zM14 14l-2.9-2.9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Искать по названию, ID, номеру страницы"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
             </div>
           </div>
+        </div>
 
+        {/* Table Section */}
+        <div className="table-section">
           {/* Table Content - Column Layout */}
           <div className="mortgage-table">
             {/* Table Header Row */}
