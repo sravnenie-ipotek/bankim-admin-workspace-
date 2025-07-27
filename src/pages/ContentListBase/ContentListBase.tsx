@@ -205,23 +205,6 @@ const ContentListBase: React.FC<ContentListBaseProps> = ({
 
       {/* Table Section */}
       <div className="table-section">
-        {/* Language Selector */}
-        <div className="table-language-selector">
-          <div className="language-selector" onClick={() => {
-            // Cycle through languages
-            if (selectedLanguage === 'ru') setSelectedLanguage('he');
-            else if (selectedLanguage === 'he') setSelectedLanguage('en');
-            else setSelectedLanguage('ru');
-          }}>
-            <span className="language-text">
-              {selectedLanguage === 'ru' ? 'Русский' : 
-               selectedLanguage === 'he' ? 'עברית' : 
-               'English'}
-            </span>
-            <img src="/src/assets/images/static/icons/chevron-down.svg" alt="Chevron" className="image2" />
-          </div>
-        </div>
-
         {/* List of Pages Title */}
         <h2 className="page-list-title">Список страниц</h2>
 

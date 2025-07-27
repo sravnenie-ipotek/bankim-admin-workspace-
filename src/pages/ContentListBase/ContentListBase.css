@@ -59,40 +59,7 @@
   overflow: hidden;
 }
 
-/* Language Selector in Table */
-.table-language-selector {
-  padding: 16px;
-  display: flex;
-  justify-content: flex-end;
-  border-bottom: 1px solid #374151;
-}
 
-.language-selector {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.language-selector:hover {
-  background-color: #374151;
-}
-
-.language-text {
-  font-family: 'Inter', sans-serif;
-  font-weight: bold;
-  font-size: 14px;
-  color: #F9FAFB;
-}
-
-.image2 {
-  width: 24px;
-  height: 24px;
-  object-fit: fill;
-}
 
 /* Page List Title */
 .page-list-title {

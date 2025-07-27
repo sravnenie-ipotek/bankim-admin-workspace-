@@ -1,9 +1,4 @@
-/* ContentCredit.css - Blank black page */
+/* ContentCredit.css - Credit content page matching ContentMortgage design structure */
 
-.content-credit-blank {
-  width: 100%;
-  height: 100vh;
-  background-color: #000000;
-  margin: 0;
-  padding: 0;
-} 
+/* Import ContentMortgage styles for consistency */
+@import '../ContentMortgage/ContentMortgage.css'; 
