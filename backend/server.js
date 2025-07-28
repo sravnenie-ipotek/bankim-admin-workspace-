@@ -2299,7 +2299,7 @@ app.get('/api/content/credit', async (req, res) => {
         MAX(CASE WHEN ct.language_code = 'en' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_en
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-      WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4')
+      WHERE ci.screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
         AND ci.is_active = true
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
