@@ -246,7 +246,6 @@ app.get('/api/content/menu/translations', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        ci.description,
         ci.is_active,
         ct_ru.content_value as title_ru,
         ct_he.content_value as title_he,
@@ -470,7 +469,6 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
         ci.category,
         ci.screen_location,
         ci.page_number,
-        ci.description,
         ci.is_active,
         ci.updated_at,
         ct_ru.content_value as title_ru,
@@ -556,7 +554,7 @@ app.get('/api/content/text/:actionId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        ci.description,
+        
         ci.is_active,
         ct_ru.content_value as content_ru,
         ct_he.content_value as content_he,
@@ -648,7 +646,7 @@ app.get('/api/content/item/:itemId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        ci.description,
+        
         ci.is_active,
         ci.updated_at,
         ct_ru.content_value as title_ru,
@@ -1227,7 +1225,7 @@ app.get('/api/content/text/:actionId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        ci.description,
+        
         ci.is_active,
         ct_ru.content_value as content_ru,
         ct_he.content_value as content_he,
@@ -1497,7 +1495,6 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        ci.description,
         ci.is_active,
         ci.page_number,
         ci.updated_at,
@@ -1854,14 +1851,13 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
 
     // Get individual content items for this refinancing step
     const contentResult = await safeQuery(`
-      SELECT
+            SELECT 
         ci.id,
         ci.content_key,
         ci.component_type,
         ci.category,
         ci.screen_location,
         ci.page_number,
-        ci.description,
         ci.is_active,
         ci.updated_at,
         ct_ru.content_value as title_ru,
@@ -2267,6 +2263,94 @@ app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
 
   } catch (error) {
     console.error(`Get credit-refi drill data error for step ${stepId}:`, error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      data: {
+        step_id: stepId,
+        items: []
+      }
+    });
+  }
+});
+
+/**
+ * Get credit drill data
+ * GET /api/content/credit/drill/:stepId
+ * Returns detailed content for a specific credit step
+ */
+app.get('/api/content/credit/drill/:stepId', async (req, res) => {
+  const { stepId } = req.params;
+  
+  try {
+    console.log(`🔍 Fetching credit drill data for step: ${stepId}`);
+    
+    // Get all content items for the specified credit step
+    const result = await safeQuery(`
+      SELECT DISTINCT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.updated_at,
+        -- Get translations for all languages
+        ct_ru.content_value as content_ru,
+        ct_he.content_value as content_he,
+        ct_en.content_value as content_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru'
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he'
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en'
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.screen_location = $1
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [stepId]);
+
+    if (!result.rows || result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: `No content found for credit step: ${stepId}`,
+        data: {
+          step_id: stepId,
+          items: []
+        }
+      });
+    }
+
+    const drillData = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      is_active: row.is_active,
+      updated_at: row.updated_at,
+      translations: {
+        ru: row.content_ru || '',
+        he: row.content_he || '',
+        en: row.content_en || ''
+      }
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        step_id: stepId,
+        content_count: drillData.length,
+        items: drillData
+      }
+    });
+
+  } catch (error) {
+    console.error(`Get credit drill data error for step ${stepId}:`, error);
     res.status(500).json({ 
       success: false, 
       error: error.message,
