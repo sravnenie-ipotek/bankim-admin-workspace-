@@ -23,8 +23,9 @@ import ContentVerification from './pages/ContentVerification';
 import QALanguage from './pages/QALanguage/QALanguage';
 import { SharedContentScreen } from './pages/SharedContentScreen';
 import { SharedContentEdit } from './pages/SharedContentEdit';
-import { SharedTextEdit } from './shared/components/SharedTextEdit';
 import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
+import CreditTextEdit from './pages/CreditTextEdit';
+import CreditRefiTextEdit from './pages/CreditRefiTextEdit';
 import MortgageTextEdit from './pages/MortgageTextEdit';
 import MortgageDropdownEdit from './pages/MortgageDropdownEdit';
 import MortgageRefiDrill from './pages/MortgageRefiDrill';
@@ -541,7 +542,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
                 <AdminLayout title="Редактирование текста кредита" activeMenuItem="content-credit">
-                  <SharedTextEdit />
+                  <CreditTextEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
             </ErrorBoundary>
@@ -569,7 +570,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
                 <AdminLayout title="Редактирование текста рефинансирования кредита" activeMenuItem="content-credit-refi">
-                  <SharedTextEdit />
+                  <CreditRefiTextEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
             </ErrorBoundary>
