@@ -664,14 +664,11 @@ app.get('/api/content/item/:itemId', async (req, res) => {
         ) as action_number
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.language_code = 'ru'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.language_code = 'en'
       WHERE ci.id = $1
     `, [itemId]);
 
