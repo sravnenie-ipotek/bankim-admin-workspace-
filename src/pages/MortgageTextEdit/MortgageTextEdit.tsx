@@ -122,7 +122,7 @@ const findRelatedContentItems = async (item: any, dataFetcher: () => Promise<any
         }
         
         // Then sort by action number
-        return (a.action_number || 0) - (b.action_number || 0);
+        return (a.action_number ?? 0) - (b.action_number ?? 0);
       })
       .slice(0, 5); // Limit to top 5 most relevant items
     
@@ -186,7 +186,7 @@ const MortgageTextEdit: React.FC = () => {
         if (targetContent) {
           const normalizedContent: ContentTranslation = {
             id: targetContent.id?.toString() || actionId || '',
-            action_number: targetContent.action_number || 1,
+            action_number: targetContent.action_number,
             content_key: targetContent.content_key || '',
             component_type: targetContent.component_type || 'text',
             category: targetContent.category || '',
@@ -421,14 +421,14 @@ const MortgageTextEdit: React.FC = () => {
             </span>
             <div className="breadcrumb-separator"></div>
             <span className="breadcrumb-item active">
-              Действие №{content.action_number || 3}
+              Действие №{content.action_number}
             </span>
           </div>
 
           {/* Page Title */}
           <div className="page-title-section">
             <h1 className="page-title">
-              Номер действия №{content.action_number || 1} | {
+              Номер действия №{content.action_number} | {
                 selectedLanguage === 'ru' ? content.translations.ru :
                 selectedLanguage === 'he' ? content.translations.he :
                 content.translations.en || content.translations.ru || content.description || content.content_key

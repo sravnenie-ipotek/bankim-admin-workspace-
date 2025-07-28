@@ -296,7 +296,7 @@ const MortgageDropdownEdit: React.FC = () => {
               <div style={{ width: '6.67px', height: '11.67px', left: '6.67px', top: '4.17px', position: 'absolute', background: 'var(--gray-400, #9CA3AF)' }}></div>
             </div>
             <div style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
-              <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', wordWrap: 'break-word' }}>Действие №{content.action_number || 1}</div>
+              <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', wordWrap: 'break-word' }}>Действие №{content.action_number}</div>
             </div>
           </div>
 
@@ -304,7 +304,7 @@ const MortgageDropdownEdit: React.FC = () => {
           <div style={{ width: '925px', justifyContent: 'flex-start', alignItems: 'flex-start', display: 'inline-flex', marginTop: '32px' }}>
             <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', gap: '12px', display: 'inline-flex' }}>
               <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '12px', display: 'inline-flex' }}>
-                <div style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', color: 'var(--gray-50, #F9FAFB)', fontSize: '30px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '45px', wordWrap: 'break-word' }}>Номер действия №{content.action_number || 1} | {content.description || 'Банк для кредита'}</div>
+                <div style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', color: 'var(--gray-50, #F9FAFB)', fontSize: '30px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '45px', wordWrap: 'break-word' }}>Номер действия №{content.action_number} | {content.description || 'Банк для кредита'}</div>
                 <div style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '8px', display: 'flex' }}>
                   <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', wordWrap: 'break-word' }}>{content.screen_location || 'Home_page'}</div>
                 </div>
