@@ -1044,7 +1044,22 @@ class ApiService {
 
       // Try to fetch real data from the database
       console.log(`🔄 Fetching ${contentType} content from database...`);
+      
+      // Test direct fetch first to compare
+      try {
+        const directResponse = await fetch(`/api/content/${contentType}`);
+        const directResult = await directResponse.json();
+        console.log(`🔗 Direct fetch result for ${contentType}:`, directResult);
+      } catch (e) {
+        console.log(`❌ Direct fetch failed:`, e);
+      }
+      
       const response = await this.requestWithCache<any>(`/api/content/${contentType}`);
+      
+      console.log(`📊 API Response for ${contentType}:`, response);
+      console.log(`📊 Response success:`, response.success);
+      console.log(`📊 Response data:`, response.data);
+      console.log(`📊 Response data keys:`, response.data ? Object.keys(response.data) : 'no data');
       
       if (response.success && response.data) {
         // Handle different response structures based on content type
@@ -1052,23 +1067,37 @@ class ApiService {
         
         if (contentType === 'mortgage' && response.data.mortgage_content) {
           contentArray = response.data.mortgage_content;
+          console.log(`✅ Found mortgage_content:`, contentArray.length);
         } else if (contentType === 'mortgage-refi' && response.data.mortgage_content) {
           contentArray = response.data.mortgage_content;
+          console.log(`✅ Found mortgage_content for mortgage-refi:`, contentArray.length);
         } else if (contentType === 'credit' && response.data.credit_content) {
           contentArray = response.data.credit_content;
+          console.log(`✅ Found credit_content:`, contentArray.length);
         } else if (contentType === 'credit-refi' && response.data.credit_refi_items) {
           contentArray = response.data.credit_refi_items;
+          console.log(`✅ Found credit_refi_items:`, contentArray.length);
         } else if (contentType === 'general' && response.data.general_content) {
           contentArray = response.data.general_content;
+          console.log(`✅ Found general_content:`, contentArray.length);
         } else if (contentType === 'menu' && response.data.menu_items) {
           contentArray = response.data.menu_items;
+          console.log(`✅ Found menu_items:`, contentArray.length);
         } else if (Array.isArray(response.data)) {
           contentArray = response.data;
+          console.log(`✅ Found direct array data:`, contentArray.length);
         } else if (response.data.data && Array.isArray(response.data.data)) {
           contentArray = response.data.data;
+          console.log(`✅ Found nested data array:`, contentArray.length);
         } else if (response.data.items && Array.isArray(response.data.items)) {
           contentArray = response.data.items;
+          console.log(`✅ Found items array:`, contentArray.length);
+        } else {
+          console.log(`❌ No matching data structure found for ${contentType}`);
+          console.log(`❌ Available keys:`, Object.keys(response.data || {}));
         }
+        
+        console.log(`📋 Final contentArray length:`, contentArray.length);
         
         if (contentArray.length > 0) {
           // Transform database response to ContentListItem format
