@@ -246,6 +246,7 @@ const MortgageRefiDrill: React.FC = () => {
       case 'select':
         return 'Дропдаун';
       case 'option':
+      case 'dropdown_option':
         return 'Дропдаун';
       case 'placeholder':
         return isDropdownField ? 'Дропдаун' : 'Текст';
