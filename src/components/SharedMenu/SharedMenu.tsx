@@ -148,7 +148,6 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       id: 'content-management',
       icon: 'file-edit',
       label: t('menu.contentSite'), // Action #9: Content Management (standalone)
-      requiredPermission: { action: 'read', resource: 'content-management' },
       hasDropdown: true,
       subItems: contentSubItems
     }
@@ -168,16 +167,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     }
   ];
 
-  const isMenuItemDisabled = (item: NavItem): boolean => {
-    if (!item.requiredPermission) return false;
-    return !hasPermission(item.requiredPermission.action, item.requiredPermission.resource);
-  };
-
   const handleItemClick = (itemId: string, item: NavItem) => {
-    // Don't handle click if item is disabled
-    if (isMenuItemDisabled(item)) {
-      return;
-    }
     
     // Handle dropdown toggle
     if (item.hasDropdown) {
@@ -233,37 +223,34 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     } else {
       isActive = item.active || activeItem === item.id || location.pathname === `/${item.id}`;
     }
-    const isDisabled = isMenuItemDisabled(item);
     const isExpanded = expandedItem === item.id;
 
     return (
       <div key={item.id} className="nav-item-container">
         <div
-          className={`navlink-sidebar ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''} ${item.hasDropdown ? 'has-dropdown' : ''}`}
+          className={`navlink-sidebar ${isActive ? 'active' : ''} ${item.hasDropdown ? 'has-dropdown' : ''}`}
           onClick={() => handleItemClick(item.id, item)}
           role="button"
-          tabIndex={isDisabled ? -1 : 0}
+          tabIndex={0}
           aria-label={item.label}
-          aria-disabled={isDisabled}
           aria-expanded={item.hasDropdown ? isExpanded : undefined}
           onKeyDown={(e) => {
-            if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
+            if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               handleItemClick(item.id, item);
             }
           }}
-          title={isDisabled ? 'У вас нет прав доступа к этой странице' : ''}
         >
           <div className="left-content">
             <div className={`icon ${item.icon}`}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                {renderIcon(item.icon, isActive && !isDisabled, isDisabled)}
+                {renderIcon(item.icon, isActive)}
               </svg>
             </div>
             <span className="pages">{item.label}</span>
           </div>
           
-          {item.hasDropdown && !isDisabled && (
+          {item.hasDropdown && (
             <div className={`dropdown-arrow ${isExpanded ? 'expanded' : ''}`}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
@@ -277,7 +264,7 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
             </div>
           )}
           
-          {item.badge && !isDisabled && (
+          {item.badge && (
             <div className="icon-badge">
               <div className="badge">
                 <span className="text">{item.badge}</span>
@@ -291,13 +278,8 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     );
   };
 
-  const renderIcon = (iconName: string, isActive: boolean, isDisabled: boolean = false) => {
-    let color = '#9CA3AF'; // Default inactive color
-    if (isDisabled) {
-      color = '#6B7280'; // Darker gray for disabled
-    } else if (isActive) {
-      color = '#FBE54D'; // Active yellow
-    }
+  const renderIcon = (iconName: string, isActive: boolean) => {
+    const color = isActive ? '#FBE54D' : '#9CA3AF'; // Active yellow or default inactive color
     
     switch (iconName) {
       case 'chart-pie':

@@ -2303,11 +2303,11 @@ app.get('/api/content/site-pages', async (req, res) => {
       SELECT 
         CASE 
           WHEN ci.screen_location LIKE 'mortgage_step%' THEN 'mortgage'
-          WHEN ci.screen_location LIKE 'mortgage_refi%' THEN 'mortgage_refi'
+          WHEN ci.screen_location LIKE 'refinance_mortgage_%' THEN 'mortgage_refi'
           WHEN ci.screen_location LIKE 'credit_step%' THEN 'credit'
-          WHEN ci.screen_location LIKE 'credit_refi%' THEN 'credit_refi'
-          WHEN ci.screen_location LIKE 'menu%' THEN 'menu'
-          WHEN ci.screen_location LIKE 'main%' THEN 'main'
+          WHEN ci.screen_location LIKE 'refinance_credit_%' THEN 'credit_refi'
+          WHEN ci.screen_location IN ('sidebar', 'footer', 'global_contact_info', 'global_errors', 'global_personal_info') THEN 'menu'
+          WHEN ci.screen_location IN ('about_page', 'contacts_page', 'bank_offers', 'common_components') THEN 'main'
           ELSE 'general'
         END as screen_group,
         COUNT(DISTINCT ci.id) as action_count,
