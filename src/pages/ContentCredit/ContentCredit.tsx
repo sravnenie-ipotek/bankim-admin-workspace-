@@ -55,11 +55,15 @@ const ContentCredit: React.FC = () => {
   const itemsPerPage = 12;
 
   useEffect(() => {
+    console.log('🚀 ContentCredit component mounted, starting data fetch...');
+    
     const fetchCreditData = async () => {
       try {
         setLoading(true);
         console.log('🔄 Fetching credit translations from database...');
         const response = await apiService.getContentByContentType('credit');
+        
+        console.log('📊 Raw API response:', response);
         
         if (response.success && response.data) {
           // Data is already normalized by apiService.getContentByContentType
@@ -71,7 +75,8 @@ const ContentCredit: React.FC = () => {
           
           setCreditData(normalizedData);
           console.log('✅ Successfully loaded credit data:', normalizedData);
-          console.log('First item:', response.data[0]); // Log first item to see structure
+          console.log('📋 Credit items count:', normalizedData.credit_items.length);
+          console.log('📋 First item:', response.data[0]); // Log first item to see structure
         } else {
           console.error('❌ Failed to fetch credit translations from database:', response.error);
           setError(response.error || 'Failed to fetch credit translations from database');
@@ -81,6 +86,7 @@ const ContentCredit: React.FC = () => {
         setError('Failed to load credit data');
       } finally {
         setLoading(false);
+        console.log('🏁 Credit data fetch completed');
       }
     };
 
@@ -109,13 +115,27 @@ const ContentCredit: React.FC = () => {
   };
 
   const filteredItems = useMemo(() => {
-    if (!creditData?.credit_items) return [];
-    return creditData.credit_items.filter(item =>
+    console.log('🔍 Filtering credit items...');
+    console.log('📊 Credit data exists:', !!creditData);
+    console.log('📊 Credit items count:', creditData?.credit_items?.length || 0);
+    console.log('📊 Search term:', searchTerm);
+    
+    if (!creditData?.credit_items) {
+      console.log('❌ No credit items to filter');
+      return [];
+    }
+    
+    const filtered = creditData.credit_items.filter(item =>
       item.content_key?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.translations?.ru?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.translations?.he?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.translations?.en?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    
+    console.log('✅ Filtered items count:', filtered.length);
+    console.log('✅ First filtered item:', filtered[0]);
+    
+    return filtered;
   }, [creditData?.credit_items, searchTerm]);
 
   // Define columns for the ContentTable
@@ -156,6 +176,11 @@ const ContentCredit: React.FC = () => {
   const handleRowAction = (item: ContentListItem, _index: number) => {
     handleViewClick(item);
   };
+
+  console.log('🎨 Rendering ContentCredit component...');
+  console.log('🎨 Loading state:', loading);
+  console.log('🎨 Error state:', error);
+  console.log('🎨 Filtered items for rendering:', filteredItems.length);
 
   return (
     <ContentListPage
