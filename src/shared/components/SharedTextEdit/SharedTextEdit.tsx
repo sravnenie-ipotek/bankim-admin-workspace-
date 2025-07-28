@@ -165,9 +165,6 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
             {content.action_number ? `Номер действия №${content.action_number} | ` : ''}
             {content.translations.ru || content.description || content.content_key}
           </h1>
-          <div className="page-info">
-            <span className="page-info-text">{pageSubtitle || content.screen_location || 'Content_page'}</span>
-          </div>
         </div>
 
         {/* Last Modified Card */}
