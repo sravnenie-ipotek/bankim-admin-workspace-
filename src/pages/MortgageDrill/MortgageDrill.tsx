@@ -169,13 +169,19 @@ const MortgageDrill: React.FC = () => {
     const componentTypeLower = action.component_type?.toLowerCase();
     
     const paths = generateContentPaths(contentType, action.id, pageId);
+    // Calculate the action number for display (same as in the UI)
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const actionIndex = filteredActions.findIndex(a => a.id === action.id);
+    const displayActionNumber = action.page_number ?? ((location.state?.baseActionNumber || 0) + startIndex + actionIndex + 1);
+    
     const navigationState = {
       fromPage: location.state?.fromPage || 1,
       searchTerm: location.state?.searchTerm || '',
       drillPage: currentPage,
       drillSearchTerm: searchTerm,
       returnPath: paths.drillPath,
-      baseActionNumber: location.state?.baseActionNumber || 0
+      baseActionNumber: location.state?.baseActionNumber || 0,
+      actionNumber: displayActionNumber // Pass the action number to text edit page
     };
 
     // For text types - navigate to the special text edit page
