@@ -2293,10 +2293,10 @@ app.get('/api/content/credit', async (req, res) => {
         ci.screen_location,
         COUNT(DISTINCT ci.id) as actionCount,
         MAX(ci.updated_at) as lastModified,
-        -- Get titles for each language
-        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
-        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
-        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
+        -- Get the main title for each step (handle step1 special case)
+        MAX(CASE WHEN ct.language_code = 'ru' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_en
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4')
@@ -2352,10 +2352,10 @@ app.get('/api/content/credit-refi', async (req, res) => {
         ci.screen_location,
         COUNT(DISTINCT ci.id) as actionCount,
         MAX(ci.updated_at) as lastModified,
-        -- Get titles for each language
-        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
-        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
-        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
+        -- Get titles for each language (improved pattern matching)
+        MAX(CASE WHEN ct.language_code = 'ru' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_en
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN (
