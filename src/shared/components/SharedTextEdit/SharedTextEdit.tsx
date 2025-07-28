@@ -64,7 +64,6 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
   pageSubtitle,
   saving = false
 }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [ruText, setRuText] = useState('');
   const [heText, setHeText] = useState('');
   const [additionalTexts, setAdditionalTexts] = useState<Array<{ ru: string; he: string }>>([]);
@@ -145,25 +144,6 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
   return (
     <div className="shared-text-edit">
       <div className="shared-text-edit-main">
-        {/* Language Selector */}
-        <div className="language-selector-container">
-          <div className="language-selector" onClick={() => {
-            // Cycle through languages
-            if (selectedLanguage === 'ru') setSelectedLanguage('he');
-            else if (selectedLanguage === 'he') setSelectedLanguage('en');
-            else setSelectedLanguage('ru');
-          }}>
-            <span className="language-text">
-              {selectedLanguage === 'ru' ? 'Русский' : 
-               selectedLanguage === 'he' ? 'עברית' : 
-               'English'}
-            </span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 6L8 10L12 6" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-        </div>
-
         {/* Breadcrumb */}
         <div className="breadcrumb-container">
           {breadcrumbs.map((item, index) => (
@@ -183,9 +163,7 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
         <div className="page-title-section">
           <h1 className="page-title">
             {content.action_number ? `Номер действия №${content.action_number} | ` : ''}
-            {selectedLanguage === 'ru' ? content.translations.ru :
-             selectedLanguage === 'he' ? content.translations.he :
-             content.translations.en || content.translations.ru || content.description || content.content_key}
+            {content.translations.ru || content.description || content.content_key}
           </h1>
           <div className="page-info">
             <span className="page-info-text">{pageSubtitle || content.screen_location || 'Content_page'}</span>
