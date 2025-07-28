@@ -2401,6 +2401,220 @@ app.get('/api/content/credit-refi', async (req, res) => {
 });
 
 /**
+ * Get general pages content
+ * GET /api/content/general
+ * Returns content for general website pages (home, about, contacts)
+ */
+app.get('/api/content/general', async (req, res) => {
+  try {
+    const result = await safeQuery(`
+      SELECT DISTINCT
+        ci.screen_location,
+        COUNT(DISTINCT ci.id) as actionCount,
+        MAX(ci.updated_at) as lastModified,
+        -- Get titles for each language
+        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.screen_location IN (
+        'home_page',
+        'about_page',
+        'contacts_page'
+      )
+        AND ci.is_active = true
+      GROUP BY ci.screen_location
+      ORDER BY ci.screen_location
+    `);
+
+    // Define display names for general pages
+    const pageDisplayNames = {
+      'home_page': {
+        ru: 'Домашняя страница',
+        he: 'עמוד בית',
+        en: 'Home Page'
+      },
+      'about_page': {
+        ru: 'О компании',
+        he: 'אודותינו',
+        en: 'About Us'
+      },
+      'contacts_page': {
+        ru: 'Контакты',
+        he: 'צור קשר',
+        en: 'Contacts'
+      }
+    };
+
+    const generalContent = result.rows.map(row => {
+      const screenLocation = row.screen_location;
+      const displayNames = pageDisplayNames[screenLocation] || {
+        ru: 'Общая страница',
+        he: 'עמוד כללי',
+        en: 'General Page'
+      };
+
+      return {
+        id: row.screen_location, // Using screen_location as unique identifier
+        content_key: row.screen_location,
+        component_type: 'page',
+        category: 'general_pages',
+        screen_location: row.screen_location,
+        description: row.title_ru || displayNames.ru,
+        is_active: true,
+        action_count: row.actioncount,
+        translations: {
+          ru: row.title_ru || displayNames.ru,
+          he: row.title_he || displayNames.he,
+          en: row.title_en || displayNames.en
+        },
+        last_modified: row.lastmodified
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: generalContent.length,
+        general_content: generalContent
+      }
+    });
+  } catch (error) {
+    console.error('Get general content error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * Get general page drill content
+ * GET /api/content/general/drill/:stepId
+ * Returns detailed content for a specific general page (home, about, contacts)
+ */
+app.get('/api/content/general/drill/:stepId', async (req, res) => {
+  try {
+    const { stepId } = req.params;
+    
+    console.log(`Fetching general page drill content for step ID: ${stepId}`);
+    
+    // Handle both step IDs and screen_location directly
+    let screenLocation = stepId;
+    
+    // Map step IDs to actual screen_locations for general pages
+    const stepMapping = {
+      'home': 'home_page',
+      'about': 'about_page',
+      'contacts': 'contacts_page',
+      'home_page': 'home_page',
+      'about_page': 'about_page',
+      'contacts_page': 'contacts_page'
+    };
+
+    // Map step ID to the real screen_location
+    if (stepMapping[stepId]) {
+      screenLocation = stepMapping[stepId];
+    }
+    
+    // Validate that this screen_location exists in our known general pages
+    const validScreenLocations = ['home_page', 'about_page', 'contacts_page'];
+    if (!validScreenLocations.includes(screenLocation)) {
+      return res.status(404).json({
+        success: false,
+        error: `Invalid step ID or screen location: ${stepId}`
+      });
+    }
+
+    // Get individual content items for this general page
+    const contentResult = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.page_number,
+        ci.description,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en'
+      WHERE ci.screen_location = $1
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [screenLocation]);
+
+    if (!contentResult.rows || contentResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No content found for this general page'
+      });
+    }
+
+    const actions = contentResult.rows.map(row => ({
+      id: row.id,
+      actionNumber: row.action_number,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      page_number: row.page_number,
+      description: row.description,
+      is_active: row.is_active,
+      last_modified: row.updated_at,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    // Get the page title from the first available title translation or use a fallback
+    const pageDisplayNames = {
+      'home_page': { ru: 'Домашняя страница', he: 'עמוד בית', en: 'Home Page' },
+      'about_page': { ru: 'О компании', he: 'אודותינו', en: 'About Us' },
+      'contacts_page': { ru: 'Контакты', he: 'צור קשר', en: 'Contacts' }
+    };
+
+    const displayNames = pageDisplayNames[screenLocation] || { ru: 'Общая страница', he: 'עמוד כללי', en: 'General Page' };
+    
+    let pageTitle = displayNames.ru;
+    if (contentResult.rows.length > 0) {
+      const firstTitle = contentResult.rows.find(row => 
+        row.content_key && row.content_key.includes('.title') && row.title_ru
+      );
+      if (firstTitle) {
+        pageTitle = firstTitle.title_ru;
+      }
+    }
+
+    res.json({
+      success: true,
+      data: {
+        step_id: stepId,
+        screen_location: screenLocation,
+        page_title: pageTitle,
+        action_count: actions.length,
+        actions: actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get general drill content error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
  * Get site pages summary for ContentMain dashboard
  * GET /api/content/site-pages
  * Returns aggregated page data with action counts and last modified dates
