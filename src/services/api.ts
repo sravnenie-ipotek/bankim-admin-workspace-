@@ -510,6 +510,59 @@ class ApiService {
     });
   }
 
+  async updateContentItem(contentItemId: string, updateData: { translations: { ru: string; he: string; en?: string } }): Promise<ApiResponse<any>> {
+    try {
+      console.log(`📝 Updating content item ${contentItemId} with translations:`, updateData.translations);
+      
+      const results = [];
+      
+      // Update Russian translation
+      if (updateData.translations.ru !== undefined) {
+        const ruResult = await this.updateContentTranslation(contentItemId, 'ru', updateData.translations.ru);
+        results.push(ruResult);
+        console.log(`🇷🇺 Russian translation update:`, ruResult.success ? '✅' : '❌', ruResult.error || '');
+      }
+      
+      // Update Hebrew translation
+      if (updateData.translations.he !== undefined) {
+        const heResult = await this.updateContentTranslation(contentItemId, 'he', updateData.translations.he);
+        results.push(heResult);
+        console.log(`🇮🇱 Hebrew translation update:`, heResult.success ? '✅' : '❌', heResult.error || '');
+      }
+      
+      // Update English translation if provided
+      if (updateData.translations.en !== undefined) {
+        const enResult = await this.updateContentTranslation(contentItemId, 'en', updateData.translations.en);
+        results.push(enResult);
+        console.log(`🇺🇸 English translation update:`, enResult.success ? '✅' : '❌', enResult.error || '');
+      }
+      
+      // Check if all updates were successful
+      const allSuccessful = results.every(result => result.success);
+      const errors = results.filter(result => !result.success).map(result => result.error);
+      
+      if (allSuccessful) {
+        console.log(`✅ All translations updated successfully for content item ${contentItemId}`);
+        return {
+          success: true,
+          data: { contentItemId, updatedTranslations: updateData.translations }
+        };
+      } else {
+        console.error(`❌ Some translation updates failed for content item ${contentItemId}:`, errors);
+        return {
+          success: false,
+          error: `Translation update failed: ${errors.join(', ')}`
+        };
+      }
+    } catch (error) {
+      console.error(`❌ Error updating content item ${contentItemId}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
+    }
+  }
+
   // Main Page Content Operations - following CSS example structure
   async getMainPageContent(): Promise<ApiResponse<MainPageContent>> {
     try {
