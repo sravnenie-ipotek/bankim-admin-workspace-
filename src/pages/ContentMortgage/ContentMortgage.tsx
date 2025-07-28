@@ -63,7 +63,7 @@ interface MortgageTranslation {
     he: string;
     en: string;
   };
-  last_modified: string;
+  lastModified: string;
   actionCount: number;
   contentType: string;
 }
@@ -104,7 +104,7 @@ const ContentMortgage: React.FC = () => {
             },
             actionCount: item.actionCount || 0,
             contentType: item.contentType || 'text',
-            last_modified: item.lastModified || item.last_modified || item.updated_at || new Date().toISOString()
+            lastModified: item.lastModified || item.last_modified || item.updated_at || new Date().toISOString()
           }));
           
           const normalizedData: MortgageData = {
@@ -203,7 +203,7 @@ const ContentMortgage: React.FC = () => {
       render: (value) => <span>{value || 1}</span>
     },
     {
-      key: 'last_modified',
+      key: 'lastModified',
       title: 'Были изменения',
       width: '224px',
       render: (value) => <span>{formatLastModified(value)}</span>
@@ -219,7 +219,8 @@ const ContentMortgage: React.FC = () => {
 
   return (
     <ContentListPage
-      title="Рассчитать ипотеку"
+      title=""  // Empty title since ContentPageWrapper already provides it
+      tabs={[]}  // Empty tabs since ContentPageWrapper already provides them
       data={filteredItems}
       columns={columns}
       onRowAction={handleRowAction}
