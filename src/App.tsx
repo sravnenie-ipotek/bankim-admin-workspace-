@@ -532,6 +532,62 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+
+        {/* Credit text edit route */}
+        <Route 
+          path="/content/credit/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование текста кредита" activeMenuItem="content-credit">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit dropdown edit route */}
+        <Route 
+          path="/content/credit/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование дропдауна кредита" activeMenuItem="content-credit">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit-refi text edit route */}
+        <Route 
+          path="/content/credit-refi/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование текста рефинансирования кредита" activeMenuItem="content-credit-refi">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit-refi dropdown edit route */}
+        <Route 
+          path="/content/credit-refi/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование дропдауна рефинансирования кредита" activeMenuItem="content-credit-refi">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
         
         {/* Mortgage-refi text edit route - MUST BE BEFORE generic edit route */}
         <Route 
