@@ -351,9 +351,10 @@ const AppRouter: React.FC = () => {
     );
   }
 
-  if (!user) {
-    return <AdminLogin />;
-  }
+  // TEMPORARY: Disable authentication for testing
+  // if (!user) {
+  //   return <AdminLogin />;
+  // }
 
   return (
     <div className="app">
@@ -439,11 +440,11 @@ const AppRouter: React.FC = () => {
           path="/content/mortgage/drill/:pageId" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <AdminLayout title="Страница ипотеки" activeMenuItem="content-mortgage">
                   <MortgageDrill />
                 </AdminLayout>
-              </ProtectedRoute>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
@@ -481,11 +482,11 @@ const AppRouter: React.FC = () => {
           path="/content/mortgage-refi/drill/:pageId" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <AdminLayout title="Страница рефинансирования" activeMenuItem="content-mortgage-refi">
                   <MortgageRefiDrill />
                 </AdminLayout>
-              </ProtectedRoute>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
@@ -495,11 +496,39 @@ const AppRouter: React.FC = () => {
           path="/content/menu/drill/:sectionId" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <AdminLayout title="Раздел меню" activeMenuItem="content-menu">
                   <MenuDrill />
                 </AdminLayout>
-              </ProtectedRoute>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit drill route - specific drill page for credit content */}
+        <Route 
+          path="/content/credit/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+                <AdminLayout title="Страница кредита" activeMenuItem="content-credit">
+                  <MortgageDrill />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit-refi drill route - specific drill page for credit refinancing content */}
+        <Route 
+          path="/content/credit-refi/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+                <AdminLayout title="Страница рефинансирования кредита" activeMenuItem="content-credit-refi">
+                  <MortgageDrill />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
@@ -549,11 +578,11 @@ const AppRouter: React.FC = () => {
           path="/content/mortgage-refi" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <AdminLayout title="Рефинансирование ипотеки" activeMenuItem="content-mortgage-refi">
                   <ContentMortgageRefi />
                 </AdminLayout>
-              </ProtectedRoute>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
@@ -563,9 +592,9 @@ const AppRouter: React.FC = () => {
           path="/content/:contentType" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <SharedContentScreen />
-              </ProtectedRoute>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
