@@ -27,7 +27,7 @@ let isConnected = false;
 let connectionAttempts = 0;
 const maxRetries = 3;
 
-// Primary database configuration (Railway)
+// Railway database configuration
 const primaryConfig = {
   connectionString: process.env.CONTENT_DATABASE_URL || process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
@@ -36,24 +36,14 @@ const primaryConfig = {
   max: 10,
 };
 
-// Local fallback configuration
-const localConfig = {
-  user: 'postgres',
-  password: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  database: 'bankim_content_local',
-  connectionTimeoutMillis: 5000,
-  idleTimeoutMillis: 30000,
-  max: 10,
-};
 
-// Initialize database connection with fallback
+
+// Initialize database connection
 async function initializeDatabase() {
-  console.log('🔌 Attempting database connection...');
+  console.log('🔌 Attempting Railway database connection...');
   
   try {
-    // Try primary database first
+    // Connect to Railway database
     pool = new Pool(primaryConfig);
     
     // Test connection
@@ -62,32 +52,15 @@ async function initializeDatabase() {
     client.release();
     
     isConnected = true;
-    console.log('✅ Connected to primary database (Railway)');
+    console.log('✅ Connected to Railway database');
     return true;
     
   } catch (primaryError) {
-    console.log('⚠️  Primary database connection failed:', primaryError.message);
-    console.log('🔄 Attempting local database fallback...');
+    console.log('❌ Railway database connection failed:', primaryError.message);
+    console.log('🔧 Please check your Railway database credentials and connection');
     
-    try {
-      // Try local database
-      pool = new Pool(localConfig);
-      
-      const client = await pool.connect();
-      await client.query('SELECT NOW()');
-      client.release();
-      
-      isConnected = true;
-      console.log('✅ Connected to local database fallback');
-      return true;
-      
-    } catch (localError) {
-      console.log('❌ Local database connection also failed:', localError.message);
-      console.log('🔧 Running in offline mode - some features may be limited');
-      
-      isConnected = false;
-      return false;
-    }
+    isConnected = false;
+    return false;
   }
 }
 
@@ -2010,57 +1983,87 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
 });
 
 /**
+ * Debug endpoint to check credit data
+ * GET /api/debug/credit-data
+ */
+app.get('/api/debug/credit-data', async (req, res) => {
+  try {
+    // Check all credit-related screen locations
+    const allCreditLocations = await safeQuery(`
+      SELECT DISTINCT screen_location, COUNT(*) as count, 
+             COUNT(DISTINCT CASE WHEN is_active = true THEN id END) as active_count
+      FROM content_items 
+      WHERE screen_location LIKE '%credit%' OR screen_location LIKE '%calculate%'
+      GROUP BY screen_location
+      ORDER BY screen_location
+    `);
+    
+    // Check specifically for credit_step locations
+    const creditSteps = await safeQuery(`
+      SELECT screen_location, content_key, component_type, is_active
+      FROM content_items 
+      WHERE screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
+      ORDER BY screen_location, content_key
+      LIMIT 10
+    `);
+    
+    res.json({
+      success: true,
+      data: {
+        all_credit_locations: allCreditLocations.rows,
+        credit_step_samples: creditSteps.rows,
+        total_credit_steps: creditSteps.rowCount
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
  * Get credit calculation content
  * GET /api/content/credit
  * Returns content for credit calculation screen with translations
  */
 app.get('/api/content/credit', async (req, res) => {
   try {
+    console.log('🔍 Credit endpoint called');
     const result = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
+      SELECT DISTINCT
         ci.screen_location,
-        ci.description,
-        ci.is_active,
-        ct_ru.content_value AS title_ru,
-        ct_he.content_value AS title_he,
-        ct_en.content_value AS title_en,
-        ci.updated_at
+        COUNT(DISTINCT ci.id) as actionCount,
+        MAX(ci.updated_at) as lastModified,
+        -- Get titles for each language
+        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.is_active = TRUE
-        AND ci.screen_location IN (
-          'credit_step1',
-          'credit_step2',
-          'credit_step3',
-          'credit_step4'
-        )
-        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
-        AND ci.component_type != 'option'
-        AND ci.content_key NOT LIKE '%_option_%'
-        AND ci.content_key NOT LIKE '%_ph'
-      ORDER BY ci.screen_location, ci.content_key
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
+        AND ci.is_active = true
+      GROUP BY ci.screen_location
+      ORDER BY ci.screen_location
     `);
 
-    const creditContent = result.rows.map(row => ({
-      id: row.id,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
+    console.log('📊 Query result rows:', result.rows.length);
+    console.log('📋 First few rows:', result.rows.slice(0, 3));
+
+    // Map the aggregated results to the expected format
+    const creditContent = result.rows.map((row, index) => ({
+      id: index + 1,
+      content_key: `${row.screen_location}_aggregated`,
+      component_type: 'page',
+      category: 'page',
       screen_location: row.screen_location,
-      description: row.description,
-      is_active: row.is_active,
+      description: `Aggregated content for ${row.screen_location}`,
+      is_active: true,
+      actionCount: parseInt(row.actioncount) || 0,
       translations: {
-        ru: row.title_ru || '',
-        he: row.title_he || '',
-        en: row.title_en || ''
+        ru: row.title_ru || `Кредит - ${row.screen_location}`,
+        he: row.title_he || `אשראי - ${row.screen_location}`,
+        en: row.title_en || `Credit - ${row.screen_location}`
       },
-      last_modified: row.updated_at
+      last_modified: row.lastmodified || new Date().toISOString()
     }));
 
     res.json({
@@ -2085,47 +2088,42 @@ app.get('/api/content/credit', async (req, res) => {
 app.get('/api/content/credit-refi', async (req, res) => {
   try {
     const result = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
+      SELECT DISTINCT
         ci.screen_location,
-        ci.description,
-        ci.is_active,
-        ct_ru.content_value AS title_ru,
-        ct_he.content_value AS title_he,
-        ct_en.content_value AS title_en,
-        ci.updated_at
+        COUNT(DISTINCT ci.id) as actionCount,
+        MAX(ci.updated_at) as lastModified,
+        -- Get titles for each language
+        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.is_active = TRUE
-        AND ci.screen_location IN (
-          'refinance_credit_1',    -- for /services/refinance-credit/1
-          'refinance_credit_2',    -- for /services/refinance-credit/2
-          'refinance_credit_3',    -- for /services/refinance-credit/3
-          'refinance_credit_4'     -- for /services/refinance-credit/4
-        )
-        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
-      ORDER BY ci.screen_location, ci.component_type, ci.content_key
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.screen_location IN (
+        'refinance_credit_1',
+        'refinance_credit_2',
+        'refinance_credit_3',
+        'refinance_credit_4'
+      )
+        AND ci.is_active = true
+      GROUP BY ci.screen_location
+      ORDER BY ci.screen_location
     `);
 
     const creditRefiContent = result.rows.map(row => ({
-      id: row.id,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
+      id: row.screen_location, // Using screen_location as unique identifier
+      content_key: row.screen_location,
+      component_type: 'step',
+      category: 'credit_refi_steps',
       screen_location: row.screen_location,
-      description: row.description,
-      is_active: row.is_active,
+      description: row.title_ru || row.title_en || row.title_he || 'Credit Refi Step',
+      is_active: true,
+      action_count: row.actioncount,
       translations: {
         ru: row.title_ru || '',
         he: row.title_he || '',
         en: row.title_en || ''
       },
-      last_modified: row.updated_at
+      last_modified: row.lastmodified
     }));
 
     res.json({
@@ -2133,11 +2131,11 @@ app.get('/api/content/credit-refi', async (req, res) => {
       data: {
         status: 'success',
         content_count: creditRefiContent.length,
-        credit_refi_content: creditRefiContent
+        credit_refi_items: creditRefiContent
       }
     });
   } catch (error) {
-    console.error('Get credit refi content error:', error);
+    console.error('Get credit-refi content error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
