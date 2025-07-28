@@ -38,6 +38,13 @@ const MortgageTextEdit: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  // Get action number from location state (passed from previous screen)
+  // Previous screen should navigate like this:
+  // navigate(`/content/mortgage/text-edit/${actionId}`, { 
+  //   state: { actionNumber: 2 } // Pass only the number (e.g., 2 for "Действие №2")
+  // });
+  const actionNumber = location.state?.actionNumber || null;
+
   useEffect(() => {
     fetchContentData();
   }, [actionId]);
@@ -113,7 +120,8 @@ const MortgageTextEdit: React.FC = () => {
         navigate('/content/mortgage', { 
           state: { 
             fromPage: location.state?.fromPage || 1,
-            searchTerm: location.state?.searchTerm || ''
+            searchTerm: location.state?.searchTerm || '',
+            actionNumber: actionNumber // Pass actionNumber back to the previous screen
           } 
         });
       } else {
@@ -132,7 +140,8 @@ const MortgageTextEdit: React.FC = () => {
     navigate('/content/mortgage', { 
       state: { 
         fromPage: location.state?.fromPage || 1,
-        searchTerm: location.state?.searchTerm || ''
+        searchTerm: location.state?.searchTerm || '',
+        actionNumber: actionNumber // Pass actionNumber back to the previous screen
       } 
     });
   };
@@ -143,7 +152,7 @@ const MortgageTextEdit: React.FC = () => {
     
     return {
       id: content.id,
-      action_number: content.action_number,
+      action_number: actionNumber || content.action_number, // Use passed actionNumber first
       content_key: content.content_key,
       component_type: content.component_type,
       screen_location: content.screen_location,
@@ -165,7 +174,7 @@ const MortgageTextEdit: React.FC = () => {
       onClick: () => navigate('/content/mortgage')
     },
     {
-      label: `Действие №${content?.action_number}`,
+      label: `Действие №${actionNumber || content?.action_number}`,
       isActive: true
     }
   ];
