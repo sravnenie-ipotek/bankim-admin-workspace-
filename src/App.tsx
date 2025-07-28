@@ -535,6 +535,20 @@ const AppRouter: React.FC = () => {
           } 
         />
 
+        {/* General pages drill route - specific drill page for general content */}
+        <Route 
+          path="/content/general/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+                <AdminLayout title="Общая страница" activeMenuItem="content-general">
+                  <MortgageDrill />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
         {/* Credit text edit route */}
         <Route 
           path="/content/credit/text-edit/:actionId" 
