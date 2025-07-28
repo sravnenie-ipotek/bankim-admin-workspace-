@@ -81,7 +81,6 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
 
   return (
     <div className="navbar-container">
-      <div className="navbar-content">
           {/* Logo Section */}
           <div className="logo-section">
             <button
@@ -172,7 +171,6 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
           )}
           </div>
         </div>
-      </div>
     </div>
   );
 };
