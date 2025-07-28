@@ -172,13 +172,8 @@ const ContentMenu: React.FC = () => {
   }
 
   return (
-    <ContentPageWrapper title="Меню">
+    <ContentPageWrapper title="Меню" showTabNavigation={false}>
       <div className="content-main">
-        {/* Page Header */}
-        <div className="content-main__header">
-          <h1 className="content-main__title">Меню</h1>
-        </div>
-
         {/* Content Section */}
         <div className="content-main__content">
           <h2 className="content-main__subtitle">Список страниц</h2>
@@ -269,10 +264,10 @@ const ContentMenu: React.FC = () => {
                 Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
               </span>
               <div className="pagination-controls">
-                <button 
-                  className="pagination-btn prev"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
+                                 <button 
+                   className="pagination-btn prev"
+                   onClick={() => setCurrentPage((prev: number) => Math.max(1, prev - 1))}
+                   disabled={currentPage === 1}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -315,10 +310,10 @@ const ContentMenu: React.FC = () => {
                   )}
                 </div>
                 
-                <button 
-                  className="pagination-btn next"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
+                                 <button 
+                   className="pagination-btn next"
+                   onClick={() => setCurrentPage((prev: number) => Math.min(totalPages, prev + 1))}
+                   disabled={currentPage === totalPages}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

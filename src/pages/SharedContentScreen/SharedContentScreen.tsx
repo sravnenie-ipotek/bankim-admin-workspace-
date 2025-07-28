@@ -6,6 +6,7 @@ import ContentMain from '../ContentMain';
 import ContentMenu from '../ContentMenu';
 import ContentMortgage from '../ContentMortgage';
 import ContentMortgageRefi from '../ContentMortgageRefi';
+import ContentCredit from '../ContentCredit';
 
 // Configuration for each content type
 interface ContentTypeConfig {
@@ -49,7 +50,8 @@ const contentTypeConfig: Record<string, ContentTypeConfig> = {
     title: 'Расчет Кредита',
     breadcrumbLabel: 'Расчет кредита',
     activeMenuItem: 'content-credit',
-    useContentListBase: true
+    useContentListBase: false,
+    customComponent: ContentCredit
   },
   'credit-refi': {
     title: 'Рефинансирование кредита',
@@ -84,7 +86,7 @@ const SharedContentScreen: React.FC = () => {
 
   return (
     <AdminLayout title={config.title} activeMenuItem={config.activeMenuItem}>
-      <ContentPageWrapper title={config.title}>
+      <ContentPageWrapper title={config.title} showTabNavigation={actualContentType !== 'main'}>
         {config.useContentListBase ? (
           <ContentListBase
             sectionTitle={config.title}

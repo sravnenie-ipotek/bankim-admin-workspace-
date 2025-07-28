@@ -13,26 +13,13 @@ const LanguageTest: React.FC = () => {
     console.log('Translations object:', translations);
   }, [language, translations, t]);
 
-  const testLanguageSwitch = (lang: 'ru' | 'he' | 'en') => {
-    console.log(`Switching to ${lang}...`);
-    setLanguage(lang);
-  };
-
   return (
     <div style={{ background: '#1F2937', padding: '1rem', margin: '1rem', borderRadius: '8px' }}>
       <h3 style={{ color: '#F59E0B' }}>Language Test Component</h3>
       <p style={{ color: '#9CA3AF' }}>Check browser console for debug output</p>
-      <div style={{ marginTop: '1rem' }}>
-        <button onClick={() => testLanguageSwitch('ru')} style={{ marginRight: '0.5rem' }}>
-          Test Russian
-        </button>
-        <button onClick={() => testLanguageSwitch('he')} style={{ marginRight: '0.5rem' }}>
-          Test Hebrew
-        </button>
-        <button onClick={() => testLanguageSwitch('en')}>
-          Test English
-        </button>
-      </div>
+      <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>
+        ⚠️ Use header dropdown to change language
+      </p>
       <div style={{ marginTop: '1rem', color: '#D1D5DB' }}>
         <p>Current: {language}</p>
         <p>{t('common.save')} | {t('common.cancel')} | {t('common.delete')}</p>

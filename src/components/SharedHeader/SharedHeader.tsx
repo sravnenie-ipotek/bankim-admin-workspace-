@@ -40,6 +40,8 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   const { language, setLanguage } = useLanguage();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
+  console.log('SharedHeader render: current language =', language);
+
   /**
    * Handle logo click with optional confirmation
    */
@@ -64,8 +66,10 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
    * Handle language selection
    */
   const handleLanguageSelect = (lang: Language) => {
+    console.log('SharedHeader: Changing language to', lang);
     setLanguage(lang);
     setIsLanguageDropdownOpen(false);
+    console.log('SharedHeader: Language changed, dropdown closed');
   };
 
   /**

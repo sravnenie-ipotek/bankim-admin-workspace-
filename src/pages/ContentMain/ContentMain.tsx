@@ -120,11 +120,6 @@ const ContentMain: React.FC = () => {
 
   return (
     <div className="content-main">
-      {/* Page Header */}
-      <div className="content-main__header">
-        <h1 className="content-main__title">Главная</h1>
-      </div>
-
       {/* Content Section */}
       <div className="content-main__content">
         <h2 className="content-main__subtitle">Список страниц</h2>

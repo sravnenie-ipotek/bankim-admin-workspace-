@@ -23,6 +23,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './TopNavigation.css';
 import { useNavigation } from '../../contexts/NavigationContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Language options interface
 interface LanguageOption {
@@ -75,7 +76,7 @@ export interface TopNavigationProps {
 }
 
 const TopNavigation: React.FC<TopNavigationProps> = ({
-  selectedLanguage = 'ru',
+  selectedLanguage: _selectedLanguage = 'ru',
   languages = [
     { code: 'ru', name: 'Русский', flag: '🇷🇺' },
     { code: 'he', name: 'עברית', flag: '🇮🇱' },
@@ -102,6 +103,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   className = ''
 }) => {
   const { navigationState } = useNavigation();
+  const { language, setLanguage } = useLanguage();
   // State management for dropdowns
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -110,8 +112,8 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   const languageRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Get current language details
-  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
+  // Get current language details from context
+  const currentLanguage = languages.find(lang => lang.code === language) || languages[0];
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -130,8 +132,11 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
 
   // Handle language selection
   const handleLanguageSelect = (languageCode: string) => {
+    console.log('TopNavigation: Changing language to', languageCode);
     setIsLanguageDropdownOpen(false);
+    setLanguage(languageCode as 'ru' | 'he' | 'en');
     onLanguageChange?.(languageCode);
+    console.log('TopNavigation: Language changed to', languageCode);
   };
 
   // Handle profile menu actions
@@ -187,16 +192,16 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
 
             {isLanguageDropdownOpen && (
               <div className="language-dropdown" role="menu" aria-label="Language options">
-                {languages.map((language) => (
+                {languages.map((langOption) => (
                   <button
-                    key={language.code}
-                    className={`language-option ${selectedLanguage === language.code ? 'selected' : ''}`}
-                    onClick={() => handleLanguageSelect(language.code)}
+                    key={langOption.code}
+                    className={`language-option ${currentLanguage.code === langOption.code ? 'selected' : ''}`}
+                    onClick={() => handleLanguageSelect(langOption.code)}
                     role="menuitem"
-                    aria-selected={selectedLanguage === language.code}
+                    aria-selected={currentLanguage.code === langOption.code}
                   >
-                    <span className="language-flag">{language.flag}</span>
-                    <span className="language-name">{language.name}</span>
+                    <span className="language-flag">{langOption.flag}</span>
+                    <span className="language-name">{langOption.name}</span>
                   </button>
                 ))}
               </div>

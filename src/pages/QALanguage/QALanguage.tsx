@@ -45,29 +45,11 @@ const QALanguage: React.FC = () => {
         </div>
       </div>
 
-      {/* Language Switcher Test */}
+      {/* Language Switcher Test - Removed, only use header dropdown */}
       <div className="qa-section">
-        <h2>Language Switcher Test</h2>
-        <div className="qa-button-group">
-          <button 
-            className={`qa-btn ${language === 'ru' ? 'active' : ''}`}
-            onClick={() => setLanguage('ru')}
-          >
-            🇷🇺 Russian
-          </button>
-          <button 
-            className={`qa-btn ${language === 'he' ? 'active' : ''}`}
-            onClick={() => setLanguage('he')}
-          >
-            🇮🇱 Hebrew
-          </button>
-          <button 
-            className={`qa-btn ${language === 'en' ? 'active' : ''}`}
-            onClick={() => setLanguage('en')}
-          >
-            🇺🇸 English
-          </button>
-        </div>
+        <h2>Language Switching</h2>
+        <p>⚠️ Language can only be changed using the dropdown in the header navbar.</p>
+        <p>Location: Header → Language Dropdown (top right)</p>
       </div>
 
       {/* Translation Tests */}
