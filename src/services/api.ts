@@ -302,8 +302,8 @@ class ApiService {
     };
     
     try {
-      // Use CONTENT_API_URL for content endpoints, API_BASE_URL for others
-      const baseUrl = endpoint.startsWith('/api/content') ? CONTENT_API_URL : API_BASE_URL;
+      // Use relative path for content endpoints since Vite proxy handles routing
+      const baseUrl = endpoint.startsWith('/api/content') ? '' : API_BASE_URL;
       const response = await fetch(`${baseUrl}${endpoint}`, {
         ...options,
         headers,
@@ -1021,6 +1021,11 @@ class ApiService {
    */
   async getContentByContentType(contentType: string): Promise<ApiResponse<ContentListItem[]>> {
     try {
+      // Clear cache for content endpoints to ensure fresh data
+      if (contentType === 'credit') {
+        this.clearContentCache();
+      }
+      
       // Map content type to database screen_location
       const screenLocationMap: Record<string, string> = {
         'mortgage': 'mortgage_calculation',
@@ -1074,6 +1079,7 @@ class ApiService {
         } else if (contentType === 'credit' && response.data.credit_content) {
           contentArray = response.data.credit_content;
           console.log(`✅ Found credit_content:`, contentArray.length);
+          console.log(`🔍 Credit content first item:`, contentArray[0]);
         } else if (contentType === 'credit-refi' && response.data.credit_refi_items) {
           contentArray = response.data.credit_refi_items;
           console.log(`✅ Found credit_refi_items:`, contentArray.length);
@@ -1095,6 +1101,7 @@ class ApiService {
         } else {
           console.log(`❌ No matching data structure found for ${contentType}`);
           console.log(`❌ Available keys:`, Object.keys(response.data || {}));
+          console.log(`❌ Response data structure:`, response.data);
         }
         
         console.log(`📋 Final contentArray length:`, contentArray.length);

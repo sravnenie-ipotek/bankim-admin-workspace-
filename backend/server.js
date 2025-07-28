@@ -375,7 +375,7 @@ app.get('/api/content/menu', async (req, res) => {
             'Sidebar Menu'
           ) as title_en
         FROM content_items ci
-        WHERE ci.screen_location IN ('sidebar', 'navigation', 'menu_navigation')
+        WHERE ci.screen_location IN ('sidebar', 'menu_navigation')
           AND ci.is_active = TRUE
           AND ci.component_type != 'option'
         GROUP BY ci.screen_location
@@ -447,7 +447,7 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
     console.log(`Fetching menu drill content for section ID: ${sectionId}`);
     
     // Validate that this screen_location exists in our known menu sections
-    const validScreenLocations = ['sidebar', 'navigation', 'menu_navigation'];
+    const validScreenLocations = ['sidebar', 'menu_navigation'];
     if (!validScreenLocations.includes(sectionId)) {
       return res.status(404).json({
         success: false,
@@ -458,7 +458,6 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
     // Get section title mapping
     const sectionTitles = {
       'sidebar': 'Панель управления',
-      'navigation': 'Навигация',
       'menu_navigation': 'Навигация меню'
     };
 
@@ -664,11 +663,14 @@ app.get('/api/content/item/:itemId', async (req, res) => {
         ) as action_number
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
       WHERE ci.id = $1
     `, [itemId]);
 
@@ -1311,64 +1313,103 @@ app.get('/api/content/mortgage', async (req, res) => {
   try {
     // Use clean screen_location based approach - much simpler!
     const result = await safeQuery(`
-      WITH step_counts AS (
+      WITH screen_summaries AS (
         SELECT 
-          'step.1.calculator' as step_group,
-          'Калькулятор ипотеки' as title_ru,
-          'משכנתא מחשבון' as title_he,
-          'Mortgage Calculator' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE AND component_type != 'option') as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE) as representative_id,
-          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_calculation' AND is_active = TRUE LIMIT 1) as page_number
-        UNION ALL
-        SELECT 
-          'step.2.personal_data' as step_group,
-          'Анкета личных данных' as title_ru,
-          'טופס נתונים אישיים' as title_he,
-          'Personal Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE AND component_type != 'option') as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE) as representative_id,
-          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step2' AND is_active = TRUE LIMIT 1) as page_number
-        UNION ALL
-        SELECT 
-          'step.3.income_data' as step_group,
-          'Анкета доходов' as title_ru,
-          'טופס הכנסות' as title_he,
-          'Income Data Form' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE AND component_type != 'option') as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE) as representative_id,
-          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step3' AND is_active = TRUE LIMIT 1) as page_number
-        UNION ALL
-        SELECT 
-          'step.4.program_selection' as step_group,
-          'Выбор программ ипотеки' as title_ru,
-          'בחירת תוכניות משכנתא' as title_he,
-          'Mortgage Program Selection' as title_en,
-          (SELECT COUNT(*) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE AND component_type != 'option') as action_count,
-          (SELECT MAX(updated_at) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as last_modified,
-          (SELECT MIN(id) FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE) as representative_id,
-          (SELECT DISTINCT page_number FROM content_items WHERE screen_location = 'mortgage_step4' AND is_active = TRUE LIMIT 1) as page_number
+          ci.screen_location,
+          COUNT(*) as action_count,
+          MAX(ci.updated_at) as last_modified,
+          MIN(ci.id) as representative_id,
+          MIN(ci.page_number) as page_number,
+          -- Get title translations from the main title content for each screen
+          COALESCE(
+            (SELECT ct_ru.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_ru ON title_ci.id = ct_ru.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
+               AND ct_ru.language_code = 'ru'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Russian translation
+            (SELECT ct_ru.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_ru ON fallback_ci.id = ct_ru.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_ru.language_code = 'ru'
+               AND ct_ru.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            ci.screen_location
+          ) as title_ru,
+          COALESCE(
+            (SELECT ct_he.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_he ON title_ci.id = ct_he.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
+               AND ct_he.language_code = 'he'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available Hebrew translation
+            (SELECT ct_he.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_he ON fallback_ci.id = ct_he.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_he.language_code = 'he'
+               AND ct_he.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            ci.screen_location
+          ) as title_he,
+          COALESCE(
+            (SELECT ct_en.content_value 
+             FROM content_items title_ci 
+             JOIN content_translations ct_en ON title_ci.id = ct_en.content_item_id
+             WHERE title_ci.screen_location = ci.screen_location 
+               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
+               AND ct_en.language_code = 'en'
+               AND title_ci.is_active = TRUE
+             LIMIT 1),
+            -- Fallback to first available English translation
+            (SELECT ct_en.content_value 
+             FROM content_items fallback_ci 
+             JOIN content_translations ct_en ON fallback_ci.id = ct_en.content_item_id
+             WHERE fallback_ci.screen_location = ci.screen_location
+               AND ct_en.language_code = 'en'
+               AND ct_en.content_value IS NOT NULL
+               AND fallback_ci.is_active = TRUE
+             LIMIT 1),
+            ci.screen_location
+          ) as title_en
+        FROM content_items ci
+        WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
+          AND ci.is_active = TRUE
+          AND ci.component_type != 'option'
+        GROUP BY ci.screen_location
+        HAVING COUNT(*) > 0
       )
       SELECT 
-        sc.representative_id as id,
-        sc.step_group as content_key,
+        ss.representative_id as id,
+        ss.screen_location as content_key,
         'step' as component_type,
         'mortgage_steps' as category,
-        'mortgage_calculation' as screen_location,
-        sc.title_ru as description,
+        ss.screen_location,
+        ss.page_number,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
         true as is_active,
-        sc.action_count,
-        sc.title_ru,
-        sc.title_he,  
-        sc.title_en,
-        sc.last_modified as updated_at,
-        sc.page_number
-      FROM step_counts sc
-      ORDER BY sc.step_group
+        ss.action_count,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as title_ru,
+        COALESCE(ss.title_he, ss.title_en, 'Unnamed Step') as title_he,
+        COALESCE(ss.title_en, ss.title_ru, 'Unnamed Step') as title_en,
+        ss.last_modified as updated_at
+      FROM screen_summaries ss
+      ORDER BY ss.screen_location
     `);
+    
+    console.log(`🔍 Mortgage query returned ${result.rows.length} rows`);
+    if (result.rows.length > 0) {
+      console.log('📋 First row sample:', result.rows[0]);
+    }
     
     const mortgageContent = result.rows.map(row => ({
       id: row.id,
@@ -1385,9 +1426,12 @@ app.get('/api/content/mortgage', async (req, res) => {
         he: row.title_he || '',
         en: row.title_en || ''
       },
-      last_modified: row.updated_at
+      last_modified: row.updated_at,
+      lastModified: row.updated_at  // Add both formats for compatibility
     }));
 
+    console.log(`✅ Formatted ${mortgageContent.length} mortgage items`);
+    
     res.json({
       success: true,
       data: {
@@ -1417,12 +1461,17 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     
     console.log(`Fetching drill content for step ID: ${stepId}`);
     
-    // Map step IDs to screen_locations - much cleaner!
+    // Map step IDs to screen_locations - updated for actual database structure
     const stepMapping = {
-      'step.1.calculator': 'mortgage_calculation',
+      'step.1.calculator': 'mortgage_step1',
       'step.2.personal_data': 'mortgage_step2', 
       'step.3.income_data': 'mortgage_step3',
-      'step.4.program_selection': 'mortgage_step4'
+      'step.4.program_selection': 'mortgage_step4',
+      // Also support direct screen_location values
+      'mortgage_step1': 'mortgage_step1',
+      'mortgage_step2': 'mortgage_step2',
+      'mortgage_step3': 'mortgage_step3',
+      'mortgage_step4': 'mortgage_step4'
     };
 
     const screenLocation = stepMapping[stepId];
@@ -1435,7 +1484,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
 
     // Get step title mapping
     const stepTitles = {
-      'mortgage_calculation': 'Калькулятор ипотеки',
+      'mortgage_step1': 'Калькулятор ипотеки',
       'mortgage_step2': 'Анкета личных данных',  
       'mortgage_step3': 'Анкета доходов',
       'mortgage_step4': 'Выбор программ ипотеки'
@@ -1708,7 +1757,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
              LIMIT 1)
           ) as title_en
         FROM content_items ci
-        WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4')
+        WHERE ci.screen_location LIKE 'refinance_mortgage_%'
           AND ci.is_active = TRUE
           AND ci.component_type != 'option'
         GROUP BY ci.screen_location
@@ -1782,26 +1831,22 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     // Handle both old step IDs and new screen_location directly
     let screenLocation = stepId;
     
-    // Map step IDs to actual screen_locations (keep original credit refinancing content)
-    const stepMapping = {
-      'step.1.calculator': 'refinance_credit_1',
-      'step.2.personal_data': 'refinance_credit_2', 
-      'step.3.income_data': 'refinance_credit_3',
-      'step.4.program_selection': 'refinance_credit_4',
-      'refinance_credit_1': 'refinance_credit_1',
-      'refinance_credit_2': 'refinance_credit_2',
-      'refinance_credit_3': 'refinance_credit_3',
-      'refinance_credit_4': 'refinance_credit_4'
+    // Map old step IDs to actual screen_locations if needed (for backwards compatibility)
+    const legacyStepMapping = {
+      'step.1.calculator': 'refinance_mortgage_1',
+      'step.2.personal_data': 'refinance_mortgage_2', 
+      'step.3.income_data': 'refinance_mortgage_3',
+      'step.4.program_selection': 'refinance_mortgage_4'
     };
 
-    // Map step ID to the real screen_location with approved content
-    if (stepMapping[stepId]) {
-      screenLocation = stepMapping[stepId];
+    // If it's a legacy step ID, map it to the real screen_location
+    if (legacyStepMapping[stepId]) {
+      screenLocation = legacyStepMapping[stepId];
     }
     
     // Validate that this screen_location exists in our known refinancing screens
-    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4'];
-    if (!validScreenLocations.includes(screenLocation)) {
+    const validScreenLocations = ['refinance_mortgage_1', 'refinance_mortgage_2', 'refinance_mortgage_3', 'refinance_mortgage_4'];
+    if (!validScreenLocations.includes(screenLocation) && !screenLocation.startsWith('refinance_mortgage_')) {
       return res.status(404).json({
         success: false,
         error: `Invalid step ID or screen location: ${stepId}`
@@ -1826,11 +1871,14 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
         ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
+        AND ct_ru.language_code = 'ru' 
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
+        AND ct_he.language_code = 'he' 
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
+        AND ct_en.language_code = 'en' 
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
@@ -1901,268 +1949,6 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
 });
 
 /**
- * Credit drill endpoint - get detailed content for specific credit step
- * GET /api/content/credit/drill/:stepId
- */
-app.get('/api/content/credit/drill/:stepId', async (req, res) => {
-  try {
-    const { stepId } = req.params;
-    
-    console.log(`Fetching credit drill content for step ID: ${stepId}`);
-    
-    // Handle both old step IDs and new screen_location directly
-    let screenLocation = stepId;
-    
-    // Map step IDs to actual screen_locations for credit content
-    const stepMapping = {
-      'step.1.calculator': 'refinance_credit_1',
-      'step.2.personal_data': 'refinance_credit_2', 
-      'step.3.income_data': 'refinance_credit_3',
-      'step.4.program_selection': 'refinance_credit_4',
-      'refinance_credit_1': 'refinance_credit_1',
-      'refinance_credit_2': 'refinance_credit_2',
-      'refinance_credit_3': 'refinance_credit_3',
-      'refinance_credit_4': 'refinance_credit_4'
-    };
-
-    // Map step ID to the real screen_location
-    if (stepMapping[stepId]) {
-      screenLocation = stepMapping[stepId];
-    }
-    
-    // Validate that this screen_location exists in our known credit screens
-    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4'];
-    if (!validScreenLocations.includes(screenLocation)) {
-      return res.status(404).json({
-        success: false,
-        error: `Invalid step ID or screen location: ${stepId}`
-      });
-    }
-
-    // Get individual content items for this credit step
-    const contentResult = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.page_number,
-        ci.description,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as title_ru,
-        ct_he.content_value as title_he,
-        ct_en.content_value as title_en,
-        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
-      FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
-      WHERE ci.screen_location = $1
-        AND ci.is_active = true
-      ORDER BY ci.content_key
-    `, [screenLocation]);
-
-    if (!contentResult.rows || contentResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No content found for this credit step'
-      });
-    }
-
-    const actions = contentResult.rows.map(row => ({
-      id: row.id,
-      actionNumber: row.action_number,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
-      screen_location: row.screen_location,
-      page_number: row.page_number,
-      description: row.description,
-      is_active: row.is_active,
-      last_modified: row.updated_at,
-      translations: {
-        ru: row.title_ru || '',
-        he: row.title_he || '',
-        en: row.title_en || ''
-      }
-    }));
-
-    // Get the page title from the first available title translation or use a fallback
-    let pageTitle = 'Unnamed Step';
-    if (contentResult.rows.length > 0) {
-      const firstTitle = contentResult.rows.find(row => 
-        row.content_key && row.content_key.includes('.title') && row.title_ru
-      );
-      if (firstTitle) {
-        pageTitle = firstTitle.title_ru;
-      } else {
-        // Fallback: use first available Russian translation
-        const fallback = contentResult.rows.find(row => row.title_ru);
-        if (fallback) {
-          pageTitle = fallback.title_ru;
-        }
-      }
-    }
-
-    // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
-
-    res.json({
-      success: true,
-      data: {
-        pageTitle: pageTitle,
-        stepGroup: stepId,
-        actionCount: visibleActionCount,
-        actions: actions
-      }
-    });
-
-  } catch (error) {
-    console.error('Get credit drill content error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-/**
- * Credit-refi drill endpoint - get detailed content for specific credit refinancing step
- * GET /api/content/credit-refi/drill/:stepId
- */
-app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
-  try {
-    const { stepId } = req.params;
-    
-    console.log(`Fetching credit-refi drill content for step ID: ${stepId}`);
-    
-    // Handle both old step IDs and new screen_location directly
-    let screenLocation = stepId;
-    
-    // Map step IDs to actual screen_locations for credit-refi content
-    const stepMapping = {
-      'step.1.calculator': 'refinance_credit_1',
-      'step.2.personal_data': 'refinance_credit_2', 
-      'step.3.income_data': 'refinance_credit_3',
-      'step.4.program_selection': 'refinance_credit_4',
-      'refinance_credit_1': 'refinance_credit_1',
-      'refinance_credit_2': 'refinance_credit_2',
-      'refinance_credit_3': 'refinance_credit_3',
-      'refinance_credit_4': 'refinance_credit_4'
-    };
-
-    // Map step ID to the real screen_location
-    if (stepMapping[stepId]) {
-      screenLocation = stepMapping[stepId];
-    }
-    
-    // Validate that this screen_location exists in our known credit-refi screens
-    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'refinance_credit_4'];
-    if (!validScreenLocations.includes(screenLocation)) {
-      return res.status(404).json({
-        success: false,
-        error: `Invalid step ID or screen location: ${stepId}`
-      });
-    }
-
-    // Get individual content items for this credit-refi step
-    const contentResult = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.page_number,
-        ci.description,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as title_ru,
-        ct_he.content_value as title_he,
-        ct_en.content_value as title_en,
-        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
-      FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
-      WHERE ci.screen_location = $1
-        AND ci.is_active = true
-      ORDER BY ci.content_key
-    `, [screenLocation]);
-
-    if (!contentResult.rows || contentResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No content found for this credit-refi step'
-      });
-    }
-
-    const actions = contentResult.rows.map(row => ({
-      id: row.id,
-      actionNumber: row.action_number,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
-      screen_location: row.screen_location,
-      page_number: row.page_number,
-      description: row.description,
-      is_active: row.is_active,
-      last_modified: row.updated_at,
-      translations: {
-        ru: row.title_ru || '',
-        he: row.title_he || '',
-        en: row.title_en || ''
-      }
-    }));
-
-    // Get the page title from the first available title translation or use a fallback
-    let pageTitle = 'Unnamed Step';
-    if (contentResult.rows.length > 0) {
-      const firstTitle = contentResult.rows.find(row => 
-        row.content_key && row.content_key.includes('.title') && row.title_ru
-      );
-      if (firstTitle) {
-        pageTitle = firstTitle.title_ru;
-      } else {
-        // Fallback: use first available Russian translation
-        const fallback = contentResult.rows.find(row => row.title_ru);
-        if (fallback) {
-          pageTitle = fallback.title_ru;
-        }
-      }
-    }
-
-    // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
-
-    res.json({
-      success: true,
-      data: {
-        pageTitle: pageTitle,
-        stepGroup: stepId,
-        actionCount: visibleActionCount,
-        actions: actions
-      }
-    });
-
-  } catch (error) {
-    console.error('Get credit-refi drill content error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-/**
  * Get dropdown options for mortgage-refi content
  * GET /api/content/mortgage-refi/{contentKey}/options
  */
@@ -2207,7 +1993,7 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.screen_location IN ('refinance_step1', 'refinance_step2', 'refinance_step3', 'refinance_step4')
+      WHERE ci.screen_location LIKE 'refinance_mortgage_%'
         AND ci.component_type = 'option'
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
@@ -2293,10 +2079,10 @@ app.get('/api/content/credit', async (req, res) => {
         ci.screen_location,
         COUNT(DISTINCT ci.id) as actionCount,
         MAX(ci.updated_at) as lastModified,
-        -- Get the main title for each step (handle step1 special case)
-        MAX(CASE WHEN ct.language_code = 'ru' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_ru,
-        MAX(CASE WHEN ct.language_code = 'he' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_he,
-        MAX(CASE WHEN ct.language_code = 'en' AND (ci.content_key LIKE '%step%_title' OR ci.content_key LIKE '%banner_title') THEN ct.content_value END) as title_en
+        -- Get titles for each language
+        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
@@ -2307,8 +2093,13 @@ app.get('/api/content/credit', async (req, res) => {
 
     console.log('📊 Query result rows:', result.rows.length);
     console.log('📋 First few rows:', result.rows.slice(0, 3));
+    console.log('🔍 Raw result.rows:', JSON.stringify(result.rows, null, 2));
+    if (result.rows.length > 0) {
+      console.log('🔑 First row keys:', Object.keys(result.rows[0]));
+    }
 
     // Map the aggregated results to the expected format
+    // For Calculate Credit Process, we'll modify the titles to indicate it's for new credit applications
     const creditContent = result.rows.map((row, index) => ({
       id: index + 1,
       content_key: `${row.screen_location}_aggregated`,
@@ -2352,10 +2143,10 @@ app.get('/api/content/credit-refi', async (req, res) => {
         ci.screen_location,
         COUNT(DISTINCT ci.id) as actionCount,
         MAX(ci.updated_at) as lastModified,
-        -- Get titles for each language (improved pattern matching)
-        MAX(CASE WHEN ct.language_code = 'ru' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_ru,
-        MAX(CASE WHEN ct.language_code = 'he' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_he,
-        MAX(CASE WHEN ct.language_code = 'en' AND (ci.content_key LIKE '%title%' OR ci.content_key LIKE '%step_%') THEN ct.content_value END) as title_en
+        -- Get titles for each language
+        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
+        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
+        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN (
@@ -2396,220 +2187,6 @@ app.get('/api/content/credit-refi', async (req, res) => {
     });
   } catch (error) {
     console.error('Get credit-refi content error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-/**
- * Get general pages content
- * GET /api/content/general
- * Returns content for general website pages (home, about, contacts)
- */
-app.get('/api/content/general', async (req, res) => {
-  try {
-    const result = await safeQuery(`
-      SELECT DISTINCT
-        ci.screen_location,
-        COUNT(DISTINCT ci.id) as actionCount,
-        MAX(ci.updated_at) as lastModified,
-        -- Get titles for each language
-        MAX(CASE WHEN ct.language_code = 'ru' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_ru,
-        MAX(CASE WHEN ct.language_code = 'he' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_he,
-        MAX(CASE WHEN ct.language_code = 'en' AND ci.content_key LIKE '%title%' THEN ct.content_value END) as title_en
-      FROM content_items ci
-      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-      WHERE ci.screen_location IN (
-        'home_page',
-        'about_page',
-        'contacts_page'
-      )
-        AND ci.is_active = true
-      GROUP BY ci.screen_location
-      ORDER BY ci.screen_location
-    `);
-
-    // Define display names for general pages
-    const pageDisplayNames = {
-      'home_page': {
-        ru: 'Домашняя страница',
-        he: 'עמוד בית',
-        en: 'Home Page'
-      },
-      'about_page': {
-        ru: 'О компании',
-        he: 'אודותינו',
-        en: 'About Us'
-      },
-      'contacts_page': {
-        ru: 'Контакты',
-        he: 'צור קשר',
-        en: 'Contacts'
-      }
-    };
-
-    const generalContent = result.rows.map(row => {
-      const screenLocation = row.screen_location;
-      const displayNames = pageDisplayNames[screenLocation] || {
-        ru: 'Общая страница',
-        he: 'עמוד כללי',
-        en: 'General Page'
-      };
-
-      return {
-        id: row.screen_location, // Using screen_location as unique identifier
-        content_key: row.screen_location,
-        component_type: 'page',
-        category: 'general_pages',
-        screen_location: row.screen_location,
-        description: row.title_ru || displayNames.ru,
-        is_active: true,
-        action_count: row.actioncount,
-        translations: {
-          ru: row.title_ru || displayNames.ru,
-          he: row.title_he || displayNames.he,
-          en: row.title_en || displayNames.en
-        },
-        last_modified: row.lastmodified
-      };
-    });
-
-    res.json({
-      success: true,
-      data: {
-        status: 'success',
-        content_count: generalContent.length,
-        general_content: generalContent
-      }
-    });
-  } catch (error) {
-    console.error('Get general content error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-/**
- * Get general page drill content
- * GET /api/content/general/drill/:stepId
- * Returns detailed content for a specific general page (home, about, contacts)
- */
-app.get('/api/content/general/drill/:stepId', async (req, res) => {
-  try {
-    const { stepId } = req.params;
-    
-    console.log(`Fetching general page drill content for step ID: ${stepId}`);
-    
-    // Handle both step IDs and screen_location directly
-    let screenLocation = stepId;
-    
-    // Map step IDs to actual screen_locations for general pages
-    const stepMapping = {
-      'home': 'home_page',
-      'about': 'about_page',
-      'contacts': 'contacts_page',
-      'home_page': 'home_page',
-      'about_page': 'about_page',
-      'contacts_page': 'contacts_page'
-    };
-
-    // Map step ID to the real screen_location
-    if (stepMapping[stepId]) {
-      screenLocation = stepMapping[stepId];
-    }
-    
-    // Validate that this screen_location exists in our known general pages
-    const validScreenLocations = ['home_page', 'about_page', 'contacts_page'];
-    if (!validScreenLocations.includes(screenLocation)) {
-      return res.status(404).json({
-        success: false,
-        error: `Invalid step ID or screen location: ${stepId}`
-      });
-    }
-
-    // Get individual content items for this general page
-    const contentResult = await safeQuery(`
-      SELECT
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.page_number,
-        ci.description,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as title_ru,
-        ct_he.content_value as title_he,
-        ct_en.content_value as title_en,
-        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
-      FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
-      WHERE ci.screen_location = $1
-        AND ci.is_active = true
-      ORDER BY ci.content_key
-    `, [screenLocation]);
-
-    if (!contentResult.rows || contentResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: 'No content found for this general page'
-      });
-    }
-
-    const actions = contentResult.rows.map(row => ({
-      id: row.id,
-      actionNumber: row.action_number,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
-      screen_location: row.screen_location,
-      page_number: row.page_number,
-      description: row.description,
-      is_active: row.is_active,
-      last_modified: row.updated_at,
-      translations: {
-        ru: row.title_ru || '',
-        he: row.title_he || '',
-        en: row.title_en || ''
-      }
-    }));
-
-    // Get the page title from the first available title translation or use a fallback
-    const pageDisplayNames = {
-      'home_page': { ru: 'Домашняя страница', he: 'עמוד בית', en: 'Home Page' },
-      'about_page': { ru: 'О компании', he: 'אודותינו', en: 'About Us' },
-      'contacts_page': { ru: 'Контакты', he: 'צור קשר', en: 'Contacts' }
-    };
-
-    const displayNames = pageDisplayNames[screenLocation] || { ru: 'Общая страница', he: 'עמוד כללי', en: 'General Page' };
-    
-    let pageTitle = displayNames.ru;
-    if (contentResult.rows.length > 0) {
-      const firstTitle = contentResult.rows.find(row => 
-        row.content_key && row.content_key.includes('.title') && row.title_ru
-      );
-      if (firstTitle) {
-        pageTitle = firstTitle.title_ru;
-      }
-    }
-
-    res.json({
-      success: true,
-      data: {
-        step_id: stepId,
-        screen_location: screenLocation,
-        page_title: pageTitle,
-        action_count: actions.length,
-        actions: actions
-      }
-    });
-
-  } catch (error) {
-    console.error('Get general drill content error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
