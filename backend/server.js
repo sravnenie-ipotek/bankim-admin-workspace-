@@ -2145,6 +2145,122 @@ app.get('/api/content/credit-refi', async (req, res) => {
   }
 });
 
+/**
+ * Get site pages summary for ContentMain dashboard
+ * GET /api/content/site-pages
+ * Returns aggregated page data with action counts and last modified dates
+ */
+app.get('/api/content/site-pages', async (req, res) => {
+  try {
+    console.log('🔄 Fetching site pages summary...');
+    
+    // Define the page mapping based on Confluence documentation
+    const pageMapping = {
+      'main': { title: 'Главная', pageNumber: 1, path: '/content/main' },
+      'menu': { title: 'Меню', pageNumber: 2, path: '/content/menu' },
+      'mortgage': { title: 'Рассчитать ипотеку', pageNumber: 3, path: '/content/mortgage' },
+      'mortgage_refi': { title: 'Рефинансирование ипотеки', pageNumber: 4, path: '/content/mortgage-refi' },
+      'credit': { title: 'Расчет кредита', pageNumber: 5, path: '/content/credit' },
+      'credit_refi': { title: 'Рефинансирование кредита', pageNumber: 6, path: '/content/credit-refi' },
+      'general': { title: 'Общие страницы', pageNumber: 7, path: '/content/general' }
+    };
+
+    // Query to get aggregated data per screen_location
+    const result = await safeQuery(`
+      SELECT 
+        CASE 
+          WHEN ci.screen_location LIKE 'mortgage_step%' THEN 'mortgage'
+          WHEN ci.screen_location LIKE 'mortgage_refi%' THEN 'mortgage_refi'
+          WHEN ci.screen_location LIKE 'credit_step%' THEN 'credit'
+          WHEN ci.screen_location LIKE 'credit_refi%' THEN 'credit_refi'
+          WHEN ci.screen_location LIKE 'menu%' THEN 'menu'
+          WHEN ci.screen_location LIKE 'main%' THEN 'main'
+          ELSE 'general'
+        END as screen_group,
+        COUNT(DISTINCT ci.id) as action_count,
+        MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.is_active = TRUE
+      GROUP BY screen_group
+      ORDER BY screen_group
+    `);
+
+    // Transform the results into the expected format
+    const sitePages = [];
+    
+    // Add pages from database results
+    result.rows.forEach(row => {
+      const pageInfo = pageMapping[row.screen_group];
+      if (pageInfo) {
+        sitePages.push({
+          id: row.screen_group,
+          title: pageInfo.title,
+          pageNumber: pageInfo.pageNumber,
+          actionCount: parseInt(row.action_count) || 0,
+          lastModified: row.last_modified ? 
+            new Date(row.last_modified).toLocaleString('ru-RU', {
+              day: '2-digit',
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'UTC'
+            }) : 
+            new Date().toLocaleString('ru-RU', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric', 
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'UTC'
+            }),
+          path: pageInfo.path
+        });
+      }
+    });
+
+    // Add any missing pages with zero counts
+    Object.keys(pageMapping).forEach(screenGroup => {
+      if (!sitePages.find(page => page.id === screenGroup)) {
+        const pageInfo = pageMapping[screenGroup];
+        sitePages.push({
+          id: screenGroup,
+          title: pageInfo.title,
+          pageNumber: pageInfo.pageNumber,
+          actionCount: 0,
+          lastModified: new Date().toLocaleString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit',
+            timeZone: 'UTC'
+          }),
+          path: pageInfo.path
+        });
+      }
+    });
+
+    // Sort by page number
+    sitePages.sort((a, b) => a.pageNumber - b.pageNumber);
+
+    console.log(`✅ Found ${sitePages.length} site pages`);
+
+    res.json({
+      success: true,
+      data: sitePages
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching site pages:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch site pages'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);

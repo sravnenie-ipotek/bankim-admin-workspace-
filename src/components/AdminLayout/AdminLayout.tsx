@@ -54,7 +54,7 @@ interface AdminLayoutProps {
  * Supports language switching, notifications, tech support, and user profile management
  */
 const AdminLayout: React.FC<AdminLayoutProps> = ({
-  title: _title,
+  title,
   activeMenuItem = 'dashboard',
   children,
   className = '',
@@ -286,6 +286,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         />
         
         <main className="admin-page-content">
+          {/* Show title for menu pages that don't have title in ContentPageWrapper */}
+          {activeMenuItem === 'content-menu' && (
+            <h1 className="admin-page-title">{title}</h1>
+          )}
           {children}
         </main>
       </div>

@@ -86,7 +86,11 @@ const SharedContentScreen: React.FC = () => {
 
   return (
     <AdminLayout title={config.title} activeMenuItem={config.activeMenuItem}>
-      <ContentPageWrapper title={config.title} showTabNavigation={actualContentType !== 'main'}>
+      <ContentPageWrapper 
+        title={config.title} 
+        showTabNavigation={actualContentType !== 'main' && actualContentType !== 'menu'}
+        showTitle={actualContentType !== 'menu'}
+      >
         {config.useContentListBase ? (
           <ContentListBase
             sectionTitle={config.title}

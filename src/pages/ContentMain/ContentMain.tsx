@@ -16,8 +16,9 @@
  * @since 2024-12-14
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../../services/api';
 import './ContentMain.css';
 
 /**
@@ -36,67 +37,160 @@ const ContentMain: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [contentPages, setContentPages] = useState<ContentPage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const itemsPerPage = 20;
 
-  // Content pages - original data preserved
-  const contentPages: ContentPage[] = [
-    {
-      id: 'main',
-      title: 'Главная',
-      pageNumber: 1,
-      actionCount: 7,
-      lastModified: '15.12.2024, 02:00',
-      path: '#' // TODO: Implement main page editing
-    },
-    {
-      id: 'menu',
-      title: 'Меню',
-      pageNumber: 2,
-      actionCount: 17,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/menu'
-    },
-    {
-      id: 'mortgage',
-      title: 'Рассчитать ипотеку',
-      pageNumber: 3,
-      actionCount: 12,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/mortgage'
-    },
-    {
-      id: 'mortgage-refi',
-      title: 'Рефинансирование ипотеки',
-      pageNumber: 4,
-      actionCount: 8,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/mortgage-refi'
-    },
-    {
-      id: 'credit',
-      title: 'Расчет кредита',
-      pageNumber: 5,
-      actionCount: 15,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/credit'
-    },
-    {
-      id: 'credit-refi',
-      title: 'Рефинансирование кредита',
-      pageNumber: 6,
-      actionCount: 6,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/credit-refi'
-    },
-    {
-      id: 'general',
-      title: 'Общие страницы',
-      pageNumber: 7,
-      actionCount: 23,
-      lastModified: '15.12.2024, 02:00',
-      path: '/content/general'
-    }
-  ];
+  // Fetch content pages from API
+  useEffect(() => {
+    const fetchContentPages = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        console.log('🔄 Fetching content pages from API...');
+        const response = await apiService.getSitePages();
+        
+        if (response.success && response.data) {
+          console.log('✅ Content pages loaded from database:', response.data);
+          setContentPages(response.data);
+        } else {
+          console.error('❌ Failed to load content pages:', response.error);
+          setError(response.error || 'Failed to load content pages');
+          
+          // Fallback to hardcoded data
+          console.log('📝 Using fallback hardcoded data...');
+          setContentPages([
+            {
+              id: 'main',
+              title: 'Главная',
+              pageNumber: 1,
+              actionCount: 7,
+              lastModified: '15.12.2024, 02:00',
+              path: '#'
+            },
+            {
+              id: 'menu',
+              title: 'Меню',
+              pageNumber: 2,
+              actionCount: 17,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/menu'
+            },
+            {
+              id: 'mortgage',
+              title: 'Рассчитать ипотеку',
+              pageNumber: 3,
+              actionCount: 12,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/mortgage'
+            },
+            {
+              id: 'mortgage-refi',
+              title: 'Рефинансирование ипотеки',
+              pageNumber: 4,
+              actionCount: 8,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/mortgage-refi'
+            },
+            {
+              id: 'credit',
+              title: 'Расчет кредита',
+              pageNumber: 5,
+              actionCount: 15,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/credit'
+            },
+            {
+              id: 'credit-refi',
+              title: 'Рефинансирование кредита',
+              pageNumber: 6,
+              actionCount: 6,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/credit-refi'
+            },
+            {
+              id: 'general',
+              title: 'Общие страницы',
+              pageNumber: 7,
+              actionCount: 23,
+              lastModified: '15.12.2024, 02:00',
+              path: '/content/general'
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching content pages:', error);
+        setError(error instanceof Error ? error.message : 'Unknown error occurred');
+        
+        // Fallback to hardcoded data on error
+        console.log('📝 Using fallback hardcoded data due to error...');
+        setContentPages([
+          {
+            id: 'main',
+            title: 'Главная',
+            pageNumber: 1,
+            actionCount: 7,
+            lastModified: '15.12.2024, 02:00',
+            path: '#'
+          },
+          {
+            id: 'menu',
+            title: 'Меню',
+            pageNumber: 2,
+            actionCount: 17,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/menu'
+          },
+          {
+            id: 'mortgage',
+            title: 'Рассчитать ипотеку',
+            pageNumber: 3,
+            actionCount: 12,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/mortgage'
+          },
+          {
+            id: 'mortgage-refi',
+            title: 'Рефинансирование ипотеки',
+            pageNumber: 4,
+            actionCount: 8,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/mortgage-refi'
+          },
+          {
+            id: 'credit',
+            title: 'Расчет кредита',
+            pageNumber: 5,
+            actionCount: 15,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/credit'
+          },
+          {
+            id: 'credit-refi',
+            title: 'Рефинансирование кредита',
+            pageNumber: 6,
+            actionCount: 6,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/credit-refi'
+          },
+          {
+            id: 'general',
+            title: 'Общие страницы',
+            pageNumber: 7,
+            actionCount: 23,
+            lastModified: '15.12.2024, 02:00',
+            path: '/content/general'
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContentPages();
+  }, []);
 
   // Filter pages based on search
   const filteredPages = contentPages.filter(page =>
@@ -152,30 +246,38 @@ const ContentMain: React.FC = () => {
 
             {/* Table Body */}
             <div className="table-body">
-              {displayedPages.map((page) => (
-                <div key={page.id} className="table-row">
-                  <div className="table-cell page-name">
-                    {page.title} Страница №{page.pageNumber}
+              {loading ? (
+                <div className="loading-message">Загрузка страниц...</div>
+              ) : error ? (
+                <div className="error-message">Ошибка загрузки: {error}</div>
+              ) : displayedPages.length === 0 ? (
+                <div className="no-data-message">Нет данных для отображения.</div>
+              ) : (
+                displayedPages.map((page) => (
+                  <div key={page.id} className="table-row">
+                    <div className="table-cell page-name">
+                      {page.title} Страница №{page.pageNumber}
+                    </div>
+                    <div className="table-cell actions-count">
+                      {page.actionCount}
+                    </div>
+                    <div className="table-cell last-modified">
+                      {page.lastModified}
+                    </div>
+                    <div className="table-cell actions">
+                      <button 
+                        className="action-button"
+                        onClick={() => handlePageClick(page)}
+                        aria-label={`Navigate to ${page.title}`}
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  <div className="table-cell actions-count">
-                    {page.actionCount}
-                  </div>
-                  <div className="table-cell last-modified">
-                    {page.lastModified}
-                  </div>
-                  <div className="table-cell actions">
-                    <button 
-                      className="action-button"
-                      onClick={() => handlePageClick(page)}
-                      aria-label={`Navigate to ${page.title}`}
-                    >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 

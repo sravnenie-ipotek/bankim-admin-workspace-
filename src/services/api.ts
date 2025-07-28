@@ -450,6 +450,27 @@ class ApiService {
     return this.request<ContentItem[]>('/api/content-items');
   }
 
+  async getSitePages(): Promise<ApiResponse<any[]>> {
+    try {
+      console.log('🔄 Fetching site pages summary...');
+      const response = await this.request<any[]>('/api/content/site-pages');
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched site pages from database');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch site pages:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching site pages:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch site pages'
+      };
+    }
+  }
+
   async getContentItemById(id: string): Promise<ApiResponse<ContentItem>> {
     return this.request<ContentItem>(`/api/content/item/${id}`);
   }

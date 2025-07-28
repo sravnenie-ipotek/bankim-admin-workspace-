@@ -6,6 +6,7 @@ interface ContentPageWrapperProps {
   title: string;
   children: React.ReactNode;
   showTabNavigation?: boolean;
+  showTitle?: boolean;
 }
 
 /**
@@ -15,12 +16,13 @@ interface ContentPageWrapperProps {
 const ContentPageWrapper: React.FC<ContentPageWrapperProps> = ({ 
   title, 
   children, 
-  showTabNavigation = true 
+  showTabNavigation = true,
+  showTitle = true
 }) => {
   return (
     <div className="main-content-frame">
       {/* Page Title */}
-      <h1 className="page-title">{title}</h1>
+      {showTitle && <h1 className="page-title">{title}</h1>}
       
       {/* Content Container with Tab Navigation */}
       <div className="content-with-tabs">

@@ -67,6 +67,16 @@
   transition: all 0.3s ease;
 }
 
+/* Admin page title for pages that don't show title in ContentPageWrapper */
+.admin-page-title {
+  color: #FFFFFF;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 40px 0 40px 105px;
+  font-family: 'Inter', sans-serif;
+  padding: 0;
+}
+
 /* Content overlay for mobile menu */
 .admin-content-overlay {
   display: none;
@@ -147,6 +157,33 @@
   
   .admin-layout.mobile-menu-open .admin-content-overlay {
     display: block;
+  }
+}
+
+/* Responsive adjustments for admin-page-title */
+@media (max-width: 1440px) {
+  .admin-page-title {
+    margin: 40px 0 40px 40px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .admin-page-title {
+    margin: 40px 0 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page-title {
+    margin: 20px 0 20px 20px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-page-title {
+    margin: 20px 0 20px 10px;
+    font-size: 20px;
   }
 }
 

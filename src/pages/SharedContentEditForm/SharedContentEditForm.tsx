@@ -430,8 +430,14 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
       <div className="last-edit-info">
         <span className="last-edit-label">Последнее редактирование</span>
         <span className="last-edit-date">
-          {new Date(contentItem?.last_modified || '').toLocaleDateString('ru-RU')} | 
-          {' '}{new Date(contentItem?.last_modified || '').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+          {contentItem?.last_modified && new Date(contentItem.last_modified).getTime() > 0 ? (
+            <>
+              {new Date(contentItem.last_modified).toLocaleDateString('ru-RU')} | 
+              {' '}{new Date(contentItem.last_modified).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+            </>
+          ) : (
+            'Дата не указана'
+          )}
         </span>
       </div>
 
@@ -539,7 +545,6 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
       {/* Action Buttons */}
       <div className="action-buttons">
         <div className="action-buttons-row">
-          <div className="box3" style={{ width: '225px', height: '41px' }}></div>
           <div className="action-buttons-inner">
             <button className="btn-secondary" onClick={handleBack} disabled={saving}>
               Назад

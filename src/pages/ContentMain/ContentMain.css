@@ -435,3 +435,38 @@
     font-size: 12px;
   }
 }
+
+/* Loading, Error, and No Data States */
+.loading-message,
+.error-message,
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #9CA3AF;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+}
+
+.loading-message {
+  background: rgba(55, 65, 81, 0.5);
+  border-radius: 8px;
+  margin: 1rem;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  margin: 1rem;
+  color: #FCA5A5;
+}
+
+.no-data-message {
+  background: rgba(75, 85, 99, 0.3);
+  border-radius: 8px;
+  margin: 1rem;
+  font-style: italic;
+}
