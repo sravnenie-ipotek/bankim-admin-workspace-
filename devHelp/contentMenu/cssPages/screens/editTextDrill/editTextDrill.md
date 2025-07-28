@@ -752,3 +752,214 @@
 	</div>
 </body>
 </html>
+
+<!-- 
+# SHARED TEXT EDIT DOCUMENTATION
+# @/editTextDrill
+
+## 🎯 QUICK REFERENCE FOR FUTURE DEVELOPMENT
+
+### ✅ SHARED TEXT EDITING PATTERN (Updated: 2025-01-28)
+
+When implementing text editing for any content type, follow this established pattern:
+
+#### **1. Wrapper Component Pattern**
+✅ **DO**: Create wrapper components that fetch data and provide props to SharedTextEdit
+❌ **DON'T**: Use SharedTextEdit directly in routes
+
+**Example Structure:**
+```
+src/pages/
+├── CreditTextEdit/               ← Credit text editing wrapper
+│   ├── CreditTextEdit.tsx
+│   └── index.ts
+├── CreditRefiTextEdit/           ← Credit-refi text editing wrapper  
+│   ├── CreditRefiTextEdit.tsx
+│   └── index.ts
+├── MortgageTextEdit/             ← Mortgage text editing wrapper
+└── MortgageRefiTextEdit/         ← Mortgage-refi text editing wrapper
+```
+
+#### **2. Wrapper Component Implementation**
+
+**Essential Features:**
+- ✅ Fetch data using `apiService.getContentItemById(actionId)`
+- ✅ Create proper breadcrumbs for navigation
+- ✅ Handle save/cancel callbacks with navigation
+- ✅ Pass all required props to SharedTextEdit
+- ✅ Handle loading/error states
+
+**Template Code:**
+```tsx
+import { SharedTextEdit, type TextEditData, type BreadcrumbItem } from '../../shared/components/SharedTextEdit';
+
+const [ContentType]TextEdit: React.FC = () => {
+  const { actionId } = useParams<{ actionId: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [content, setContent] = useState<ContentItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data
+  const fetchContentData = async () => {
+    const response = await apiService.getContentItemById(actionId || '');
+    // Process and set content...
+  };
+
+  // Handle save
+  const handleSave = async (data: { ruText: string; heText: string; ... }) => {
+    const response = await apiService.updateContentItem(content.id, updateData);
+    // Handle success/error...
+  };
+
+  // Handle navigation
+  const handleCancel = () => {
+    navigate('/content/[contentType]', { state: navigationState });
+  };
+
+  // Create breadcrumbs
+  const breadcrumbs: BreadcrumbItem[] = [
+    { label: 'Контент сайта', onClick: () => navigate('/content/[contentType]') },
+    { label: '[Content Type Name]', onClick: () => navigate('/content/[contentType]') },
+    { label: `Действие №${actionNumber}`, isActive: true }
+  ];
+
+  return (
+    <SharedTextEdit
+      content={textEditData}
+      breadcrumbs={breadcrumbs}
+      loading={saving}
+      error={error}
+      onSave={handleSave}
+      onCancel={handleCancel}
+      showAdditionalText={false}
+      pageSubtitle="[Custom subtitle]"
+    />
+  );
+};
+```
+
+#### **3. Route Configuration in App.tsx**
+
+**Pattern:**
+```tsx
+// Import wrapper component
+import [ContentType]TextEdit from './pages/[ContentType]TextEdit';
+
+// Add route
+<Route 
+  path="/content/[contentType]/text-edit/:actionId" 
+  element={
+    <ErrorBoundary>
+      <AdminLayout title="[Title]" activeMenuItem="content-[contentType]">
+        <[ContentType]TextEdit />
+      </AdminLayout>
+    </ErrorBoundary>
+  } 
+/>
+```
+
+#### **4. Working Examples:**
+
+**✅ Implemented and Working:**
+- `/content/credit/text-edit/:actionId` → `CreditTextEdit`
+- `/content/credit-refi/text-edit/:actionId` → `CreditRefiTextEdit`  
+- `/content/mortgage/text-edit/:actionId` → `MortgageTextEdit`
+- `/content/mortgage-refi/text-edit/:actionId` → `MortgageRefiTextEdit`
+
+#### **5. Navigation Flow:**
+
+```
+Content List → Drill Page → Text Item (ТИП = Текст) → Text Edit Component
+     ↓              ↓                    ↓                     ↓
+/content/credit → /drill/step → click text item → /text-edit/:actionId
+```
+
+#### **6. Common Issues & Solutions:**
+
+**❌ Error: "Cannot read properties of undefined (reading 'map')"**
+- **Cause**: Using SharedTextEdit directly without props
+- **Fix**: Create wrapper component that fetches data and provides props
+
+**❌ Route redirects to /admin/login**  
+- **Cause**: Missing route definition
+- **Fix**: Add route in App.tsx with proper component
+
+**❌ Navigation back doesn't work**
+- **Cause**: Missing returnPath in location.state
+- **Fix**: Ensure drill pages pass navigation state when navigating to edit
+
+#### **7. Future Content Types:**
+
+When adding text editing for new content types:
+
+1. **Create wrapper component** in `src/pages/[ContentType]TextEdit/`
+2. **Import in App.tsx** and add route
+3. **Follow the established pattern** from existing implementations
+4. **Test navigation flow**: list → drill → edit → back
+
+#### **8. SharedTextEdit Component:**
+
+**Location**: `src/shared/components/SharedTextEdit/`
+**Purpose**: Reusable text editing UI component
+**Usage**: Always use through wrapper components, never directly in routes
+
+**Required Props:**
+- `content: TextEditData` - Content item to edit
+- `breadcrumbs: BreadcrumbItem[]` - Navigation breadcrumbs  
+- `onSave: (data) => void` - Save callback
+- `onCancel: () => void` - Cancel/back callback
+- `loading?: boolean` - Loading state
+- `error?: string` - Error message
+- `showAdditionalText?: boolean` - Show additional text section
+- `pageSubtitle?: string` - Custom subtitle
+
+---
+
+## 📝 DEVELOPMENT CHECKLIST
+
+When implementing text editing for a new content type:
+
+- [ ] Create wrapper component in `src/pages/[ContentType]TextEdit/`
+- [ ] Implement data fetching with `apiService.getContentItemById()`
+- [ ] Create proper breadcrumbs for navigation
+- [ ] Handle save with `apiService.updateContentItem()`
+- [ ] Handle cancel with proper navigation state
+- [ ] Import wrapper in App.tsx
+- [ ] Add route configuration in App.tsx
+- [ ] Test: list → drill → edit → save/cancel
+- [ ] Verify authentication is properly configured
+- [ ] Test error handling (network, validation, etc.)
+
+---
+
+## 🚀 QUICK COPY-PASTE TEMPLATES
+
+### New Wrapper Component:
+See CreditTextEdit.tsx or CreditRefiTextEdit.tsx for complete template
+
+### New Route in App.tsx:
+```tsx
+<Route 
+  path="/content/[contentType]/text-edit/:actionId" 
+  element={
+    <ErrorBoundary>
+      <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+        <AdminLayout title="[Title]" activeMenuItem="content-[contentType]">
+          <[ContentType]TextEdit />
+        </AdminLayout>
+      </ProtectedRoute>
+    </ErrorBoundary>
+  } 
+/>
+```
+
+### Import Statement:
+```tsx
+import [ContentType]TextEdit from './pages/[ContentType]TextEdit';
+```
+
+This pattern ensures consistent, maintainable text editing across all content types! 🎉
+
+-->
