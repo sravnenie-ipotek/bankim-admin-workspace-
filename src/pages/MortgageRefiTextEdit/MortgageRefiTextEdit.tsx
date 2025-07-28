@@ -120,29 +120,6 @@ const MortgageRefiTextEdit: React.FC = () => {
     };
   };
 
-  const breadcrumbs: BreadcrumbItem[] = [
-    {
-      label: 'Контент сайта',
-      onClick: () => navigate('/content'),
-      isActive: false
-    },
-    {
-      label: 'Рефинансирование ипотеки',
-      onClick: () => navigate('/content/mortgage-refi'),
-      isActive: false
-    },
-    {
-      label: 'Список действий',
-      onClick: handleCancel,
-      isActive: false
-    },
-    {
-      label: 'Редактирование',
-      onClick: () => {},
-      isActive: true
-    }
-  ];
-
   const handleSave = async (data: TextEditData) => {
     if (!content) return;
     
@@ -182,6 +159,29 @@ const MortgageRefiTextEdit: React.FC = () => {
       }
     });
   };
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      label: 'Контент сайта',
+      onClick: () => navigate('/content'),
+      isActive: false
+    },
+    {
+      label: 'Рефинансирование ипотеки',
+      onClick: () => navigate('/content/mortgage-refi'),
+      isActive: false
+    },
+    {
+      label: 'Список действий',
+      onClick: handleCancel,
+      isActive: false
+    },
+    {
+      label: 'Редактирование',
+      onClick: () => {},
+      isActive: true
+    }
+  ];
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#111928' }}>
