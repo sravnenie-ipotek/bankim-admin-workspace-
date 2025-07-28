@@ -115,6 +115,11 @@ const MortgageRefiDrill: React.FC = () => {
     const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
     console.log('📋 Type display:', typeDisplay);
     
+    // Calculate the action number for display (same as in the UI)
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const actionIndex = filteredActions.findIndex(a => a.id === action.id);
+    const displayActionNumber = action.actionNumber ?? ((location.state?.baseActionNumber || 0) + startIndex + actionIndex + 1);
+    
     // Navigate based on component type
     const componentTypeLower = action.component_type?.toLowerCase();
     
@@ -125,13 +130,18 @@ const MortgageRefiDrill: React.FC = () => {
         typeDisplay === 'Текст') {
       const textEditUrl = `/content/mortgage-refi/text-edit/${action.id}`;
       console.log('✅ Navigating to mortgage-refi text edit page:', textEditUrl);
-      navigate(textEditUrl, { 
-        state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
-          returnPath: `/content/mortgage-refi/drill/${pageId}`
-        } 
-      });
+      
+      const navigationState = {
+        fromPage: currentPage,
+        searchTerm: searchTerm,
+        drillPage: currentPage,
+        drillSearchTerm: searchTerm,
+        returnPath: `/content/mortgage-refi/drill/${pageId}`,
+        baseActionNumber: location.state?.baseActionNumber || 0,
+        actionNumber: displayActionNumber // Pass the action number to text edit page
+      };
+      
+      navigate(textEditUrl, { state: navigationState });
     } 
     // For dropdown types - navigate to the special dropdown edit page
     else if (componentTypeLower === 'dropdown' || 
@@ -140,13 +150,18 @@ const MortgageRefiDrill: React.FC = () => {
              typeDisplay === 'Дропдаун') {
       const dropdownEditUrl = `/content/mortgage-refi/dropdown-edit/${action.id}`;
       console.log('📋 Navigating to mortgage-refi dropdown edit page:', dropdownEditUrl);
-      navigate(dropdownEditUrl, { 
-        state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
-          returnPath: `/content/mortgage-refi/drill/${pageId}`
-        } 
-      });
+      
+      const navigationState = {
+        fromPage: currentPage,
+        searchTerm: searchTerm,
+        drillPage: currentPage,
+        drillSearchTerm: searchTerm,
+        returnPath: `/content/mortgage-refi/drill/${pageId}`,
+        baseActionNumber: location.state?.baseActionNumber || 0,
+        actionNumber: displayActionNumber // Pass the action number to dropdown edit page
+      };
+      
+      navigate(dropdownEditUrl, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {

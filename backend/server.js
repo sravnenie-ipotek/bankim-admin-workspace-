@@ -2035,13 +2035,10 @@ app.get('/api/content/credit', async (req, res) => {
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.is_active = TRUE
         AND ci.screen_location IN (
-          'calculate_credit_1',                    -- for /services/calculate-credit/1 (17 items)
-          'calculate_credit_2',                    -- for /services/calculate-credit/2 (37 items)
-          'calculate_credit_3_header',             -- for /services/calculate-credit/3 (header - 1 item)
-          'calculate_credit_3_personal_info',      -- for /services/calculate-credit/3 (personal info - 12 items)
-          'calculate_credit_4_header',             -- for /services/calculate-credit/4 (header - 1 item)
-          'calculate_credit_4_employment',         -- for /services/calculate-credit/4 (employment - 6 items)
-          'calculate_credit_4_income'              -- for /services/calculate-credit/4 (income - 6 items)
+          'credit_step1',
+          'credit_step2',
+          'credit_step3',
+          'credit_step4'
         )
         AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
         AND ci.component_type != 'option'

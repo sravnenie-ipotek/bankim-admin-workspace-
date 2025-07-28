@@ -44,6 +44,9 @@ const MortgageRefiDropdownEdit: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   
+  // Get action number from location state (passed from previous screen)
+  const actionNumber = location.state?.actionNumber || null;
+  
   // Form states
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
@@ -77,7 +80,7 @@ const MortgageRefiDropdownEdit: React.FC = () => {
             en: item.translations?.en || ''
           },
           last_modified: item.updated_at || new Date().toISOString(),
-          action_number: item.action_number
+          action_number: actionNumber || item.action_number
         });
         
         setTitleRu(item.translations?.ru || '');

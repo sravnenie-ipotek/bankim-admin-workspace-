@@ -1,4 +1,4 @@
-# Database Screen Location Conventions
+image.png# Database Screen Location Conventions
 
 ## Overview
 This document defines the standardized screen location naming conventions used in the content management system database for all mortgage and credit processes.
