@@ -3,7 +3,7 @@
  * Centralized logic for handling different content types (mortgage, mortgage-refi, credit, etc.)
  */
 
-export type ContentType = 'mortgage' | 'mortgage-refi' | 'credit' | 'credit-refi';
+export type ContentType = 'mortgage' | 'mortgage-refi' | 'credit' | 'credit-refi' | 'general';
 
 export interface ContentTypeConfig {
   type: ContentType;
@@ -36,6 +36,12 @@ const CONTENT_TYPE_CONFIGS: Record<ContentType, ContentTypeConfig> = {
     apiPath: 'credit-refi',
     basePath: '/content/credit-refi',
     displayName: 'Рефинансирование кредита'
+  },
+  'general': {
+    type: 'general',
+    apiPath: 'general',
+    basePath: '/content/general',
+    displayName: 'Общие страницы'
   }
 };
 
