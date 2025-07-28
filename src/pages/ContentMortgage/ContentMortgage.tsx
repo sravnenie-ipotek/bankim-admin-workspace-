@@ -228,8 +228,6 @@ const ContentMortgage: React.FC = () => {
       loading={loading}
       error={error}
       itemsPerPage={itemsPerPage}
-      selectedLanguage={selectedLanguage}
-      onLanguageChange={setSelectedLanguage}
     />
   );
 };
