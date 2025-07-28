@@ -7,6 +7,7 @@ import ContentMenu from '../ContentMenu';
 import ContentMortgage from '../ContentMortgage';
 import ContentMortgageRefi from '../ContentMortgageRefi';
 import ContentCredit from '../ContentCredit';
+import ContentCreditRefi from '../ContentCreditRefi';
 
 // Configuration for each content type
 interface ContentTypeConfig {
@@ -57,7 +58,8 @@ const contentTypeConfig: Record<string, ContentTypeConfig> = {
     title: 'Рефинансирование кредита',
     breadcrumbLabel: 'Рефинансирование кредита',
     activeMenuItem: 'content-credit-refi',
-    useContentListBase: true
+    useContentListBase: false,
+    customComponent: ContentCreditRefi
   },
   'general': {
     title: 'Общие страницы',
