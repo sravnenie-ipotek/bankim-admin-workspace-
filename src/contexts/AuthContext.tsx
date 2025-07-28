@@ -98,27 +98,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // TEMPORARILY DISABLED: Always provide a default user for development
   useEffect(() => {
-    const savedUser = localStorage.getItem('bankIM_admin_user');
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser);
-        
-        // Update permissions to latest role definitions (in case roles were updated)
-        const updatedUserData = {
-          ...userData,
-          permissions: ROLE_PERMISSIONS[userData.role as UserRole] || []
-        };
-        
-        setUser(updatedUserData);
-        localStorage.setItem('bankIM_admin_user', JSON.stringify(updatedUserData));
-      } catch (error) {
-        console.error('Failed to parse saved user data:', error);
-        localStorage.removeItem('bankIM_admin_user');
-      }
-    }
+    // Create a default director user with all permissions
+    const defaultUser: User = {
+      id: 'temp_director',
+      email: 'director@bankim.com',
+      name: 'Temporary Director',
+      role: 'director',
+      permissions: ROLE_PERMISSIONS['director'] || []
+    };
+    
+    setUser(defaultUser);
     setLoading(false);
+    
+    console.log('🔓 TEMPORARILY DISABLED: Using default director user for development');
   }, []);
 
   const login = async (email: string, _password: string, role: UserRole): Promise<boolean> => {
@@ -153,15 +147,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const hasPermission = (action: string, resource: string): boolean => {
-    if (!user) return false;
-    
-    return user.permissions.some(
-      permission => permission.action === action && permission.resource === resource
-    );
+    // TEMPORARILY DISABLED: Always return true for development
+    console.log('🔓 TEMPORARILY DISABLED: Permission check bypassed:', action, resource);
+    return true;
   };
 
   const isRole = (role: UserRole): boolean => {
-    return user?.role === role;
+    // TEMPORARILY DISABLED: Always return true for development
+    console.log('🔓 TEMPORARILY DISABLED: Role check bypassed:', role);
+    return true;
   };
 
   const value: AuthContextType = {
