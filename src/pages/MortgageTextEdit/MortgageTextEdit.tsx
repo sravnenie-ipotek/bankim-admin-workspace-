@@ -10,7 +10,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
-import { SharedHeader, SharedMenu } from '../../components';
+import { SharedMenu } from '../../components';
 import { SharedTextEdit, type TextEditData, type BreadcrumbItem } from '../../shared/components';
 
 interface ContentItem {
@@ -174,7 +174,6 @@ const MortgageTextEdit: React.FC = () => {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#111928' }}>
       <SharedMenu />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: '264px' }}>
-        <SharedHeader />
         {content ? (
           <SharedTextEdit
             content={getTextEditData()!}
