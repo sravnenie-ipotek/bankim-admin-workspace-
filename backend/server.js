@@ -1655,64 +1655,22 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
           MAX(ci.updated_at) as last_modified,
           MIN(ci.id) as representative_id,
           MIN(ci.page_number) as page_number,
-          -- Get title translations from the main title content for each screen
-          COALESCE(
-            (SELECT ct_ru.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_ru ON title_ci.id = ct_ru.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND title_ci.content_key LIKE '%.title'
-               AND ct_ru.language_code = 'ru'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available Russian translation
-            (SELECT ct_ru.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_ru ON fallback_ci.id = ct_ru.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_ru.language_code = 'ru'
-               AND ct_ru.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1)
-          ) as title_ru,
-          COALESCE(
-            (SELECT ct_he.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_he ON title_ci.id = ct_he.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND title_ci.content_key LIKE '%.title'
-               AND ct_he.language_code = 'he'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available Hebrew translation
-            (SELECT ct_he.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_he ON fallback_ci.id = ct_he.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_he.language_code = 'he'
-               AND ct_he.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1)
-          ) as title_he,
-          COALESCE(
-            (SELECT ct_en.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_en ON title_ci.id = ct_en.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND title_ci.content_key LIKE '%.title'
-               AND ct_en.language_code = 'en'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available English translation
-            (SELECT ct_en.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_en ON fallback_ci.id = ct_en.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_en.language_code = 'en'
-               AND ct_en.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1)
-          ) as title_en
+          -- Use specific names for mortgage-refi
+          CASE ci.screen_location
+            WHEN 'refinance_mortgage_1' THEN 'Рефинансирование ипотеки'
+            WHEN 'refinance_mortgage_2' THEN 'Банк текущей ипотеки'
+            ELSE ci.screen_location
+          END as title_ru,
+          CASE ci.screen_location
+            WHEN 'refinance_mortgage_1' THEN 'מחזור משכנתא'
+            WHEN 'refinance_mortgage_2' THEN 'בנק המשכנתא הנוכחית'
+            ELSE ci.screen_location
+          END as title_he,
+          CASE ci.screen_location
+            WHEN 'refinance_mortgage_1' THEN 'Mortgage Refinance'
+            WHEN 'refinance_mortgage_2' THEN 'Current Bank'
+            ELSE ci.screen_location
+          END as title_en
         FROM content_items ci
         WHERE ci.screen_location LIKE 'refinance_mortgage_%'
           AND ci.is_active = TRUE

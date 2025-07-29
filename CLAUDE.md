@@ -4,13 +4,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+### Initial Setup
 ```bash
-# Install dependencies
-npm install
+# Install all dependencies (frontend + backend)
+npm run setup  # Runs npm install, backend:install, and backend:migrate
 
+# Or manually:
+npm install
+npm run backend:install
+npm run backend:migrate
+```
+
+### Development
+```bash
 # Start development server (runs on port 3002)
 npm run dev
 
+# Start both frontend and backend concurrently
+npm run full-dev
+
+# Backend only commands
+npm run backend:dev      # Start backend dev server on port 3001
+npm run backend:start    # Start backend production server
+npm run backend:status   # Check database connection status
+npm run backend:test     # Run backend API tests
+```
+
+### Building & Quality
+```bash
 # Build for production (includes TypeScript check)
 npm run build
 
@@ -19,11 +40,20 @@ npm run lint
 
 # Preview production build
 npm run preview
+```
 
-# Backend commands (when backend is needed)
-npm run backend:dev      # Start backend dev server on port 3001
-npm run backend:migrate  # Run database migrations
-npm run full-dev        # Run both frontend and backend concurrently
+### Testing
+```bash
+# Run all Cypress E2E tests
+npm run test:all
+
+# Run specific test suites
+npm run test:mortgage        # Mortgage drill navigation tests
+npm run test:content-errors  # Content not found checks
+npm run test:full-drill     # Full drill depth tests
+
+# Open Cypress interactive mode
+npm run cypress:open
 ```
 
 ## Architecture Overview
@@ -32,10 +62,12 @@ This is a React TypeScript management portal for a banking system with role-base
 
 ### Tech Stack
 - **Frontend**: React 18 + TypeScript + Vite
-- **Routing**: React Router v6
+- **Routing**: React Router v6 (with future flags enabled)
 - **Styling**: CSS with dark theme (no CSS-in-JS libraries)
 - **Backend**: Express + PostgreSQL (in `/backend` directory)
 - **API**: RESTful API with content management endpoints
+- **Testing**: Cypress for E2E tests
+- **Environment**: Node.js >=18.0.0, npm >=8.0.0
 
 ### Key Architectural Patterns
 
@@ -50,9 +82,11 @@ This is a React TypeScript management portal for a banking system with role-base
 
 4. **API Integration**: 
    - API service centralized in `src/services/api.ts`
-   - Supports caching with ETag headers
+   - Supports caching with ETag headers (5-minute default TTL)
    - Fallback to mock data when API unavailable
    - Environment-based configuration via Vite env vars
+   - Proxy configuration: `/api` routes proxy to `http://localhost:3001`
+   - Cache management utilities: `clearContentCache()`, `getContentCacheStats()`
 
 5. **Content Management Architecture**:
    - Multilingual support (RU/HE/EN)
@@ -71,9 +105,17 @@ This is a React TypeScript management portal for a banking system with role-base
 ## Database Architecture
 
 The system uses multiple PostgreSQL databases:
-- **bankim_content**: UI content and translations (see detailed schema below)
-- **bankim_core**: Business logic, formulas, permissions
+- **bankim_content**: UI content and translations (primary database for this portal)
+- **bankim_core**: Business logic, formulas, permissions, admin users
 - **bankim_management**: Portal-specific data
+
+### Environment Variables
+Copy `env.template` to `.env` and configure:
+```bash
+CONTENT_DATABASE_URL=postgresql://...  # Main content database
+CORE_DATABASE_URL=postgresql://...     # Core business logic
+MANAGEMENT_DATABASE_URL=postgresql://... # Management data
+```
 
 ### Content Database Schema
 
@@ -126,12 +168,14 @@ Each role has specific routes and UI components based on permissions.
 
 ## Development Notes
 
-- TypeScript strict mode enabled
-- No test framework currently configured
-- API URL configuration via environment variables (see env.template)
-- Content caching implemented with 5-minute TTL
+- TypeScript strict mode enabled (see `tsconfig.json`)
+- Cypress E2E testing framework configured
+- API URL configuration via environment variables (see `env.template`)
+- Content caching implemented with 5-minute TTL (configurable via `VITE_CONTENT_CACHE_TTL`)
 - Mock data fallback for offline development
 - Port 3002 for frontend, 3001 for backend API
+- Vite proxy configured to forward `/api` requests to backend
+- Authentication temporarily disabled for testing (see line 357 in `App.tsx`)
 
 ### Current Implementation Status
 
@@ -187,3 +231,27 @@ const contexts = {
 - Using React Context for auth (`AuthContext`)
 - Navigation state via `NavigationContext`
 - No Redux/MobX - local component state preferred
+- Error boundaries implemented for route-level error handling
+
+## Important Files & Locations
+
+### Configuration Files
+- `env.template` - Environment variables template
+- `vite.config.ts` - Vite configuration with proxy setup
+- `tsconfig.json` - TypeScript configuration (strict mode)
+- `cypress.config.ts` - E2E test configuration
+
+### Key Source Files
+- `src/App.tsx` - Main routing and layout configuration
+- `src/services/api.ts` - Centralized API service with caching
+- `src/components/AdminLayout/` - Main layout wrapper
+- `src/contexts/` - React Context providers
+- `backend/server.js` - Express API server
+- `backend/scripts/migrate.js` - Database migration script
+
+### Content Management Flow
+1. Content stored in `bankim_content` database
+2. API endpoints serve content with language support
+3. Frontend caches responses with ETag validation
+4. Edit modals update all language translations simultaneously
+5. Cache automatically cleared on successful updates
