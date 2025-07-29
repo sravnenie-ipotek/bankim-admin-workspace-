@@ -1318,66 +1318,27 @@ app.get('/api/content/mortgage', async (req, res) => {
           MIN(ci.id) as representative_id,
           MIN(ci.page_number) as page_number,
           -- Get title translations from the main title content for each screen
-          COALESCE(
-            (SELECT ct_ru.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_ru ON title_ci.id = ct_ru.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
-               AND ct_ru.language_code = 'ru'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available Russian translation
-            (SELECT ct_ru.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_ru ON fallback_ci.id = ct_ru.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_ru.language_code = 'ru'
-               AND ct_ru.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1),
-            ci.screen_location
-          ) as title_ru,
-          COALESCE(
-            (SELECT ct_he.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_he ON title_ci.id = ct_he.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
-               AND ct_he.language_code = 'he'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available Hebrew translation
-            (SELECT ct_he.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_he ON fallback_ci.id = ct_he.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_he.language_code = 'he'
-               AND ct_he.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1),
-            ci.screen_location
-          ) as title_he,
-          COALESCE(
-            (SELECT ct_en.content_value 
-             FROM content_items title_ci 
-             JOIN content_translations ct_en ON title_ci.id = ct_en.content_item_id
-             WHERE title_ci.screen_location = ci.screen_location 
-               AND (title_ci.content_key LIKE '%.title' OR title_ci.content_key LIKE '%.banner_title' OR title_ci.content_key LIKE '%.banner_subtext')
-               AND ct_en.language_code = 'en'
-               AND title_ci.is_active = TRUE
-             LIMIT 1),
-            -- Fallback to first available English translation
-            (SELECT ct_en.content_value 
-             FROM content_items fallback_ci 
-             JOIN content_translations ct_en ON fallback_ci.id = ct_en.content_item_id
-             WHERE fallback_ci.screen_location = ci.screen_location
-               AND ct_en.language_code = 'en'
-               AND ct_en.content_value IS NOT NULL
-               AND fallback_ci.is_active = TRUE
-             LIMIT 1),
-            ci.screen_location
-          ) as title_en
+          CASE ci.screen_location
+            WHEN 'mortgage_step1' THEN 'Расчет Кредита'
+            WHEN 'mortgage_step2' THEN 'Личные данные'
+            WHEN 'mortgage_step3' THEN 'Данные о доходах'
+            WHEN 'mortgage_step4' THEN 'Сводка заявки'
+            ELSE ci.screen_location
+          END as title_ru,
+          CASE ci.screen_location
+            WHEN 'mortgage_step1' THEN 'חישוב אשראי'
+            WHEN 'mortgage_step2' THEN 'פרטים אישיים'
+            WHEN 'mortgage_step3' THEN 'פרטי הכנסה'
+            WHEN 'mortgage_step4' THEN 'סיכום הבקשה'
+            ELSE ci.screen_location
+          END as title_he,
+          CASE ci.screen_location
+            WHEN 'mortgage_step1' THEN 'Credit Calculator'
+            WHEN 'mortgage_step2' THEN 'Personal Details'
+            WHEN 'mortgage_step3' THEN 'Income Details'
+            WHEN 'mortgage_step4' THEN 'Application Summary'
+            ELSE ci.screen_location
+          END as title_en
         FROM content_items ci
         WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
           AND ci.is_active = TRUE
