@@ -120,31 +120,41 @@ const MenuDrill: React.FC = () => {
     // Navigate based on component type
     const componentTypeLower = action.component_type?.toLowerCase();
     
-    // For text types - navigate to edit page
-    if (componentTypeLower === 'text' || 
+    // Calculate the action number for display (same as in the UI)
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const actionIndex = filteredActions.findIndex(a => a.id === action.id);
+    const displayActionNumber = action.page_number ?? ((location.state?.baseActionNumber || 0) + startIndex + actionIndex + 1);
+    
+    const navigationState = {
+      fromPage: location.state?.fromPage || 1,
+      searchTerm: location.state?.searchTerm || '',
+      drillPage: currentPage,
+      drillSearchTerm: searchTerm,
+      returnPath: `/content/menu/drill/${sectionId}`,
+      baseActionNumber: location.state?.baseActionNumber || 0,
+      actionNumber: displayActionNumber // Pass the action number to text edit page
+    };
+    
+    // For dropdown types - navigate to the dropdown edit page
+    if (typeDisplay === 'Дропдаун') {
+      console.log('📋 Navigating to dropdown edit page for menu');
+      navigate(`/content-management/dropdown-edit/${action.id}`, { state: navigationState });
+    }
+    // For text types - navigate to text edit page
+    else if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
-        typeDisplay === 'Текст') {
-      const textEditUrl = `/content/menu/text-edit/${action.id}`;
-      console.log('✅ Navigating to menu text edit page:', textEditUrl);
-      navigate(textEditUrl, { 
-        state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
-          returnPath: `/content/menu/drill/${sectionId}`
-        } 
-      });
+        componentTypeLower === 'link' ||
+        componentTypeLower === 'button' ||
+        typeDisplay === 'Текст' ||
+        typeDisplay === 'Ссылка') {
+      console.log('✅ Navigating to text edit page');
+      navigate(`/text-edit/${action.id}`, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(`/content/menu/edit/${action.id}`, { 
-        state: { 
-          fromPage: currentPage,
-          searchTerm: searchTerm,
-          returnPath: `/content/menu/drill/${sectionId}`
-        } 
-      });
+      navigate(`/content-management/edit/${action.id}`, { state: navigationState });
     }
   };
 

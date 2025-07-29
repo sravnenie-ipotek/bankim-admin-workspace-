@@ -1,0 +1,564 @@
+/**
+ * SharedDropdownEdit Component
+ * Shared component for editing dropdown content across all content types
+ * 
+ * @version 1.0.0
+ * @since 2025-01-29
+ */
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { AdminLayout } from '../../components';
+import { apiService } from '../../services/api';
+import { getDropdownConfig, DropdownContent, DropdownOption } from '../../utils/dropdownConfigs';
+import './SharedDropdownEdit.css';
+
+const SharedDropdownEdit: React.FC = () => {
+  const { actionId } = useParams<{ actionId: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Extract content type from the URL path
+  const pathname = location.pathname;
+  const contentTypeMatch = pathname.match(/\/content\/([^\/]+)\/dropdown-edit/);
+  const contentType = contentTypeMatch ? contentTypeMatch[1] : '';
+  
+  console.log('SharedDropdownEdit - pathname:', pathname);
+  console.log('SharedDropdownEdit - contentType:', contentType);
+  console.log('SharedDropdownEdit - actionId:', actionId);
+  
+  // Get configuration for this content type
+  const config = getDropdownConfig(contentType);
+  
+  // State management
+  const [content, setContent] = useState<DropdownContent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  // Get action number from location state
+  const actionNumber = location.state?.actionNumber || null;
+  
+  // Form states
+  const [titleRu, setTitleRu] = useState('');
+  const [titleHe, setTitleHe] = useState('');
+  const [titleEn, setTitleEn] = useState('');
+  const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
+
+  // Validate configuration exists
+  useEffect(() => {
+    if (!config) {
+      setError(`Неизвестный тип контента: ${contentType}`);
+      setLoading(false);
+    }
+  }, [config, contentType]);
+
+  // Fetch content data
+  useEffect(() => {
+    if (config && actionId) {
+      fetchContentData();
+    }
+  }, [config, actionId]);
+
+  const fetchContentData = async () => {
+    if (!config || !actionId) return;
+    
+    try {
+      setLoading(true);
+      console.log(`📋 Fetching ${contentType} dropdown content for action ID: ${actionId}`);
+      
+      // First try to fetch the specific content item by ID
+      let response = await apiService.getContentItemById(actionId);
+      
+      // If that fails, try fetching from the content type's endpoint
+      if (!response.success || !response.data) {
+        console.log(`📋 Trying to fetch from ${contentType} content...`);
+        const contentResponse = await apiService.getContentByType(contentType);
+        
+        if (contentResponse.success && contentResponse.data) {
+          // Find the item in the content array
+          const contentArray = contentResponse.data.content || contentResponse.data;
+          const item = Array.isArray(contentArray) 
+            ? contentArray.find((c: any) => c.id === actionId || c.id === parseInt(actionId))
+            : null;
+          
+          if (item) {
+            response = { success: true, data: item };
+          }
+        }
+      }
+      
+      if (response.success && response.data) {
+        const item = response.data;
+        console.log('📋 Content item loaded:', item);
+        
+        setContent({
+          id: item.id,
+          content_key: item.content_key || '',
+          component_type: item.component_type || 'dropdown',
+          category: item.category || '',
+          screen_location: item.screen_location || '',
+          description: item.description || '',
+          is_active: item.is_active !== false,
+          translations: {
+            ru: '',
+            he: '',
+            en: ''
+          },
+          last_modified: item.updated_at || new Date().toISOString(),
+          action_number: actionNumber || (item as any).action_number
+        });
+        
+        // Handle translations - could be array or object
+        if (content) {
+          if (Array.isArray(item.translations)) {
+            const ruTrans = item.translations.find((t: any) => t.lang === 'ru' || t.language === 'ru');
+            const heTrans = item.translations.find((t: any) => t.lang === 'he' || t.language === 'he');
+            const enTrans = item.translations.find((t: any) => t.lang === 'en' || t.language === 'en');
+            
+            // Handle different property names: content_value, text, value
+            const ruValue = ruTrans?.content_value || ruTrans?.text || ruTrans?.value || '';
+            const heValue = heTrans?.content_value || heTrans?.text || heTrans?.value || '';
+            const enValue = enTrans?.content_value || enTrans?.text || enTrans?.value || '';
+            
+            content.translations.ru = ruValue;
+            content.translations.he = heValue;
+            content.translations.en = enValue;
+            
+            setTitleRu(ruValue);
+            setTitleHe(heValue);
+            setTitleEn(enValue);
+          } else if (item.translations && typeof item.translations === 'object') {
+            const trans = item.translations as any;
+            content.translations.ru = trans.ru || '';
+            content.translations.he = trans.he || '';
+            content.translations.en = trans.en || '';
+            
+            setTitleRu(trans.ru || '');
+            setTitleHe(trans.he || '');
+            setTitleEn(trans.en || '');
+          }
+          setContent({...content});
+        }
+        
+        // Initialize dropdown options
+        await initializeDropdownOptions(item);
+      } else {
+        setError('Не удалось загрузить данные');
+      }
+    } catch (err) {
+      console.error(`❌ Error fetching ${contentType} content data:`, err);
+      setError('Ошибка загрузки данных');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const initializeDropdownOptions = async (item: any) => {
+    if (!config) return;
+    
+    try {
+      console.log(`📋 Fetching dropdown options for ${contentType} content key: ${item.content_key}`);
+      
+      const response = await config.api.fetchOptions(item.content_key);
+      
+      if (response.success && response.data) {
+        const options = response.data.map((optionItem: any) => {
+          // Handle different translation formats
+          let ru = '', he = '', en = '';
+          
+          if (Array.isArray(optionItem.translations)) {
+            const ruTrans = optionItem.translations.find((t: any) => t.lang === 'ru' || t.language === 'ru');
+            const heTrans = optionItem.translations.find((t: any) => t.lang === 'he' || t.language === 'he');
+            const enTrans = optionItem.translations.find((t: any) => t.lang === 'en' || t.language === 'en');
+            
+            ru = ruTrans?.content_value || ruTrans?.text || ruTrans?.value || '';
+            he = heTrans?.content_value || heTrans?.text || heTrans?.value || '';
+            en = enTrans?.content_value || enTrans?.text || enTrans?.value || '';
+          } else if (optionItem.translations) {
+            ru = optionItem.translations.ru || '';
+            he = optionItem.translations.he || '';
+            en = optionItem.translations.en || '';
+          }
+          
+          return config.features.englishSupport ? { ru, he, en } : { ru, he };
+        });
+        
+        console.log(`✅ Found ${options.length} dropdown options`);
+        setDropdownOptions(options.length > 0 ? options : [
+          { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
+        ]);
+      } else {
+        console.log('⚠️ No dropdown options found, initializing with empty option');
+        setDropdownOptions([
+          { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
+        ]);
+      }
+    } catch (err) {
+      console.error('❌ Error fetching dropdown options:', err);
+      setDropdownOptions([
+        { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
+      ]);
+    }
+  };
+
+  const handleBack = () => {
+    const returnPath = location.state?.returnPath || config?.breadcrumbBase || '/content';
+    navigate(returnPath, {
+      state: {
+        fromPage: location.state?.fromPage || 1,
+        searchTerm: location.state?.searchTerm || ''
+      }
+    });
+  };
+
+  const handleSave = async () => {
+    if (!config || !actionId) return;
+    
+    try {
+      setSaving(true);
+      setError(null);
+      
+      // Update the main dropdown title
+      const results = [];
+      
+      // Update Russian translation if changed
+      if (titleRu !== content?.translations.ru) {
+        results.push(await config.api.updateTitle(actionId, 'ru', titleRu));
+      }
+      
+      // Update Hebrew translation if changed
+      if (titleHe !== content?.translations.he) {
+        results.push(await config.api.updateTitle(actionId, 'he', titleHe));
+      }
+      
+      // Update English translation if supported and changed
+      if (config.features.englishSupport && titleEn !== content?.translations.en) {
+        results.push(await config.api.updateTitle(actionId, 'en', titleEn));
+      }
+      
+      // Update options if the API supports it
+      if (config.api.updateOptions && config.features.optionManagement) {
+        await config.api.updateOptions(actionId, dropdownOptions);
+      }
+      
+      console.log(`✅ ${contentType} dropdown updated successfully`);
+      setHasChanges(false);
+      
+      // Navigate back after successful save
+      handleBack();
+    } catch (err) {
+      console.error(`❌ Error saving ${contentType} content:`, err);
+      setError('Ошибка при сохранении данных');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleOptionChange = (index: number, field: 'ru' | 'he' | 'en', value: string) => {
+    const newOptions = [...dropdownOptions];
+    newOptions[index][field] = value;
+    setDropdownOptions(newOptions);
+    setHasChanges(true);
+  };
+
+  const handleAddOption = () => {
+    const newOption: DropdownOption = { 
+      ru: '', 
+      he: '',
+      ...(config?.features.englishSupport ? { en: '' } : {})
+    };
+    setDropdownOptions([...dropdownOptions, newOption]);
+    setHasChanges(true);
+  };
+
+  const handleDeleteOption = (index: number) => {
+    const newOptions = dropdownOptions.filter((_, i) => i !== index);
+    setDropdownOptions(newOptions);
+    setHasChanges(true);
+  };
+
+  const handleReorderOption = (index: number, direction: 'up' | 'down') => {
+    if (
+      (direction === 'up' && index === 0) ||
+      (direction === 'down' && index === dropdownOptions.length - 1)
+    ) {
+      return;
+    }
+
+    const newOptions = [...dropdownOptions];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    [newOptions[index], newOptions[targetIndex]] = [newOptions[targetIndex], newOptions[index]];
+    
+    setDropdownOptions(newOptions);
+    setHasChanges(true);
+  };
+
+  const formatLastModified = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return `${date.toLocaleDateString('ru-RU')} | ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
+    } catch {
+      return '01.08.2023 | 12:03';
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <AdminLayout title={config?.pageTitle || 'Редактирование дропдауна'} activeMenuItem={config?.activeMenuItem}>
+        <div className="shared-dropdown-edit-loading">
+          <div className="loading-spinner"></div>
+          <p>Загрузка данных...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  // Error state
+  if (error || !content || !config) {
+    return (
+      <AdminLayout title={config?.pageTitle || 'Редактирование дропдауна'} activeMenuItem={config?.activeMenuItem}>
+        <div className="shared-dropdown-edit-error">
+          <p>Ошибка: {error || 'Данные не найдены'}</p>
+          <button onClick={handleBack}>Вернуться назад</button>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout title={config.pageTitle} activeMenuItem={config.activeMenuItem}>
+      <div className="shared-dropdown-edit-page">
+        {/* Breadcrumb */}
+        <div className="breadcrumb-container">
+          <span className="breadcrumb-item" onClick={() => navigate('/content')}>
+            {config.breadcrumbLabels.contentSite}
+          </span>
+          <div className="breadcrumb-separator"></div>
+          <span className="breadcrumb-item" onClick={() => navigate(config.breadcrumbBase)}>
+            {config.breadcrumbLabels.contentType}
+          </span>
+          <div className="breadcrumb-separator"></div>
+          <span className="breadcrumb-item" onClick={handleBack}>
+            {config.breadcrumbLabels.actionsList}
+          </span>
+          <div className="breadcrumb-separator"></div>
+          <span className="breadcrumb-item active">
+            {config.breadcrumbLabels.editDropdown}
+          </span>
+        </div>
+
+        {/* Page Title */}
+        <div className="page-title-section">
+          <h1 className="page-title">
+            Номер действия №{content.action_number || '3'} | {content.translations.ru || 'Основной источник дохода'}
+          </h1>
+          <p className="page-subtitle">Home_page</p>
+        </div>
+        
+        {/* Last Modified Box */}
+        <div className="last-modified-box">
+          <span className="last-modified-label">Последнее редактирование</span>
+          <span className="last-modified-date">{formatLastModified(content.last_modified)}</span>
+        </div>
+
+        {/* Form */}
+        <div className="dropdown-edit-form">
+          {/* Title Section */}
+          <h2 className="section-title">Заголовки действий</h2>
+          
+          <div className="form-section">
+            <div className="language-fields">
+                <div className="language-group">
+                  <label className="language-label">RU</label>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      value={titleRu}
+                      onChange={(e) => {
+                        setTitleRu(e.target.value);
+                        setHasChanges(true);
+                      }}
+                      className="form-input"
+                      placeholder="Введите заголовок на русском языке"
+                    />
+                  </div>
+                </div>
+
+                <div className="language-group">
+                  <label className="language-label">HEB</label>
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      value={titleHe}
+                      onChange={(e) => {
+                        setTitleHe(e.target.value);
+                        setHasChanges(true);
+                      }}
+                      className="form-input rtl"
+                      placeholder="הזן כותרת בעברית"
+                      dir="rtl"
+                    />
+                  </div>
+                </div>
+
+                {config.features.englishSupport && (
+                  <div className="language-group">
+                    <label className="language-label">EN</label>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        value={titleEn}
+                        onChange={(e) => {
+                          setTitleEn(e.target.value);
+                          setHasChanges(true);
+                        }}
+                        className="form-input"
+                        placeholder="Enter title in English"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+          {/* Dropdown Options Section */}
+          {config.features.optionManagement && (
+            <>
+              <div className="section-header">
+                <h2 className="section-title">Опции ответов</h2>
+                <button
+                  type="button"
+                  onClick={handleAddOption}
+                  className="btn-add-option"
+                >
+                  <span className="add-icon"></span>
+                  Добавить вариант
+                </button>
+              </div>
+
+              <div className="form-section">
+                <div className="options-list">
+                  {dropdownOptions.map((option, index) => (
+                    <div key={index} className="option-item">
+                      <div className="option-number">
+                        <div className="option-reorder-icon"></div>
+                        <span className="option-index">{index + 1}</span>
+                      </div>
+                      
+                      <div className="option-fields">
+                        <div className="option-language-group">
+                          <label className="option-label">RU</label>
+                          <input
+                            type="text"
+                            value={option.ru}
+                            onChange={(e) => handleOptionChange(index, 'ru', e.target.value)}
+                            className="option-input"
+                            placeholder="Сотрудник"
+                          />
+                        </div>
+
+                        <div className="option-language-group">
+                          <label className="option-label">HEB</label>
+                          <input
+                            type="text"
+                            value={option.he}
+                            onChange={(e) => handleOptionChange(index, 'he', e.target.value)}
+                            className="option-input rtl"
+                            placeholder="עובד"
+                            dir="rtl"
+                          />
+                        </div>
+
+                        {config.features.englishSupport && (
+                          <div className="option-language-group">
+                            <label className="option-label">EN</label>
+                            <input
+                              type="text"
+                              value={option.en || ''}
+                              onChange={(e) => handleOptionChange(index, 'en', e.target.value)}
+                              className="option-input"
+                              placeholder="Employee"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="option-actions">
+                        {config.features.optionReordering && (
+                          <>
+                            <button
+                              className="btn-icon"
+                              onClick={() => handleReorderOption(index, 'up')}
+                              disabled={index === 0}
+                              title="Переместить вверх"
+                            >
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 8L6 14L7.41 15.41L12 10.83L16.59 15.41L18 14L12 8Z" fill="currentColor"/>
+                              </svg>
+                            </button>
+                            <button
+                              className="btn-icon"
+                              onClick={() => handleReorderOption(index, 'down')}
+                              disabled={index === dropdownOptions.length - 1}
+                              title="Переместить вниз"
+                            >
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 16L18 10L16.59 8.59L12 13.17L7.41 8.59L6 10L12 16Z" fill="currentColor"/>
+                              </svg>
+                            </button>
+                          </>
+                        )}
+                        <button
+                          className="btn-icon btn-edit"
+                          title="Редактировать"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="currentColor"/>
+                          </svg>
+                        </button>
+                        <button
+                          className="btn-icon btn-delete"
+                          onClick={() => handleDeleteOption(index)}
+                          disabled={dropdownOptions.length <= 1}
+                          title="Удалить"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="currentColor"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        
+        {/* Form Actions */}
+        <div className="form-actions">
+          <button 
+            type="button" 
+            onClick={handleBack}
+            className="btn btn-secondary"
+          >
+            Назад
+          </button>
+          <button 
+            type="button" 
+            onClick={handleSave}
+            className="btn btn-primary"
+            disabled={!hasChanges || saving}
+          >
+            {saving ? 'Сохранение...' : 'Сохранить и опубликовать'}
+          </button>
+        </div>
+      </div>
+    </AdminLayout>
+  );
+};
+
+export default SharedDropdownEdit;

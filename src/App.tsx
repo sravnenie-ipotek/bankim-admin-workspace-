@@ -27,10 +27,11 @@ import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
 import CreditTextEdit from './pages/CreditTextEdit';
 import CreditRefiTextEdit from './pages/CreditRefiTextEdit';
 import MortgageTextEdit from './pages/MortgageTextEdit';
-import MortgageDropdownEdit from './pages/MortgageDropdownEdit';
+// import MortgageDropdownEdit from './pages/MortgageDropdownEdit'; // Now using SharedDropdownEdit
 import MortgageRefiDrill from './pages/MortgageRefiDrill';
 import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
+import SharedDropdownEdit from './pages/SharedDropdownEdit';
 import ContentMortgageRefi from './pages/ContentMortgageRefi';
 import MenuDrill from './pages/MenuDrill';
 import LanguageDemo from './components/LanguageDemo/LanguageDemo';
@@ -471,9 +472,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage">
-                  <MortgageDropdownEdit />
-                </AdminLayout>
+                <SharedDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -507,47 +506,7 @@ const AppRouter: React.FC = () => {
           } 
         />
         
-        {/* Menu drill route - specific drill page for menu sections */}
-        <Route 
-          path="/content/menu/drill/:sectionId" 
-          element={
-            <ErrorBoundary>
-              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
-                <AdminLayout title="Раздел меню" activeMenuItem="content-menu">
-                  <MenuDrill />
-                </AdminLayout>
-              {/* </ProtectedRoute> */}
-            </ErrorBoundary>
-          } 
-        />
 
-        {/* Menu text edit route */}
-        <Route 
-          path="/content/menu/text-edit/:actionId" 
-          element={
-            <ErrorBoundary>
-              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
-                <AdminLayout title="Редактирование текста меню" activeMenuItem="content-menu">
-                  <SharedContentEdit />
-                </AdminLayout>
-              {/* </ProtectedRoute> */}
-            </ErrorBoundary>
-          } 
-        />
-
-        {/* Menu general edit route */}
-        <Route 
-          path="/content/menu/edit/:actionId" 
-          element={
-            <ErrorBoundary>
-              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
-                <AdminLayout title="Редактирование меню" activeMenuItem="content-menu">
-                  <SharedContentEdit />
-                </AdminLayout>
-              {/* </ProtectedRoute> */}
-            </ErrorBoundary>
-          } 
-        />
 
         {/* Credit drill route - specific drill page for credit content */}
         <Route 
@@ -745,6 +704,48 @@ const AppRouter: React.FC = () => {
           } 
         />
         
+        {/* Menu drill route - specific drill page for menu sections */}
+        <Route 
+          path="/content/menu/drill/:sectionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+                <AdminLayout title="Раздел меню" activeMenuItem="content-menu">
+                  <MenuDrill />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Menu text edit route */}
+        <Route 
+          path="/content/menu/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование текста меню" activeMenuItem="content-menu">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Menu general edit route */}
+        <Route 
+          path="/content/menu/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование меню" activeMenuItem="content-menu">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
         {/* Shared content edit route - handles all content types */}
         <Route 
           path="/content/:contentType/edit/:itemId" 
