@@ -646,7 +646,7 @@ app.get('/api/content/item/:itemId', async (req, res) => {
         ci.component_type,
         ci.category,
         ci.screen_location,
-        
+        COALESCE(ct_ru.content_value, ct_he.content_value, ct_en.content_value, ci.content_key) as description,
         ci.is_active,
         ci.updated_at,
         ct_ru.content_value as title_ru,

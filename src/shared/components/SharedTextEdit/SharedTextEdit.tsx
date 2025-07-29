@@ -141,6 +141,15 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
     );
   }
 
+  if (!content) {
+    return (
+      <div className="shared-text-edit-error">
+        <p>Ошибка: Контент не найден</p>
+        <button onClick={onCancel}>Вернуться назад</button>
+      </div>
+    );
+  }
+
   return (
     <div className="shared-text-edit">
       <div className="shared-text-edit-main">
@@ -163,7 +172,7 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
         <div className="page-title-section">
           <h1 className="page-title">
             {content.action_number ? `Номер действия №${content.action_number} | ` : ''}
-            {content.translations.ru || content.description || content.content_key}
+            {content.translations?.ru || content.description || content.content_key}
           </h1>
         </div>
 

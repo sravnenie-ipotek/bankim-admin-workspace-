@@ -138,7 +138,7 @@ const MenuDrill: React.FC = () => {
     // For dropdown types - navigate to the dropdown edit page
     if (typeDisplay === 'Дропдаун') {
       console.log('📋 Navigating to dropdown edit page for menu');
-      navigate(`/content-management/dropdown-edit/${action.id}`, { state: navigationState });
+      navigate(`/content/menu/dropdown-edit/${action.id}`, { state: navigationState });
     }
     // For text types - navigate to text edit page
     else if (componentTypeLower === 'text' || 
@@ -149,12 +149,12 @@ const MenuDrill: React.FC = () => {
         typeDisplay === 'Текст' ||
         typeDisplay === 'Ссылка') {
       console.log('✅ Navigating to text edit page');
-      navigate(`/text-edit/${action.id}`, { state: navigationState });
+      navigate(`/content/menu/text-edit/${action.id}`, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {
       console.log('➡️ Navigating to standard edit page for type:', action.component_type);
-      navigate(`/content-management/edit/${action.id}`, { state: navigationState });
+      navigate(`/content/menu/edit/${action.id}`, { state: navigationState });
     }
   };
 

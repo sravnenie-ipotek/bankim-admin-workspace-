@@ -391,7 +391,7 @@
 .option-input.rtl {
   direction: rtl;
   text-align: right;
-  padding: 8px 16px 9px 212px;
+  padding: 8px 16px 9px 16px; /* Match RU padding so Hebrew text is visible */
 }
 
 /* Option Actions */

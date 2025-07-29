@@ -57,6 +57,12 @@ const MortgageDropdownEdit: React.FC = () => {
     fetchContentData();
   }, [actionId]);
 
+  // Debug useEffect to monitor state changes
+  useEffect(() => {
+    console.log('🔄 State update - titleHe:', titleHe);
+    console.log('🔄 State update - dropdownOptions:', dropdownOptions);
+  }, [titleHe, dropdownOptions]);
+
   const fetchContentData = async () => {
     try {
       setLoading(true);
@@ -86,6 +92,9 @@ const MortgageDropdownEdit: React.FC = () => {
       
       if (response.success && response.data) {
         const item = response.data;
+        console.log('🔍 Raw content item response:', item);
+        console.log('🔍 Item translations:', item.translations);
+        
         setContent({
           id: item.id,
           content_key: item.content_key || '',
@@ -102,6 +111,10 @@ const MortgageDropdownEdit: React.FC = () => {
           last_modified: item.updated_at || new Date().toISOString(),
           action_number: item.action_number
         });
+        
+        console.log('📝 Setting title translations:');
+        console.log('📝 Russian:', item.translations?.ru || '');
+        console.log('📝 Hebrew:', item.translations?.he || '');
         
         setTitleRu(item.translations?.ru || '');
         setTitleHe(item.translations?.he || '');
@@ -127,12 +140,21 @@ const MortgageDropdownEdit: React.FC = () => {
       const response = await apiService.getMortgageDropdownOptions(item.content_key);
       
       if (response.success && response.data) {
-        const options = response.data.map((optionItem: any) => ({
-          ru: optionItem.translations?.ru || '',
-          he: optionItem.translations?.he || ''
-        }));
+        console.log('🔍 Raw API response:', response.data);
+        
+        const options = response.data.map((optionItem: any) => {
+          const option = {
+            ru: optionItem.translations?.ru || '',
+            he: optionItem.translations?.he || ''
+          };
+          console.log(`📝 Processing option:`, optionItem);
+          console.log(`📝 Extracted translations:`, option);
+          return option;
+        });
         
         console.log(`✅ Found ${options.length} dropdown options via generic API`);
+        console.log('📋 Final options array:', options);
+        
         setDropdownOptions(options.length > 0 ? options : [
           { ru: '', he: '' } // Start with at least one empty option
         ]);

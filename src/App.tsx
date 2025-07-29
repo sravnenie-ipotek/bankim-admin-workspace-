@@ -34,6 +34,9 @@ import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
 import SharedDropdownEdit from './pages/SharedDropdownEdit';
 import ContentMortgageRefi from './pages/ContentMortgageRefi';
 import MenuDrill from './pages/MenuDrill';
+import MenuTextEdit from './pages/MenuTextEdit';
+import MenuDropdownEdit from './pages/MenuDropdownEdit';
+import MenuEdit from './pages/MenuEdit';
 import LanguageDemo from './components/LanguageDemo/LanguageDemo';
 import LanguageTest from './components/LanguageTest/LanguageTest';
 
@@ -725,7 +728,21 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
                 <AdminLayout title="Редактирование текста меню" activeMenuItem="content-menu">
-                  <SharedContentEdit />
+                  <MenuTextEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Menu dropdown edit route */}
+        <Route 
+          path="/content/menu/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование дропдауна меню" activeMenuItem="content-menu">
+                  <MenuDropdownEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
             </ErrorBoundary>
@@ -739,7 +756,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
                 <AdminLayout title="Редактирование меню" activeMenuItem="content-menu">
-                  <SharedContentEdit />
+                  <MenuEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
             </ErrorBoundary>

@@ -46,6 +46,11 @@ const SharedDropdownEdit: React.FC = () => {
   const [titleEn, setTitleEn] = useState('');
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
 
+  // Monitor dropdownOptions state changes
+  useEffect(() => {
+    console.log('🔄 dropdownOptions state changed:', dropdownOptions);
+  }, [dropdownOptions]);
+
   // Validate configuration exists
   useEffect(() => {
     if (!config) {
@@ -91,7 +96,25 @@ const SharedDropdownEdit: React.FC = () => {
       
       if (response.success && response.data) {
         const item = response.data;
-        console.log('📋 Content item loaded:', item);
+        console.log('🔍 Raw content item response:', item);
+        console.log('🔍 Item translations:', item.translations);
+        
+        // Handle translations - could be array or object
+        let ru = '', he = '', en = '';
+        if (Array.isArray(item.translations)) {
+          const ruTrans = item.translations.find((t: any) => t.lang === 'ru' || t.language === 'ru');
+          const heTrans = item.translations.find((t: any) => t.lang === 'he' || t.language === 'he');
+          const enTrans = item.translations.find((t: any) => t.lang === 'en' || t.language === 'en');
+          
+          ru = (ruTrans as any)?.content_value || (ruTrans as any)?.text || (ruTrans as any)?.value || '';
+          he = (heTrans as any)?.content_value || (heTrans as any)?.text || (heTrans as any)?.value || '';
+          en = (enTrans as any)?.content_value || (enTrans as any)?.text || (enTrans as any)?.value || '';
+        } else if (item.translations && typeof item.translations === 'object') {
+          const trans = item.translations as any;
+          ru = trans.ru || '';
+          he = trans.he || '';
+          en = trans.en || '';
+        }
         
         setContent({
           id: item.id,
@@ -102,48 +125,25 @@ const SharedDropdownEdit: React.FC = () => {
           description: item.description || '',
           is_active: item.is_active !== false,
           translations: {
-            ru: '',
-            he: '',
-            en: ''
+            ru,
+            he,
+            en
           },
           last_modified: item.updated_at || new Date().toISOString(),
-          action_number: actionNumber || (item as any).action_number
+          action_number: (item as any).action_number || actionNumber
         });
         
-        // Handle translations - could be array or object
-        if (content) {
-          if (Array.isArray(item.translations)) {
-            const ruTrans = item.translations.find((t: any) => t.lang === 'ru' || t.language === 'ru');
-            const heTrans = item.translations.find((t: any) => t.lang === 'he' || t.language === 'he');
-            const enTrans = item.translations.find((t: any) => t.lang === 'en' || t.language === 'en');
-            
-            // Handle different property names: content_value, text, value
-            const ruValue = ruTrans?.content_value || ruTrans?.text || ruTrans?.value || '';
-            const heValue = heTrans?.content_value || heTrans?.text || heTrans?.value || '';
-            const enValue = enTrans?.content_value || enTrans?.text || enTrans?.value || '';
-            
-            content.translations.ru = ruValue;
-            content.translations.he = heValue;
-            content.translations.en = enValue;
-            
-            setTitleRu(ruValue);
-            setTitleHe(heValue);
-            setTitleEn(enValue);
-          } else if (item.translations && typeof item.translations === 'object') {
-            const trans = item.translations as any;
-            content.translations.ru = trans.ru || '';
-            content.translations.he = trans.he || '';
-            content.translations.en = trans.en || '';
-            
-            setTitleRu(trans.ru || '');
-            setTitleHe(trans.he || '');
-            setTitleEn(trans.en || '');
-          }
-          setContent({...content});
-        }
+        console.log('📝 Setting title translations:');
+        console.log('📝 Russian:', ru);
+        console.log('📝 Hebrew:', he);
+        console.log('📝 English:', en);
         
-        // Initialize dropdown options
-        await initializeDropdownOptions(item);
+        setTitleRu(ru);
+        setTitleHe(he);
+        setTitleEn(en);
+        
+        // Initialize dropdown options based on the content
+        initializeDropdownOptions(item);
       } else {
         setError('Не удалось загрузить данные');
       }
@@ -162,33 +162,61 @@ const SharedDropdownEdit: React.FC = () => {
       console.log(`📋 Fetching dropdown options for ${contentType} content key: ${item.content_key}`);
       
       const response = await config.api.fetchOptions(item.content_key);
+      console.log('🔍 Raw dropdown options response:', response);
       
       if (response.success && response.data) {
+        console.log('🔍 Raw dropdown options data:', response.data);
+        
         const options = response.data.map((optionItem: any) => {
+          console.log('🔍 Processing option item:', optionItem);
+          
           // Handle different translation formats
           let ru = '', he = '', en = '';
           
-          if (Array.isArray(optionItem.translations)) {
+          // First try the direct title properties (API format)
+          if (optionItem.titleRu) {
+            ru = optionItem.titleRu;
+            he = optionItem.titleHe || '';
+            en = optionItem.titleEn || '';
+            console.log('📝 Using titleRu/titleHe format:', { ru, he, en });
+          } else if (Array.isArray(optionItem.translations)) {
             const ruTrans = optionItem.translations.find((t: any) => t.lang === 'ru' || t.language === 'ru');
             const heTrans = optionItem.translations.find((t: any) => t.lang === 'he' || t.language === 'he');
             const enTrans = optionItem.translations.find((t: any) => t.lang === 'en' || t.language === 'en');
             
-            ru = ruTrans?.content_value || ruTrans?.text || ruTrans?.value || '';
-            he = heTrans?.content_value || heTrans?.text || heTrans?.value || '';
-            en = enTrans?.content_value || enTrans?.text || enTrans?.value || '';
+            ru = (ruTrans as any)?.content_value || (ruTrans as any)?.text || (ruTrans as any)?.value || '';
+            he = (heTrans as any)?.content_value || (heTrans as any)?.text || (heTrans as any)?.value || '';
+            en = (enTrans as any)?.content_value || (enTrans as any)?.text || (enTrans as any)?.value || '';
+            console.log('📝 Using translations array format:', { ru, he, en });
           } else if (optionItem.translations) {
             ru = optionItem.translations.ru || '';
             he = optionItem.translations.he || '';
             en = optionItem.translations.en || '';
+            console.log('📝 Using translations object format:', { ru, he, en });
           }
           
-          return config.features.englishSupport ? { ru, he, en } : { ru, he };
+          const option = config.features.englishSupport ? { ru, he, en } : { ru, he };
+          console.log(`📝 Final extracted option:`, option);
+          return option;
         });
         
         console.log(`✅ Found ${options.length} dropdown options`);
-        setDropdownOptions(options.length > 0 ? options : [
+        console.log('📋 Final options array:', options);
+        
+        const finalOptions = options.length > 0 ? options : [
           { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
-        ]);
+        ];
+        
+        console.log('🎯 Setting dropdownOptions state to:', finalOptions);
+        
+        // TEMPORARY TEST: Force Hebrew values to see if rendering works
+        const testOptions = finalOptions.map((option: DropdownOption, index: number) => ({
+          ...option,
+          he: option.he || `Test Hebrew ${index + 1}`
+        }));
+        console.log('🧪 Test options with forced Hebrew:', testOptions);
+        
+        setDropdownOptions(testOptions);
       } else {
         console.log('⚠️ No dropdown options found, initializing with empty option');
         setDropdownOptions([

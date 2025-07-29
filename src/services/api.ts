@@ -472,7 +472,10 @@ class ApiService {
   }
 
   async getContentItemById(id: string): Promise<ApiResponse<ContentItem>> {
-    return this.request<ContentItem>(`/api/content/item/${id}`);
+    console.log('🔍 getContentItemById called with id:', id);
+    const result = await this.requestWithCache<ContentItem>(`/api/content/item/${id}`);
+    console.log('📦 getContentItemById result:', result);
+    return result;
   }
 
   async updateContentTranslation(
