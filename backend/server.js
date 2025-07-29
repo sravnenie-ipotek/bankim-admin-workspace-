@@ -1088,7 +1088,7 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.screen_location = 'mortgage_step1'
-        AND (ci.component_type = 'option' OR ci.component_type = 'text')
+        AND (ci.component_type = 'option' OR ci.component_type = 'text' OR ci.component_type = 'dropdown_option')
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key

@@ -184,21 +184,18 @@ const MortgageDrill: React.FC = () => {
       actionNumber: displayActionNumber // Pass the action number to text edit page
     };
 
+    // For dropdown types - navigate to the special dropdown edit page (check typeDisplay first)
+    if (typeDisplay === 'Дропдаун') {
+      console.log('📋 Navigating to dropdown edit page:', paths.dropdownEditPath);
+      navigate(paths.dropdownEditPath, { state: navigationState });
+    } 
     // For text types - navigate to the special text edit page
-    if (componentTypeLower === 'text' || 
+    else if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
         typeDisplay === 'Текст') {
       console.log('✅ Navigating to text edit page:', paths.textEditPath);
       navigate(paths.textEditPath, { state: navigationState });
-    } 
-    // For dropdown types - navigate to the special dropdown edit page
-    else if (componentTypeLower === 'dropdown' || 
-             componentTypeLower === 'select' ||
-             componentTypeLower === 'option' ||
-             typeDisplay === 'Дропдаун') {
-      console.log('📋 Navigating to dropdown edit page:', paths.dropdownEditPath);
-      navigate(paths.dropdownEditPath, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {
@@ -222,7 +219,8 @@ const MortgageDrill: React.FC = () => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
       // Hide individual dropdown option values, only show dropdown headers
-      if (action.component_type?.toLowerCase() === 'option') {
+      if (action.component_type?.toLowerCase() === 'option' || 
+          action.component_type?.toLowerCase() === 'dropdown_option') {
         return false;
       }
       // Hide placeholder components, they shouldn't be clickable
