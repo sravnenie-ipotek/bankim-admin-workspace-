@@ -2382,6 +2382,94 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
 });
 
 /**
+ * Get general content
+ * GET /api/content/general
+ * Returns general content items with translations
+ */
+app.get('/api/content/general', async (req, res) => {
+  try {
+    console.log('🔄 Fetching general content...');
+    
+    // Get general content items (not mortgage, credit, menu, or main related)
+    const result = await safeQuery(`
+      SELECT DISTINCT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.screen_location, ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+      WHERE ci.is_active = TRUE
+        AND ci.screen_location NOT LIKE 'mortgage%'
+        AND ci.screen_location NOT LIKE 'credit%'
+        AND ci.screen_location NOT LIKE 'refinance%'
+        AND ci.screen_location NOT IN ('sidebar', 'footer', 'global_contact_info', 'global_errors', 'global_personal_info')
+        AND ci.screen_location NOT IN ('about_page', 'contacts_page', 'bank_offers', 'common_components')
+        AND (ct_ru.content_value IS NOT NULL OR ct_he.content_value IS NOT NULL OR ct_en.content_value IS NOT NULL)
+      ORDER BY ci.screen_location, ci.content_key
+    `);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No general content found'
+      });
+    }
+
+    // Transform the data into the expected format
+    const generalItems = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      is_active: row.is_active,
+      updated_at: row.updated_at,
+      action_number: row.action_number,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+
+    console.log(`✅ Found ${generalItems.length} general content items`);
+
+    res.json({
+      success: true,
+      data: {
+        content_count: generalItems.length,
+        general_items: generalItems,
+        screen_location: 'general',
+        last_modified: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching general content:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get site pages summary for ContentMain dashboard
  * GET /api/content/site-pages
  * Returns aggregated page data with action counts and last modified dates
