@@ -213,9 +213,37 @@ const getComponentTypeDisplay = (componentType: string, contentKey: string = '')
     case 'label':
     case 'field_label':
       return isDropdownField ? 'Дропдаун' : 'Текст';
-    // ... other cases
+    case 'link':
+    case 'button':
+      return 'Ссылка';
+    case 'text':
+      return 'Текст';
+    case 'help_text':
+      return 'Справка';
+    case 'header':
+    case 'section_header':
+      return 'Заголовок';
+    default:
+      return 'Текст';
   }
 };
+```
+
+#### 3.5 Update Navigation Logic for Link Types
+Update the `handleEditClick` function to navigate link and button types to text edit pages:
+
+```typescript
+// For text types - navigate to the special text edit page
+else if (componentTypeLower === 'text' || 
+    componentTypeLower === 'label' ||
+    componentTypeLower === 'field_label' ||
+    componentTypeLower === 'link' ||
+    componentTypeLower === 'button' ||
+    typeDisplay === 'Текст' ||
+    typeDisplay === 'Ссылка') {
+  console.log('✅ Navigating to text edit page:', paths.textEditPath);
+  navigate(paths.textEditPath, { state: navigationState });
+}
 ```
 
 ### Step 4: Frontend - Add Missing Routes
@@ -285,10 +313,12 @@ For each content type, verify:
 - ✅ List page counts exclude dropdown options
 - ✅ Drill pages hide dropdown options
 - ✅ Drill pages show placeholders as TEXT type
+- ✅ Drill pages show link/button types as Ссылка
 - ✅ Dropdown headers navigate to dropdown edit pages
 - ✅ Dropdown edit pages show all options
 - ✅ Text items navigate to text edit pages
 - ✅ Placeholders navigate to text edit pages
+- ✅ Link/button items navigate to text edit pages
 
 ### Step 6: Restart and Deploy
 
@@ -333,6 +363,10 @@ git push
 **Problem:** Placeholder components not visible in drill page
 **Solution:** Remove placeholder filtering and show them as TEXT type
 
+### Issue 6: Link Types Navigate to Wrong Page
+**Problem:** Link and button types navigate to standard edit instead of text edit
+**Solution:** Add `componentTypeLower === 'link'` and `componentTypeLower === 'button'` to text navigation condition
+
 ### Issue 4: Count Still Includes Options
 **Problem:** List page count still includes dropdown options
 **Solution:** Add `AND ci.component_type != 'dropdown_option'` to count query
@@ -349,6 +383,7 @@ git push
 - [ ] All dropdown headers navigate to dropdown edit pages
 - [ ] All text items navigate to text edit pages
 - [ ] All placeholders navigate to text edit pages
+- [ ] All link/button items navigate to text edit pages
 - [ ] No individual options show in drill pages
 
 ## Example: Complete Fix for Credit Content

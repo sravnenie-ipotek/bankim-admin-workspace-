@@ -193,7 +193,10 @@ const MortgageDrill: React.FC = () => {
     else if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
         componentTypeLower === 'field_label' ||
-        typeDisplay === 'Текст') {
+        componentTypeLower === 'link' ||
+        componentTypeLower === 'button' ||
+        typeDisplay === 'Текст' ||
+        typeDisplay === 'Ссылка') {
       console.log('✅ Navigating to text edit page:', paths.textEditPath);
       navigate(paths.textEditPath, { state: navigationState });
     } 
