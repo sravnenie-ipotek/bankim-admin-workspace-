@@ -123,31 +123,8 @@ const MortgageRefiDrill: React.FC = () => {
     // Navigate based on component type
     const componentTypeLower = action.component_type?.toLowerCase();
     
-    // For text types - navigate to the special text edit page
-    if (componentTypeLower === 'text' || 
-        componentTypeLower === 'label' ||
-        componentTypeLower === 'field_label' ||
-        typeDisplay === 'Текст') {
-      const textEditUrl = `/content/mortgage-refi/text-edit/${action.id}`;
-      console.log('✅ Navigating to mortgage-refi text edit page:', textEditUrl);
-      
-      const navigationState = {
-        fromPage: currentPage,
-        searchTerm: searchTerm,
-        drillPage: currentPage,
-        drillSearchTerm: searchTerm,
-        returnPath: `/content/mortgage-refi/drill/${pageId}`,
-        baseActionNumber: location.state?.baseActionNumber || 0,
-        actionNumber: displayActionNumber // Pass the action number to text edit page
-      };
-      
-      navigate(textEditUrl, { state: navigationState });
-    } 
-    // For dropdown types - navigate to the special dropdown edit page
-    else if (componentTypeLower === 'dropdown' || 
-             componentTypeLower === 'select' ||
-             componentTypeLower === 'option' ||
-             typeDisplay === 'Дропдаун') {
+    // For dropdown types - navigate to the special dropdown edit page (check typeDisplay first)
+    if (typeDisplay === 'Дропдаун') {
       const dropdownEditUrl = `/content/mortgage-refi/dropdown-edit/${action.id}`;
       console.log('📋 Navigating to mortgage-refi dropdown edit page:', dropdownEditUrl);
       
@@ -162,6 +139,29 @@ const MortgageRefiDrill: React.FC = () => {
       };
       
       navigate(dropdownEditUrl, { state: navigationState });
+    } 
+    // For text types - navigate to the special text edit page
+    else if (componentTypeLower === 'text' || 
+        componentTypeLower === 'label' ||
+        componentTypeLower === 'field_label' ||
+        componentTypeLower === 'link' ||
+        componentTypeLower === 'button' ||
+        typeDisplay === 'Текст' ||
+        typeDisplay === 'Ссылка') {
+      const textEditUrl = `/content/mortgage-refi/text-edit/${action.id}`;
+      console.log('✅ Navigating to mortgage-refi text edit page:', textEditUrl);
+      
+      const navigationState = {
+        fromPage: currentPage,
+        searchTerm: searchTerm,
+        drillPage: currentPage,
+        drillSearchTerm: searchTerm,
+        returnPath: `/content/mortgage-refi/drill/${pageId}`,
+        baseActionNumber: location.state?.baseActionNumber || 0,
+        actionNumber: displayActionNumber // Pass the action number to text edit page
+      };
+      
+      navigate(textEditUrl, { state: navigationState });
     } 
     // For other types - navigate to standard edit page
     else {
@@ -190,9 +190,11 @@ const MortgageRefiDrill: React.FC = () => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
       // Hide individual dropdown option values, only show dropdown headers
-      if (action.component_type?.toLowerCase() === 'option') {
+      if (action.component_type?.toLowerCase() === 'option' || 
+          action.component_type?.toLowerCase() === 'dropdown_option') {
         return false;
       }
+      // Include placeholder components as TEXT type
       return true;
     });
   }, [drillData?.actions]);
@@ -228,7 +230,6 @@ const MortgageRefiDrill: React.FC = () => {
   const getComponentTypeDisplay = (componentType: string, contentKey: string = '') => {
     // Check if this is a dropdown-related field based on content patterns
     const isDropdownField = contentKey.includes('_option') || 
-                            contentKey.includes('_ph') || 
                             contentKey.includes('citizenship') ||
                             contentKey.includes('education') ||
                             contentKey.includes('family_status') ||
@@ -239,7 +240,9 @@ const MortgageRefiDrill: React.FC = () => {
                             contentKey.includes('first_home') ||
                             contentKey.includes('sphere') ||
                             contentKey.includes('type') ||
-                            contentKey.includes('when_needed');
+                            contentKey.includes('when_needed') ||
+                            // Only include _ph if it's not a standalone placeholder
+                            (contentKey.includes('_ph') && !contentKey.endsWith('_ph'));
 
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
@@ -249,7 +252,7 @@ const MortgageRefiDrill: React.FC = () => {
       case 'dropdown_option':
         return 'Дропдаун';
       case 'placeholder':
-        return isDropdownField ? 'Дропдаун' : 'Текст';
+        return 'Текст';  // Always show placeholders as TEXT
       case 'label':
       case 'field_label':
         return isDropdownField ? 'Дропдаун' : 'Текст';
