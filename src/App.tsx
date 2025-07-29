@@ -478,6 +478,20 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+
+        {/* Mortgage general edit route */}
+        <Route 
+          path="/content/mortgage/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование ипотеки" activeMenuItem="content-mortgage">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
         
         {/* Mortgage-refi drill route - specific drill page for mortgage refinancing content */}
         <Route 
@@ -501,6 +515,34 @@ const AppRouter: React.FC = () => {
               {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
                 <AdminLayout title="Раздел меню" activeMenuItem="content-menu">
                   <MenuDrill />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Menu text edit route */}
+        <Route 
+          path="/content/menu/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование текста меню" activeMenuItem="content-menu">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Menu general edit route */}
+        <Route 
+          path="/content/menu/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование меню" activeMenuItem="content-menu">
+                  <SharedContentEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
             </ErrorBoundary>
@@ -549,6 +591,34 @@ const AppRouter: React.FC = () => {
           } 
         />
 
+        {/* General text edit route */}
+        <Route 
+          path="/content/general/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование текста общей страницы" activeMenuItem="content-general">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* General edit route */}
+        <Route 
+          path="/content/general/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование общей страницы" activeMenuItem="content-general">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
         {/* Credit text edit route */}
         <Route 
           path="/content/credit/text-edit/:actionId" 
@@ -570,6 +640,20 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
                 <AdminLayout title="Редактирование дропдауна кредита" activeMenuItem="content-credit">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Credit general edit route */}
+        <Route 
+          path="/content/credit/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование кредита" activeMenuItem="content-credit">
                   <SharedContentEdit />
                 </AdminLayout>
               {/* </ProtectedRoute> */}
@@ -604,6 +688,20 @@ const AppRouter: React.FC = () => {
             </ErrorBoundary>
           } 
         />
+
+        {/* Credit-refi general edit route */}
+        <Route 
+          path="/content/credit-refi/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование рефинансирования кредита" activeMenuItem="content-credit-refi">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
         
         {/* Mortgage-refi text edit route - MUST BE BEFORE generic edit route */}
         <Route 
@@ -624,11 +722,25 @@ const AppRouter: React.FC = () => {
           path="/content/mortgage-refi/dropdown-edit/:actionId" 
           element={
             <ErrorBoundary>
-              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> 
                 <AdminLayout title="Редактирование дропдауна" activeMenuItem="content-mortgage-refi">
                   <MortgageRefiDropdownEdit />
                 </AdminLayout>
               </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+
+        {/* Mortgage-refi general edit route */}
+        <Route 
+          path="/content/mortgage-refi/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}> */}
+                <AdminLayout title="Редактирование рефинансирования ипотеки" activeMenuItem="content-mortgage-refi">
+                  <SharedContentEdit />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
             </ErrorBoundary>
           } 
         />
@@ -684,7 +796,8 @@ const AppRouter: React.FC = () => {
         />
 
         {/* Fallback route - must be last */}
-        <Route path="*" element={<Navigate to="/admin/login" replace />} />
+        {/* Temporarily disabled to prevent redirects during development */}
+        {/* <Route path="*" element={<Navigate to="/admin/login" replace />} /> */}
       </Routes>
     </div>
   );
