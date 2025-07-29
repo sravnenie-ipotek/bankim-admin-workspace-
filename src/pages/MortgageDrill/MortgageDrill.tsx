@@ -107,7 +107,7 @@ const MortgageDrill: React.FC = () => {
       }
       
       // Fallback: get all individual mortgage content items across all steps
-      const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
+              const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
       
       if (response.success && response.data) {
         // Use the data from the new all-items endpoint
@@ -473,8 +473,22 @@ const MortgageDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`ru-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={action.translations.ru}>
-                      {action.translations.ru}
+                    <div 
+                      style={{ 
+                        color: 'var(--white, white)', 
+                        fontSize: '14px', 
+                        fontFamily: 'Arimo', 
+                        fontWeight: '400', 
+                        lineHeight: '21px', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis', 
+                        whiteSpace: 'nowrap',
+                        paddingLeft: action.isOption ? '20px' : '0px',
+                        opacity: action.isOption ? '0.8' : '1'
+                      }} 
+                      title={action.translations.ru}
+                    >
+                      {action.isOption ? '  • ' : ''}{action.translations.ru}
                     </div>
                   </div>
                   <div className="column-divider"></div>
@@ -493,8 +507,25 @@ const MortgageDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`he-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', textAlign: 'right', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', direction: 'rtl' }} title={action.translations.he}>
-                      {action.translations.he}
+                    <div 
+                      style={{ 
+                        flex: '1 1 0', 
+                        textAlign: 'right', 
+                        color: 'var(--white, white)', 
+                        fontSize: '14px', 
+                        fontFamily: 'Arimo', 
+                        fontWeight: '400', 
+                        lineHeight: '21px', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis', 
+                        whiteSpace: 'nowrap', 
+                        direction: 'rtl',
+                        paddingRight: action.isOption ? '20px' : '0px',
+                        opacity: action.isOption ? '0.8' : '1'
+                      }} 
+                      title={action.translations.he}
+                    >
+                      {action.translations.he}{action.isOption ? '  •' : ''}
                     </div>
                   </div>
                   <div className="column-divider"></div>

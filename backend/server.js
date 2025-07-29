@@ -1067,7 +1067,7 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       }
     }
     
-    console.log('Using content key pattern:', `${actualContentKey}.option.%`);
+    console.log('Using content key pattern:', `${actualContentKey}_option_%`);
     
     // Get all options for this mortgage dropdown
     const result = await safeQuery(`
@@ -1078,19 +1078,19 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
         CAST(
-          SUBSTRING(ci.content_key FROM '\\.option\\.([0-9]+)$')
+          SUBSTRING(ci.content_key FROM '_option_([0-9]+)$')
           AS INTEGER
         ) as option_order
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
-      WHERE ci.screen_location = 'mortgage_calculation'
+      WHERE ci.screen_location = 'mortgage_step1'
         AND ci.component_type = 'option'
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
-    `, [`${actualContentKey}.option.%`]);
+    `, [`${actualContentKey}_option_%`]);
     
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
@@ -2070,6 +2070,7 @@ app.get('/api/content/credit-refi', async (req, res) => {
         'refinance_credit_4'
       )
         AND ci.is_active = true
+        AND ci.component_type != 'option'
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
     `);
