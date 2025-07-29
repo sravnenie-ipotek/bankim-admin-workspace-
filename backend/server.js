@@ -1345,6 +1345,7 @@ app.get('/api/content/mortgage', async (req, res) => {
         WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
           AND ci.is_active = TRUE
           AND ci.component_type != 'option'
+          AND ci.component_type != 'dropdown_option'
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )

@@ -214,7 +214,7 @@ const MortgageDrill: React.FC = () => {
     });
   };
 
-  // First filter out options and placeholders, then apply search
+  // First filter out options only, then apply search
   const visibleActions = useMemo(() => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
@@ -223,10 +223,7 @@ const MortgageDrill: React.FC = () => {
           action.component_type?.toLowerCase() === 'dropdown_option') {
         return false;
       }
-      // Hide placeholder components, they shouldn't be clickable
-      if (action.component_type?.toLowerCase() === 'placeholder') {
-        return false;
-      }
+      // Include placeholder components as TEXT type
       return true;
     });
   }, [drillData?.actions]);
@@ -285,7 +282,7 @@ const MortgageDrill: React.FC = () => {
       case 'dropdown_option':
         return 'Дропдаун';
       case 'placeholder':
-        return isDropdownField ? 'Дропдаун' : 'Текст';
+        return 'Текст';
       case 'label':
       case 'field_label':
         return isDropdownField ? 'Дропдаун' : 'Текст';
