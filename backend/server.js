@@ -2111,84 +2111,113 @@ app.get('/api/content/credit-refi', async (req, res) => {
  * Returns detailed content for a specific credit refinancing step
  */
 app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
-  const { stepId } = req.params;
-  
   try {
-    console.log(`🔍 Fetching credit-refi drill data for step: ${stepId}`);
+    const { stepId } = req.params;
     
-    // Get all content items for the specified credit-refi step
-    const result = await safeQuery(`
-      SELECT DISTINCT
+    console.log(`Fetching credit-refi drill content for step ID: ${stepId}`);
+    
+    // Map step IDs to screen_locations - for credit refinancing
+    const stepMapping = {
+      'step.1.calculator': 'refinance_credit_1',
+      'step.2.personal_data': 'refinance_credit_2', 
+      'step.3.income_data': 'refinance_credit_3',
+      'step.4.program_selection': 'refinance_credit_4',
+      // Also support direct screen_location values
+      'refinance_credit_1': 'refinance_credit_1',
+      'refinance_credit_2': 'refinance_credit_2',
+      'refinance_credit_3': 'refinance_credit_3',
+      'refinance_credit_4': 'refinance_credit_4'
+    };
+
+    const screenLocation = stepMapping[stepId];
+    if (!screenLocation) {
+      return res.status(404).json({
+        success: false,
+        error: `Invalid step ID: ${stepId}`
+      });
+    }
+
+    // Get step title mapping
+    const stepTitles = {
+      'refinance_credit_1': 'Цель рефинансирования кредита',
+      'refinance_credit_2': 'Банк текущего кредита',
+      'refinance_credit_3': 'Анкета доходов',
+      'refinance_credit_4': 'Выбор программ рефинансирования'
+    };
+
+    // Use the exact same query pattern as working mortgage drill
+    const contentResult = await safeQuery(`
+      SELECT 
         ci.id,
         ci.content_key,
         ci.component_type,
         ci.category,
         ci.screen_location,
         ci.is_active,
+        ci.page_number,
         ci.updated_at,
-        -- Get translations for all languages
-        ct_ru.content_value as content_ru,
-        ct_he.content_value as content_he,
-        ct_en.content_value as content_en
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru'
+        AND ct_ru.language_code = 'ru' 
         AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he'
+        AND ct_he.language_code = 'he' 
         AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en'
+        AND ct_en.language_code = 'en' 
         AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
-    `, [stepId]);
+    `, [screenLocation]);
 
-    if (!result.rows || result.rows.length === 0) {
+    if (!contentResult.rows || contentResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: `No content found for credit-refi step: ${stepId}`,
-        data: {
-          step_id: stepId,
-          items: []
-        }
+        error: 'No content found for this step'
       });
     }
 
-    const drillData = result.rows.map(row => ({
+    const actions = contentResult.rows.map(row => ({
       id: row.id,
+      actionNumber: row.action_number,
       content_key: row.content_key,
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
+      page_number: row.page_number,
+      description: row.description,
       is_active: row.is_active,
-      updated_at: row.updated_at,
+      last_modified: row.updated_at,
       translations: {
-        ru: row.content_ru || '',
-        he: row.content_he || '',
-        en: row.content_en || ''
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
       }
     }));
+
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
       data: {
-        step_id: stepId,
-        content_count: drillData.length,
-        items: drillData
+        pageTitle: stepTitles[screenLocation],
+        stepGroup: stepId,
+        actionCount: visibleActionCount,
+        actions: actions
       }
     });
 
   } catch (error) {
-    console.error(`Get credit-refi drill data error for step ${stepId}:`, error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message,
-      data: {
-        step_id: stepId,
-        items: []
-      }
+    console.error('Get credit-refi drill content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });
