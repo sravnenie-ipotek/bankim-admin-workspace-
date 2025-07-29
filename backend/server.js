@@ -2298,7 +2298,8 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
         -- Get translations for all languages
         ct_ru.content_value as content_ru,
         ct_he.content_value as content_he,
-        ct_en.content_value as content_en
+        ct_en.content_value as content_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru'
@@ -2319,20 +2320,32 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
         success: false,
         error: `No content found for credit step: ${stepId}`,
         data: {
-          step_id: stepId,
-          items: []
+          pageTitle: '',
+          stepGroup: stepId,
+          actionCount: 0,
+          actions: []
         }
       });
     }
 
-    const drillData = result.rows.map(row => ({
+    // Get step title mapping for credit
+    const stepTitles = {
+      'credit_step1': 'Калькулятор кредита',
+      'credit_step2': 'Анкета личных данных',
+      'credit_step3': 'Анкета доходов',
+      'credit_step4': 'Выбор кредитных программ'
+    };
+
+    const actions = result.rows.map((row) => ({
       id: row.id,
+      actionNumber: row.action_number,
       content_key: row.content_key,
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
+      description: row.description || '',
       is_active: row.is_active,
-      updated_at: row.updated_at,
+      last_modified: row.updated_at,
       translations: {
         ru: row.content_ru || '',
         he: row.content_he || '',
@@ -2340,12 +2353,16 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
       }
     }));
 
+    // Count visible actions (excluding options like frontend does)
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+
     res.json({
       success: true,
       data: {
-        step_id: stepId,
-        content_count: drillData.length,
-        items: drillData
+        pageTitle: stepTitles[stepId] || `Credit Step: ${stepId}`,
+        stepGroup: stepId,
+        actionCount: visibleActionCount,
+        actions: actions
       }
     });
 
@@ -2355,8 +2372,10 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
       success: false, 
       error: error.message,
       data: {
-        step_id: stepId,
-        items: []
+        pageTitle: '',
+        stepGroup: stepId,
+        actionCount: 0,
+        actions: []
       }
     });
   }
