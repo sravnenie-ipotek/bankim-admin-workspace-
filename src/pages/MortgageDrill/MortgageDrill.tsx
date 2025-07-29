@@ -217,12 +217,16 @@ const MortgageDrill: React.FC = () => {
     });
   };
 
-  // First filter out options, then apply search
+  // First filter out options and placeholders, then apply search
   const visibleActions = useMemo(() => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
       // Hide individual dropdown option values, only show dropdown headers
       if (action.component_type?.toLowerCase() === 'option') {
+        return false;
+      }
+      // Hide placeholder components, they shouldn't be clickable
+      if (action.component_type?.toLowerCase() === 'placeholder') {
         return false;
       }
       return true;
@@ -259,8 +263,8 @@ const MortgageDrill: React.FC = () => {
 
   const getComponentTypeDisplay = (componentType: string, contentKey: string = '') => {
     // Check if this is a dropdown-related field based on content patterns
+    // Only consider it a dropdown if it has actual options or is a dropdown component
     const isDropdownField = contentKey.includes('_option') || 
-                            contentKey.includes('_ph') || 
                             contentKey.includes('citizenship') ||
                             contentKey.includes('education') ||
                             contentKey.includes('family_status') ||
@@ -271,7 +275,9 @@ const MortgageDrill: React.FC = () => {
                             contentKey.includes('first_home') ||
                             contentKey.includes('sphere') ||
                             contentKey.includes('type') ||
-                            contentKey.includes('when_needed');
+                            contentKey.includes('when_needed') ||
+                            // Only include _ph if it's not a standalone placeholder
+                            (contentKey.includes('_ph') && !contentKey.endsWith('_ph'));
 
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
