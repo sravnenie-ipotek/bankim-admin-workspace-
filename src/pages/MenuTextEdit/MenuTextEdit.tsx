@@ -13,19 +13,21 @@ import { apiService } from '../../services/api';
 import { SharedMenu } from '../../components';
 import { SharedTextEdit, type TextEditData, type BreadcrumbItem } from '../../shared/components';
 
+// Interface matching what the backend actually returns
 interface ContentItem {
-  id: string;
+  id: number;
   content_key: string;
   component_type: string;
+  category: string;
   screen_location: string;
   description: string;
   is_active: boolean;
-  action_number?: number;
-  last_modified: string;
+  action_number?: string;
+  updated_at: string;
   translations: {
     ru: string;
     he: string;
-    en?: string;
+    en: string;
   };
 }
 
@@ -42,6 +44,8 @@ const MenuTextEdit: React.FC = () => {
   const actionNumber = location.state?.actionNumber || null;
 
   useEffect(() => {
+    // Clear cache before fetching to ensure we get fresh data
+    apiService.clearContentCache();
     fetchContentData();
   }, [actionId]);
 
@@ -54,9 +58,13 @@ const MenuTextEdit: React.FC = () => {
       
       if (result.success && result.data) {
         console.log('✅ Content fetched successfully:', result.data);
-        setContent(result.data);
+        console.log('Data type:', typeof result.data);
+        console.log('Data keys:', Object.keys(result.data));
+        // Cast the data to our local ContentItem type
+        setContent(result.data as any as ContentItem);
       } else {
         console.log('❌ Content not found:', result);
+        console.log('Full API response:', JSON.stringify(result, null, 2));
         setError('Контент не найден');
       }
     } catch (err) {
@@ -72,7 +80,7 @@ const MenuTextEdit: React.FC = () => {
 
     try {
       setSaving(true);
-      const result = await apiService.updateContentItem(content.id, {
+      const result = await apiService.updateContentItem(String(content.id), {
         translations: updates
       });
 
@@ -108,45 +116,54 @@ const MenuTextEdit: React.FC = () => {
 
   // Transform content to SharedTextEdit format
   const textEditData: TextEditData | null = content ? {
-    id: content.id,
-    type: 'text',
-    action_number: actionNumber || content.action_number,
+    id: String(content.id),
+    action_number: typeof content.action_number === 'string' ? parseInt(content.action_number) : content.action_number,
     content_key: content.content_key,
     component_type: content.component_type || 'text',
     screen_location: content.screen_location || '',
     description: content.description || '',
     is_active: content.is_active !== false,
-    contentKey: content.content_key,
     translations: {
       ru: content.translations.ru || '',
       he: content.translations.he || '',
       en: content.translations.en || ''
     },
-    lastModified: content.last_modified
+    last_modified: content.updated_at
   } : null;
 
   // Breadcrumb configuration
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Контент сайта', onClick: () => navigate('/content-management') },
     { label: 'Меню', onClick: () => navigate('/content/menu') },
-    { label: content?.description || 'Редактирование текста', active: true }
+    { label: content?.description || 'Редактирование текста', isActive: true }
   ];
 
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#1F2A37' }}>
       <SharedMenu activeItem="content-menu" />
       <div style={{ flex: 1, marginLeft: '280px' }}>
-        <SharedTextEdit
-          data={textEditData}
-          loading={loading}
-          saving={saving}
-          error={error}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          breadcrumbs={breadcrumbs}
-          actionNumber={actionNumber}
-          entityType="menu"
-        />
+        {textEditData ? (
+          <SharedTextEdit
+            content={textEditData}
+            loading={loading}
+            saving={saving}
+            error={error}
+            onSave={(data) => {
+              handleSave({
+                ru: data.ruText,
+                he: data.heText,
+                en: textEditData.translations.en
+              });
+            }}
+            onCancel={handleCancel}
+            breadcrumbs={breadcrumbs}
+          />
+        ) : (
+          <div className="shared-text-edit-error">
+            <p>Ошибка: Контент не найден</p>
+            <button onClick={handleCancel}>Вернуться назад</button>
+          </div>
+        )}
       </div>
     </div>
   );

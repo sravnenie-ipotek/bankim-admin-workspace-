@@ -138,9 +138,9 @@ const SharedDropdownEdit: React.FC = () => {
         console.log('📝 Hebrew:', he);
         console.log('📝 English:', en);
         
-        setTitleRu(ru);
-        setTitleHe(he);
-        setTitleEn(en);
+        setTitleRu(getSafeTranslation(ru, 'ru'));
+        setTitleHe(getSafeTranslation(he, 'he'));
+        setTitleEn(getSafeTranslation(en, 'en'));
         
         // Initialize dropdown options based on the content
         initializeDropdownOptions(item);
@@ -330,6 +330,41 @@ const SharedDropdownEdit: React.FC = () => {
     } catch {
       return '01.08.2023 | 12:03';
     }
+  };
+
+  // Helper function to safely parse and display translation text
+  const getSafeTranslation = (translation: string, language: 'ru' | 'he' | 'en'): string => {
+    if (!translation) return '';
+    
+    // Check if the translation looks like JSON
+    if (translation.trim().startsWith('[') || translation.trim().startsWith('{')) {
+      try {
+        // Try to parse as JSON
+        const parsed = JSON.parse(translation);
+        
+        // If it's an array, extract the first label
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const firstItem = parsed[0];
+          if (typeof firstItem === 'object' && firstItem.label) {
+            return firstItem.label;
+          }
+        }
+        
+        // If it's an object with label property
+        if (typeof parsed === 'object' && parsed.label) {
+          return parsed.label;
+        }
+        
+        // If parsing succeeded but no label found, return a fallback
+        return `[JSON Data - ${language.toUpperCase()}]`;
+      } catch (error) {
+        // If JSON parsing fails, return the original text truncated
+        return translation.length > 50 ? translation.substring(0, 50) + '...' : translation;
+      }
+    }
+    
+    // Return the original translation if it's not JSON
+    return translation;
   };
 
   // Loading state

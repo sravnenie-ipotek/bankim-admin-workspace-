@@ -217,17 +217,17 @@ const MortgageDrill: React.FC = () => {
     });
   };
 
-  // First filter out options only, then apply search
+  // Hide dropdown options from drill pages (following @dropDownDBlogic rules)
   const visibleActions = useMemo(() => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
-      // Hide individual dropdown option values, only show dropdown headers
+      // Hide dropdown options from drill pages - they should only appear in dropdown edit pages
+      // According to @dropDownDBlogic rules, only main dropdown fields should be visible in drill pages
       if (action.component_type?.toLowerCase() === 'option' || 
           action.component_type?.toLowerCase() === 'dropdown_option') {
-        return false;
+        return false; // Hide dropdown options from drill pages
       }
-      // Include placeholder components as TEXT type
-      return true;
+      return true; // Show all other content types
     });
   }, [drillData?.actions]);
 
@@ -263,17 +263,14 @@ const MortgageDrill: React.FC = () => {
     // Check if this is a dropdown-related field based on content patterns
     // Only consider it a dropdown if it has actual options or is a dropdown component
     const isDropdownField = contentKey.includes('_option') || 
-                            contentKey.includes('citizenship') ||
-                            contentKey.includes('education') ||
-                            contentKey.includes('family_status') ||
-                            contentKey.includes('main_source') ||
-                            contentKey.includes('debt_types') ||
-                            contentKey.includes('has_additional') ||
-                            contentKey.includes('property_ownership') ||
-                            contentKey.includes('first_home') ||
-                            contentKey.includes('sphere') ||
-                            contentKey.includes('type') ||
-                            contentKey.includes('when_needed') ||
+                            // More specific patterns for actual dropdowns
+                            contentKey.includes('education_level') ||
+                            contentKey.includes('family_status_select') ||
+                            contentKey.includes('main_source_select') ||
+                            contentKey.includes('debt_types_select') ||
+                            contentKey.includes('property_ownership_select') ||
+                            contentKey.includes('sphere_select') ||
+                            contentKey.includes('type_select') ||
                             // Only include _ph if it's not a standalone placeholder
                             (contentKey.includes('_ph') && !contentKey.endsWith('_ph'));
 
@@ -302,6 +299,41 @@ const MortgageDrill: React.FC = () => {
       default:
         return 'Текст';
     }
+  };
+
+  // Helper function to safely parse and display translation text
+  const getSafeTranslation = (translation: string, language: 'ru' | 'he' | 'en'): string => {
+    if (!translation) return '';
+    
+    // Check if the translation looks like JSON
+    if (translation.trim().startsWith('[') || translation.trim().startsWith('{')) {
+      try {
+        // Try to parse as JSON
+        const parsed = JSON.parse(translation);
+        
+        // If it's an array, extract the first label
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const firstItem = parsed[0];
+          if (typeof firstItem === 'object' && firstItem.label) {
+            return firstItem.label;
+          }
+        }
+        
+        // If it's an object with label property
+        if (typeof parsed === 'object' && parsed.label) {
+          return parsed.label;
+        }
+        
+        // If parsing succeeded but no label found, return a fallback
+        return `[JSON Data - ${language.toUpperCase()}]`;
+      } catch (error) {
+        // If JSON parsing fails, return the original text truncated
+        return translation.length > 50 ? translation.substring(0, 50) + '...' : translation;
+      }
+    }
+    
+    // Return the original translation if it's not JSON
+    return translation;
   };
 
   if (loading) {
@@ -490,9 +522,9 @@ const MortgageDrill: React.FC = () => {
                         paddingLeft: action.isOption ? '20px' : '0px',
                         opacity: action.isOption ? '0.8' : '1'
                       }} 
-                      title={action.translations.ru}
+                      title={getSafeTranslation(action.translations.ru, 'ru')}
                     >
-                      {action.isOption ? '  • ' : ''}{action.translations.ru}
+                      {action.isOption ? '  • ' : ''}{getSafeTranslation(action.translations.ru, 'ru')}
                     </div>
                   </div>
                   <div className="column-divider"></div>
@@ -527,9 +559,9 @@ const MortgageDrill: React.FC = () => {
                         paddingRight: action.isOption ? '20px' : '0px',
                         opacity: action.isOption ? '0.8' : '1'
                       }} 
-                      title={action.translations.he}
+                      title={getSafeTranslation(action.translations.he, 'he')}
                     >
-                      {action.translations.he}{action.isOption ? '  •' : ''}
+                      {getSafeTranslation(action.translations.he, 'he')}{action.isOption ? '  •' : ''}
                     </div>
                   </div>
                   <div className="column-divider"></div>

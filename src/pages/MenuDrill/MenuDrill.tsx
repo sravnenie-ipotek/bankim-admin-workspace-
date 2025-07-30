@@ -167,15 +167,17 @@ const MenuDrill: React.FC = () => {
     });
   };
 
-  // First filter out options, then apply search
+  // Hide dropdown options from drill pages (following @dropDownDBlogic rules)
   const visibleActions = useMemo(() => {
     if (!drillData?.actions) return [];
     return drillData.actions.filter(action => {
-      // Hide individual dropdown option values, only show dropdown headers
-      if (action.component_type?.toLowerCase() === 'option') {
-        return false;
+      // Hide dropdown options from drill pages - they should only appear in dropdown edit pages
+      // According to @dropDownDBlogic rules, only main dropdown fields should be visible in drill pages
+      if (action.component_type?.toLowerCase() === 'option' || 
+          action.component_type?.toLowerCase() === 'dropdown_option') {
+        return false; // Hide dropdown options from drill pages
       }
-      return true;
+      return true; // Show all other content types
     });
   }, [drillData?.actions]);
 

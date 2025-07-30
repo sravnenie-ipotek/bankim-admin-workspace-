@@ -27,14 +27,20 @@ let isConnected = false;
 let connectionAttempts = 0;
 const maxRetries = 3;
 
-// Railway database configuration
+// Railway database configuration - FORCE using CONTENT_DATABASE_URL
 const primaryConfig = {
-  connectionString: process.env.CONTENT_DATABASE_URL || process.env.DATABASE_URL,
+  connectionString: process.env.CONTENT_DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,
   max: 10,
 };
+
+// Debug which database URL is being used
+console.log('🔍 Database connection debug:');
+console.log(`   CONTENT_DATABASE_URL: ${process.env.CONTENT_DATABASE_URL ? 'Present' : 'Missing'}`);
+console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Present' : 'Missing'}`);
+console.log(`   FORCED to use: CONTENT_DATABASE_URL`);
 
 
 
@@ -376,7 +382,7 @@ app.get('/api/content/menu', async (req, res) => {
         FROM content_items ci
         WHERE ci.screen_location IN ('sidebar', 'menu_navigation')
           AND ci.is_active = TRUE
-          AND ci.component_type != 'option'
+          AND ci.component_type NOT IN ('option', 'dropdown_option')
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )
@@ -478,13 +484,13 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
@@ -516,7 +522,7 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -662,13 +668,13 @@ app.get('/api/content/item/:itemId', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.id = $1
     `, [itemId]);
 
@@ -737,13 +743,13 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
         AND ci.is_active = true
       ORDER BY ci.screen_location, ci.content_key
@@ -776,7 +782,7 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
     console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -1012,7 +1018,7 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.screen_location = 'main_page'
-        AND ci.component_type = 'option'
+        AND ci.component_type IN ('option', 'dropdown_option')
         AND ci.content_key LIKE $1
         AND ci.is_active = TRUE
       ORDER BY option_order
@@ -1084,9 +1090,9 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
           ) AS INTEGER
         ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
       WHERE ci.screen_location = 'mortgage_step1'
         AND (ci.component_type = 'option' OR ci.component_type = 'text' OR ci.component_type = 'dropdown_option')
         AND ci.content_key LIKE $1
@@ -1469,13 +1475,13 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
@@ -1507,7 +1513,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -1648,92 +1654,10 @@ app.put('/api/content/mortgage/:id', async (req, res) => {
  * Returns content for mortgage refinancing screen with dynamic translations from database
  */
 app.get('/api/content/mortgage-refi', async (req, res) => {
-  try {
-    // Dynamic query that gets actual content from database instead of hard-coded titles
-    const result = await safeQuery(`
-      WITH screen_summaries AS (
-        SELECT 
-          ci.screen_location,
-          COUNT(*) as action_count,
-          MAX(ci.updated_at) as last_modified,
-          MIN(ci.id) as representative_id,
-          MIN(ci.page_number) as page_number,
-          -- Use specific names for mortgage-refi
-          CASE ci.screen_location
-            WHEN 'refinance_mortgage_1' THEN 'Рефинансирование ипотеки'
-            WHEN 'refinance_mortgage_2' THEN 'Банк текущей ипотеки'
-            ELSE ci.screen_location
-          END as title_ru,
-          CASE ci.screen_location
-            WHEN 'refinance_mortgage_1' THEN 'מחזור משכנתא'
-            WHEN 'refinance_mortgage_2' THEN 'בנק המשכנתא הנוכחית'
-            ELSE ci.screen_location
-          END as title_he,
-          CASE ci.screen_location
-            WHEN 'refinance_mortgage_1' THEN 'Mortgage Refinance'
-            WHEN 'refinance_mortgage_2' THEN 'Current Bank'
-            ELSE ci.screen_location
-          END as title_en
-        FROM content_items ci
-        WHERE ci.screen_location LIKE 'refinance_mortgage_%'
-          AND ci.is_active = TRUE
-          AND ci.component_type != 'option'
-          AND ci.component_type != 'dropdown_option'
-        GROUP BY ci.screen_location
-        HAVING COUNT(*) > 0
-      )
-      SELECT 
-        ss.representative_id as id,
-        ss.screen_location as content_key,
-        'step' as component_type,
-        'mortgage_refi_steps' as category,
-        ss.screen_location,
-        ss.page_number,
-        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
-        true as is_active,
-        ss.action_count,
-        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as title_ru,
-        COALESCE(ss.title_he, ss.title_en, 'Unnamed Step') as title_he,
-        COALESCE(ss.title_en, ss.title_ru, 'Unnamed Step') as title_en,
-        ss.last_modified as updated_at
-      FROM screen_summaries ss
-      ORDER BY ss.screen_location
-    `);
-    
-    const mortgageRefiContent = result.rows.map(row => ({
-      id: row.id,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
-      screen_location: row.screen_location,
-      page_number: row.page_number,
-      description: row.description,
-      is_active: row.is_active,
-      actionCount: row.action_count || 1,
-      translations: {
-        ru: row.title_ru || '',
-        he: row.title_he || '',
-        en: row.title_en || ''
-      },
-      last_modified: row.updated_at
-    }));
-
-    res.json({
-      success: true,
-      data: {
-        status: 'success',
-        content_count: mortgageRefiContent.length,
-        mortgage_content: mortgageRefiContent
-      }
-    });
-
-  } catch (error) {
-    console.error('Get mortgage refi content error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
+  res.json({
+    test: 123,
+    time: new Date().toISOString()
+  });
 });
 
 /**
@@ -1845,7 +1769,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     }
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -1910,9 +1834,9 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
           ) AS INTEGER
         ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
       WHERE ci.screen_location LIKE 'refinance_mortgage_%'
         AND (ci.component_type = 'option' OR ci.component_type = 'dropdown_option')
         AND ci.content_key LIKE $1
@@ -2075,7 +1999,7 @@ app.get('/api/content/credit-refi', async (req, res) => {
         'refinance_credit_4'
       )
         AND ci.is_active = true
-        AND ci.component_type != 'option'
+        AND ci.component_type NOT IN ('option', 'dropdown_option')
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
     `);
@@ -2169,13 +2093,13 @@ app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
@@ -2207,7 +2131,7 @@ app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -2257,13 +2181,13 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru'
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he'
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en'
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
       ORDER BY ci.content_key
@@ -2308,7 +2232,7 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -2361,13 +2285,13 @@ app.get('/api/content/general', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
         AND ct_ru.language_code = 'ru' 
-        AND (ct_ru.status = 'approved' OR ct_ru.status IS NULL)
+        AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
         AND ct_he.language_code = 'he' 
-        AND (ct_he.status = 'approved' OR ct_he.status IS NULL)
+        AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
         AND ct_en.language_code = 'en' 
-        AND (ct_en.status = 'approved' OR ct_en.status IS NULL)
+        AND ct_en.status = 'approved'
       WHERE ci.is_active = TRUE
         AND ci.screen_location NOT LIKE 'mortgage%'
         AND ci.screen_location NOT LIKE 'credit%'
