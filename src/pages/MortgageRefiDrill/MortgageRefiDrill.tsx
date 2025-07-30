@@ -192,7 +192,8 @@ const MortgageRefiDrill: React.FC = () => {
       // Hide dropdown options from drill pages - they should only appear in dropdown edit pages
       // According to @dropDownDBlogic rules, only main dropdown fields should be visible in drill pages
       if (action.component_type?.toLowerCase() === 'option' || 
-          action.component_type?.toLowerCase() === 'dropdown_option') {
+          action.component_type?.toLowerCase() === 'dropdown_option' ||
+          action.component_type?.toLowerCase() === 'field_option') {
         return false; // Hide dropdown options from drill pages
       }
       return true; // Show all other content types

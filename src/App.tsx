@@ -405,6 +405,18 @@ const AppRouter: React.FC = () => {
         
         {/* Content submenu routes - Special routes for main content */}
         <Route 
+          path="/content/main/drill/:pageId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
+                <AdminLayout title="Главная страница" activeMenuItem="content-main">
+                  <ContentMainDrill />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        <Route 
           path="/content/main/action/:actionId" 
           element={
             <ErrorBoundary>

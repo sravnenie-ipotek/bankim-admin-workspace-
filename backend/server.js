@@ -398,7 +398,7 @@ app.get('/api/content/menu', async (req, res) => {
         FROM content_items ci
         WHERE ci.screen_location IN ('sidebar', 'menu_navigation')
           AND ci.is_active = TRUE
-          AND ci.component_type NOT IN ('option', 'dropdown_option')
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )
@@ -538,7 +538,7 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -798,7 +798,7 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
     console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -1037,7 +1037,7 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.screen_location = 'main_page'
-        AND ci.component_type IN ('option', 'dropdown_option')
+        AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
         AND (
           -- Support numeric pattern: app.main.action.1.option.1, app.main.action.1.option.2, etc.
           ci.content_key LIKE $1
@@ -1562,7 +1562,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -1818,7 +1818,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     }
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -2481,7 +2481,7 @@ app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -2582,7 +2582,7 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({
       success: true,
@@ -2883,7 +2883,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, re
       const basePattern = `app.main.action.${actualContentKey}`;
       whereClause = `
         WHERE ci.screen_location = 'main_page'
-          AND ci.component_type IN ('option', 'dropdown_option')
+          AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
           AND (
             ci.content_key LIKE $1
             OR (ci.content_key LIKE $2 
@@ -2906,7 +2906,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, re
         WHERE ${screenLocationPattern === 'mortgage_step1' ? 
           "ci.screen_location = 'mortgage_step1'" : 
           screenLocationPattern}
-          AND ci.component_type IN ('option', 'dropdown_option')
+          AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
           AND (
             ci.content_key LIKE $1
             OR (ci.content_key LIKE $2 
@@ -3191,7 +3191,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/validate', async (req, r
       SELECT COUNT(*) as count
       FROM content_items ci
       WHERE ci.content_key LIKE $1
-        AND ci.component_type IN ('option', 'dropdown_option')
+        AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
         AND ci.is_active = TRUE
     `, [`${actualContentKey}_%`]);
     

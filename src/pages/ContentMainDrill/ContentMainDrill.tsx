@@ -40,7 +40,7 @@ interface DropdownAction {
 }
 
 const ContentMainDrill: React.FC = () => {
-  const { actionId } = useParams<{ actionId: string }>();
+  const { actionId, pageId } = useParams<{ actionId?: string; pageId?: string }>();
   const navigate = useNavigate();
   const { setCurrentSubmenu } = useNavigation();
   
@@ -57,12 +57,13 @@ const ContentMainDrill: React.FC = () => {
   // Fetch real dropdown data
   useEffect(() => {
     const fetchAction = async () => {
-      if (!actionId) return;
+      const currentActionId = actionId || pageId;
+      if (!currentActionId) return;
       setIsLoading(true);
       
       try {
         // Fetch action data
-        const resp = await apiService.getMainPageAction(actionId);
+        const resp = await apiService.getMainPageAction(currentActionId);
         if (resp.success && resp.data) {
           const action = resp.data;
           
@@ -90,7 +91,7 @@ const ContentMainDrill: React.FC = () => {
     };
 
     fetchAction();
-  }, [actionId]);
+  }, [actionId, pageId]);
 
   // Handlers
   const handleBack = () => {

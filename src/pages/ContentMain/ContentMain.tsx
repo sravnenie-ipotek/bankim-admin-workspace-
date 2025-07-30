@@ -133,7 +133,7 @@ const ContentMain: React.FC = () => {
             pageNumber: 1,
             actionCount: 7,
             lastModified: '15.12.2024, 02:00',
-            path: '#'
+            path: '/content/main/drill/main_page'
           },
           {
             id: 'menu',
