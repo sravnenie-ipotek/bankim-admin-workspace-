@@ -103,6 +103,9 @@ process.on('unhandledRejection', (error) => {
   }
 });
 
+// Import authentication middleware
+const { setupAuthRoutes, setupSessionStore } = require('./auth-middleware');
+
 // Middleware
 app.use(helmet());
 app.use(cors({
@@ -122,6 +125,19 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
+
+// Session middleware setup
+app.use(require('express-session')({
+  store: setupSessionStore(pool),
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 // Rate limiting - more lenient for development
 const limiter = rateLimit({
@@ -1001,7 +1017,10 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
   const { actionNumber } = req.params;
   
   try {
-    // Get all options for this action
+    const basePattern = `app.main.action.${actionNumber}`;
+    console.log('Using main page action patterns:', `${basePattern}.option.%`, `AND`, `${basePattern}.%`);
+    
+    // Get all options for this action - FIXED: Support both numeric and descriptive patterns
     const result = await safeQuery(`
       SELECT 
         ci.id,
@@ -1019,10 +1038,25 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.screen_location = 'main_page'
         AND ci.component_type IN ('option', 'dropdown_option')
-        AND ci.content_key LIKE $1
+        AND (
+          -- Support numeric pattern: app.main.action.1.option.1, app.main.action.1.option.2, etc.
+          ci.content_key LIKE $1
+          OR
+          -- Support descriptive pattern: app.main.action.1.bank_hapoalim, etc. (but exclude .ph, .label)
+          (ci.content_key LIKE $2 
+           AND ci.content_key NOT LIKE $3
+           AND ci.content_key NOT LIKE $4
+           AND ci.content_key NOT LIKE $5)
+        )
         AND ci.is_active = TRUE
-      ORDER BY option_order
-    `, [`app.main.action.${actionNumber}.option.%`]);
+      ORDER BY option_order NULLS LAST, ci.content_key
+    `, [
+      `${basePattern}.option.%`,    // Numeric pattern
+      `${basePattern}.%`,           // Descriptive pattern base
+      `${basePattern}.ph`,          // Exclude placeholder
+      `${basePattern}.label`,       // Exclude label
+      `${basePattern}.option.%`     // Exclude numeric (already covered above)
+    ]);
     
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
@@ -1073,9 +1107,9 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       }
     }
     
-    console.log('Using content key pattern:', `${actualContentKey}_option%`);
+    console.log('Using content key patterns:', `${actualContentKey}_option%`, `AND`, `${actualContentKey}_%`);
     
-    // Get all options for this mortgage dropdown
+    // Get all options for this mortgage dropdown - FIXED: Support both numeric and descriptive patterns
     const result = await safeQuery(`
       SELECT 
         ci.id,
@@ -1095,10 +1129,25 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
       WHERE ci.screen_location = 'mortgage_step1'
         AND (ci.component_type = 'option' OR ci.component_type = 'text' OR ci.component_type = 'dropdown_option')
-        AND ci.content_key LIKE $1
+        AND (
+          -- Support numeric pattern: field_name_option_1, field_name_option_2, etc.
+          ci.content_key LIKE $1
+          OR
+          -- Support descriptive pattern: field_name_hapoalim, field_name_leumi, etc. (but exclude _ph, _label)
+          (ci.content_key LIKE $2 
+           AND ci.content_key NOT LIKE $3
+           AND ci.content_key NOT LIKE $4
+           AND ci.content_key NOT LIKE $5)
+        )
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
-    `, [`${actualContentKey}_option%`]);
+    `, [
+      `${actualContentKey}_option%`,  // Numeric pattern
+      `${actualContentKey}_%`,        // Descriptive pattern base
+      `${actualContentKey}_ph`,       // Exclude placeholder
+      `${actualContentKey}_label`,    // Exclude label
+      `${actualContentKey}_option%`   // Exclude numeric (already covered above)
+    ]);
     
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
@@ -1817,9 +1866,9 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
       }
     }
     
-    console.log('Using mortgage-refi content key pattern:', `${actualContentKey}_option%`);
+    console.log('Using mortgage-refi content key patterns:', `${actualContentKey}_option%`, `AND`, `${actualContentKey}_%`);
     
-    // Get all options for this mortgage-refi dropdown
+    // Get all options for this mortgage-refi dropdown - FIXED: Support both numeric and descriptive patterns
     const result = await safeQuery(`
       SELECT 
         ci.id,
@@ -1837,12 +1886,27 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
       LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
-      WHERE ci.screen_location LIKE 'refinance_mortgage_%'
+      WHERE (ci.screen_location LIKE 'refinance_mortgage_%' OR ci.screen_location = 'refinance_step1')
         AND (ci.component_type = 'option' OR ci.component_type = 'dropdown_option')
-        AND ci.content_key LIKE $1
+        AND (
+          -- Support numeric pattern: field_name_option_1, field_name_option_2, etc.
+          ci.content_key LIKE $1
+          OR
+          -- Support descriptive pattern: field_name_hapoalim, field_name_leumi, etc. (but exclude _ph, _label)
+          (ci.content_key LIKE $2 
+           AND ci.content_key NOT LIKE $3
+           AND ci.content_key NOT LIKE $4
+           AND ci.content_key NOT LIKE $5)
+        )
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
-    `, [`${actualContentKey}_option%`]);
+    `, [
+      `${actualContentKey}_option%`,  // Numeric pattern
+      `${actualContentKey}_%`,        // Descriptive pattern base
+      `${actualContentKey}_ph`,       // Exclude placeholder
+      `${actualContentKey}_label`,    // Exclude label
+      `${actualContentKey}_option%`   // Exclude numeric (already covered above)
+    ]);
 
     // Transform to expected format
     const options = result.rows.map((row, index) => ({
@@ -1864,6 +1928,292 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
 
   } catch (error) {
     console.error('Get mortgage-refi options error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get dropdown container information for mortgage content
+ * GET /api/content/mortgage/{contentKey}/dropdown
+ * Returns dropdown container, placeholder, and label information
+ */
+app.get('/api/content/mortgage/:contentKey/dropdown', async (req, res) => {
+  const { contentKey } = req.params;
+  
+  try {
+    console.log('Fetching dropdown container info for mortgage content key:', contentKey);
+    
+    // Build the pattern for dropdown container and related components
+    let actualContentKey = contentKey;
+    
+    // Check if contentKey is numeric (ID)
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    console.log('Using content key for dropdown container:', actualContentKey);
+    
+    // Get dropdown container and related components (container, placeholder, label)
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
+      WHERE ci.screen_location = 'mortgage_step1'
+        AND ci.component_type IN ('dropdown', 'placeholder', 'label')
+        AND (
+          ci.content_key = $1 OR 
+          ci.content_key = $2 OR 
+          ci.content_key = $3
+        )
+        AND ci.is_active = TRUE
+      ORDER BY ci.component_type, ci.content_key
+    `, [
+      actualContentKey,
+      `${actualContentKey}_ph`,
+      `${actualContentKey}_label`
+    ]);
+    
+    // Organize results by component type
+    const dropdownInfo = {
+      container: null,
+      placeholder: null,
+      label: null
+    };
+    
+    result.rows.forEach(row => {
+      const item = {
+        id: row.id.toString(),
+        content_key: row.content_key,
+        component_type: row.component_type,
+        translations: {
+          ru: row.title_ru || '',
+          he: row.title_he || '',
+          en: row.title_en || ''
+        }
+      };
+      
+      switch (row.component_type) {
+        case 'dropdown':
+          dropdownInfo.container = item;
+          break;
+        case 'placeholder':
+          dropdownInfo.placeholder = item;
+          break;
+        case 'label':
+          dropdownInfo.label = item;
+          break;
+      }
+    });
+    
+    res.json({
+      success: true,
+      data: dropdownInfo
+    });
+    
+  } catch (error) {
+    console.error('Get mortgage dropdown container error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get dropdown container information for mortgage-refi content
+ * GET /api/content/mortgage-refi/{contentKey}/dropdown
+ * Returns dropdown container, placeholder, and label information
+ */
+app.get('/api/content/mortgage-refi/:contentKey/dropdown', async (req, res) => {
+  const { contentKey } = req.params;
+  
+  try {
+    console.log('Fetching dropdown container info for mortgage-refi content key:', contentKey);
+    
+    // Build the pattern for dropdown container and related components
+    let actualContentKey = contentKey;
+    
+    // Check if contentKey is numeric (ID)
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    console.log('Using content key for mortgage-refi dropdown container:', actualContentKey);
+    
+    // Get dropdown container and related components (container, placeholder, label)
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
+      WHERE ci.screen_location LIKE 'refinance_mortgage_%'
+        AND ci.component_type IN ('dropdown', 'placeholder', 'label')
+        AND (
+          ci.content_key = $1 OR 
+          ci.content_key = $2 OR 
+          ci.content_key = $3
+        )
+        AND ci.is_active = TRUE
+      ORDER BY ci.component_type, ci.content_key
+    `, [
+      actualContentKey,
+      `${actualContentKey}_ph`,
+      `${actualContentKey}_label`
+    ]);
+    
+    // Organize results by component type
+    const dropdownInfo = {
+      container: null,
+      placeholder: null,
+      label: null
+    };
+    
+    result.rows.forEach(row => {
+      const item = {
+        id: row.id.toString(),
+        content_key: row.content_key,
+        component_type: row.component_type,
+        translations: {
+          ru: row.title_ru || '',
+          he: row.title_he || '',
+          en: row.title_en || ''
+        }
+      };
+      
+      switch (row.component_type) {
+        case 'dropdown':
+          dropdownInfo.container = item;
+          break;
+        case 'placeholder':
+          dropdownInfo.placeholder = item;
+          break;
+        case 'label':
+          dropdownInfo.label = item;
+          break;
+      }
+    });
+    
+    res.json({
+      success: true,
+      data: dropdownInfo
+    });
+    
+  } catch (error) {
+    console.error('Get mortgage-refi dropdown container error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get dropdown container information for main page actions
+ * GET /api/content/main_page/action/{actionNumber}/dropdown
+ * Returns dropdown container, placeholder, and label information
+ */
+app.get('/api/content/main_page/action/:actionNumber/dropdown', async (req, res) => {
+  const { actionNumber } = req.params;
+  
+  try {
+    console.log('Fetching dropdown container info for main page action:', actionNumber);
+    
+    // Build the base content key pattern
+    const basePattern = `app.main.action.${actionNumber}`;
+    
+    // Get dropdown container and related components (container, placeholder, label)
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
+      WHERE ci.screen_location = 'main_page'
+        AND ci.component_type IN ('dropdown', 'placeholder', 'label')
+        AND ci.content_key LIKE $1
+        AND ci.is_active = TRUE
+      ORDER BY ci.component_type, ci.content_key
+    `, [`${basePattern}%`]);
+    
+    // Organize results by component type
+    const dropdownInfo = {
+      container: null,
+      placeholder: null,
+      label: null
+    };
+    
+    result.rows.forEach(row => {
+      const item = {
+        id: row.id.toString(),
+        content_key: row.content_key,
+        component_type: row.component_type,
+        translations: {
+          ru: row.title_ru || '',
+          he: row.title_he || '',
+          en: row.title_en || ''
+        }
+      };
+      
+      switch (row.component_type) {
+        case 'dropdown':
+          dropdownInfo.container = item;
+          break;
+        case 'placeholder':
+          dropdownInfo.placeholder = item;
+          break;
+        case 'label':
+          dropdownInfo.label = item;
+          break;
+      }
+    });
+    
+    res.json({
+      success: true,
+      data: dropdownInfo
+    });
+    
+  } catch (error) {
+    console.error('Get main page dropdown container error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -2463,6 +2813,489 @@ app.get('/api/content/site-pages', async (req, res) => {
   }
 });
 
+
+/**
+ * UNIFIED DROPDOWN API ENDPOINTS
+ * Following @dropDownDBlogic patterns for consistent dropdown handling
+ */
+
+/**
+ * Universal dropdown options endpoint
+ * GET /api/content/dropdown/{contentType}/{contentKey}/options
+ * Supports all content types: mortgage, mortgage-refi, credit, credit-refi, menu, general
+ */
+app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, res) => {
+  const { contentType, contentKey } = req.params;
+  
+  try {
+    console.log(`Fetching unified dropdown options for ${contentType}:${contentKey}`);
+    
+    // Determine screen location based on content type
+    let screenLocationPattern;
+    let componentTypes = ['option', 'dropdown_option'];
+    
+    switch (contentType) {
+      case 'mortgage':
+        screenLocationPattern = 'mortgage_step1';
+        break;
+      case 'mortgage-refi':
+        screenLocationPattern = "ci.screen_location LIKE 'refinance_mortgage_%' OR ci.screen_location = 'refinance_step1'";
+        break;
+      case 'credit':
+        screenLocationPattern = 'credit_step1';
+        break;
+      case 'credit-refi':
+        screenLocationPattern = 'refinance_credit_1';
+        break;
+      case 'menu':
+        screenLocationPattern = 'main_page';
+        break;
+      case 'general':
+        screenLocationPattern = 'general';
+        break;
+      default:
+        return res.status(400).json({
+          success: false,
+          error: `Unsupported content type: ${contentType}`
+        });
+    }
+    
+    // Get actual content key if ID is provided
+    let actualContentKey = contentKey;
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    // Build query based on content type
+    let whereClause;
+    let queryParams = [];
+    
+    if (contentType === 'menu') {
+      // Menu uses dot notation patterns
+      const basePattern = `app.main.action.${actualContentKey}`;
+      whereClause = `
+        WHERE ci.screen_location = 'main_page'
+          AND ci.component_type IN ('option', 'dropdown_option')
+          AND (
+            ci.content_key LIKE $1
+            OR (ci.content_key LIKE $2 
+                AND ci.content_key NOT LIKE $3
+                AND ci.content_key NOT LIKE $4
+                AND ci.content_key NOT LIKE $5)
+          )
+          AND ci.is_active = TRUE
+      `;
+      queryParams = [
+        `${basePattern}.option.%`,
+        `${basePattern}.%`,
+        `${basePattern}.ph`,
+        `${basePattern}.label`,
+        `${basePattern}.option.%`
+      ];
+    } else {
+      // Other content types use underscore patterns
+      whereClause = `
+        WHERE ${screenLocationPattern === 'mortgage_step1' ? 
+          "ci.screen_location = 'mortgage_step1'" : 
+          screenLocationPattern}
+          AND ci.component_type IN ('option', 'dropdown_option')
+          AND (
+            ci.content_key LIKE $1
+            OR (ci.content_key LIKE $2 
+                AND ci.content_key NOT LIKE $3
+                AND ci.content_key NOT LIKE $4
+                AND ci.content_key NOT LIKE $5)
+          )
+          AND ci.is_active = TRUE
+      `;
+      queryParams = [
+        `${actualContentKey}_option%`,
+        `${actualContentKey}_%`,
+        `${actualContentKey}_ph`,
+        `${actualContentKey}_label`,
+        `${actualContentKey}_option%`
+      ];
+    }
+    
+    // Execute unified query
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.screen_location,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        CAST(
+          COALESCE(
+            SUBSTRING(ci.content_key FROM '_option_([0-9]+)$'),
+            SUBSTRING(ci.content_key FROM '_options_([0-9]+)$'),
+            SUBSTRING(ci.content_key FROM '\\.option\\.([0-9]+)$')
+          ) AS INTEGER
+        ) as option_order
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
+      ${whereClause}
+      ORDER BY option_order NULLS LAST, ci.content_key
+    `, queryParams);
+    
+    // Transform to unified response format
+    const options = result.rows.map((row, index) => ({
+      id: row.id.toString(),
+      content_key: row.content_key,
+      component_type: row.component_type,
+      screen_location: row.screen_location,
+      order: row.option_order || (index + 1),
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      }
+    }));
+    
+    res.json({
+      success: true,
+      data: {
+        content_type: contentType,
+        content_key: actualContentKey,
+        options_count: options.length,
+        options: options
+      }
+    });
+    
+  } catch (error) {
+    console.error(`Unified dropdown options error for ${contentType}:${contentKey}:`, error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Universal dropdown container endpoint
+ * GET /api/content/dropdown/{contentType}/{contentKey}/container
+ * Returns dropdown container, placeholder, and label information
+ */
+app.get('/api/content/dropdown/:contentType/:contentKey/container', async (req, res) => {
+  const { contentType, contentKey } = req.params;
+  
+  try {
+    console.log(`Fetching unified dropdown container for ${contentType}:${contentKey}`);
+    
+    // Determine screen location based on content type
+    let screenLocationPattern;
+    
+    switch (contentType) {
+      case 'mortgage':
+        screenLocationPattern = "ci.screen_location = 'mortgage_step1'";
+        break;
+      case 'mortgage-refi':
+        screenLocationPattern = "ci.screen_location LIKE 'refinance_mortgage_%'";
+        break;
+      case 'credit':
+        screenLocationPattern = "ci.screen_location = 'credit_step1'";
+        break;
+      case 'credit-refi':
+        screenLocationPattern = "ci.screen_location = 'refinance_credit_1'";
+        break;
+      case 'menu':
+        screenLocationPattern = "ci.screen_location = 'main_page'";
+        break;
+      case 'general':
+        screenLocationPattern = "ci.screen_location = 'general'";
+        break;
+      default:
+        return res.status(400).json({
+          success: false,
+          error: `Unsupported content type: ${contentType}`
+        });
+    }
+    
+    // Get actual content key if ID is provided
+    let actualContentKey = contentKey;
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    // Build query based on content type
+    let whereClause;
+    let queryParams = [];
+    
+    if (contentType === 'menu') {
+      // Menu uses dot notation patterns
+      const basePattern = `app.main.action.${actualContentKey}`;
+      whereClause = `
+        WHERE ci.screen_location = 'main_page'
+          AND ci.component_type IN ('dropdown', 'placeholder', 'label')
+          AND ci.content_key LIKE $1
+          AND ci.is_active = TRUE
+      `;
+      queryParams = [`${basePattern}%`];
+    } else {
+      // Other content types use underscore patterns
+      whereClause = `
+        WHERE ${screenLocationPattern}
+          AND ci.component_type IN ('dropdown', 'placeholder', 'label')
+          AND (ci.content_key = $1 OR ci.content_key = $2 OR ci.content_key = $3)
+          AND ci.is_active = TRUE
+      `;
+      queryParams = [
+        actualContentKey,
+        `${actualContentKey}_ph`,
+        `${actualContentKey}_label`
+      ];
+    }
+    
+    // Execute unified query
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.screen_location,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
+      ${whereClause}
+      ORDER BY ci.component_type, ci.content_key
+    `, queryParams);
+    
+    // Organize results by component type
+    const containerInfo = {
+      container: null,
+      placeholder: null,
+      label: null
+    };
+    
+    result.rows.forEach(row => {
+      const item = {
+        id: row.id.toString(),
+        content_key: row.content_key,
+        component_type: row.component_type,
+        screen_location: row.screen_location,
+        translations: {
+          ru: row.title_ru || '',
+          he: row.title_he || '',
+          en: row.title_en || ''
+        }
+      };
+      
+      switch (row.component_type) {
+        case 'dropdown':
+          containerInfo.container = item;
+          break;
+        case 'placeholder':
+          containerInfo.placeholder = item;
+          break;
+        case 'label':
+          containerInfo.label = item;
+          break;
+      }
+    });
+    
+    res.json({
+      success: true,
+      data: {
+        content_type: contentType,
+        content_key: actualContentKey,
+        container_info: containerInfo
+      }
+    });
+    
+  } catch (error) {
+    console.error(`Unified dropdown container error for ${contentType}:${contentKey}:`, error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Universal dropdown validation endpoint
+ * GET /api/content/dropdown/{contentType}/{contentKey}/validate
+ * Validates dropdown structure according to @dropDownDBlogic rules
+ */
+app.get('/api/content/dropdown/:contentType/:contentKey/validate', async (req, res) => {
+  const { contentType, contentKey } = req.params;
+  
+  try {
+    console.log(`Validating dropdown structure for ${contentType}:${contentKey}`);
+    
+    // Get actual content key if ID is provided
+    let actualContentKey = contentKey;
+    if (!isNaN(contentKey)) {
+      const keyResult = await safeQuery(`
+        SELECT content_key 
+        FROM content_items 
+        WHERE id = $1
+      `, [contentKey]);
+      
+      if (keyResult.rows.length > 0) {
+        actualContentKey = keyResult.rows[0].content_key;
+      }
+    }
+    
+    // Validate dropdown structure
+    const validationResult = await safeQuery(`
+      SELECT 
+        ci.component_type,
+        COUNT(*) as count,
+        STRING_AGG(DISTINCT ct.language_code, ', ' ORDER BY ct.language_code) as languages
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id 
+        AND ct.status = 'approved'
+      WHERE ci.content_key IN ($1, $2, $3)
+        AND ci.component_type IN ('dropdown', 'option', 'dropdown_option', 'placeholder', 'label')
+        AND ci.is_active = TRUE
+      GROUP BY ci.component_type
+      ORDER BY ci.component_type
+    `, [
+      actualContentKey,
+      `${actualContentKey}_ph`,
+      `${actualContentKey}_label`
+    ]);
+    
+    // Check for options
+    const optionsResult = await safeQuery(`
+      SELECT COUNT(*) as count
+      FROM content_items ci
+      WHERE ci.content_key LIKE $1
+        AND ci.component_type IN ('option', 'dropdown_option')
+        AND ci.is_active = TRUE
+    `, [`${actualContentKey}_%`]);
+    
+    const validation = {
+      content_type: contentType,
+      content_key: actualContentKey,
+      structure: {
+        has_container: false,
+        has_placeholder: false,
+        has_label: false,
+        options_count: parseInt(optionsResult.rows[0].count)
+      },
+      languages: {
+        ru: false,
+        he: false,
+        en: false
+      },
+      issues: []
+    };
+    
+    // Analyze structure
+    validationResult.rows.forEach(row => {
+      switch (row.component_type) {
+        case 'dropdown':
+          validation.structure.has_container = true;
+          break;
+        case 'placeholder':
+          validation.structure.has_placeholder = true;
+          break;
+        case 'label':
+          validation.structure.has_label = true;
+          break;
+      }
+      
+      // Check languages
+      const languages = row.languages.split(', ');
+      languages.forEach(lang => {
+        if (lang === 'ru') validation.languages.ru = true;
+        if (lang === 'he') validation.languages.he = true;
+        if (lang === 'en') validation.languages.en = true;
+      });
+    });
+    
+    // Identify issues
+    if (!validation.structure.has_container) {
+      validation.issues.push('Missing dropdown container');
+    }
+    if (!validation.structure.has_placeholder) {
+      validation.issues.push('Missing placeholder text');
+    }
+    if (!validation.structure.has_label) {
+      validation.issues.push('Missing label text');
+    }
+    if (validation.structure.options_count === 0) {
+      validation.issues.push('No dropdown options found');
+    }
+    if (!validation.languages.ru || !validation.languages.he || !validation.languages.en) {
+      validation.issues.push('Incomplete translations (missing languages)');
+    }
+    
+    validation.is_valid = validation.issues.length === 0;
+    
+    res.json({
+      success: true,
+      data: validation
+    });
+    
+  } catch (error) {
+    console.error(`Dropdown validation error for ${contentType}:${contentKey}:`, error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Setup authentication routes
+setupAuthRoutes(app, pool);
+
+// Add auth-verify endpoint for frontend compatibility
+app.post('/api/auth-verify', (req, res) => {
+  try {
+    // Check if user is authenticated via session
+    if (req.session && req.session.user) {
+      res.json({
+        success: true,
+        user: req.session.user,
+        message: 'Authentication verified'
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        error: 'Not authenticated',
+        message: 'Please log in to continue'
+      });
+    }
+  } catch (error) {
+    console.error('Auth verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during authentication verification'
+    });
+  }
+});
 
 // Error handling middleware
 app.use((error, req, res, next) => {

@@ -200,6 +200,41 @@ const MenuDrill: React.FC = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentActions = filteredActions.slice(startIndex, endIndex);
 
+  // Helper function to safely parse and display translation text
+  const getSafeTranslation = (translation: string, language: 'ru' | 'he' | 'en'): string => {
+    if (!translation) return '';
+    
+    // Check if the translation looks like JSON
+    if (translation.trim().startsWith('[') || translation.trim().startsWith('{')) {
+      try {
+        // Try to parse as JSON
+        const parsed = JSON.parse(translation);
+        
+        // If it's an array, extract the first label
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const firstItem = parsed[0];
+          if (typeof firstItem === 'object' && firstItem.label) {
+            return firstItem.label;
+          }
+        }
+        
+        // If it's an object with label property
+        if (typeof parsed === 'object' && parsed.label) {
+          return parsed.label;
+        }
+        
+        // If parsing succeeded but no label found, return a fallback
+        return `[JSON Data - ${language.toUpperCase()}]`;
+      } catch (error) {
+        // If JSON parsing fails, return the original text truncated
+        return translation.length > 50 ? translation.substring(0, 50) + '...' : translation;
+      }
+    }
+    
+    // Return the original translation if it's not JSON
+    return translation;
+  };
+
   const formatLastModified = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -377,8 +412,8 @@ const MenuDrill: React.FC = () => {
               {currentActions.map((action, index) => (
                 <React.Fragment key={`action-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${action.page_number || (startIndex + index + 1)}.${action.description || action.translations.ru || action.content_key}`}>
-                      {action.page_number || (startIndex + index + 1)}.{action.description || action.translations.ru || action.content_key}
+                    <div style={{ flex: '1 1 0', color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={`${action.page_number || (startIndex + index + 1)}.${action.description || getSafeTranslation(action.translations.ru, 'ru') || action.content_key}`}>
+                      {action.page_number || (startIndex + index + 1)}.{action.description || getSafeTranslation(action.translations.ru, 'ru') || action.content_key}
                     </div>
                   </div>
                   <div className="column-divider"></div>

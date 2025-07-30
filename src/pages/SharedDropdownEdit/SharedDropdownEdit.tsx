@@ -416,7 +416,7 @@ const SharedDropdownEdit: React.FC = () => {
         {/* Page Title */}
         <div className="page-title-section">
           <h1 className="page-title">
-            Номер действия №{content.action_number || '3'} | {content.translations.ru || 'Основной источник дохода'}
+            Номер действия №{content.action_number || '3'} | {getSafeTranslation(content.translations.ru, 'ru') || 'Основной источник дохода'}
           </h1>
           <p className="page-subtitle">Home_page</p>
         </div>
