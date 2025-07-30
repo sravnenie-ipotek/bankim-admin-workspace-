@@ -12,6 +12,7 @@ import ContentManagement from './pages/Chat/ContentManagement/ContentManagement'
 import ContentMainDrill from './pages/ContentMainDrill'
 import ContentMainConfirm from './pages/ContentMainConfirm'
 import ContentMainText from './pages/ContentMainText'
+import MainDrill from './pages/MainDrill/MainDrill'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
@@ -410,7 +411,7 @@ const AppRouter: React.FC = () => {
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <AdminLayout title="Главная страница" activeMenuItem="content-main">
-                  <ContentMainDrill />
+                  <MainDrill />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>
@@ -447,6 +448,48 @@ const AppRouter: React.FC = () => {
               <ProtectedRoute requiredPermission={{ action: 'write', resource: 'content-management' }}>
                 <AdminLayout title="Редактирование текста" activeMenuItem="content-main">
                   <ContentMainText />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Main text edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/main/text-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование текста" activeMenuItem="content-main">
+                  <ContentMainText />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Main dropdown edit route - MUST BE BEFORE generic edit route */}
+        <Route 
+          path="/content/main/dropdown-edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование выпадающего списка" activeMenuItem="content-main">
+                  <SharedDropdownEdit />
+                </AdminLayout>
+              </ProtectedRoute>
+            </ErrorBoundary>
+          } 
+        />
+        
+        {/* Main general edit route */}
+        <Route 
+          path="/content/main/edit/:actionId" 
+          element={
+            <ErrorBoundary>
+              <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
+                <AdminLayout title="Редактирование контента" activeMenuItem="content-main">
+                  <SharedContentEdit />
                 </AdminLayout>
               </ProtectedRoute>
             </ErrorBoundary>

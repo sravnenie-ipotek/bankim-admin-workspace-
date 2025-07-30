@@ -560,6 +560,174 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
 });
 
 /**
+ * Get detailed content items for main page
+ * GET /api/content/main/drill/:pageId
+ * Returns individual content items for the main page drill view
+ */
+app.get('/api/content/main/drill/:pageId', async (req, res) => {
+  try {
+    const { pageId } = req.params;
+    
+    console.log(`Fetching main page drill content for page ID: ${pageId}`);
+    
+    // Map pageId to screen_location and title
+    let screenLocation, pageTitle;
+    
+    if (pageId === 'main_step1') {
+      screenLocation = 'main_step1';
+      pageTitle = 'Главная страница - Навигация';
+    } else if (pageId === 'main_step2') {
+      screenLocation = 'main_step2';
+      pageTitle = 'Главная страница - Настройки';
+    } else {
+      // Fallback to original behavior for backwards compatibility
+      screenLocation = 'main_page';
+      pageTitle = 'Главная Страница №1';
+    }
+
+    // Get individual content items for main page
+    const contentResult = await safeQuery(`
+      SELECT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.page_number,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as title_ru,
+        ct_he.content_value as title_he,
+        ct_en.content_value as title_en,
+        ROW_NUMBER() OVER (ORDER BY ci.content_key) as action_number
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND ct_en.status = 'approved'
+      WHERE ci.screen_location = $1
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [screenLocation]);
+
+    if (!contentResult.rows) {
+      return res.status(500).json({
+        success: false,
+        error: 'Database query failed'
+      });
+    }
+
+    // Count visible actions (excluding dropdown options)
+    const visibleActionCount = contentResult.rows.filter(item => 
+      !['option', 'dropdown_option', 'field_option'].includes(item.component_type)
+    ).length;
+
+    // Format the response like other drill endpoints
+    const actions = contentResult.rows.map(row => ({
+      id: row.id.toString(),
+      actionNumber: row.action_number,
+      content_key: row.content_key || '',
+      component_type: row.component_type || 'text',
+      category: row.category || '',
+      screen_location: row.screen_location || '',
+      page_number: row.page_number || 0,
+      description: '',
+      is_active: row.is_active !== false,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at || new Date().toISOString()
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        pageTitle,
+        stepGroup: screenLocation,
+        actionCount: visibleActionCount,
+        actions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get main drill content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get main content list
+ * GET /api/content/main
+ * Returns main page steps similar to mortgage structure
+ */
+app.get('/api/content/main', async (req, res) => {
+  try {
+    console.log('🔄 Fetching main content list...');
+    
+    // Get main steps from database - simplified query
+    const result = await safeQuery(
+      'SELECT ci.id, ci.content_key, ci.component_type, ci.category, ci.screen_location, ci.page_number, ci.is_active, ci.updated_at, ct_ru.content_value as title_ru, (SELECT COUNT(*) FROM content_items ci2 WHERE ci2.screen_location = ci.screen_location) as action_count FROM content_items ci LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = $1 AND ct_ru.status = $2 WHERE ci.component_type = $3 AND ci.category = $4 AND ci.is_active = true ORDER BY ci.page_number ASC',
+      ['ru', 'approved', 'step', 'main_steps']
+    );
+
+    if (!result || !result.rows) {
+      return res.status(500).json({
+        success: false,
+        error: 'Invalid database response'
+      });
+    }
+
+    // Transform the data to match expected format
+    const mainContent = result.rows.map(item => ({
+      id: item.id,
+      content_key: item.content_key,
+      component_type: item.component_type,
+      category: item.category,
+      screen_location: item.screen_location,
+      description: item.title_ru || item.content_key,
+      is_active: item.is_active,
+      actionCount: item.action_count.toString(),
+      page_number: item.page_number || 1,
+      translations: {
+        ru: item.title_ru || '',
+        he: item.title_he || '',
+        en: item.title_en || ''
+      },
+      last_modified: item.updated_at,
+      lastModified: item.updated_at
+    }));
+
+    console.log(`✅ Found ${mainContent.length} main steps`);
+
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: mainContent.length,
+        main_content: mainContent
+      }
+    });
+
+  } catch (error) {
+    console.error('Get main content error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * Get text content by action ID
  * GET /api/content/text/{actionId}
  * Returns text content for a specific action with translations
@@ -2708,7 +2876,7 @@ app.get('/api/content/site-pages', async (req, res) => {
     
     // Define the page mapping based on Confluence documentation
     const pageMapping = {
-      'main': { title: 'Главная', pageNumber: 1, path: '/content/main' },
+      'main': { title: 'Главная', pageNumber: 1, path: '/content/main/drill/main_page' },
       'menu': { title: 'Меню', pageNumber: 2, path: '/content/menu' },
       'mortgage': { title: 'Рассчитать ипотеку', pageNumber: 3, path: '/content/mortgage' },
       'mortgage_refi': { title: 'Рефинансирование ипотеки', pageNumber: 4, path: '/content/mortgage-refi' },

@@ -128,12 +128,20 @@ const ContentMain: React.FC = () => {
         console.log('📝 Using fallback hardcoded data due to error...');
         setContentPages([
           {
-            id: 'main',
-            title: 'Главная',
+            id: 'main_step1',
+            title: 'Главная - Навигация',
             pageNumber: 1,
-            actionCount: 7,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/main/drill/main_page'
+            actionCount: 3,
+            lastModified: '30.07.2025, 23:00',
+            path: '/content/main/drill/main_step1'
+          },
+          {
+            id: 'main_step2',
+            title: 'Главная - Настройки',
+            pageNumber: 2,
+            actionCount: 2,
+            lastModified: '30.07.2025, 23:00',
+            path: '/content/main/drill/main_step2'
           },
           {
             id: 'menu',
