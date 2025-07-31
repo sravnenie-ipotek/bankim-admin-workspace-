@@ -2448,6 +2448,7 @@ app.get('/api/content/credit', async (req, res) => {
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
         AND ci.is_active = true
+        AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
     `);
@@ -2885,24 +2886,96 @@ app.get('/api/content/site-pages', async (req, res) => {
       'general': { title: 'Общие страницы', pageNumber: 7, path: '/content/general' }
     };
 
-    // Query to get aggregated data per screen_location
+    // Query to get aggregated data per screen_location using the same logic as drill pages
     const result = await safeQuery(`
-      SELECT 
-        CASE 
-          WHEN ci.screen_location LIKE 'mortgage_step%' THEN 'mortgage'
-          WHEN ci.screen_location LIKE 'refinance_mortgage_%' THEN 'mortgage_refi'
-          WHEN ci.screen_location LIKE 'credit_step%' THEN 'credit'
-          WHEN ci.screen_location LIKE 'refinance_credit_%' THEN 'credit_refi'
-          WHEN ci.screen_location IN ('sidebar', 'footer', 'global_contact_info', 'global_errors', 'global_personal_info') THEN 'menu'
-          WHEN ci.screen_location IN ('about_page', 'contacts_page', 'bank_offers', 'common_components') THEN 'main'
-          ELSE 'general'
-        END as screen_group,
-        COUNT(DISTINCT ci.id) as action_count,
-        MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
-      FROM content_items ci
-      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-      WHERE ci.is_active = TRUE
-      GROUP BY screen_group
+      WITH content_counts AS (
+        -- Mortgage content (like /api/content/mortgage) - exclude option types like drill pages do
+        SELECT 'mortgage' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location LIKE 'mortgage_step%'
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+
+        UNION ALL
+
+        -- Mortgage Refi content (like /api/content/mortgage-refi) - exclude option types
+        SELECT 'mortgage_refi' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location LIKE 'refinance_mortgage_%'
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+
+        UNION ALL
+
+        -- Credit content (like /api/content/credit) - exclude option types
+        SELECT 'credit' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location LIKE 'credit_step%'
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+
+        UNION ALL
+
+        -- Credit Refi content (like /api/content/credit-refi) - exclude option types
+        SELECT 'credit_refi' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location LIKE 'refinance_credit_%'
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+
+        UNION ALL
+
+        -- Menu content (like /api/content/menu) - exclude option/dropdown types
+        SELECT 'menu' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location IN ('sidebar', 'menu_navigation')
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+
+        UNION ALL
+
+        -- Main content (like /api/content/main) - main_page screen_location
+        SELECT 'main' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location = 'main_page'
+
+        UNION ALL
+
+        -- General content (everything else not categorized above)
+        SELECT 'general' as screen_group,
+               COUNT(DISTINCT ci.id) as action_count,
+               MAX(GREATEST(ci.updated_at, ct.updated_at)) as last_modified
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        WHERE ci.is_active = TRUE
+          AND ci.screen_location NOT LIKE 'mortgage_step%'
+          AND ci.screen_location NOT LIKE 'refinance_mortgage_%'
+          AND ci.screen_location NOT LIKE 'credit_step%'
+          AND ci.screen_location NOT LIKE 'refinance_credit_%'
+          AND ci.screen_location NOT IN ('sidebar', 'menu_navigation', 'main_page')
+      )
+      SELECT screen_group, action_count, last_modified
+      FROM content_counts
+      WHERE action_count > 0
       ORDER BY screen_group
     `);
 
