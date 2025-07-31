@@ -279,6 +279,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  width: 100%;
+  padding: 0 40px;
 }
 
 /* Drill Table - Column-based layout following drill_1.md */
