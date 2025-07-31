@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { AdminLayout } from '../../components';
+import { AdminLayout, InlineEdit } from '../../components';
 import { apiService } from '../../services/api';
 import { getDropdownConfig, DropdownContent, DropdownOption } from '../../utils/dropdownConfigs';
 import './SharedDropdownEdit.css';
@@ -514,23 +514,21 @@ const SharedDropdownEdit: React.FC = () => {
                       <div className="option-fields">
                         <div className="option-language-group">
                           <label className="option-label">RU</label>
-                          <input
-                            type="text"
+                          <InlineEdit
                             value={option.ru}
-                            onChange={(e) => handleOptionChange(index, 'ru', e.target.value)}
-                            className="option-input"
+                            onSave={(newValue) => handleOptionChange(index, 'ru', newValue)}
                             placeholder="Сотрудник"
+                            className="option-inline-edit"
                           />
                         </div>
 
                         <div className="option-language-group">
                           <label className="option-label">HEB</label>
-                          <input
-                            type="text"
+                          <InlineEdit
                             value={option.he}
-                            onChange={(e) => handleOptionChange(index, 'he', e.target.value)}
-                            className="option-input rtl"
+                            onSave={(newValue) => handleOptionChange(index, 'he', newValue)}
                             placeholder="עובד"
+                            className="option-inline-edit"
                             dir="rtl"
                           />
                         </div>
@@ -538,12 +536,11 @@ const SharedDropdownEdit: React.FC = () => {
                         {config.features.englishSupport && (
                           <div className="option-language-group">
                             <label className="option-label">EN</label>
-                            <input
-                              type="text"
+                            <InlineEdit
                               value={option.en || ''}
-                              onChange={(e) => handleOptionChange(index, 'en', e.target.value)}
-                              className="option-input"
+                              onSave={(newValue) => handleOptionChange(index, 'en', newValue)}
                               placeholder="Employee"
+                              className="option-inline-edit"
                             />
                           </div>
                         )}
@@ -574,14 +571,6 @@ const SharedDropdownEdit: React.FC = () => {
                             </button>
                           </>
                         )}
-                        <button
-                          className="btn-icon btn-edit"
-                          title="Редактировать"
-                        >
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="currentColor"/>
-                          </svg>
-                        </button>
                         <button
                           className="btn-icon btn-delete"
                           onClick={() => handleDeleteOption(index)}

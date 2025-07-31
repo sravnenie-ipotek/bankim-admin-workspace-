@@ -6,6 +6,96 @@
  * @since 2025-01-26
  */
 
+/* Inline Edit Styles for Drill Tables */
+.drill-table-inline-edit {
+  flex: 1;
+  min-width: 0;
+}
+
+.drill-table-inline-edit .inline-edit-container.display {
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-height: 32px;
+}
+
+.drill-table-inline-edit .inline-edit-container.display:hover {
+  background-color: rgba(55, 65, 81, 0.3);
+  border-color: rgba(75, 85, 99, 0.5);
+}
+
+.drill-table-inline-edit .inline-edit-text {
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 21px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drill-table-inline-edit .inline-edit-text.placeholder {
+  color: #9CA3AF;
+  font-weight: 400;
+}
+
+.drill-table-inline-edit .inline-edit-trigger {
+  background-color: transparent;
+  border: 1px solid #4B5563;
+  color: #9CA3AF;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.drill-table-inline-edit .inline-edit-trigger:hover {
+  background-color: #374151;
+  border-color: #6B7280;
+  color: #fff;
+}
+
+.drill-table-inline-edit .inline-edit-trigger svg {
+  width: 12px;
+  height: 12px;
+}
+
+.drill-table-inline-edit .inline-edit-input {
+  background-color: #1F2937;
+  border: 1px solid #374151;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 21px;
+  min-height: 32px;
+}
+
+.drill-table-inline-edit .inline-edit-input:focus {
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+}
+
+.drill-table-inline-edit .inline-edit-actions {
+  gap: 2px;
+}
+
+.drill-table-inline-edit .inline-edit-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+/* Pencil button for row editing */
+.inline-edit-trigger:hover {
+  background-color: #374151 !important;
+  border-color: #6B7280 !important;
+  color: #fff !important;
+}
+
 /* Main Page Container */
 .mortgage-drill-page {
   display: flex;

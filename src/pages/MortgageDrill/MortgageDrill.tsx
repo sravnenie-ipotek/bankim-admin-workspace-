@@ -11,7 +11,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageDrill.css';
 import { apiService } from '../../services/api';
-import { Pagination } from '../../components';
+import { Pagination, InlineEdit } from '../../components';
 import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
 
 interface MortgageAction {
@@ -49,6 +49,8 @@ const MortgageDrill: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
   const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  const [editingRowId, setEditingRowId] = useState<string | null>(null);
+  const [editedValues, setEditedValues] = useState<{ ru?: string; he?: string }>({});
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
 
   // Detect content type from URL path
@@ -150,6 +152,45 @@ const MortgageDrill: React.FC = () => {
       setError('Ошибка загрузки данных');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle inline text updates
+  const handleInlineUpdate = async (actionId: string, language: 'ru' | 'he' | 'en', newValue: string) => {
+    try {
+      console.log(`🔄 Updating ${language} translation for action ${actionId}:`, newValue);
+      
+      // Update via API
+      const response = await apiService.updateMenuTranslation(actionId, language, newValue);
+      
+      if (response.success) {
+        // Update local state
+        setDrillData(prevData => {
+          if (!prevData) return prevData;
+          
+          return {
+            ...prevData,
+            actions: prevData.actions.map(action => 
+              action.id === actionId 
+                ? {
+                    ...action,
+                    translations: {
+                      ...action.translations,
+                      [language]: newValue
+                    },
+                    last_modified: new Date().toISOString()
+                  }
+                : action
+            )
+          };
+        });
+        
+        console.log(`✅ Successfully updated ${language} translation for action ${actionId}`);
+      } else {
+        console.error(`❌ Failed to update ${language} translation:`, response.error);
+      }
+    } catch (error) {
+      console.error(`❌ Error updating ${language} translation:`, error);
     }
   };
 
@@ -507,30 +548,49 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
-                <React.Fragment key={`ru-${action.id}`}>
-                  <div className="column-cell">
-                    <div 
-                      style={{ 
-                        color: 'var(--white, white)', 
-                        fontSize: '14px', 
-                        fontFamily: 'Arimo', 
-                        fontWeight: '400', 
-                        lineHeight: '21px', 
-                        overflow: 'hidden', 
-                        textOverflow: 'ellipsis', 
-                        whiteSpace: 'nowrap',
-                        paddingLeft: action.isOption ? '20px' : '0px',
-                        opacity: action.isOption ? '0.8' : '1'
-                      }} 
-                      title={getSafeTranslation(action.translations.ru, 'ru')}
-                    >
-                      {action.isOption ? '  • ' : ''}{getSafeTranslation(action.translations.ru, 'ru')}
+              {currentActions.map((action, index) => {
+                const isEditing = editingRowId === action.id;
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`ru-${action.id}`}>
+                    <div className="column-cell">
+                      {isEditing && isLink ? (
+                        <InlineEdit
+                          value={editedValues.ru !== undefined ? editedValues.ru : getSafeTranslation(action.translations.ru, 'ru')}
+                          onSave={(newValue) => {
+                            setEditedValues(prev => ({ ...prev, ru: newValue }));
+                          }}
+                          placeholder="Введите текст..."
+                          className="drill-table-inline-edit"
+                          startInEditMode={true}
+                          hideButtons={true}
+                        />
+                      ) : (
+                        <div 
+                          style={{ 
+                            color: 'var(--white, white)', 
+                            fontSize: '14px', 
+                            fontFamily: 'Arimo', 
+                            fontWeight: '400', 
+                            lineHeight: '21px', 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis', 
+                            whiteSpace: 'nowrap',
+                            paddingLeft: action.isOption ? '20px' : '0px',
+                            opacity: action.isOption ? '0.8' : '1'
+                          }} 
+                          title={getSafeTranslation(action.translations.ru, 'ru')}
+                        >
+                          {action.isOption ? '  • ' : ''}{getSafeTranslation(action.translations.ru, 'ru')}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
 
             {/* Column 4: HEB */}
@@ -541,57 +601,170 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
-                <React.Fragment key={`he-${action.id}`}>
-                  <div className="column-cell">
-                    <div 
-                      style={{ 
-                        flex: '1 1 0', 
-                        textAlign: 'right', 
-                        color: 'var(--white, white)', 
-                        fontSize: '14px', 
-                        fontFamily: 'Arimo', 
-                        fontWeight: '400', 
-                        lineHeight: '21px', 
-                        overflow: 'hidden', 
-                        textOverflow: 'ellipsis', 
-                        whiteSpace: 'nowrap', 
-                        direction: 'rtl',
-                        paddingRight: action.isOption ? '20px' : '0px',
-                        opacity: action.isOption ? '0.8' : '1'
-                      }} 
-                      title={getSafeTranslation(action.translations.he, 'he')}
-                    >
-                      {getSafeTranslation(action.translations.he, 'he')}{action.isOption ? '  •' : ''}
+              {currentActions.map((action, index) => {
+                const isEditing = editingRowId === action.id;
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`he-${action.id}`}>
+                    <div className="column-cell">
+                      {isEditing && isLink ? (
+                        <InlineEdit
+                          value={editedValues.he !== undefined ? editedValues.he : getSafeTranslation(action.translations.he, 'he')}
+                          onSave={(newValue) => {
+                            setEditedValues(prev => ({ ...prev, he: newValue }));
+                          }}
+                          placeholder="הזן טקסט..."
+                          className="drill-table-inline-edit"
+                          startInEditMode={true}
+                          hideButtons={true}
+                          dir="rtl"
+                        />
+                      ) : (
+                        <div 
+                          style={{ 
+                            flex: '1 1 0', 
+                            textAlign: 'right', 
+                            color: 'var(--white, white)', 
+                            fontSize: '14px', 
+                            fontFamily: 'Arimo', 
+                            fontWeight: '400', 
+                            lineHeight: '21px', 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis', 
+                            whiteSpace: 'nowrap', 
+                            direction: 'rtl',
+                            paddingRight: action.isOption ? '20px' : '0px',
+                            opacity: action.isOption ? '0.8' : '1'
+                          }} 
+                          title={getSafeTranslation(action.translations.he, 'he')}
+                        >
+                          {getSafeTranslation(action.translations.he, 'he')}{action.isOption ? '  •' : ''}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
 
             {/* Column 5: Action Buttons */}
             <div className="table-column" style={{ width: '125px' }}>
               <div className="column-header" style={{ height: '50px' }}></div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
-                <React.Fragment key={`edit-${action.id}`}>
-                  <div className="column-cell">
-                    <div 
-                      className="edit-icon-button"
-                      onClick={() => {
-                        console.log('🚀 Arrow clicked for action:', action);
-                        handleEditClick(action);
-                      }}
-                      title="Редактировать"
-                      style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'rgb(255, 255, 255)', backgroundColor: 'transparent', border: '1px solid rgb(55, 65, 81)', width: '40px', height: '40px', borderRadius: '4px' }}
-                    >
-                      →
+              {currentActions.map((action, index) => {
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`edit-${action.id}`}>
+                    <div className="column-cell">
+                      {isLink ? (
+                        editingRowId === action.id ? (
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <button
+                              className="inline-edit-btn save"
+                              onClick={async () => {
+                                // Save both RU and HE translations if they were edited
+                                if (editedValues.ru !== undefined) {
+                                  await handleInlineUpdate(action.id, 'ru', editedValues.ru);
+                                }
+                                if (editedValues.he !== undefined) {
+                                  await handleInlineUpdate(action.id, 'he', editedValues.he);
+                                }
+                                setEditingRowId(null);
+                                setEditedValues({});
+                              }}
+                              title="Сохранить"
+                              style={{
+                                backgroundColor: '#10B981',
+                                border: 'none',
+                                borderRadius: '4px',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: '#fff',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              ✓
+                            </button>
+                            <button
+                              className="inline-edit-btn cancel"
+                              onClick={() => {
+                                setEditingRowId(null);
+                                setEditedValues({});
+                              }}
+                              title="Отменить"
+                              style={{
+                                backgroundColor: '#EF4444',
+                                border: 'none',
+                                borderRadius: '4px',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: '#fff',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              ✗
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className="inline-edit-trigger"
+                            onClick={() => {
+                              setEditingRowId(action.id);
+                              setEditedValues({});
+                            }}
+                            title="Редактировать"
+                            style={{ 
+                              backgroundColor: 'transparent',
+                              border: '1px solid #4B5563',
+                              borderRadius: '4px',
+                              width: '32px',
+                              height: '32px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              color: '#9CA3AF',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M11.854 1.146a.5.5 0 0 1 0 .708L5.207 8.5l-.853 2.853a.5.5 0 0 0 .61.61l2.853-.853 6.646-6.647a.5.5 0 0 0 0-.707l-2-2a.5.5 0 0 0-.707 0l-1.902 1.902zm1.141 1.563L11.293 4.41 9.585 2.702l1.702-1.701 1.708 1.708z" fill="currentColor"/>
+                            </svg>
+                          </button>
+                        )
+                      ) : (
+                        <div 
+                          className="edit-icon-button"
+                          onClick={() => {
+                            console.log('🚀 Arrow clicked for action:', action);
+                            handleEditClick(action);
+                          }}
+                          title="Редактировать"
+                          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'rgb(255, 255, 255)', backgroundColor: 'transparent', border: '1px solid rgb(55, 65, 81)', width: '40px', height: '40px', borderRadius: '4px' }}
+                        >
+                          →
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
           </div>
 
