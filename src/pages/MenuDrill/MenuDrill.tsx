@@ -406,10 +406,10 @@ const MenuDrill: React.FC = () => {
         {/* Table Section */}
         <div className="table-section">
           {/* Container following drill_1.md design */}
-          <div style={{ width: '925px', background: 'var(--gray-800, #1F2A37)', boxShadow: '0px 1px 2px -1px rgba(0, 0, 0, 0.10)', borderRadius: '8px', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', display: 'inline-flex' }}>
+          <div style={{ width: '100%', maxWidth: '1400px', background: 'var(--gray-800, #1F2A37)', boxShadow: '0px 1px 2px -1px rgba(0, 0, 0, 0.10)', borderRadius: '8px', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', display: 'inline-flex' }}>
             {/* Search Header */}
             <div style={{ alignSelf: 'stretch', padding: '16px', justifyContent: 'space-between', alignItems: 'center', display: 'inline-flex' }}>
-              <div style={{ width: '893px', height: '42px', position: 'relative' }}>
+              <div style={{ width: '100%', height: '42px', position: 'relative' }}>
                 <div style={{ width: '403px', height: '42px', left: '0px', top: '0px', position: 'absolute' }}>
                   <div style={{ width: '403px', height: '42px', left: '0px', top: '0px', position: 'absolute', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', display: 'inline-flex' }}>
                     <div style={{ width: '403px', paddingLeft: '16px', paddingRight: '16px', paddingTop: '12px', paddingBottom: '12px', background: 'var(--gray-700, #374151)', borderRadius: '8px', border: '1px var(--gray-600, #4B5563) solid', justifyContent: 'flex-start', alignItems: 'center', gap: '10px', display: 'inline-flex' }}>
@@ -430,7 +430,7 @@ const MenuDrill: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div style={{ paddingLeft: '12px', paddingRight: '12px', paddingTop: '8px', paddingBottom: '8px', left: '794px', top: '4px', position: 'absolute', background: 'var(--gray-800, #1F2A37)', borderRadius: '8px', border: '1px var(--gray-600, #4B5563) solid', justifyContent: 'center', alignItems: 'center', gap: '8px', display: 'inline-flex' }}>
+                <div style={{ paddingLeft: '12px', paddingRight: '12px', paddingTop: '8px', paddingBottom: '8px', right: '16px', top: '4px', position: 'absolute', background: 'var(--gray-800, #1F2A37)', borderRadius: '8px', border: '1px var(--gray-600, #4B5563) solid', justifyContent: 'center', alignItems: 'center', gap: '8px', display: 'inline-flex' }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g id="funnel">
                       <path id="Union" fillRule="evenodd" clipRule="evenodd" d="M0.666504 3.46685C0.666504 1.71402 1.68758 0.333313 3.00755 0.333313H12.9922C14.3122 0.333313 15.3332 1.71402 15.3332 3.46685C15.3332 4.28415 14.9974 5.02664 14.4718 5.58069L10.6665 9.52712V12.8668C10.6665 13.3553 10.3781 13.7943 9.93136 13.9799L7.59803 14.9466C7.05307 15.1723 6.42474 14.9081 6.18612 14.3503C6.08565 14.1172 6.08565 13.8548 6.18612 13.6217V9.52712L2.52808 5.58069C2.00242 5.02664 1.6666 4.28415 1.6666 3.46685H0.666504ZM3.00755 2.33331C2.5767 2.33331 2.6666 2.95273 2.6666 3.46685C2.6666 3.66545 2.72946 3.88552 2.93685 4.10611L6.83975 8.23616C6.95236 8.35487 7.01385 8.5118 7.01163 8.67425L6.99994 13.4668L8.66658 12.7668V8.67425C8.66435 8.5118 8.72585 8.35487 8.83846 8.23616L12.5281 4.10611C12.7355 3.88552 12.9983 3.66545 12.9983 3.46685C12.9983 2.95273 13.423 2.33331 12.9922 2.33331H3.00755Z" fill="#F9FAFB"/>
@@ -444,7 +444,7 @@ const MenuDrill: React.FC = () => {
             {/* Table Content - Column-based layout following drill_1.md */}
             <div className="drill-table-columns">
             {/* Column 1: НОМЕР ДЕЙСТВИЯ */}
-            <div className="table-column" style={{ width: '149px' }}>
+            <div className="table-column" style={{ width: '180px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
                   НОМЕР ДЕЙСТВИЯ
@@ -463,7 +463,27 @@ const MenuDrill: React.FC = () => {
               ))}
             </div>
 
-            {/* Column 2: ТИП */}
+            {/* Column 2: ID */}
+            <div className="table-column" style={{ width: '200px' }}>
+              <div className="column-header">
+                <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
+                  ID
+                </div>
+              </div>
+              <div className="column-divider"></div>
+              {currentActions.map((action) => (
+                <React.Fragment key={`id-${action.id}`}>
+                  <div className="column-cell">
+                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={action.screen_location || action.id}>
+                      {action.screen_location || action.id}
+                    </div>
+                  </div>
+                  <div className="column-divider"></div>
+                </React.Fragment>
+              ))}
+            </div>
+
+            {/* Column 3: ТИП */}
             <div className="table-column" style={{ width: '126px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
@@ -483,8 +503,8 @@ const MenuDrill: React.FC = () => {
               ))}
             </div>
 
-            {/* Column 3: RU */}
-            <div className="table-column" style={{ width: '269px' }}>
+            {/* Column 4: RU */}
+            <div className="table-column" style={{ width: '260px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
                   RU
@@ -522,8 +542,8 @@ const MenuDrill: React.FC = () => {
               })}
             </div>
 
-            {/* Column 4: HEB */}
-            <div className="table-column" style={{ width: '146px' }}>
+            {/* Column 5: HEB */}
+            <div className="table-column" style={{ width: '230px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
                   HEB
@@ -562,7 +582,7 @@ const MenuDrill: React.FC = () => {
               })}
             </div>
 
-            {/* Column 5: РЕДАКТИРОВАТЬ */}
+            {/* Column 6: РЕДАКТИРОВАТЬ */}
             <div className="table-column" style={{ width: '161px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>

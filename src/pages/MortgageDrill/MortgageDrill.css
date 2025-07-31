@@ -277,10 +277,11 @@
 /* Table Section */
 .table-section {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
-  padding: 0 40px;
+  padding: 0 20px;
+  overflow-x: auto;
 }
 
 /* Drill Table - Column-based layout following drill_1.md */
@@ -289,6 +290,8 @@
   justify-content: flex-start;
   align-items: center;
   display: inline-flex;
+  min-width: 1111px;
+  width: max-content;
 }
 
 .table-column {
