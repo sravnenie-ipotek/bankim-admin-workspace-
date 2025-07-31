@@ -66,10 +66,10 @@ const InlineEdit: React.FC<InlineEditProps> = ({
 
   const handleSave = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue !== value) {
-      onSave(trimmedValue);
+    onSave(trimmedValue);
+    if (!hideButtons) {
+      setIsEditing(false);
     }
-    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -103,7 +103,12 @@ const InlineEdit: React.FC<InlineEditProps> = ({
             <textarea
               ref={inputRef as React.RefObject<HTMLTextAreaElement>}
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={(e) => {
+                setEditValue(e.target.value);
+                if (hideButtons) {
+                  onSave(e.target.value);
+                }
+              }}
               onKeyDown={handleKeyDown}
               onBlur={handleBlur}
               className="inline-edit-input"
@@ -117,7 +122,12 @@ const InlineEdit: React.FC<InlineEditProps> = ({
               ref={inputRef as React.RefObject<HTMLInputElement>}
               type="text"
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={(e) => {
+                setEditValue(e.target.value);
+                if (hideButtons) {
+                  onSave(e.target.value);
+                }
+              }}
               onKeyDown={handleKeyDown}
               onBlur={handleBlur}
               className="inline-edit-input"
