@@ -21,6 +21,78 @@
 
 BankIM Management Portal - это комплексная система управления для банковских сотрудников, директоров и администраторов. Платформа предоставляет удобный интерфейс для управления клиентами, заявками, документами и банковскими услугами.
 
+## ⚠️ Known Issues & Current Status
+
+### 🚨 Critical Dropdown System Issues
+
+The dropdown content management system has several critical bugs that are currently being addressed:
+
+**Primary Issue**: Dropdown edit pages show no options due to query logic errors in the backend.
+
+**Affected Endpoints**:
+- `http://localhost:3002/content/mortgage/dropdown-edit/{id}` - Shows no options
+- `http://localhost:3002/content/mortgage-refi/dropdown-edit/{id}` - Shows no options
+- `http://localhost:3002/content/credit/dropdown-edit/{id}` - Shows no options
+
+**Root Cause**: The dropdown options query in `backend/server.js` has fundamental logic errors:
+1. **Hardcoded screen_location** - Should use the same screen_location as the main dropdown field
+2. **Overly broad pattern matching** - `_%` matches placeholders and labels
+3. **Wrong component type filtering** - Accepts 'text' when should only be 'option'
+
+**Status**: 
+- ✅ **Bug Analysis Complete** - See `devHelp/bugs/dropDownbugs.md` for detailed analysis
+- 🔄 **Fix Implementation** - In progress
+- ⏳ **Testing** - Pending
+
+### 📊 Content Management Status
+
+**Working Features**:
+- ✅ Content drill-down pages display correctly
+- ✅ Content editing for text fields works
+- ✅ Navigation between content pages works
+- ✅ ID column now shows content_key for better identification
+
+**Known Issues**:
+- ❌ Dropdown options not loading in edit pages
+- ❌ Some navigation routes may not match database conventions
+- ❌ Component type inconsistencies in database
+
+### 🔧 Development Focus
+
+Current development priorities:
+1. **Fix dropdown options query logic** (Critical)
+2. **Standardize component type naming** (High)
+3. **Improve error handling for empty options** (Medium)
+4. **Update documentation to match implementation** (Medium)
+
+For detailed bug analysis, see: `devHelp/bugs/dropDownbugs.md`
+
+---
+
+## ✅ Recent Improvements & Fixes
+
+### 🎯 Latest Updates (August 2025)
+
+**Content Management Enhancements**:
+- ✅ **ID Column Enhancement** - All drill-down pages now show `content_key` instead of `screen_location` in ID column
+- ✅ **Duplicate Content Identification** - Can now distinguish between duplicate entries with same translations
+- ✅ **Yellow Line Removal** - Removed yellow underline from section titles for cleaner UI
+- ✅ **Comprehensive Bug Documentation** - Complete analysis of dropdown system issues documented
+
+**Files Updated**:
+- `src/pages/MenuDrill/MenuDrill.tsx` - ID column shows content_key
+- `src/pages/MainDrill/MainDrill.tsx` - ID column shows content_key  
+- `src/pages/MortgageDrill/MortgageDrill.tsx` - ID column shows content_key
+- `src/pages/MortgageRefiDrill/MortgageRefiDrill.tsx` - ID column shows content_key
+- `src/pages/CalculatorFormula.css` - Removed yellow underline
+- `devHelp/bugs/dropDownbugs.md` - Complete bug analysis added
+
+**Example Improvement**:
+Before: ID column showed "sidebar" for all sidebar items
+After: ID column shows "sidebar_company_2", "sidebar_menu_about_us", etc.
+
+---
+
 ## ✨ Основные возможности
 
 ### 🏛️ Сотрудник банка
@@ -298,7 +370,7 @@ CREATE INDEX idx_content_items_app_context ON content_items(app_context_id);
 - **Оптимизированные запросы** с фильтрацией по `app_context_id`
 - **Быстрое переключение** между различными интерфейсами
 
-#### **🔄 Миграция данных:**
+#### **�� Миграция данных:**
 ```sql
 -- Все существующие записи автоматически получили контекст 'public'
 UPDATE content_items SET app_context_id = 1 WHERE app_context_id IS NULL;
