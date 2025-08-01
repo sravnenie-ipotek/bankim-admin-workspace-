@@ -52,6 +52,7 @@ const MortgageDropdownEdit: React.FC = () => {
   const [titleRu, setTitleRu] = useState('');
   const [titleHe, setTitleHe] = useState('');
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([]);
+  const [optionsError, setOptionsError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchContentData();
@@ -155,17 +156,29 @@ const MortgageDropdownEdit: React.FC = () => {
         console.log(`✅ Found ${options.length} dropdown options via generic API`);
         console.log('📋 Final options array:', options);
         
-        setDropdownOptions(options.length > 0 ? options : [
-          { ru: '', he: '' } // Start with at least one empty option
-        ]);
+        if (options.length > 0) {
+          setDropdownOptions(options);
+          setOptionsError(null);
+        } else {
+          // No options found - provide helpful feedback
+          console.log('⚠️ No dropdown options found');
+          setDropdownOptions([{ ru: '', he: '' }]); // Start with at least one empty option
+          setOptionsError('Опции выпадающего списка не найдены. Возможные причины:\n' +
+            '• Опции еще не созданы в базе данных\n' +
+            '• Неверный формат ключа контента\n' +
+            '• Опции находятся в другой локации экрана\n\n' +
+            'Вы можете добавить новые опции ниже.');
+        }
       } else {
-        console.log('⚠️ No dropdown options found, initializing with empty option');
+        console.log('⚠️ API returned no data');
         setDropdownOptions([{ ru: '', he: '' }]);
+        setOptionsError('Не удалось загрузить опции из базы данных. Вы можете создать новые опции.');
       }
     } catch (err) {
       console.error('❌ Error fetching dropdown options:', err);
       // Initialize with empty options on error
       setDropdownOptions([{ ru: '', he: '' }]);
+      setOptionsError(`Ошибка при загрузке опций: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
     }
   };
 
@@ -384,6 +397,27 @@ const MortgageDropdownEdit: React.FC = () => {
           {/* Dropdown Options Section */}
           <div style={{ marginTop: '48px' }}>
             <div style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', color: 'var(--gray-50, #F9FAFB)', fontSize: '20px', fontFamily: 'Arimo', fontWeight: '600', lineHeight: '30px', wordWrap: 'break-word', marginBottom: '24px' }}>Опции дропдауна</div>
+            
+            {/* Options Error Message */}
+            {optionsError && (
+              <div style={{ 
+                backgroundColor: '#FEF3C7', 
+                border: '1px solid #F59E0B', 
+                borderRadius: '8px', 
+                padding: '16px', 
+                marginBottom: '24px',
+                color: '#92400E',
+                fontSize: '14px',
+                fontFamily: 'Arimo',
+                lineHeight: '20px',
+                whiteSpace: 'pre-line'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{ fontSize: '20px' }}>⚠️</div>
+                  <div>{optionsError}</div>
+                </div>
+              </div>
+            )}
           
             <div style={{ width: '925px', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '24px', display: 'inline-flex' }}>
               {dropdownOptions.map((option, index) => (

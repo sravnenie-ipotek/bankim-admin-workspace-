@@ -398,7 +398,7 @@ app.get('/api/content/menu', async (req, res) => {
         FROM content_items ci
         WHERE ci.screen_location IN ('sidebar', 'menu_navigation')
           AND ci.is_active = TRUE
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )
@@ -538,7 +538,7 @@ app.get('/api/content/menu/drill/:sectionId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -624,7 +624,7 @@ app.get('/api/content/main/drill/:pageId', async (req, res) => {
 
     // Count visible actions (excluding dropdown options)
     const visibleActionCount = contentResult.rows.filter(item => 
-      !['option', 'dropdown_option', 'field_option'].includes(item.component_type)
+      item.component_type !== 'option'
     ).length;
 
     // Format the response like other drill endpoints
@@ -966,7 +966,7 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
     console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
 
     // Count visible actions (excluding options like frontend does)  
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -1205,7 +1205,7 @@ app.get('/api/content/main_page/action/:actionNumber/options', async (req, res) 
       LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
       LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
       WHERE ci.screen_location = 'main_page'
-        AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
+        AND ci.component_type = 'option'
         AND (
           -- Support numeric pattern: app.main.action.1.option.1, app.main.action.1.option.2, etc.
           ci.content_key LIKE $1
@@ -1259,25 +1259,55 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
     console.log('Fetching options for content key:', contentKey);
     
     // Build the pattern for options based on the content key
-    // If contentKey is an ID, we need to first get the actual content_key
+    // If contentKey is an ID, we need to first get the actual content_key and screen_location
     let actualContentKey = contentKey;
+    let screenLocation = null;
     
     // Check if contentKey is numeric (ID)
     if (!isNaN(contentKey)) {
       const keyResult = await safeQuery(`
-        SELECT content_key 
+        SELECT content_key, screen_location, component_type
         FROM content_items 
         WHERE id = $1
       `, [contentKey]);
       
       if (keyResult.rows.length > 0) {
         actualContentKey = keyResult.rows[0].content_key;
+        screenLocation = keyResult.rows[0].screen_location;
+        
+        // Validate that this is actually a dropdown field
+        const componentType = keyResult.rows[0].component_type;
+        if (!['dropdown', 'dropdown_field', 'select'].includes(componentType)) {
+          console.warn(`Warning: Content item ${contentKey} has component_type '${componentType}' which may not be a dropdown`);
+        }
+      }
+    } else {
+      // If contentKey is not numeric, we need to find its screen_location
+      const locationResult = await safeQuery(`
+        SELECT screen_location, component_type
+        FROM content_items 
+        WHERE content_key = $1
+        LIMIT 1
+      `, [contentKey]);
+      
+      if (locationResult.rows.length > 0) {
+        screenLocation = locationResult.rows[0].screen_location;
       }
     }
     
-    console.log('Using content key patterns:', `${actualContentKey}_option%`, `AND`, `${actualContentKey}_%`);
+    // If we couldn't find the screen_location, return empty options
+    if (!screenLocation) {
+      console.error(`Could not find screen_location for content key: ${contentKey}`);
+      return res.json({
+        success: true,
+        data: []
+      });
+    }
     
-    // Get all options for this mortgage dropdown - FIXED: Support both numeric and descriptive patterns
+    console.log(`Using screen_location: ${screenLocation}, content key pattern: ${actualContentKey}_%`);
+    
+    // Get all options for this dropdown using the correct screen_location
+    // Handle container/options pattern mismatch by using screen_location-based pattern
     const result = await safeQuery(`
       SELECT 
         ci.id,
@@ -1285,36 +1315,29 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
         ct_ru.content_value as title_ru,
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
-        CAST(
-          COALESCE(
-            SUBSTRING(ci.content_key FROM '_option_([0-9]+)$'),
-            SUBSTRING(ci.content_key FROM '_options_([0-9]+)$')
-          ) AS INTEGER
-        ) as option_order
+        -- Extract order from descriptive names or use content_key for ordering
+        CASE 
+          WHEN ci.content_key ~ '_option_([0-9]+)$' THEN 
+            CAST(SUBSTRING(ci.content_key FROM '_option_([0-9]+)$') AS INTEGER)
+          ELSE 
+            ROW_NUMBER() OVER (ORDER BY ci.content_key)
+        END as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
-      WHERE ci.screen_location = 'mortgage_step1'
-        AND (ci.component_type = 'option' OR ci.component_type = 'text' OR ci.component_type = 'dropdown_option')
-        AND (
-          -- Support numeric pattern: field_name_option_1, field_name_option_2, etc.
-          ci.content_key LIKE $1
-          OR
-          -- Support descriptive pattern: field_name_hapoalim, field_name_leumi, etc. (but exclude _ph, _label)
-          (ci.content_key LIKE $2 
-           AND ci.content_key NOT LIKE $3
-           AND ci.content_key NOT LIKE $4
-           AND ci.content_key NOT LIKE $5)
-        )
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.screen_location = $1
+        AND ci.component_type IN ('option', 'dropdown_option')
+        AND ci.content_key LIKE $2
+        AND ci.content_key NOT LIKE $3
+        AND ci.content_key NOT LIKE $4
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
     `, [
-      `${actualContentKey}_option%`,  // Numeric pattern
-      `${actualContentKey}_%`,        // Descriptive pattern base
-      `${actualContentKey}_ph`,       // Exclude placeholder
-      `${actualContentKey}_label`,    // Exclude label
-      `${actualContentKey}_option%`   // Exclude numeric (already covered above)
+      screenLocation,                           // Dynamic screen location from the main dropdown field
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_%`,  // screen_location.field.field_name_*
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_ph`, // Exclude placeholder
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_label` // Exclude label
     ]);
     
     // Transform to expected format
@@ -1568,7 +1591,6 @@ app.get('/api/content/mortgage', async (req, res) => {
         WHERE ci.screen_location IN ('mortgage_step1', 'mortgage_step2', 'mortgage_step3', 'mortgage_step4')
           AND ci.is_active = TRUE
           AND ci.component_type != 'option'
-          AND ci.component_type != 'dropdown_option'
         GROUP BY ci.screen_location
         HAVING COUNT(*) > 0
       )
@@ -1730,7 +1752,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -1986,7 +2008,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     }
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -2018,25 +2040,55 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
     console.log('Fetching options for mortgage-refi content key:', contentKey);
     
     // Build the pattern for options based on the content key
-    // If contentKey is an ID, we need to first get the actual content_key
+    // If contentKey is an ID, we need to first get the actual content_key and screen_location
     let actualContentKey = contentKey;
+    let screenLocation = null;
     
     // Check if contentKey is numeric (ID)
     if (!isNaN(contentKey)) {
       const keyResult = await safeQuery(`
-        SELECT content_key 
+        SELECT content_key, screen_location, component_type
         FROM content_items 
         WHERE id = $1
       `, [contentKey]);
       
       if (keyResult.rows.length > 0) {
         actualContentKey = keyResult.rows[0].content_key;
+        screenLocation = keyResult.rows[0].screen_location;
+        
+        // Validate that this is actually a dropdown field
+        const componentType = keyResult.rows[0].component_type;
+        if (!['dropdown', 'dropdown_field', 'select'].includes(componentType)) {
+          console.warn(`Warning: Content item ${contentKey} has component_type '${componentType}' which may not be a dropdown`);
+        }
+      }
+    } else {
+      // If contentKey is not numeric, we need to find its screen_location
+      const locationResult = await safeQuery(`
+        SELECT screen_location, component_type
+        FROM content_items 
+        WHERE content_key = $1
+        LIMIT 1
+      `, [contentKey]);
+      
+      if (locationResult.rows.length > 0) {
+        screenLocation = locationResult.rows[0].screen_location;
       }
     }
     
-    console.log('Using mortgage-refi content key patterns:', `${actualContentKey}_option%`, `AND`, `${actualContentKey}_%`);
+    // If we couldn't find the screen_location, return empty options
+    if (!screenLocation) {
+      console.error(`Could not find screen_location for content key: ${contentKey}`);
+      return res.json({
+        success: true,
+        data: []
+      });
+    }
     
-    // Get all options for this mortgage-refi dropdown - FIXED: Support both numeric and descriptive patterns
+    console.log(`Using screen_location: ${screenLocation}, content key patterns: ${actualContentKey}_option_% OR ${actualContentKey}_%`);
+    
+    // Get all options for this mortgage-refi dropdown using the correct screen_location
+    // Handle container/options pattern mismatch by using screen_location-based pattern
     const result = await safeQuery(`
       SELECT 
         ci.id,
@@ -2044,36 +2096,29 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
         ct_ru.content_value as title_ru,
         ct_he.content_value as title_he,
         ct_en.content_value as title_en,
-        CAST(
-          COALESCE(
-            SUBSTRING(ci.content_key FROM '_option_([0-9]+)$'),
-            SUBSTRING(ci.content_key FROM '_options_([0-9]+)$')
-          ) AS INTEGER
-        ) as option_order
+        -- Extract order from descriptive names or use content_key for ordering
+        CASE 
+          WHEN ci.content_key ~ '_option_([0-9]+)$' THEN 
+            CAST(SUBSTRING(ci.content_key FROM '_option_([0-9]+)$') AS INTEGER)
+          ELSE 
+            ROW_NUMBER() OVER (ORDER BY ci.content_key)
+        END as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru' AND ct_ru.status = 'approved'
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he' AND ct_he.status = 'approved'
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en' AND ct_en.status = 'approved'
-      WHERE (ci.screen_location LIKE 'refinance_mortgage_%' OR ci.screen_location = 'refinance_step1')
-        AND (ci.component_type = 'option' OR ci.component_type = 'dropdown_option')
-        AND (
-          -- Support numeric pattern: field_name_option_1, field_name_option_2, etc.
-          ci.content_key LIKE $1
-          OR
-          -- Support descriptive pattern: field_name_hapoalim, field_name_leumi, etc. (but exclude _ph, _label)
-          (ci.content_key LIKE $2 
-           AND ci.content_key NOT LIKE $3
-           AND ci.content_key NOT LIKE $4
-           AND ci.content_key NOT LIKE $5)
-        )
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = 'ru'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = 'he'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = 'en'
+      WHERE ci.screen_location = $1
+        AND ci.component_type IN ('option', 'dropdown_option')
+        AND ci.content_key LIKE $2
+        AND ci.content_key NOT LIKE $3
+        AND ci.content_key NOT LIKE $4
         AND ci.is_active = TRUE
       ORDER BY option_order NULLS LAST, ci.content_key
     `, [
-      `${actualContentKey}_option%`,  // Numeric pattern
-      `${actualContentKey}_%`,        // Descriptive pattern base
-      `${actualContentKey}_ph`,       // Exclude placeholder
-      `${actualContentKey}_label`,    // Exclude label
-      `${actualContentKey}_option%`   // Exclude numeric (already covered above)
+      screenLocation,                           // Dynamic screen location from the main dropdown field
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_%`,  // screen_location.field.field_name_*
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_ph`, // Exclude placeholder
+      `${screenLocation}.field.${actualContentKey.split('.').pop()}_label` // Exclude label
     ]);
 
     // Transform to expected format
@@ -2448,7 +2493,7 @@ app.get('/api/content/credit', async (req, res) => {
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
       WHERE ci.screen_location IN ('credit_step1', 'credit_step2', 'credit_step3', 'credit_step4')
         AND ci.is_active = true
-        AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+        AND ci.component_type != 'option'
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
     `);
@@ -2518,7 +2563,7 @@ app.get('/api/content/credit-refi', async (req, res) => {
         'refinance_credit_4'
       )
         AND ci.is_active = true
-        AND ci.component_type NOT IN ('option', 'dropdown_option')
+        AND ci.component_type != 'option'
       GROUP BY ci.screen_location
       ORDER BY ci.screen_location
     `);
@@ -2650,7 +2695,7 @@ app.get('/api/content/credit-refi/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -2751,7 +2796,7 @@ app.get('/api/content/credit/drill/:stepId', async (req, res) => {
     }));
 
     // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
+    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
 
     res.json({
       success: true,
@@ -2897,7 +2942,7 @@ app.get('/api/content/site-pages', async (req, res) => {
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = TRUE
           AND ci.screen_location LIKE 'mortgage_step%'
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
 
         UNION ALL
 
@@ -2909,7 +2954,7 @@ app.get('/api/content/site-pages', async (req, res) => {
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = TRUE
           AND ci.screen_location LIKE 'refinance_mortgage_%'
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
 
         UNION ALL
 
@@ -2921,7 +2966,7 @@ app.get('/api/content/site-pages', async (req, res) => {
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = TRUE
           AND ci.screen_location LIKE 'credit_step%'
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
 
         UNION ALL
 
@@ -2933,7 +2978,7 @@ app.get('/api/content/site-pages', async (req, res) => {
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = TRUE
           AND ci.screen_location LIKE 'refinance_credit_%'
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
 
         UNION ALL
 
@@ -2945,7 +2990,7 @@ app.get('/api/content/site-pages', async (req, res) => {
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = TRUE
           AND ci.screen_location IN ('sidebar', 'menu_navigation')
-          AND ci.component_type NOT IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type != 'option'
 
         UNION ALL
 
@@ -3073,7 +3118,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, re
     
     // Determine screen location based on content type
     let screenLocationPattern;
-    let componentTypes = ['option', 'dropdown_option'];
+    let componentTypes = ['option'];
     
     switch (contentType) {
       case 'mortgage':
@@ -3124,7 +3169,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, re
       const basePattern = `app.main.action.${actualContentKey}`;
       whereClause = `
         WHERE ci.screen_location = 'main_page'
-          AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type = 'option'
           AND (
             ci.content_key LIKE $1
             OR (ci.content_key LIKE $2 
@@ -3147,7 +3192,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/options', async (req, re
         WHERE ${screenLocationPattern === 'mortgage_step1' ? 
           "ci.screen_location = 'mortgage_step1'" : 
           screenLocationPattern}
-          AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
+          AND ci.component_type = 'option'
           AND (
             ci.content_key LIKE $1
             OR (ci.content_key LIKE $2 
@@ -3417,7 +3462,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/validate', async (req, r
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id 
         AND ct.status = 'approved'
       WHERE ci.content_key IN ($1, $2, $3)
-        AND ci.component_type IN ('dropdown', 'option', 'dropdown_option', 'placeholder', 'label')
+        AND ci.component_type IN ('dropdown', 'option', 'placeholder', 'label')
         AND ci.is_active = TRUE
       GROUP BY ci.component_type
       ORDER BY ci.component_type
@@ -3432,7 +3477,7 @@ app.get('/api/content/dropdown/:contentType/:contentKey/validate', async (req, r
       SELECT COUNT(*) as count
       FROM content_items ci
       WHERE ci.content_key LIKE $1
-        AND ci.component_type IN ('option', 'dropdown_option', 'field_option')
+        AND ci.component_type = 'option'
         AND ci.is_active = TRUE
     `, [`${actualContentKey}_%`]);
     

@@ -133,20 +133,9 @@ const ContentMortgage: React.FC = () => {
 
 
   const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
-    // Map mortgage page to proper step ID for backend drill endpoint
-    let stepId = item.content_key;
-    
-    // Map content based on Russian translation to ensure proper step routing
-    const russianTitle = item.translations?.ru?.toLowerCase() || '';
-    if (russianTitle.includes('калькулятор') || russianTitle.includes('рассчитать')) {
-      stepId = 'step.1.calculator';
-    } else if (russianTitle.includes('личн')) {
-      stepId = 'step.2.personal_data';
-    } else if (russianTitle.includes('доход')) {
-      stepId = 'step.3.income_data';
-    } else if (russianTitle.includes('программ')) {
-      stepId = 'step.4.program_selection';
-    }
+    // Use the actual screen_location from the database
+    // This ensures consistency with the database conventions documented in procceessesPagesInDB.md
+    const stepId = item.screen_location || item.content_key;
     
     // Calculate the base action number for continuous numbering
     // Sum up all action counts of items before this one
