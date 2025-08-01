@@ -321,28 +321,36 @@ const MortgageRefiDrill: React.FC = () => {
                             // Only include _ph if it's not a standalone placeholder
                             (contentKey.includes('_ph') && !contentKey.endsWith('_ph'));
 
+    // According to Confluence specification, only 3 types are allowed:
+    // 1. Ссылка (Link) - website links
+    // 2. Текст (Text) - any text (headers, input labels, etc.)
+    // 3. Дропдаун (Dropdown) - multiselect and singleselect inputs with options
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
+      case 'dropdown_container':
       case 'select':
         return 'Дропдаун';
       case 'option':
       case 'dropdown_option':
         return 'Дропдаун';
-      case 'placeholder':
-        return 'Текст';  // Always show placeholders as TEXT
       case 'label':
       case 'field_label':
         return isDropdownField ? 'Дропдаун' : 'Текст';
       case 'link':
       case 'button':
         return 'Ссылка';
+      // All other component types are classified as 'Текст' according to Confluence spec
       case 'text':
-        return 'Текст';
+      case 'placeholder':
       case 'help_text':
-        return 'Справка';
       case 'header':
       case 'section_header':
-        return 'Заголовок';
+      case 'title':
+      case 'hint':
+      case 'tooltip':
+      case 'notice':
+      case 'disclaimer':
+      case 'unit':
       default:
         return 'Текст';
     }
