@@ -289,33 +289,40 @@ const MenuDrill: React.FC = () => {
   const getComponentTypeDisplay = (componentType: string, contentKey: string = '') => {
     // Check if this is a dropdown-related field based on content patterns
     const isDropdownField = contentKey.includes('_option') || 
-                            contentKey.includes('_ph') || 
-                            contentKey.includes('menu_item');
+                            contentKey.includes('_ph');
 
+    // According to Confluence specification, only 3 types are allowed:
+    // 1. Ссылка (Link) - website links
+    // 2. Текст (Text) - any text (headers, input labels, etc.)
+    // 3. Дропдаун (Dropdown) - multiselect and singleselect inputs with options
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
+      case 'dropdown_container':
       case 'select':
         return 'Дропдаун';
       case 'option':
       case 'dropdown_option':
         return 'Дропдаун';
-      case 'placeholder':
-        return isDropdownField ? 'Дропдаун' : 'Текст';
       case 'label':
       case 'field_label':
         return isDropdownField ? 'Дропдаун' : 'Текст';
       case 'link':
       case 'button':
         return 'Ссылка';
+      // All other component types are classified as 'Текст' according to Confluence spec
+      // This includes menu_item, header, section_header, help_text, etc.
       case 'text':
-        return 'Текст';
+      case 'placeholder':
       case 'help_text':
-        return 'Справка';
       case 'header':
       case 'section_header':
-        return 'Заголовок';
+      case 'title':
+      case 'hint':
+      case 'tooltip':
+      case 'notice':
+      case 'disclaimer':
+      case 'unit':
       case 'menu_item':
-        return 'Пункт меню';
       default:
         return 'Текст';
     }
@@ -474,8 +481,8 @@ const MenuDrill: React.FC = () => {
               {currentActions.map((action) => (
                 <React.Fragment key={`id-${action.id}`}>
                   <div className="column-cell">
-                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={action.screen_location || action.id}>
-                      {action.screen_location || action.id}
+                    <div style={{ flex: '1 1 0', color: 'var(--gray-300, #D1D5DB)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={action.content_key || action.id}>
+                      {action.content_key || action.id}
                     </div>
                   </div>
                   <div className="column-divider"></div>
