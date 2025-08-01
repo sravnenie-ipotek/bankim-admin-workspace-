@@ -965,7 +965,7 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
 
     console.log(`✅ Found ${actions.length} total mortgage content items across all steps`);
 
-    // Count visible actions (excluding options like frontend does)
+    // Count visible actions (excluding options like frontend does)  
     const visibleActionCount = actions.filter(action => !['option', 'dropdown_option', 'field_option'].includes(action.component_type)).length;
 
     res.json({

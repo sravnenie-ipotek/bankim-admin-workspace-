@@ -318,6 +318,7 @@ const MortgageDrill: React.FC = () => {
 
     switch (componentType?.toLowerCase()) {
       case 'dropdown':
+      case 'dropdown_container':
       case 'select':
         return 'Дропдаун';
       case 'option':
