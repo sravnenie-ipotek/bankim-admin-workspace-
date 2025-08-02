@@ -28,7 +28,7 @@ import MortgageDrill from './pages/MortgageDrill/MortgageDrill';
 import CreditTextEdit from './pages/CreditTextEdit';
 import CreditRefiTextEdit from './pages/CreditRefiTextEdit';
 import MortgageTextEdit from './pages/MortgageTextEdit';
-// import MortgageDropdownEdit from './pages/MortgageDropdownEdit'; // Now using SharedDropdownEdit
+import MortgageDropdownEdit from './pages/MortgageDropdownEdit/MortgageDropdownEdit';
 import MortgageRefiDrill from './pages/MortgageRefiDrill';
 import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import MortgageRefiDropdownEdit from './pages/MortgageRefiDropdownEdit';
@@ -530,7 +530,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <SharedDropdownEdit />
+                <MortgageDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
