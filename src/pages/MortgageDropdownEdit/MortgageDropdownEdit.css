@@ -323,25 +323,22 @@
   top: 0px;
 }
 
-.drag-icon {
+.hamburger-icon {
   width: 24px;
   height: 24px;
   position: absolute;
   left: 0px;
   top: 0px;
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.drag-icon::after {
+.hamburger-icon::after {
   content: '';
   width: 16px;
-  height: 14px;
-  left: 4px;
-  top: 5px;
-  position: absolute;
-  background: var(--gray-400, #9CA3AF);
-  /* Add drag icon styling */
-  background-image: url("data:image/svg+xml,%3Csvg width='16' height='14' viewBox='0 0 16 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 3H2.01M2 7H2.01M2 11H2.01M6 3H6.01M6 7H6.01M6 11H6.01M10 3H10.01M10 7H10.01M10 11H10.01M14 3H14.01M14 7H14.01M14 11H14.01' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  height: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='12' viewBox='0 0 16 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1H15M1 6H15M1 11H15' stroke='%23F9FAFB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;

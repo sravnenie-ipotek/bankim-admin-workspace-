@@ -147,7 +147,7 @@ const MortgageDropdownEdit: React.FC = () => {
               {options.map((option, index) => (
                 <div key={index} className="option-row">
                   <div className="option-drag-section">
-                    <div className="drag-icon"></div>
+                    <div className="hamburger-icon"></div>
                     <div className="option-number">{index + 1}</div>
                   </div>
                   <div className="option-inputs">
