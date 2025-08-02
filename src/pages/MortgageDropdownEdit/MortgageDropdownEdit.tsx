@@ -6,54 +6,266 @@
  * @since 2025-01-26
  */
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageDropdownEdit.css';
 import { AdminLayout } from '../../components';
+import { apiService } from '../../services/api';
 
 interface DropdownOption {
   ru: string;
   he: string;
 }
 
-const MortgageDropdownEdit: React.FC = () => {
-  const navigate = useNavigate();
-  
-  // Form states matching the design specification
-  const [titleRu, setTitleRu] = useState('Основой источник дохода');
-  const [titleHe, setTitleHe] = useState('מקור הכנסה עיקרי');
-  const [options, setOptions] = useState<DropdownOption[]>([
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' }, 
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' },
-    { ru: 'Сотрудник', he: 'עובד' }
-  ]);
+interface ContentItem {
+  id: string;
+  content_key: string;
+  component_type: string;
+  screen_location: string;
+  description: string;
+  is_active: boolean;
+  action_number?: number;
+  last_modified: string;
+  translations: {
+    ru: string;
+    he: string;
+    en?: string;
+  };
+}
 
-  const handleBack = () => {
-    navigate('/content/mortgage');
+const MortgageDropdownEdit: React.FC = () => {
+  const { actionId } = useParams<{ actionId: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Content state
+  const [content, setContent] = useState<ContentItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  // Get action number from location state
+  const actionNumber = location.state?.actionNumber || null;
+  
+  // Form states - will be populated from API data
+  const [titleRu, setTitleRu] = useState('');
+  const [titleHe, setTitleHe] = useState('');
+  const [options, setOptions] = useState<DropdownOption[]>([]);
+
+  // Load content data on component mount
+  useEffect(() => {
+    fetchContentData();
+  }, [actionId]);
+
+  // Monitor for changes to enable save button
+  useEffect(() => {
+    if (content) {
+      const hasRuChange = titleRu !== (content.translations?.ru || '');
+      const hasHeChange = titleHe !== (content.translations?.he || '');
+      // Note: options changes are tracked separately in handlers
+      setHasChanges(hasRuChange || hasHeChange);
+    }
+  }, [titleRu, titleHe, content]);
+
+  const fetchContentData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log(`📋 Fetching mortgage dropdown content item with ID: ${actionId}`);
+      const response = await apiService.getContentItemById(actionId || '');
+      
+      if (response.success && response.data) {
+        const targetContent = response.data;
+        
+        // Normalize content structure
+        const normalizedContent: ContentItem = {
+          id: targetContent.id?.toString() || actionId || '',
+          action_number: (targetContent as any).action_number || actionNumber,
+          content_key: targetContent.content_key || '',
+          component_type: targetContent.component_type || 'dropdown',
+          screen_location: targetContent.screen_location || 'mortgage_calculation',
+          description: targetContent.description || '',
+          is_active: targetContent.is_active !== false,
+          translations: {
+            ru: (targetContent as any).translations?.ru || '',
+            he: (targetContent as any).translations?.he || '',
+            en: (targetContent as any).translations?.en || ''
+          },
+          last_modified: targetContent.updated_at || new Date().toISOString()
+        };
+
+        setContent(normalizedContent);
+        
+        // Initialize form fields with loaded data
+        setTitleRu(normalizedContent.translations.ru);
+        setTitleHe(normalizedContent.translations.he);
+        
+        // Try to load dropdown options
+        await loadDropdownOptions(normalizedContent.content_key);
+        
+      } else {
+        setError('Содержимое не найдено');
+      }
+    } catch (err) {
+      console.error('Error fetching content:', err);
+      setError('Ошибка загрузки данных');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSave = () => {
-    console.log('Saving data...', { titleRu, titleHe, options });
+  const loadDropdownOptions = async (contentKey: string) => {
+    try {
+      console.log(`📋 Loading dropdown options for content key: ${contentKey}`);
+      const response = await apiService.getMortgageDropdownOptions(contentKey);
+      
+      if (response.success && response.data && Array.isArray(response.data)) {
+        const loadedOptions: DropdownOption[] = response.data.map((option: any) => ({
+          ru: option.translations?.ru || option.ru || 'Сотрудник',
+          he: option.translations?.he || option.he || 'עובד'
+        }));
+        
+        setOptions(loadedOptions.length > 0 ? loadedOptions : [
+          { ru: 'Сотрудник', he: 'עובד' },
+          { ru: 'Сотрудник', he: 'עובד' },
+          { ru: 'Сотрудник', he: 'עובד' }
+        ]);
+      } else {
+        // Default options if API call fails
+        setOptions([
+          { ru: 'Сотрудник', he: 'עובד' },
+          { ru: 'Сотрудник', he: 'עובד' },
+          { ru: 'Сотрудник', he: 'עובד' }
+        ]);
+      }
+    } catch (err) {
+      console.error('Error loading dropdown options:', err);
+      // Use default options on error
+      setOptions([
+        { ru: 'Сотрудник', he: 'עובד' },
+        { ru: 'Сотрудник', he: 'עובד' },
+        { ru: 'Сотрудник', he: 'עובד' }
+      ]);
+    }
+  };
+
+  const handleBack = () => {
+    navigate('/content/mortgage', { 
+      state: { 
+        fromPage: location.state?.fromPage || 1,
+        searchTerm: location.state?.searchTerm || '',
+        actionNumber: actionNumber
+      } 
+    });
+  };
+
+  const handleSave = async () => {
+    if (!content) return;
+
+    try {
+      console.log(`💾 Saving changes for content item ${content.id}`);
+      
+      // Update Russian translation
+      const ruResponse = await apiService.updateContentTranslation(
+        content.id,
+        'ru',
+        titleRu
+      );
+
+      // Update Hebrew translation
+      const heResponse = await apiService.updateContentTranslation(
+        content.id,
+        'he',
+        titleHe
+      );
+
+      // TODO: Update dropdown options via API (if endpoint exists)
+      // For now, just log the options that would be saved
+      console.log('Dropdown options to save:', options);
+
+      if (ruResponse.success && heResponse.success) {
+        console.log('✅ Successfully saved all translations');
+        setHasChanges(false);
+        navigate('/content/mortgage', { 
+          state: { 
+            fromPage: location.state?.fromPage || 1,
+            searchTerm: location.state?.searchTerm || '',
+            actionNumber: actionNumber
+          } 
+        });
+      } else {
+        console.error('❌ Failed to save some translations');
+        setError('Ошибка сохранения изменений');
+      }
+    } catch (err) {
+      console.error('❌ Error saving content:', err);
+      setError('Ошибка сохранения изменений');
+    }
   };
 
   const handleOptionChange = (index: number, field: 'ru' | 'he', value: string) => {
     const newOptions = [...options];
     newOptions[index][field] = value;
     setOptions(newOptions);
+    setHasChanges(true); // Mark as changed when options are modified
   };
 
   const handleAddOption = () => {
     setOptions([...options, { ru: 'Сотрудник', he: 'עובד' }]);
+    setHasChanges(true);
   };
 
   const handleDeleteOption = (index: number) => {
     const newOptions = options.filter((_, i) => i !== index);
     setOptions(newOptions);
+    setHasChanges(true);
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="dropdown-edit-page">
+          <div className="dropdown-edit-main">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+              <div>Загрузка...</div>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  // Error state
+  if (error && !content) {
+    return (
+      <AdminLayout>
+        <div className="dropdown-edit-page">
+          <div className="dropdown-edit-main">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+              <div style={{ color: '#ef4444' }}>Ошибка: {error}</div>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  // Format last modified date
+  const formatLastModified = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).replace(',', ' |');
+    } catch {
+      return '01.08.2023 | 12:03'; // Fallback
+    }
   };
 
   return (
@@ -72,7 +284,7 @@ const MortgageDropdownEdit: React.FC = () => {
             </div>
             <div className="breadcrumb-arrow"></div>
             <div className="breadcrumb-item breadcrumb-active">
-              Действие №3
+              Действие №{actionNumber || content?.action_number || actionId}
             </div>
           </div>
 
@@ -81,10 +293,10 @@ const MortgageDropdownEdit: React.FC = () => {
             <div className="page-title-content">
               <div className="page-title-row">
                 <div className="page-title">
-                  Номер действия №3 | Основной источник дохода
+                  Номер действия №{actionNumber || content?.action_number || actionId} | {titleRu || content?.translations?.ru || 'Основной источник дохода'}
                 </div>
                 <div className="page-subtitle">
-                  <div>Home_page</div>
+                  <div>{content?.screen_location || 'mortgage_calculation'}</div>
                 </div>
               </div>
             </div>
@@ -94,7 +306,9 @@ const MortgageDropdownEdit: React.FC = () => {
           <div className="last-modified-card">
             <div className="last-modified-content">
               <div className="last-modified-label">Последнее редактирование</div>
-              <div className="last-modified-date">01.08.2023 | 12:03</div>
+              <div className="last-modified-date">
+                {content?.last_modified ? formatLastModified(content.last_modified) : '01.08.2023 | 12:03'}
+              </div>
             </div>
           </div>
 
@@ -201,8 +415,14 @@ const MortgageDropdownEdit: React.FC = () => {
               <button className="back-button" onClick={handleBack}>
                 <div className="back-button-text">Назад</div>
               </button>
-              <button className="save-button save-button-enabled" onClick={handleSave}>
-                <div className="save-button-text-enabled">Сохранить и опубликовать</div>
+              <button 
+                className={`save-button ${hasChanges ? 'save-button-enabled' : 'save-button-disabled'}`} 
+                onClick={handleSave}
+                disabled={!hasChanges}
+              >
+                <div className={hasChanges ? 'save-button-text-enabled' : 'save-button-text-disabled'}>
+                  Сохранить и опубликовать
+                </div>
               </button>
             </div>
           </div>

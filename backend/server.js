@@ -1306,6 +1306,25 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
     
     console.log(`Using screen_location: ${screenLocation}, content key pattern: ${actualContentKey}_%`);
     
+    // Extract the field name from the content key
+    // Example: calculate_mortgage_citizenship_dropdown -> citizenship
+    let fieldName = actualContentKey.split('.').pop();
+    
+    // Handle different content key patterns
+    if (fieldName.includes('_dropdown')) {
+      // Remove _dropdown suffix
+      fieldName = fieldName.replace('_dropdown', '');
+    }
+    
+    // Extract the actual field name (last part after underscore if it exists)
+    if (fieldName.includes('_')) {
+      const parts = fieldName.split('_');
+      // Get the last meaningful part (usually the field name)
+      fieldName = parts[parts.length - 1];
+    }
+    
+    console.log(`Extracted field name: ${fieldName} from content key: ${actualContentKey}`);
+    
     // Get all options for this dropdown using the correct screen_location
     // Handle container/options pattern mismatch by using screen_location-based pattern
     const result = await safeQuery(`
@@ -1335,9 +1354,9 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
       ORDER BY option_order NULLS LAST, ci.content_key
     `, [
       screenLocation,                           // Dynamic screen location from the main dropdown field
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_%`,  // screen_location.field.field_name_*
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_ph`, // Exclude placeholder
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_label` // Exclude label
+      `${screenLocation}.field.${fieldName}_%`,  // screen_location.field.field_name_*
+      `${screenLocation}.field.${fieldName}_ph`, // Exclude placeholder
+      `${screenLocation}.field.${fieldName}_label` // Exclude label
     ]);
     
     // Transform to expected format
@@ -2085,7 +2104,25 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
       });
     }
     
-    console.log(`Using screen_location: ${screenLocation}, content key patterns: ${actualContentKey}_option_% OR ${actualContentKey}_%`);
+    // Extract the field name from the content key
+    // Example: calculate_mortgage_citizenship_dropdown -> citizenship
+    let fieldName = actualContentKey.split('.').pop();
+    
+    // Handle different content key patterns
+    if (fieldName.includes('_dropdown')) {
+      // Remove _dropdown suffix
+      fieldName = fieldName.replace('_dropdown', '');
+    }
+    
+    // Extract the actual field name (last part after underscore if it exists)
+    if (fieldName.includes('_')) {
+      const parts = fieldName.split('_');
+      // Get the last meaningful part (usually the field name)
+      fieldName = parts[parts.length - 1];
+    }
+    
+    console.log(`Extracted field name: ${fieldName} from content key: ${actualContentKey}`);
+    console.log(`Using screen_location: ${screenLocation}, field pattern: ${fieldName}_%`);
     
     // Get all options for this mortgage-refi dropdown using the correct screen_location
     // Handle container/options pattern mismatch by using screen_location-based pattern
@@ -2116,9 +2153,9 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
       ORDER BY option_order NULLS LAST, ci.content_key
     `, [
       screenLocation,                           // Dynamic screen location from the main dropdown field
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_%`,  // screen_location.field.field_name_*
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_ph`, // Exclude placeholder
-      `${screenLocation}.field.${actualContentKey.split('.').pop()}_label` // Exclude label
+      `${screenLocation}.field.${fieldName}_%`,  // screen_location.field.field_name_*
+      `${screenLocation}.field.${fieldName}_ph`, // Exclude placeholder
+      `${screenLocation}.field.${fieldName}_label` // Exclude label
     ]);
 
     // Transform to expected format
