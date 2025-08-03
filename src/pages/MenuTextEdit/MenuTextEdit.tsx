@@ -41,7 +41,7 @@ const MenuTextEdit: React.FC = () => {
   const [saving, setSaving] = useState(false);
 
   // Get action number from location state
-  const actionNumber = location.state?.actionNumber || null;
+  // const actionNumber = location.state?.actionNumber || null;
 
   useEffect(() => {
     // Clear cache before fetching to ensure we get fresh data

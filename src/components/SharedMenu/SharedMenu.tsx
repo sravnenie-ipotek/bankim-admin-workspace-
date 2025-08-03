@@ -21,7 +21,6 @@
 import React, { useState, useEffect } from 'react';
 import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
-import { useAuth } from '../../contexts/AuthContext';
 import { useFontSettings } from '../../hooks/useFontSettings';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { useLocation } from 'react-router-dom';
@@ -50,7 +49,6 @@ export interface SharedMenuProps {
 }
 
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
-  const { hasPermission } = useAuth();
   const { t } = useLanguage();
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { fontSettings, loading: fontLoading } = useFontSettings();

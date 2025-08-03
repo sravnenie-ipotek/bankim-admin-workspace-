@@ -90,7 +90,7 @@ const ContentListBase: React.FC<ContentListBaseProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   useEffect(() => {

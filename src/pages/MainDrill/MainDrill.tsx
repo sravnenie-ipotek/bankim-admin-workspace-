@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { apiService } from '../../services/api';
+// import { apiService } from '../../services/api';
 import { Pagination } from '../../components';
 import '../MortgageDrill/MortgageDrill.css'; // Reuse drill styles
 
@@ -47,7 +47,7 @@ const MainDrill: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  // const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -60,10 +60,10 @@ const MainDrill: React.FC = () => {
       console.log(`🔍 Fetching main drill data for page ID: ${pageId}`);
       
       // Use the backend drill endpoint for main
-      const drillResponse = await apiService.request(`/api/content/main/drill/${pageId}`, 'GET');
+      const drillResponse = await fetch(`/api/content/main/drill/${pageId}`).then(r => r.json());
       
       if (drillResponse.success && drillResponse.data) {
-        const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
+        const { pageTitle, actionCount, actions } = drillResponse.data;
 
         // Transform to drill data format
         const transformedActions: MainAction[] = actions.map((item: any) => ({

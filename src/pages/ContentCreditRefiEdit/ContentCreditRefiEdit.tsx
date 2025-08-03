@@ -57,7 +57,23 @@ const ContentCreditRefiEdit: React.FC = () => {
         console.log('🎯 Found content item:', item);
 
         if (item) {
-          setContentItem(item);
+          // Transform ContentListItem to CreditRefiTranslation format
+          const transformedItem: CreditRefiTranslation = {
+            id: item.id,
+            content_key: item.content_key || '',
+            component_type: item.component_type || 'text',
+            category: item.category || '',
+            screen_location: item.screen_location || '',
+            description: item.description || null,
+            is_active: item.is_active ?? true,
+            translations: {
+              ru: item.translations?.ru || '',
+              he: item.translations?.he || '',
+              en: item.translations?.en || ''
+            },
+            last_modified: item.lastModified || new Date().toISOString()
+          };
+          setContentItem(transformedItem);
           setTitleRu(item.translations?.ru || '');
           setTitleHe(item.translations?.he || '');
           setTitleEn(item.translations?.en || '');
@@ -96,7 +112,27 @@ const ContentCreditRefiEdit: React.FC = () => {
         translations: translationsData
       });
 
-      const response = await apiService.updateTranslations(contentItem.id, translationsData);
+      // Update each language translation separately
+      const responses = [];
+      
+      // Update Russian translation
+      const ruResponse = await apiService.updateContentTranslation(contentItem.id, 'ru', translationsData.ru);
+      responses.push(ruResponse);
+      
+      // Update Hebrew translation  
+      const heResponse = await apiService.updateContentTranslation(contentItem.id, 'he', translationsData.he);
+      responses.push(heResponse);
+      
+      // Update English translation
+      const enResponse = await apiService.updateContentTranslation(contentItem.id, 'en', translationsData.en);
+      responses.push(enResponse);
+      
+      // Check if all updates were successful
+      const allSuccessful = responses.every(response => response.success);
+      const response = { 
+        success: allSuccessful, 
+        error: allSuccessful ? undefined : 'Some translations failed to update' 
+      };
       console.log('✅ Save response:', response);
 
       if (response.success) {

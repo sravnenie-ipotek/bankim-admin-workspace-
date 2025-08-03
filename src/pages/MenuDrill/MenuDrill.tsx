@@ -47,7 +47,7 @@ const MenuDrill: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  // const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [editedValues, setEditedValues] = useState<{ ru?: string; he?: string }>({});
   const itemsPerPage = 20; // Show more items per page to accommodate all menu content
@@ -62,10 +62,10 @@ const MenuDrill: React.FC = () => {
       console.log(`🔍 Fetching menu drill data for section ID: ${sectionId}`);
       
       // Use the backend drill endpoint for menu
-      const drillResponse = await apiService.request(`/api/content/menu/drill/${sectionId}`, 'GET');
+      const drillResponse = await fetch(`/api/content/menu/drill/${sectionId}`).then(r => r.json());
       
       if (drillResponse.success && drillResponse.data) {
-        const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
+        const { pageTitle, actionCount, actions } = drillResponse.data;
 
         // Transform to drill data format
         const transformedActions: MenuAction[] = actions.map((item: any) => ({

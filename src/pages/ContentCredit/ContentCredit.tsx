@@ -51,7 +51,7 @@ const ContentCredit: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   useEffect(() => {
