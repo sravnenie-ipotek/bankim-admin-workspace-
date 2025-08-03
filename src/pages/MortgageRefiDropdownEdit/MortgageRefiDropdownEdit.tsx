@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { AdminLayout } from '../../components';
+import { createFallbackOptions } from '../../utils/dropdownContextualMessages';
 import '../MortgageDropdownEdit/MortgageDropdownEdit.css'; // Reuse dropdown edit styles
 
 interface DropdownContent {
@@ -113,17 +114,36 @@ const MortgageRefiDropdownEdit: React.FC = () => {
         }));
         
         console.log(`✅ Found ${options.length} dropdown options via generic API`);
-        setDropdownOptions(options.length > 0 ? options : [
-          { ru: '', he: '' } // Start with at least one empty option
-        ]);
+        if (options.length > 0) {
+          setDropdownOptions(options);
+        } else {
+          // Use contextual messages when no options are found
+          console.log('⚠️ No dropdown options found, using contextual placeholder options');
+          const fallbackOptions = createFallbackOptions(
+            item.content_key,
+            content?.translations?.ru,
+            content?.translations?.he
+          );
+          setDropdownOptions(fallbackOptions);
+        }
       } else {
-        console.log('⚠️ No dropdown options found, initializing with empty option');
-        setDropdownOptions([{ ru: '', he: '' }]);
+        console.log('⚠️ No dropdown options found via API, using contextual placeholder options');
+        const fallbackOptions = createFallbackOptions(
+          content?.content_key || 'unknown',
+          content?.translations?.ru,
+          content?.translations?.he
+        );
+        setDropdownOptions(fallbackOptions);
       }
     } catch (err) {
       console.error('❌ Error fetching dropdown options:', err);
-      // Initialize with empty options on error
-      setDropdownOptions([{ ru: '', he: '' }]);
+      // Use contextual messages for better user experience
+      const fallbackOptions = createFallbackOptions(
+        contentKey || 'unknown',
+        content?.translations?.ru,
+        content?.translations?.he
+      );
+      setDropdownOptions(fallbackOptions);
     }
   };
 

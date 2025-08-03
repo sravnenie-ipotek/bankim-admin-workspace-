@@ -2,16 +2,24 @@
 
 .dropdown-edit-page {
   width: 100%;
-  min-height: 100%;
-  background: transparent; /* Let AdminLayout handle background */
+  min-height: 100vh;
+  background: var(--gray-900, #111928);
+  position: relative;
+  z-index: 1;
+  /* Override AdminLayout background completely */
+  margin: -40px;
+  padding: 40px;
 }
 
 .dropdown-edit-main {
-  padding: 0;
+  padding: 24px;
   padding-bottom: 120px;
   margin: 0;
-  max-width: 1200px;
   width: 100%;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Breadcrumb */
@@ -21,6 +29,7 @@
   align-items: center;
   gap: 16px;
   display: inline-flex;
+  width: 925px;
 }
 
 .breadcrumb-item {
@@ -59,12 +68,11 @@
 
 /* Page Title */
 .page-title-section {
-  width: 100%;
-  max-width: 925px;
+  width: 925px;
   justify-content: flex-start;
   align-items: flex-start;
-  display: flex;
-  margin-top: 32px;
+  display: inline-flex;
+  margin-top: 24px;
 }
 
 .page-title-content {
@@ -115,7 +123,8 @@
   justify-content: flex-start;
   align-items: flex-start;
   display: inline-flex;
-  margin-top: 40px;
+  margin-top: 24px;
+  align-self: flex-start;
 }
 
 .last-modified-content {
@@ -144,20 +153,21 @@
 
 /* Section Headers */
 .section-header {
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
   color: var(--gray-50, #F9FAFB);
   font-size: 20px;
   font-family: 'Arimo', sans-serif;
   font-weight: 600;
   line-height: 30px;
   margin-bottom: 24px;
+  white-space: nowrap;
+  text-align: left;
 }
 
 /* Action Headers Section */
 .action-headers-section {
-  margin-top: 40px;
+  margin-top: 24px;
+  background: transparent;
+  width: 925px;
 }
 
 /* Input Field Styling - Design Specification Compliance
@@ -174,16 +184,19 @@
 
 .headers-input-row {
   display: flex;
-  gap: 24px;
+  gap: 20px;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .input-group {
-  width: 320px; /* Increased width for comfortable text spacing */
+  width: 295px; /* Match option input width for alignment */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 8px;
-  display: inline-flex;
+  display: flex;
 }
 
 .input-label {
@@ -252,8 +265,9 @@
 .add-option-section {
   display: flex;
   justify-content: flex-end;
-  margin-top: 32px;
+  margin-top: 24px;
   margin-bottom: 16px;
+  width: 925px;
 }
 
 .add-option-button {
@@ -306,16 +320,20 @@
 /* Dropdown Options Section */
 .dropdown-options-section {
   margin-top: 24px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .options-list {
-  width: 100%;
-  max-width: 925px;
+  width: 925px;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 24px;
-  display: flex;
+  display: inline-flex;
 }
 
 /* Dropdown Option Row */
@@ -376,7 +394,7 @@
 }
 
 .option-input-group {
-  width: 320px; /* Increased width to match input-group for consistency */
+  width: 295px; /* Match header input width for perfect alignment */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -477,8 +495,8 @@
 
 .bottom-actions-row {
   align-self: stretch;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: center !important;
+  align-items: center;
   display: flex;
   padding: 0 2rem; /* Add inner padding for content */
   max-width: 1200px;
@@ -495,10 +513,12 @@
 }
 
 .bottom-actions-buttons {
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
   gap: 16px;
   display: flex;
+  width: 100%;
+  position: relative;
 }
 
 .back-button {
@@ -515,6 +535,9 @@
   background: transparent;
   border: none;
   transition: background-color 0.2s ease;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .back-button:hover {
@@ -540,10 +563,11 @@
   display: flex;
   border: none;
   transition: background-color 0.2s ease;
+  margin-left: auto;
 }
 
 .save-button-enabled {
-  background: var(--primary-700, #FBE54D);
+  background: #FBE54D !important;
   cursor: pointer;
 }
 
@@ -551,8 +575,21 @@
   background: var(--primary-600, #F7DC0B);
 }
 
+.save-button-disabled {
+  background: var(--gray-600, #4B5563);
+  cursor: not-allowed;
+}
+
 .save-button-text-enabled {
   color: var(--gray-900, #111928);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.save-button-text-disabled {
+  color: var(--gray-400, #9CA3AF);
   font-size: 14px;
   font-family: 'Arimo', sans-serif;
   font-weight: 500;
@@ -609,11 +646,19 @@
   
   .bottom-actions-buttons {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center !important;
+    gap: 16px;
+    position: static;
   }
   
-  .back-button,
+  .back-button {
+    position: static;
+    transform: none;
+    width: calc(50% - 8px);
+  }
+  
   .save-button {
+    margin-left: 0;
     width: calc(50% - 8px);
   }
   

@@ -1912,10 +1912,108 @@ app.put('/api/content/mortgage/:id', async (req, res) => {
  * Returns content for mortgage refinancing screen with dynamic translations from database
  */
 app.get('/api/content/mortgage-refi', async (req, res) => {
-  res.json({
-    test: 123,
-    time: new Date().toISOString()
-  });
+  try {
+    console.log('🔄 Fetching mortgage-refi content from database...');
+    
+    // Use clean screen_location based approach - copied from mortgage endpoint
+    const result = await safeQuery(`
+      WITH screen_summaries AS (
+        SELECT 
+          ci.screen_location,
+          COUNT(*) as action_count,
+          MAX(ci.updated_at) as last_modified,
+          MIN(ci.id) as representative_id,
+          MIN(ci.page_number) as page_number,
+          -- Get title translations from the main title content for each screen
+          CASE ci.screen_location
+            WHEN 'refinance_credit_1' THEN 'Удалить данные займа?'
+            WHEN 'refinance_credit_2' THEN 'Личные данные'
+            WHEN 'refinance_credit_3' THEN 'Детали дохода'
+            WHEN 'mortgage_step4' THEN 'Фильтр ипотеки'
+            ELSE ci.screen_location
+          END as title_ru,
+          CASE ci.screen_location
+            WHEN 'refinance_credit_1' THEN 'מחשבון'
+            WHEN 'refinance_credit_2' THEN 'פרטים אישיים'
+            WHEN 'refinance_credit_3' THEN 'הכנסות'
+            WHEN 'mortgage_step4' THEN 'תוכניות'
+            ELSE ci.screen_location
+          END as title_he,
+          CASE ci.screen_location
+            WHEN 'refinance_credit_1' THEN 'We will select the best market offers for you'
+            WHEN 'refinance_credit_2' THEN 'Personal Details'
+            WHEN 'refinance_credit_3' THEN 'Income Details'
+            WHEN 'mortgage_step4' THEN 'Personal Profile Details'
+            ELSE ci.screen_location
+          END as title_en
+        FROM content_items ci
+        WHERE ci.screen_location IN ('refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4')
+          AND ci.is_active = TRUE
+          AND ci.component_type != 'option'
+        GROUP BY ci.screen_location
+        HAVING COUNT(*) > 0
+      )
+      SELECT 
+        ss.representative_id as id,
+        ss.screen_location as content_key,
+        'step' as component_type,
+        'mortgage_refi_steps' as category,
+        ss.screen_location,
+        ss.page_number,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
+        true as is_active,
+        ss.action_count,
+        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as title_ru,
+        COALESCE(ss.title_he, ss.title_en, 'Unnamed Step') as title_he,
+        COALESCE(ss.title_en, ss.title_ru, 'Unnamed Step') as title_en,
+        ss.last_modified as updated_at
+      FROM screen_summaries ss
+      ORDER BY ss.screen_location
+    `);
+    
+    console.log(`🔍 Mortgage-refi query returned ${result.rows.length} rows`);
+    if (result.rows.length > 0) {
+      console.log('📋 First row sample:', result.rows[0]);
+    }
+    
+    const mortgageRefiContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      description: row.description,
+      is_active: row.is_active,
+      actionCount: row.action_count || 1,
+      page_number: row.page_number,
+      translations: {
+        ru: row.title_ru || '',
+        he: row.title_he || '',
+        en: row.title_en || ''
+      },
+      last_modified: row.updated_at,
+      lastModified: row.updated_at  // Add both formats for compatibility
+    }));
+
+    console.log(`✅ Formatted ${mortgageRefiContent.length} mortgage-refi items`);
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        content_count: mortgageRefiContent.length,
+        mortgage_content: mortgageRefiContent
+      }
+    });
+    
+    console.log('✅ Successfully returned mortgage-refi content');
+  } catch (error) {
+    console.error('❌ Get mortgage-refi content error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
 });
 
 /**

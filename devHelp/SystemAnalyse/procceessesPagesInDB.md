@@ -3,6 +3,33 @@
 ## Overview
 This document defines the standardized screen location naming conventions used in the content management system database for all mortgage and credit processes.
 
+## 🚨 CRITICAL: NO MOCK DATA ALLOWED
+
+### ⚠️ IMPORTANT WARNING
+**DO NOT USE MOCK DATA** in production or development environments. All examples in this document are for illustration purposes only and should be replaced with real database content.
+
+### Real Data Requirements
+- **All screen locations MUST have real content** in the database
+- **All translations MUST be complete** (RU/HE/EN for all content items)
+- **All API endpoints MUST return real data** from PostgreSQL database
+- **No hardcoded responses** or test data in production code
+
+### Examples Are For Reference Only
+The code examples in this document show the correct structure and patterns, but you must:
+1. **Replace example values** with real database content
+2. **Ensure all screen locations exist** in the database
+3. **Verify all translations are complete** before deployment
+4. **Test with real data** before going live
+
+### Common Mistakes to Avoid
+- ❌ **Hardcoded responses**: `res.json({test: 123, time: new Date()})`
+- ❌ **Mock data arrays**: `[{id: 1, title: "Test"}]`
+- ❌ **Empty responses**: `res.json({success: true, data: []})`
+- ❌ **Placeholder content**: Using "Lorem ipsum" or dummy text
+- ✅ **Real database queries**: Always query PostgreSQL for actual content
+- ✅ **Complete translations**: Ensure RU/HE/EN for all content
+- ✅ **Proper error handling**: Return meaningful errors when data is missing
+
 ## ⚠️ CRITICAL: Screen Location Requirements
 
 ### Exact Matching Rule
@@ -33,8 +60,10 @@ const response = await apiService.getContentByContentType('mortgage');
 ### Verification Steps
 1. **Check Frontend Code**: Search for `apiService` calls in React components to see what screen_location values are used
 2. **Match Exactly**: Ensure database `screen_location` matches the API path parameter exactly
-3. **Test API**: Verify `/api/content/{content_type}/{screen_location}/{language}` returns data
+3. **Test API**: Verify `/api/content/{content_type}/{screen_location}/{language}` returns **REAL DATA** (not mock/test data)
 4. **Update Documentation**: Document any new screen_location values used
+5. **Verify Database Content**: Ensure all screen locations have actual content in the database
+6. **Check Translations**: Verify all content has complete RU/HE/EN translations
 
 ## Database Screen Location Mapping
 

@@ -11,6 +11,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { AdminLayout, InlineEdit } from '../../components';
 import { apiService } from '../../services/api';
 import { getDropdownConfig, DropdownContent, DropdownOption } from '../../utils/dropdownConfigs';
+import { createFallbackOptions } from '../../utils/dropdownContextualMessages';
 import './SharedDropdownEdit.css';
 
 const SharedDropdownEdit: React.FC = () => {
@@ -203,9 +204,25 @@ const SharedDropdownEdit: React.FC = () => {
         console.log(`✅ Found ${options.length} dropdown options`);
         console.log('📋 Final options array:', options);
         
-        const finalOptions = options.length > 0 ? options : [
-          { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
-        ];
+        let finalOptions;
+        if (options.length > 0) {
+          finalOptions = options;
+        } else {
+          // Use contextual messages when no options are found
+          console.log('⚠️ No dropdown options found, using contextual placeholder messages');
+          const fallbackOptions = createFallbackOptions(
+            item.content_key,
+            content?.translations?.ru,
+            content?.translations?.he
+          );
+          
+          // Convert to the expected format with optional English support
+          finalOptions = fallbackOptions.map(option => ({
+            ru: option.ru,
+            he: option.he,
+            ...(config.features.englishSupport ? { en: option.en || '' } : {})
+          }));
+        }
         
         console.log('🎯 Setting dropdownOptions state to:', finalOptions);
         
@@ -218,16 +235,32 @@ const SharedDropdownEdit: React.FC = () => {
         
         setDropdownOptions(testOptions);
       } else {
-        console.log('⚠️ No dropdown options found, initializing with empty option');
-        setDropdownOptions([
-          { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
-        ]);
+        console.log('⚠️ No dropdown options found, using contextual placeholder messages');
+        const fallbackOptions = createFallbackOptions(
+          content?.content_key || 'unknown',
+          content?.translations?.ru,
+          content?.translations?.he
+        );
+        
+        // Convert to the expected format with optional English support
+        const contextualOptions = fallbackOptions.map(option => ({
+          ru: option.ru,
+          he: option.he,
+          ...(config.features.englishSupport ? { en: option.en || '' } : {})
+        }));
+        
+        setDropdownOptions(contextualOptions);
       }
     } catch (err) {
       console.error('❌ Error fetching dropdown options:', err);
-      setDropdownOptions([
-        { ru: '', he: '', ...(config.features.englishSupport ? { en: '' } : {}) }
-      ]);
+      // Use contextual messages for better user experience
+      const fallbackOptions = createFallbackOptions(
+        content?.content_key || 'unknown',
+        content?.translations?.ru,
+        content?.translations?.he
+      );
+      
+      setDropdownOptions(fallbackOptions);
     }
   };
 

@@ -11,6 +11,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageDropdownEdit.css';
 import { AdminLayout } from '../../components';
 import { apiService } from '../../services/api';
+import { createFallbackOptions } from '../../utils/dropdownContextualMessages';
 
 interface DropdownOption {
   ru: string;
@@ -122,40 +123,57 @@ const MortgageDropdownEdit: React.FC = () => {
       
       if (response.success && response.data && Array.isArray(response.data)) {
         const loadedOptions: DropdownOption[] = response.data.map((option: any) => ({
-          ru: option.translations?.ru || option.ru || 'Сотрудник',
-          he: option.translations?.he || option.he || 'עובד'
+          ru: option.translations?.ru || option.ru || 'Опция',
+          he: option.translations?.he || option.he || 'אפשרות'
         }));
         
-        setOptions(loadedOptions.length > 0 ? loadedOptions : [
-          { ru: 'Сотрудник', he: 'עובד' },
-          { ru: 'Сотрудник', he: 'עובד' },
-          { ru: 'Сотрудник', he: 'עובד' }
-        ]);
+        if (loadedOptions.length > 0) {
+          console.log(`✅ Loaded ${loadedOptions.length} options for ${contentKey}`);
+          setOptions(loadedOptions);
+        } else {
+          console.warn(`⚠️ No options found for ${contentKey}. Using contextual placeholder options.`);
+          // Use contextual messages based on dropdown type
+          const fallbackOptions = createFallbackOptions(
+            contentKey, 
+            content?.translations?.ru, 
+            content?.translations?.he
+          );
+          setOptions(fallbackOptions);
+        }
       } else {
-        // Default options if API call fails
-        setOptions([
-          { ru: 'Сотрудник', he: 'עובד' },
-          { ru: 'Сотрудник', he: 'עובד' },
-          { ru: 'Сотрудник', he: 'עובד' }
-        ]);
+        console.error(`❌ API error for ${contentKey}:`, response.error);
+        // Use contextual messages even for API errors
+        const fallbackOptions = createFallbackOptions(
+          contentKey, 
+          content?.translations?.ru, 
+          content?.translations?.he
+        );
+        setOptions(fallbackOptions);
       }
     } catch (err) {
       console.error('Error loading dropdown options:', err);
-      // Use default options on error
-      setOptions([
-        { ru: 'Сотрудник', he: 'עובד' },
-        { ru: 'Сотрудник', he: 'עובד' },
-        { ru: 'Сотрудник', he: 'עובד' }
-      ]);
+      // Use contextual messages even for network errors
+      const fallbackOptions = createFallbackOptions(
+        contentKey, 
+        content?.translations?.ru, 
+        content?.translations?.he
+      );
+      setOptions(fallbackOptions);
     }
   };
 
   const handleBack = () => {
-    navigate('/content/mortgage', { 
+    // Use returnPath from state if available, otherwise default to mortgage list
+    const returnPath = location.state?.returnPath || '/content/mortgage';
+    
+    navigate(returnPath, { 
       state: { 
         fromPage: location.state?.fromPage || 1,
         searchTerm: location.state?.searchTerm || '',
-        actionNumber: actionNumber
+        drillPage: location.state?.drillPage || 1,
+        drillSearchTerm: location.state?.drillSearchTerm || '',
+        actionNumber: actionNumber,
+        baseActionNumber: location.state?.baseActionNumber || 0
       } 
     });
   };
@@ -187,11 +205,18 @@ const MortgageDropdownEdit: React.FC = () => {
       if (ruResponse.success && heResponse.success) {
         console.log('✅ Successfully saved all translations');
         setHasChanges(false);
-        navigate('/content/mortgage', { 
+        
+        // Use returnPath from state if available, otherwise default to mortgage list
+        const returnPath = location.state?.returnPath || '/content/mortgage';
+        
+        navigate(returnPath, { 
           state: { 
             fromPage: location.state?.fromPage || 1,
             searchTerm: location.state?.searchTerm || '',
-            actionNumber: actionNumber
+            drillPage: location.state?.drillPage || 1,
+            drillSearchTerm: location.state?.drillSearchTerm || '',
+            actionNumber: actionNumber,
+            baseActionNumber: location.state?.baseActionNumber || 0
           } 
         });
       } else {
@@ -279,7 +304,7 @@ const MortgageDropdownEdit: React.FC = () => {
               Контент сайта
             </div>
             <div className="breadcrumb-arrow"></div>
-            <div className="breadcrumb-item breadcrumb-active" onClick={() => navigate('/content/mortgage')}>
+            <div className="breadcrumb-item breadcrumb-active" onClick={handleBack}>
               Главная страница Страница №1
             </div>
             <div className="breadcrumb-arrow"></div>
@@ -410,7 +435,6 @@ const MortgageDropdownEdit: React.FC = () => {
         {/* Bottom Actions */}
         <div className="bottom-actions">
           <div className="bottom-actions-row">
-            <div className="bottom-actions-spacer"></div>
             <div className="bottom-actions-buttons">
               <button className="back-button" onClick={handleBack}>
                 <div className="back-button-text">Назад</div>
