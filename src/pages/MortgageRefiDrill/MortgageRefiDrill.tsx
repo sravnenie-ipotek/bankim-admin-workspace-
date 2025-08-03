@@ -61,10 +61,11 @@ const MortgageRefiDrill: React.FC = () => {
       console.log(`🔍 Fetching mortgage-refi drill data for step ID: ${pageId}`);
       
       // Use the backend drill endpoint for mortgage-refi
-      const drillResponse = await apiService.request(`/api/content/mortgage-refi/drill/${pageId}`, 'GET');
+      const drillResponse = await apiService.request(`/api/content/mortgage-refi/drill/${pageId}`, { method: 'GET' });
       
       if (drillResponse.success && drillResponse.data) {
-        const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
+        const drillData = drillResponse.data as any;
+        const { pageTitle, stepGroup, actionCount, actions } = drillData;
 
         // Transform to drill data format
         const transformedActions: MortgageRefiAction[] = actions.map((item: any) => ({
@@ -526,7 +527,7 @@ const MortgageRefiDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
+              {currentActions.map((action) => (
                 <React.Fragment key={`type-${action.id}`}>
                   <div className="column-cell">
                     <div style={{ color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '500', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={getComponentTypeDisplay(action.component_type, action.content_key)}>
@@ -546,7 +547,7 @@ const MortgageRefiDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const isEditing = editingRowId === action.id;
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
@@ -585,7 +586,7 @@ const MortgageRefiDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const isEditing = editingRowId === action.id;
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
@@ -621,7 +622,7 @@ const MortgageRefiDrill: React.FC = () => {
             <div className="table-column" style={{ width: '125px' }}>
               <div className="column-header" style={{ height: '50px' }}></div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
                 

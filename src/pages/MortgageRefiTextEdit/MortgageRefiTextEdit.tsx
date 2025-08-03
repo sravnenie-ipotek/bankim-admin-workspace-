@@ -68,7 +68,7 @@ const MortgageRefiTextEdit: React.FC = () => {
       console.log(`📖 Fetching mortgage-refi text content for action ID: ${actionId}`);
       
       // Try to get specific content item first
-      const response = await apiService.request(`/api/content/item/${actionId}`, { method: 'GET' });
+      const response = await apiService.getContentItemById(actionId!);
       
       if (response.success && response.data) {
         const targetContent = response.data as any;
@@ -194,7 +194,7 @@ const MortgageRefiTextEdit: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#111928' }}>
-      <AdminLayout />
+      <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: '264px' }}>
         {content ? (
           <SharedTextEdit

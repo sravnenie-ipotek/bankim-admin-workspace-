@@ -63,7 +63,7 @@ const MortgageRefiDropdownEdit: React.FC = () => {
       console.log(`📋 Fetching mortgage-refi dropdown content for action ID: ${actionId}`);
       
       // Fetch the specific content item
-      const response = await apiService.request(`/api/content/item/${actionId}`, { method: 'GET' });
+      const response = await apiService.getContentItemById(actionId!);
       
       if (response.success && response.data) {
         const item = response.data as any;

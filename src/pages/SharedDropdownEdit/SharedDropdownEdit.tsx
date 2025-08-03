@@ -220,7 +220,7 @@ const SharedDropdownEdit: React.FC = () => {
           finalOptions = fallbackOptions.map(option => ({
             ru: option.ru,
             he: option.he,
-            ...(config.features.englishSupport ? { en: option.en || '' } : {})
+            ...(config.features.englishSupport ? { en: (option as any).en || '' } : {})
           }));
         }
         
@@ -246,7 +246,7 @@ const SharedDropdownEdit: React.FC = () => {
         const contextualOptions = fallbackOptions.map(option => ({
           ru: option.ru,
           he: option.he,
-          ...(config.features.englishSupport ? { en: option.en || '' } : {})
+          ...(config.features.englishSupport ? { en: (option as any).en || '' } : {})
         }));
         
         setDropdownOptions(contextualOptions);
