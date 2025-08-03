@@ -46,7 +46,7 @@ const MortgageRefiDrill: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  // const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [editedValues, setEditedValues] = useState<{ ru?: string; he?: string }>({});
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage-refi content
@@ -61,11 +61,11 @@ const MortgageRefiDrill: React.FC = () => {
       console.log(`🔍 Fetching mortgage-refi drill data for step ID: ${pageId}`);
       
       // Use the backend drill endpoint for mortgage-refi
-      const drillResponse = await apiService.request(`/api/content/mortgage-refi/drill/${pageId}`, { method: 'GET' });
+      const drillResponse = await fetch(`/api/content/mortgage-refi/drill/${pageId}`).then(r => r.json());
       
       if (drillResponse.success && drillResponse.data) {
         const drillData = drillResponse.data as any;
-        const { pageTitle, stepGroup, actionCount, actions } = drillData;
+        const { pageTitle, actionCount, actions } = drillData;
 
         // Transform to drill data format
         const transformedActions: MortgageRefiAction[] = actions.map((item: any) => ({

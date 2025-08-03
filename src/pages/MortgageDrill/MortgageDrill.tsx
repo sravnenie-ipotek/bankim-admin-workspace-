@@ -12,7 +12,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './MortgageDrill.css';
 import { apiService } from '../../services/api';
 import { Pagination, InlineEdit } from '../../components';
-import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints, getContentDataKey, type ContentType } from '../../utils/contentTypeUtils';
+import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints } from '../../utils/contentTypeUtils';
 
 interface MortgageAction {
   id: string;
@@ -48,7 +48,7 @@ const MortgageDrill: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
+  // const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [editedValues, setEditedValues] = useState<{ ru?: string; he?: string }>({});
   const itemsPerPage = 20; // Show more items per page to accommodate all mortgage content
@@ -68,10 +68,10 @@ const MortgageDrill: React.FC = () => {
       // Try the backend drill endpoint first
       try {
         const { drillEndpoint } = generateApiEndpoints(contentType, pageId);
-        const drillResponse = await apiService.request(drillEndpoint, 'GET');
+        const drillResponse = await fetch(drillEndpoint).then(r => r.json());
         
         if (drillResponse.success && drillResponse.data) {
-          const { pageTitle, stepGroup, actionCount, actions } = drillResponse.data;
+          const { pageTitle, actionCount, actions } = drillResponse.data;
 
           // Transform to drill data format
           const transformedActions: MortgageAction[] = actions.map((item: any) => ({
@@ -109,7 +109,7 @@ const MortgageDrill: React.FC = () => {
       }
       
       // Fallback: get all individual mortgage content items across all steps
-              const response = await apiService.request('/api/content/mortgage/all-items', 'GET');
+              const response = await apiService.getMortgageAllItems();
       
       if (response.success && response.data) {
         // Use the data from the new all-items endpoint
@@ -556,7 +556,7 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => (
+              {currentActions.map((action) => (
                 <React.Fragment key={`type-${action.id}`}>
                   <div className="column-cell">
                     <div style={{ color: 'var(--white, white)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '500', lineHeight: '21px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={getComponentTypeDisplay(action.component_type, action.content_key)}>
@@ -576,7 +576,7 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const isEditing = editingRowId === action.id;
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
@@ -606,12 +606,12 @@ const MortgageDrill: React.FC = () => {
                             overflow: 'hidden', 
                             textOverflow: 'ellipsis', 
                             whiteSpace: 'nowrap',
-                            paddingLeft: action.isOption ? '20px' : '0px',
-                            opacity: action.isOption ? '0.8' : '1'
+                            paddingLeft: '0px',
+                            opacity: '1'
                           }} 
                           title={getSafeTranslation(action.translations.ru, 'ru')}
                         >
-                          {action.isOption ? '  • ' : ''}{getSafeTranslation(action.translations.ru, 'ru')}
+                          {getSafeTranslation(action.translations.ru, 'ru')}
                         </div>
                       )}
                     </div>
@@ -629,7 +629,7 @@ const MortgageDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const isEditing = editingRowId === action.id;
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
@@ -663,12 +663,12 @@ const MortgageDrill: React.FC = () => {
                             textOverflow: 'ellipsis', 
                             whiteSpace: 'nowrap', 
                             direction: 'rtl',
-                            paddingRight: action.isOption ? '20px' : '0px',
-                            opacity: action.isOption ? '0.8' : '1'
+                            paddingRight: '0px',
+                            opacity: '1'
                           }} 
                           title={getSafeTranslation(action.translations.he, 'he')}
                         >
-                          {getSafeTranslation(action.translations.he, 'he')}{action.isOption ? '  •' : ''}
+                          {getSafeTranslation(action.translations.he, 'he')}
                         </div>
                       )}
                     </div>
@@ -682,7 +682,7 @@ const MortgageDrill: React.FC = () => {
             <div className="table-column" style={{ width: '125px' }}>
               <div className="column-header" style={{ height: '50px' }}></div>
               <div className="column-divider"></div>
-              {currentActions.map((action, index) => {
+              {currentActions.map((action) => {
                 const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
                 const isLink = typeDisplay === 'Ссылка';
                 

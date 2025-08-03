@@ -250,7 +250,7 @@ const MortgageDropdownEdit: React.FC = () => {
   // Loading state
   if (loading) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Загрузка...">
         <div className="dropdown-edit-page">
           <div className="dropdown-edit-main">
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
@@ -265,7 +265,7 @@ const MortgageDropdownEdit: React.FC = () => {
   // Error state
   if (error && !content) {
     return (
-      <AdminLayout>
+      <AdminLayout title="Ошибка">
         <div className="dropdown-edit-page">
           <div className="dropdown-edit-main">
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
@@ -294,7 +294,7 @@ const MortgageDropdownEdit: React.FC = () => {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout title={`Редактирование дропдауна - ${content?.content_key || 'Загрузка...'}`}>
       <div className="dropdown-edit-page">
         {/* Main Content Area */}
         <div className="dropdown-edit-main">
