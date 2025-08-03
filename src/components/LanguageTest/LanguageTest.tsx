@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 const LanguageTest: React.FC = () => {
-  const { language, setLanguage, t, translations } = useLanguage();
+  const { language, t, translations } = useLanguage();
 
   useEffect(() => {
     console.log('=== Language Test Component Mounted ===');

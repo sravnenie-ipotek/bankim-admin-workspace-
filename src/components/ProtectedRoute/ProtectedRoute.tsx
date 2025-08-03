@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth, UserRole } from '../../contexts/AuthContext';
+import { UserRole } from '../../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,10 +12,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  requiredRole,
-  requiredPermission,
-  fallback
+  children
+  // requiredRole,
+  // requiredPermission,
+  // fallback
 }) => {
   // TEMPORARILY DISABLED: Authentication checks
   // TODO: Re-enable authentication when needed
@@ -26,16 +26,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 };
 
 // Helper function to get display names for roles
-const getRoleDisplayName = (role: UserRole): string => {
-  const roleNames: Record<UserRole, string> = {
-    'director': 'Директор',
-    'administration': 'Администратор',
-    'sales-manager': 'Менеджер по продажам',
-    'content-manager': 'Контент-менеджер',
-    'brokers': 'Брокер',
-    'bank-employee': 'Сотрудник банка'
-  };
-  return roleNames[role] || role;
-};
+// const getRoleDisplayName = (role: UserRole): string => {
+//   const roleNames: Record<UserRole, string> = {
+//     'director': 'Директор',
+//     'administration': 'Администратор',
+//     'sales-manager': 'Менеджер по продажам',
+//     'content-manager': 'Контент-менеджер',
+//     'brokers': 'Брокер',
+//     'bank-employee': 'Сотрудник банка'
+//   };
+//   return roleNames[role] || role;
+// };
 
 export default ProtectedRoute; 

@@ -16,7 +16,7 @@ import MainDrill from './pages/MainDrill/MainDrill'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
-import AdminLogin from './components/AdminLogin/AdminLogin'
+// import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
@@ -345,7 +345,7 @@ const Dashboard = () => (
 
 // Main App Router Component
 const AppRouter: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return (
