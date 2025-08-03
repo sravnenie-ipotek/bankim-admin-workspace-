@@ -63,10 +63,10 @@ const MortgageRefiDropdownEdit: React.FC = () => {
       console.log(`📋 Fetching mortgage-refi dropdown content for action ID: ${actionId}`);
       
       // Fetch the specific content item
-      const response = await apiService.request(`/api/content/item/${actionId}`, 'GET');
+      const response = await apiService.request(`/api/content/item/${actionId}`, { method: 'GET' });
       
       if (response.success && response.data) {
-        const item = response.data;
+        const item = response.data as any;
         setContent({
           id: item.id,
           content_key: item.content_key || '',
@@ -139,7 +139,7 @@ const MortgageRefiDropdownEdit: React.FC = () => {
       console.error('❌ Error fetching dropdown options:', err);
       // Use contextual messages for better user experience
       const fallbackOptions = createFallbackOptions(
-        contentKey || 'unknown',
+        content?.content_key || 'unknown',
         content?.translations?.ru,
         content?.translations?.he
       );
@@ -212,14 +212,7 @@ const MortgageRefiDropdownEdit: React.FC = () => {
     setHasChanges(true);
   };
 
-  const formatLastModified = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return `${date.toLocaleDateString('ru-RU')} | ${date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
-    } catch {
-      return '01.08.2023 | 12:03';
-    }
-  };
+
 
   if (loading) {
     return (

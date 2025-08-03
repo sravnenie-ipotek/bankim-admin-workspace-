@@ -7,7 +7,7 @@ import './QALanguage.css';
  * Tests the translation system functionality
  */
 const QALanguage: React.FC = () => {
-  const { language, setLanguage, t, isRTL, translations } = useLanguage();
+  const { language, t, isRTL, translations } = useLanguage();
 
   // Test translation keys
   const testKeys = [

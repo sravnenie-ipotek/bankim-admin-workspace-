@@ -201,7 +201,7 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
         console.log(`📦 Direct item fetch response:`, itemResponse);
         
         if (itemResponse.success && itemResponse.data) {
-          const item = itemResponse.data;
+          const item = itemResponse.data as any;
           setContentItem(item);
           setTranslations({
             ru: item.translations?.ru || '',
@@ -261,7 +261,7 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
         console.log(`✅ Found item:`, item);
         
         if (item) {
-          setContentItem(item);
+          setContentItem(item as any);
           setTranslations({
             ru: item.translations?.ru || '',
             he: item.translations?.he || '',

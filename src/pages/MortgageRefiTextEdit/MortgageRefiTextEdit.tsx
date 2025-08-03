@@ -9,9 +9,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import AdminLayout from '../../components/AdminLayout';
+import SharedTextEdit from '../../shared/components/SharedTextEdit/SharedTextEdit';
 import { apiService } from '../../services/api';
-import { SharedMenu } from '../../components';
-import { SharedTextEdit, type TextEditData, type BreadcrumbItem } from '../../shared/components';
+
+interface TextEditData {
+  id: string;
+  action_number?: number;
+  content_key: string;
+  component_type: string;
+  screen_location: string;
+  description: string;
+  is_active: boolean;
+  translations: {
+    ru: string;
+    he: string;
+    en: string;
+  };
+  last_modified: string;
+}
 
 interface ContentItem {
   id: string;
@@ -27,22 +43,6 @@ interface ContentItem {
   };
   last_modified: string;
   action_number?: number;
-}
-
-interface ContentTranslation {
-  id: string;
-  action_number?: number;
-  content_key: string;
-  component_type: string;
-  screen_location: string;
-  description: string;
-  is_active: boolean;
-  translations: {
-    ru: string;
-    he: string;
-    en: string;
-  };
-  last_modified: string;
 }
 
 const MortgageRefiTextEdit: React.FC = () => {
@@ -68,10 +68,10 @@ const MortgageRefiTextEdit: React.FC = () => {
       console.log(`📖 Fetching mortgage-refi text content for action ID: ${actionId}`);
       
       // Try to get specific content item first
-      const response = await apiService.request(`/api/content/item/${actionId}`, 'GET');
+      const response = await apiService.request(`/api/content/item/${actionId}`, { method: 'GET' });
       
       if (response.success && response.data) {
-        const targetContent = response.data;
+        const targetContent = response.data as any;
         console.log('✅ Found target content item:', targetContent);
         
         // Normalize the content structure for SharedTextEdit
@@ -120,28 +120,37 @@ const MortgageRefiTextEdit: React.FC = () => {
     };
   };
 
-  const handleSave = async (data: TextEditData) => {
+  const handleSave = async (data: { ruText: string; heText: string; additionalTexts: { ru: string; he: string; }[]; }) => {
     if (!content) return;
     
     try {
       setSaving(true);
-      console.log('💾 Saving mortgage-refi text changes...', data);
+      console.log('💾 Saving mortgage-refi text content...');
       
-      const updatePayload = {
-        translations: data.translations
-      };
+      // Update Russian translation
+      await apiService.updateContentTranslation(content.id, 'ru', data.ruText);
       
-      const response = await apiService.updateContentTranslation(content.id, updatePayload);
+      // Update Hebrew translation
+      await apiService.updateContentTranslation(content.id, 'he', data.heText);
       
-      if (response.success) {
-        console.log('✅ Mortgage-refi text saved successfully');
-        handleCancel();
-      } else {
-        setError(response.error || 'Ошибка сохранения изменений');
+      // Update English translation if needed
+      if (content.translations.en !== content.translations.en) {
+        await apiService.updateContentTranslation(content.id, 'en', content.translations.en || '');
       }
+      
+      console.log('✅ Mortgage-refi text content saved successfully');
+      
+      // Navigate back to the content list
+      const returnPath = location.state?.returnPath || '/content/mortgage-refi';
+      navigate(returnPath, {
+        state: {
+          fromPage: location.state?.fromPage || 1,
+          searchTerm: location.state?.searchTerm || ''
+        }
+      });
     } catch (err) {
-      console.error('❌ Error saving mortgage-refi text:', err);
-      setError('Ошибка сохранения изменений');
+      console.error('❌ Error saving mortgage-refi text content:', err);
+      setError('Ошибка сохранения данных');
     } finally {
       setSaving(false);
     }
@@ -160,7 +169,7 @@ const MortgageRefiTextEdit: React.FC = () => {
     });
   };
 
-  const breadcrumbs: BreadcrumbItem[] = [
+  const breadcrumbs = [
     {
       label: 'Контент сайта',
       onClick: () => navigate('/content'),
@@ -185,7 +194,7 @@ const MortgageRefiTextEdit: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#111928' }}>
-      <SharedMenu />
+      <AdminLayout />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: '264px' }}>
         {content ? (
           <SharedTextEdit

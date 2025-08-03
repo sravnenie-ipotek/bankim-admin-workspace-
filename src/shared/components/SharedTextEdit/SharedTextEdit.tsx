@@ -61,7 +61,7 @@ const SharedTextEdit: React.FC<SharedTextEditProps> = ({
   onSave,
   onCancel,
   showAdditionalText = false,
-  pageSubtitle,
+
   saving = false
 }) => {
   const [ruText, setRuText] = useState('');

@@ -7,7 +7,7 @@ import { ContentPage } from '../pages/Chat/ContentManagement/types/contentTypes'
 import { ContentListItem } from '../pages/ContentListBase/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const CONTENT_API_URL = import.meta.env.VITE_CONTENT_API_URL || API_BASE_URL;
+
 const USE_REAL_CONTENT_DATA = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
 const CONTENT_CACHE_TTL = parseInt(import.meta.env.VITE_CONTENT_CACHE_TTL || '300000');
 
