@@ -193,9 +193,8 @@ const MortgageRefiTextEdit: React.FC = () => {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#111928' }}>
-      <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: '264px' }}>
+    <AdminLayout title="Редактирование текста" activeMenuItem="content-mortgage-refi">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {content ? (
           <SharedTextEdit
             content={getTextEditData()!}
@@ -246,7 +245,7 @@ const MortgageRefiTextEdit: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
