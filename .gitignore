@@ -16,9 +16,6 @@ build/
 .env.test.local
 .env.production.local
 
-# Database configuration files (contain credentials)
-server/config/database-*.js
-
 # IDE and editor files
 .vscode/
 .idea/
@@ -118,5 +115,7 @@ cypress/videos/
 cypress/fixtures/example.json
 cypress/reports/
 
-# Database files (if any local backups)
-*.sql.backup
+# SSH Connection Documentation (contains sensitive credentials)
+SSH_README.md
+ssh_connection.md
+server_credentials.md
