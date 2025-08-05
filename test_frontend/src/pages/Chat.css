@@ -1,0 +1,466 @@
+/**
+ * Chat Page Styles
+ * Styling for the main chat interface and content management sections
+ * 
+ * Design System: 
+ * - Follows BankIM design tokens and color scheme
+ * - Dark theme with consistent spacing
+ * - Responsive design for mobile/tablet/desktop
+ * - Accessibility considerations (focus states, ARIA support)
+ * 
+ * @version 1.0.0
+ * @author BankIM Development Team
+ * @since 2024-12-14
+ */
+
+/* Import Arimo font - consistent with existing components */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   MAIN CHAT PAGE LAYOUT
+   ========================================================================== */
+
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: calc(100vh - 140px);
+  
+  /* Consistent with existing page styling */
+  font-family: 'Arimo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   NAVIGATION HEADER
+   ========================================================================== */
+
+.chat-navigation {
+  background: #1F2A37;
+  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #374151;
+}
+
+.nav-header {
+  margin-bottom: 24px;
+}
+
+.nav-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.nav-header p {
+  font-size: 16px;
+  color: #9CA3AF;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   SECTION TABS
+   ========================================================================== */
+
+.section-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.section-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 6px;
+  color: #D1D5DB;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Accessibility: Focus states */
+  outline: none;
+}
+
+.section-tab:hover {
+  background: #4B5563;
+  border-color: #6B7280;
+  color: #F3F4F6;
+}
+
+.section-tab:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.section-tab.active {
+  background: #6366F1;
+  border-color: #6366F1;
+  color: #FFFFFF;
+}
+
+.section-tab.active:hover {
+  background: #5855D6;
+  border-color: #5855D6;
+}
+
+.tab-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tab-title {
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   MAIN CONTENT AREA
+   ========================================================================== */
+
+.chat-content {
+  flex: 1;
+  background: #1F2A37;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  overflow: hidden;
+}
+
+.chat-section {
+  padding: 24px;
+  min-height: 400px;
+}
+
+.section-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #374151;
+}
+
+.section-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.section-header p {
+  font-size: 16px;
+  color: #9CA3AF;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   DEVELOPMENT NOTICE (Temporary)
+   ========================================================================== */
+
+.development-notice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.notice-card {
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.notice-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #F59E0B;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.notice-card p {
+  font-size: 16px;
+  color: #D1D5DB;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.placeholder-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #6366F1;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  
+  /* Accessibility */
+  outline: none;
+}
+
+.btn-primary:hover {
+  background: #5855D6;
+  transform: translateY(-1px);
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   LOADING STATES
+   ========================================================================== */
+
+.chat-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #374151;
+  border-top: 3px solid #6366F1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.chat-loading p {
+  font-size: 16px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* ==========================================================================
+   ERROR AND DEFAULT STATES
+   ========================================================================== */
+
+.default-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.default-section .section-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.default-section h2 {
+  color: #EF4444;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+/* Tablet styles */
+@media (max-width: 1024px) {
+  .chat-page {
+    gap: 16px;
+  }
+  
+  .chat-navigation {
+    padding: 20px;
+  }
+  
+  .nav-header h1 {
+    font-size: 24px;
+  }
+  
+  .section-tabs {
+    gap: 8px;
+  }
+  
+  .section-tab {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .chat-section {
+    padding: 20px;
+  }
+  
+  .section-header h2 {
+    font-size: 22px;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .chat-page {
+    gap: 12px;
+  }
+  
+  .chat-navigation {
+    padding: 16px;
+  }
+  
+  .nav-header {
+    margin-bottom: 16px;
+  }
+  
+  .nav-header h1 {
+    font-size: 22px;
+  }
+  
+  .nav-header p {
+    font-size: 14px;
+  }
+  
+  .section-tabs {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .section-tab {
+    justify-content: center;
+    padding: 12px 16px;
+    width: 100%;
+  }
+  
+  .chat-section {
+    padding: 16px;
+    min-height: 300px;
+  }
+  
+  .section-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  
+  .section-header h2 {
+    font-size: 20px;
+  }
+  
+  .section-header p {
+    font-size: 14px;
+  }
+  
+  .notice-card {
+    padding: 24px 20px;
+  }
+  
+  .notice-card h3 {
+    font-size: 18px;
+  }
+  
+  .notice-card p {
+    font-size: 14px;
+  }
+  
+  .placeholder-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+    max-width: 200px;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  .chat-navigation {
+    padding: 12px;
+  }
+  
+  .chat-section {
+    padding: 12px;
+  }
+  
+  .notice-card {
+    padding: 20px 16px;
+  }
+  
+  .development-notice {
+    min-height: 250px;
+  }
+}
+
+/* ==========================================================================
+   HIGH CONTRAST AND ACCESSIBILITY
+   ========================================================================== */
+
+/* Enhanced focus indicators for accessibility */
+@media (prefers-reduced-motion: no-preference) {
+  .section-tab,
+  .btn-primary {
+    transition: all 0.2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-tab,
+  .btn-primary,
+  .loading-spinner {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .section-tab {
+    border-width: 2px;
+  }
+  
+  .section-tab.active {
+    border-color: #FFFFFF;
+  }
+  
+  .btn-primary {
+    border: 2px solid #FFFFFF;
+  }
+}
+
+/* Dark mode adjustments (already dark by default, but ensuring consistency) */
+@media (prefers-color-scheme: dark) {
+  /* Already optimized for dark theme */
+} 

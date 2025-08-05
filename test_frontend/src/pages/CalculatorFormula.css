@@ -1,0 +1,633 @@
+/**
+ * Calculator Formula Page Styles
+ * Page 11: Формула калькулятора. Директор. Стр.11 . Действий 15
+ * 
+ * Design System:
+ * - Matches existing admin panel design
+ * - Responsive layout for desktop, tablet, mobile
+ * - Professional form styling with validation states
+ * - Consistent color scheme and typography
+ */
+
+.calculator-formula-page {
+  padding: 32px;
+  background-color: transparent;
+  min-height: calc(100vh - 80px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Page Header - Actions 3 & 4 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.page-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.edit-formula-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #3B82F6;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-formula-btn:hover {
+  background-color: #2563EB;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.edit-formula-btn:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.edit-formula-btn svg {
+  flex-shrink: 0;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 16px;
+  color: #6B7280;
+}
+
+/* Main Content */
+.formula-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Formula Sections - Actions 5, 8, 10 */
+.formula-section {
+  background-color: rgba(31, 42, 55, 0.5);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+.section-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #F9FAFB;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+}
+
+/* Layout Grids */
+.formula-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Input Groups - Actions 6, 7, 9, 11-15 */
+.formula-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formula-label {
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.formula-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formula-input {
+  padding: 12px 16px;
+  border: 2px solid rgba(75, 85, 99, 0.5);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #F9FAFB;
+  background-color: rgba(55, 65, 81, 0.3);
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formula-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formula-input.error {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.formula-input:disabled {
+  background-color: rgba(55, 65, 81, 0.2);
+  color: #6B7280;
+  cursor: not-allowed;
+}
+
+.formula-error-message {
+  font-family: 'Arimo', sans-serif;
+  font-size: 12px;
+  color: #EF4444;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.formula-display-value {
+  padding: 12px 16px;
+  background-color: rgba(55, 65, 81, 0.2);
+  border: 2px solid rgba(75, 85, 99, 0.5);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #F9FAFB;
+  font-weight: 500;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* Action Buttons */
+.formula-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  background-color: rgba(31, 42, 55, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn {
+  padding: 12px 24px;
+  background-color: #10B981;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.save-btn:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+  background-color: #FFFFFF;
+  color: #6B7280;
+  border: 2px solid #D1D5DB;
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background-color: #F9FAFB;
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+.cancel-btn:disabled {
+  background-color: #F3F4F6;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .calculator-formula-page {
+    padding: 20px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .page-title {
+    font-size: 28px;
+  }
+  
+  .edit-formula-btn {
+    align-self: flex-end;
+  }
+  
+  .formula-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .formula-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .formula-section {
+    padding: 20px;
+  }
+  
+  .formula-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+  
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .calculator-formula-page {
+    padding: 16px;
+  }
+  
+  .page-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .formula-content {
+    gap: 24px;
+  }
+  
+  .formula-section {
+    padding: 16px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .formula-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .formula-input,
+  .formula-display-value {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .edit-formula-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .save-btn,
+  .cancel-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .formula-input {
+    border-width: 3px;
+  }
+  
+  .formula-input:focus {
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+  
+  .formula-input.error {
+    border-width: 3px;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .edit-formula-btn,
+  .save-btn,
+  .cancel-btn,
+  .formula-input {
+    transition: none;
+  }
+  
+  .edit-formula-btn:hover,
+  .save-btn:hover {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .calculator-formula-page {
+    background-color: white;
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  .edit-formula-btn,
+  .formula-actions {
+    display: none;
+  }
+  
+  .formula-section {
+    box-shadow: none;
+    border: 1px solid #000;
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  
+  .page-title,
+  .section-title {
+    color: #000;
+  }
+} 
+/* Permission notice styles */
+.permission-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.notice-icon {
+  font-size: 1rem;
+}
+
+.notice-text {
+  font-weight: 500;
+}
+
+.current-role {
+  color: #495057;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+/* Bank Selection Section */
+.bank-selection-section {
+  background-color: rgba(31, 42, 55, 0.5);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(55, 65, 81, 0.5);
+  margin-bottom: 24px;
+}
+
+.bank-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 400px;
+}
+
+.bank-dropdown {
+  padding: 12px 16px;
+  border: 2px solid rgba(75, 85, 99, 0.5);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #F9FAFB;
+  background-color: rgba(55, 65, 81, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bank-dropdown:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bank-dropdown:disabled {
+  background-color: rgba(55, 65, 81, 0.2);
+  color: #6B7280;
+  cursor: not-allowed;
+}
+
+.bank-dropdown option {
+  padding: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+}
+
+/* Current Bank Info */
+.current-bank-info {
+  background-color: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.current-bank-info h3 {
+  font-family: 'Arimo', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1E40AF;
+  margin: 0 0 8px 0;
+}
+
+.no-config-notice {
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #B45309;
+  background-color: #FEF3C7;
+  border: 1px solid #F59E0B;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
+}
+
+/* Permission Notice Enhancement */
+.permission-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #991B1B;
+}
+
+.notice-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.notice-text {
+  font-weight: 500;
+}
+
+.current-role {
+  font-weight: 400;
+  color: #7F1D1D;
+  font-style: italic;
+}
+
+/* Enhanced Formula Grid for Bank-specific Parameters */
+.formula-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Enhanced Input Styling for Bank Parameters */
+.formula-input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.formula-input[type="number"]::-webkit-outer-spin-button,
+.formula-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Section-specific styling */
+.formula-section .section-title {
+  position: relative;
+}
+
+.formula-section .section-title::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #FBE54D 0%, #F59E0B 100%);
+  border-radius: 1px;
+}
+
+/* Enhanced Display Values for Bank Configuration */
+.formula-display-value {
+  padding: 12px 16px;
+  background-color: rgba(55, 65, 81, 0.2);
+  border: 2px solid rgba(75, 85, 99, 0.5);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 14px;
+  color: #F9FAFB;
+  font-weight: 600;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.formula-display-value::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: #10B981;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+/* Loading State Enhancements */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 16px;
+  color: #9CA3AF;
+  background-color: rgba(31, 42, 55, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+.loading-indicator::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E5E7EB;
+  border-top: 2px solid #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

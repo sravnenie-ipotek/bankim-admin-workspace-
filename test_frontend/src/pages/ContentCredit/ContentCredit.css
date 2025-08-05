@@ -1,0 +1,4 @@
+/* ContentCredit.css - Credit content page matching ContentMortgage design structure */
+
+/* Import ContentMortgage styles for consistency */
+@import '../ContentMortgage/ContentMortgage.css'; 

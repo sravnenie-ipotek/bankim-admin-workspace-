@@ -119,3 +119,4 @@ cypress/reports/
 SSH_README.md
 ssh_connection.md
 server_credentials.md
+SSH_SERVER_HIERARCHY.md

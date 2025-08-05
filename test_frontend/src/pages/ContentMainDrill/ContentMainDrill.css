@@ -1,0 +1,448 @@
+/**
+ * ContentMainDrill Styles
+ * Matching exact design from main_page_drill CSS example
+ */
+
+.content-main-drill {
+  padding: 0;
+  background-color: #111928;
+  min-height: 100vh;
+  font-family: 'Arimo', Arial, sans-serif;
+}
+
+/* Loading State */
+.content-main-drill.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #374151;
+  border-top-color: #6366F1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.content-main-drill.loading p {
+  margin-top: 20px;
+  color: #9CA3AF;
+  font-size: 14px;
+}
+
+/* Error State */
+.content-main-drill.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.content-main-drill.error p {
+  color: #F9FAFB;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.content-main-drill.error button {
+  padding: 10px 20px;
+  background-color: #6366F1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.content-main-drill.error button:hover {
+  background-color: #5558E3;
+}
+
+/* Breadcrumb Section */
+.breadcrumb-section {
+  padding: 16px 40px;
+  background-color: #1F2A37;
+  border-bottom: 1px solid #374151;
+}
+
+/* Page Header */
+.page-header {
+  padding: 16px 370px 0 370px;
+  background-color: #111928;
+}
+
+.page-title-main h1 {
+  font-family: 'Arimo', Arial, sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+  color: #F9FAFB;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* Last Modified Card */
+.last-modified-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #1F2A37;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 32px 370px 32px 370px;
+  gap: 12px;
+}
+
+.last-modified-label {
+  color: #9CA3AF;
+  font-size: 14px;
+  margin: 0;
+}
+
+.last-modified-time {
+  color: #F9FAFB;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Action Headers Section */
+.action-headers-section {
+  padding: 0 370px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: 'Arimo', Arial, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #F9FAFB;
+  margin: 0 0 16px 0;
+}
+
+.headers-container {
+  display: flex;
+  gap: 315px; /* Matching design spacing */
+}
+
+.header-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heb-input {
+  align-items: flex-end;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #374151;
+  border-radius: 8px;
+  border: 1px solid #4B5563;
+  padding: 8px 16px 9px 16px;
+  min-width: 212px;
+}
+
+.header-text-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 14px;
+  width: 100%;
+}
+
+.header-text-input.heb-text {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Add Option Button */
+.add-option-section {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 145px;
+  margin-bottom: 24px;
+}
+
+.add-option-btn {
+  display: flex;
+  align-items: center;
+  background: none;
+  border-radius: 8px;
+  border: 1px solid #9CA3AF;
+  padding: 8px 12px;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-option-btn:hover {
+  background-color: #374151;
+  border-color: #4B5563;
+}
+
+.add-option-btn .add-icon {
+  color: #F9FAFB;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.add-option-btn {
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Options Section */
+.options-section {
+  padding: 0 370px 40px 370px;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Option Row */
+.option-row {
+  display: flex;
+  align-items: center;
+  padding: 0 42px;
+  gap: 48px;
+}
+
+.option-left-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: #FFFFFF;
+  font-size: 24px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.option-number {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-inputs-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  flex: 1;
+}
+
+.option-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.option-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.option-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #374151;
+  border-radius: 8px;
+  border: 1px solid #4B5563;
+  padding: 8px 16px 9px 16px;
+  min-width: 212px;
+}
+
+.option-text-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 14px;
+  width: 100%;
+}
+
+.option-text-input.heb-text {
+  text-align: center;
+  direction: rtl;
+}
+
+.option-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.edit-btn {
+  background: #374151;
+}
+
+.delete-btn {
+  background: #374151;
+}
+
+.action-btn:hover {
+  background: #4B5563;
+}
+
+.btn-icon {
+  font-size: 20px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  align-items: flex-start;
+  background: #1F2A37;
+  padding: 24px 145px 24px 564px;
+  margin: 5px 0 0 264px;
+  gap: 16px;
+}
+
+.back-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: none;
+  border-radius: 8px;
+  border: 1px solid #9CA3AF;
+  padding: 10px 92px;
+  text-align: left;
+  cursor: pointer;
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background-color: #374151;
+  border-color: #4B5563;
+}
+
+.save-publish-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #FBE54D;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 23px;
+  text-align: left;
+  cursor: pointer;
+  color: #111928;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.save-publish-button:hover:not(:disabled) {
+  background: #F4DC1A;
+}
+
+.save-publish-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+  .page-header,
+  .last-modified-card,
+  .action-headers-section,
+  .options-section {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .action-buttons {
+    margin-left: 0;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  
+  .add-option-section {
+    padding-right: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .headers-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .option-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .option-inputs-section {
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
