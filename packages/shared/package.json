@@ -1,0 +1,28 @@
+{
+  "name": "@bankim/shared",
+  "version": "0.1.0",
+  "description": "Shared types and utilities for BankIM Management Portal",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -w -p tsconfig.json",
+    "test": "echo 'No tests yet'",
+    "lint": "echo 'No linting yet'",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": ["bankim", "shared", "types"],
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelMishaev/bankimOnlineAdmin_shared.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
