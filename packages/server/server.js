@@ -1744,6 +1744,7 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
         AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
+        AND ci.component_type != 'option'
       ORDER BY ci.content_key
     `, [screenLocation]);
 
@@ -1772,8 +1773,8 @@ app.get('/api/content/mortgage/drill/:stepId', async (req, res) => {
       }
     }));
 
-    // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    // Count all actions (options already excluded at database level)
+    const visibleActionCount = actions.length;
 
     res.json({
       success: true,
@@ -2046,8 +2047,8 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
     }
     
     // Validate that this screen_location exists in our known refinancing screens
-    const validScreenLocations = ['refinance_mortgage_1', 'refinance_mortgage_2', 'refinance_mortgage_3', 'refinance_mortgage_4'];
-    if (!validScreenLocations.includes(screenLocation) && !screenLocation.startsWith('refinance_mortgage_')) {
+    const validScreenLocations = ['refinance_credit_1', 'refinance_credit_2', 'refinance_credit_3', 'mortgage_step4'];
+    if (!validScreenLocations.includes(screenLocation) && !screenLocation.startsWith('refinance_credit_')) {
       return res.status(404).json({
         success: false,
         error: `Invalid step ID or screen location: ${stepId}`
@@ -2081,6 +2082,7 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
         AND ct_en.status = 'approved'
       WHERE ci.screen_location = $1
         AND ci.is_active = true
+        AND ci.component_type != 'option'
       ORDER BY ci.content_key
     `, [screenLocation]);
 
@@ -2126,8 +2128,8 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
       }
     }
 
-    // Count visible actions (excluding options like frontend does)
-    const visibleActionCount = actions.filter(action => action.component_type !== 'option').length;
+    // Count all actions (options already excluded at database level)
+    const visibleActionCount = actions.length;
 
     res.json({
       success: true,

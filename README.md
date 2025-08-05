@@ -1,133 +1,58 @@
-# 🏗️ BankIM Management Portal
+# BankIM Management Portal
 
-A modern monorepo for the BankIM Management Portal with clear separation between frontend, backend, and shared code.
+This repository contains the management and administrative components for the BankIM system.
 
-## 📁 Project Structure
+## 🏗️ Structure
 
-```
-bankIM_management_portal/
-├── packages/
-│   ├── client/                 # Frontend React app
-│   │   ├── src/               # React components & pages
-│   │   ├── public/            # Static assets
-│   │   ├── cypress/           # E2E tests
-│   │   ├── devHelp/           # Development documentation
-│   │   └── package.json       # Frontend dependencies
-│   ├── server/                # Backend Node.js API
-│   │   ├── server.js          # Main server
-│   │   ├── database/          # Database scripts
-│   │   ├── logs/              # Server logs
-│   │   └── package.json       # Backend dependencies
-│   └── shared/                # Shared types & utilities
-│       ├── src/types/         # TypeScript interfaces
-│       └── package.json       # Shared package config
-├── docs/                      # Project documentation
-├── scripts/                   # Utility scripts
-├── tools/                     # Development tools
-├── tests/                     # Test files
-├── assets/                    # Images and assets
-├── package.json               # Root workspace config
-└── turbo.json                 # Build system
-```
+- **Admin Components**: AdminLayout, AdminLogin
+- **Content Management**: All Content* components for managing system content
+- **Server**: Backend API and database management
+- **Shared**: TypeScript types and utilities
 
 ## 🚀 Quick Start
 
-### Development
 ```bash
 # Install dependencies
 npm install
 
-# Start all packages in development
+# Start development server
 npm run dev
 
-# Or start individual packages
-cd packages/client && npm run dev    # Frontend only
-cd packages/server && npm run dev    # Backend only
-```
-
-### Build
-```bash
-# Build all packages
+# Build for production
 npm run build
-
-# Build individual packages
-npm run build --workspace=@bankim/client
-npm run build --workspace=@bankim/server
-npm run build --workspace=@bankim/shared
 ```
 
-### Testing
-```bash
-# Run all tests
-npm run test
+## 📁 Components
 
-# Run tests for specific package
-npm run test --workspace=@bankim/client
-```
+### Admin Components
+- `AdminLayout/` - Main admin layout component
+- `AdminLogin/` - Admin authentication component
 
-## 📦 Packages
+### Content Management
+- `ContentManagement.tsx` - Main content management interface
+- `ContentManagementPage.tsx` - Content management page component
+- `Content*` - Various content editing and management components
 
-### `@bankim/client` - Frontend
-- **React 18** + **TypeScript** + **Vite**
-- **Multi-language support** (RU, EN, HE)
-- **Content management interface**
-- **Responsive design**
+### Server
+- `server/` - Backend API and database management
 
-### `@bankim/server` - Backend
-- **Node.js** + **Express** + **PostgreSQL**
-- **Content management API**
-- **Authentication & authorization**
-- **Database migrations**
-
-### `@bankim/shared` - Shared Code
-- **TypeScript interfaces** for API contracts
-- **Business logic** and calculations
-- **Validation schemas**
-- **Constants and utilities**
+### Shared
+- `shared/` - TypeScript types and utilities
 
 ## 🔧 Development
 
-### Team Workflow
-- **Frontend Team**: Works in `packages/client/`
-- **Backend Team**: Works in `packages/server/`
-- **Architecture Team**: Manages `packages/shared/`
+This repository is focused on the management and administrative aspects of the BankIM system, providing tools for:
 
-### Adding Dependencies
-```bash
-# Add to specific package
-npm install lodash --workspace=@bankim/client
-npm install express --workspace=@bankim/server
+- Content management and editing
+- User administration
+- System configuration
+- Database management
+- API administration
 
-# Add to shared package
-npm install zod --workspace=@bankim/shared
-```
+## 📦 Dependencies
 
-### Shared Code Usage
-```typescript
-// In client or server
-import { ApiResponse, ContentItem } from '@bankim/shared';
-
-const response: ApiResponse<ContentItem> = await fetch('/api/content');
-```
-
-## 📚 Documentation
-
-- **Setup Guide**: `docs/QUICK_START_GUIDE.md`
-- **Deployment**: `docs/RAILWAY_DEPLOYMENT.md`
-- **Database**: `docs/DATABASE_SETUP_GUIDE.md`
-- **API Documentation**: `docs/REPOSITORIES_README.md`
-
-## 🛠️ Tools
-
-- **Turborepo**: Incremental builds and caching
-- **TypeScript**: Type safety across packages
-- **ESLint**: Code linting
-- **Cypress**: E2E testing
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-**Built with ❤️ by the BankIM Development Team** 
+- React
+- TypeScript
+- Node.js
+- PostgreSQL
+- Express.js 

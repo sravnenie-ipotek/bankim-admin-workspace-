@@ -12,7 +12,14 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "push:all": "./scripts/push-all-repos.sh",
+    "push:client": "cd packages/client && ./scripts/push-client.sh",
+    "push:server": "cd packages/server && ./scripts/push-server.sh",
+    "push:shared": "cd packages/shared && ./scripts/publish.sh",
+    "push:dry-run": "./scripts/push-all-repos.sh --dry-run",
+    "sync": "./scripts/push-all-repos.sh -m 'Automated sync'",
+    "deploy:all": "npm run build && npm run push:all"
   },
   "devDependencies": {
     "turbo": "^1.11.0"
