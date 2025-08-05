@@ -8,7 +8,7 @@ ssh root@185.253.72.80
 # Password: PZy3oNaxQLTCvf
 ```
 
-### **Step 2: Create Directory Structure**
+### **Step 2: Create Directory Structure (Secure)**
 ```bash
 # Navigate to bankim directory
 cd /var/www/bankim/
@@ -17,9 +17,9 @@ cd /var/www/bankim/
 mkdir -p bankim-admin-api/mainapp
 mkdir -p bankim-admin-client/mainapp
 
-# Set proper permissions
-chmod 755 bankim-admin-api
-chmod 755 bankim-admin-client
+# Set SECURE permissions (owner + group only)
+chmod 750 bankim-admin-api
+chmod 750 bankim-admin-client
 
 # Verify creation
 ls -la
@@ -39,17 +39,19 @@ git clone git@github.com:MichaelMishaev/bankimOnlineAdmin_client.git .
 ls -la /var/www/bankim/
 ```
 
-### **Step 4: Setup Environment Files**
+### **Step 4: Setup Environment Files (Secure)**
 ```bash
 # Setup admin API environment
 cd /var/www/bankim/bankim-admin-api/mainapp/
 cp .env.template .env.production
 # Edit .env.production with production settings
+chmod 600 .env.production  # Only owner can read/write
 
 # Setup admin client environment
 cd /var/www/bankim/bankim-admin-client/mainapp/
 cp .env.template .env
 # Edit .env with development settings
+chmod 600 .env  # Only owner can read/write
 ```
 
 ### **Step 5: Install Dependencies**
@@ -85,6 +87,9 @@ pm2 status bankim-admin-client
 
 # Check directory structure
 tree /var/www/bankim/ -L 3
+
+# Check permissions (should show 750)
+ls -la /var/www/bankim/
 ```
 
 ## 🚨 **Troubleshooting Setup**
@@ -99,33 +104,48 @@ git clone https://github.com/MichaelMishaev/bankimOnlineAdmin.git .
 git clone https://github.com/MichaelMishaev/bankimOnlineAdmin_client.git .
 ```
 
-### **If Permissions Fail:**
+### **If Permissions Cause Issues:**
 ```bash
-# Fix permissions
-chown -R root:root /var/www/bankim/bankim-admin-api/
-chown -R root:root /var/www/bankim/bankim-admin-client/
-chmod -R 755 /var/www/bankim/bankim-admin-api/
-chmod -R 755 /var/www/bankim/bankim-admin-client/
+# If web server needs access, use 755
+chmod 755 /var/www/bankim/bankim-admin-api/
+chmod 755 /var/www/bankim/bankim-admin-client/
+
+# Or set proper ownership
+chown -R www-data:www-data /var/www/bankim/bankim-admin-api/
+chown -R www-data:www-data /var/www/bankim/bankim-admin-client/
 ```
 
-## 📋 **Final Structure**
+### **If Environment Files Need Web Server Access:**
+```bash
+# Only if web server needs to read .env files
+chmod 640 /var/www/bankim/bankim-admin-api/mainapp/.env.production
+chmod 640 /var/www/bankim/bankim-admin-client/mainapp/.env
+```
+
+## 📋 **Final Structure (Secure)**
 ```
 /var/www/bankim/
-├── bankim-admin-api/         ← NEW ADMIN API
+├── bankim-admin-api/         ← NEW ADMIN API (750 permissions)
 │   ├── mainapp/
 │   │   ├── server-db.js
 │   │   ├── package.json
-│   │   └── .env.production
+│   │   └── .env.production   ← 600 permissions
 │   └── .git/
-├── bankim-admin-client/      ← NEW ADMIN CLIENT
+├── bankim-admin-client/      ← NEW ADMIN CLIENT (750 permissions)
 │   ├── mainapp/
 │   │   ├── src/
 │   │   ├── package.json
-│   │   └── .env
+│   │   └── .env              ← 600 permissions
 │   └── .git/
 └── [existing BankIM Online folders...]
 ```
 
+## 🔐 **Security Benefits:**
+- **750**: Only owner and group can access (not others)
+- **600**: Only owner can read/write sensitive files
+- **Protects**: Source code, environment variables, secrets
+- **Maintains**: Functionality for web server
+
 ---
 
-**Note**: This creates separate admin folders that won't conflict with existing BankIM Online application. 
+**Note**: This creates secure admin folders that protect sensitive information while maintaining functionality. 
