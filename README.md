@@ -1,129 +1,133 @@
 # 🏗️ BankIM Management Portal
 
-## 📋 **Repository Structure**
+A modern monorepo for the BankIM Management Portal with clear separation between frontend, backend, and shared code.
 
-This project has been split into separate repositories for better development workflow:
+## 📁 Project Structure
 
-### **📁 Client Repository (Frontend)**
-- **Repository**: `bankimOnlineAdmin_client`
-- **GitHub**: https://github.com/MichaelMishaev/bankimOnlineAdmin_client
-- **Technology**: React 18 + TypeScript + Vite
-
-### **📁 Server Repository (Backend)**
-- **Repository**: `bankimOnlineAdmin` (this repository)
-- **GitHub**: https://github.com/MichaelMishaev/bankimOnlineAdmin
-- **Technology**: Node.js + Express + PostgreSQL
-
-## 📚 **Documentation**
-
-For complete repository information and setup instructions, see:
-- **[REPOSITORIES_README.md](./REPOSITORIES_README.md)** - Complete repository structure and setup guide
-
-## 🚀 **Quick Start**
-
-### **Backend Development (This Repository)**
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run backend:dev
-
-# Run database migrations
-npm run backend:migrate
+```
+bankIM_management_portal/
+├── packages/
+│   ├── client/                 # Frontend React app
+│   │   ├── src/               # React components & pages
+│   │   ├── public/            # Static assets
+│   │   ├── cypress/           # E2E tests
+│   │   ├── devHelp/           # Development documentation
+│   │   └── package.json       # Frontend dependencies
+│   ├── server/                # Backend Node.js API
+│   │   ├── server.js          # Main server
+│   │   ├── database/          # Database scripts
+│   │   ├── logs/              # Server logs
+│   │   └── package.json       # Backend dependencies
+│   └── shared/                # Shared types & utilities
+│       ├── src/types/         # TypeScript interfaces
+│       └── package.json       # Shared package config
+├── docs/                      # Project documentation
+├── scripts/                   # Utility scripts
+├── tools/                     # Development tools
+├── tests/                     # Test files
+├── assets/                    # Images and assets
+├── package.json               # Root workspace config
+└── turbo.json                 # Build system
 ```
 
-### **Frontend Development**
-```bash
-# Clone client repository
-git clone git@github.com:MichaelMishaev/bankimOnlineAdmin_client.git
-cd bankimOnlineAdmin_client
+## 🚀 Quick Start
 
+### Development
+```bash
 # Install dependencies
 npm install
 
-# Start development server
+# Start all packages in development
 npm run dev
+
+# Or start individual packages
+cd packages/client && npm run dev    # Frontend only
+cd packages/server && npm run dev    # Backend only
 ```
 
-## 🗄️ **Database Architecture**
-
-This repository contains the backend API and database management:
-
-- **Content Database**: Multi-language content management
-- **Core Database**: Business logic and calculations
-- **Management Database**: Admin operations and user management
-
-## 🔧 **Available Scripts**
-
+### Build
 ```bash
-# Backend Development
-npm run backend:dev      # Start backend server
-npm run backend:start    # Start production server
-npm run backend:test     # Run backend tests
+# Build all packages
+npm run build
 
-# Database Management
-npm run backend:migrate  # Run database migrations
-npm run backend:status   # Check database status
-
-# Full Stack Development
-npm run full-dev         # Start both frontend and backend
+# Build individual packages
+npm run build --workspace=@bankim/client
+npm run build --workspace=@bankim/server
+npm run build --workspace=@bankim/shared
 ```
 
-## 📊 **Technology Stack**
+### Testing
+```bash
+# Run all tests
+npm run test
 
-### **Backend (This Repository)**
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Database**: PostgreSQL (Railway)
-- **Authentication**: JWT
-- **API**: RESTful endpoints
+# Run tests for specific package
+npm run test --workspace=@bankim/client
+```
 
-### **Frontend (Client Repository)**
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Routing**: React Router DOM
-- **Styling**: CSS3 with CSS Variables
-- **Languages**: Russian, English, Hebrew (RTL)
+## 📦 Packages
 
-## 🌐 **API Endpoints**
+### `@bankim/client` - Frontend
+- **React 18** + **TypeScript** + **Vite**
+- **Multi-language support** (RU, EN, HE)
+- **Content management interface**
+- **Responsive design**
 
-### **Content Management**
-- `GET /api/content/:contentType` - Get content by type
-- `POST /api/content/:contentType` - Create new content
-- `PUT /api/content/:contentType/:id` - Update content
-- `DELETE /api/content/:contentType/:id` - Delete content
+### `@bankim/server` - Backend
+- **Node.js** + **Express** + **PostgreSQL**
+- **Content management API**
+- **Authentication & authorization**
+- **Database migrations**
 
-### **Authentication**
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/verify` - Verify JWT token
+### `@bankim/shared` - Shared Code
+- **TypeScript interfaces** for API contracts
+- **Business logic** and calculations
+- **Validation schemas**
+- **Constants and utilities**
 
-### **Health & Status**
-- `GET /health` - Server health check
-- `GET /api/db/status` - Database status
+## 🔧 Development
 
-## 🚀 **Deployment**
+### Team Workflow
+- **Frontend Team**: Works in `packages/client/`
+- **Backend Team**: Works in `packages/server/`
+- **Architecture Team**: Manages `packages/shared/`
 
-### **Backend Deployment**
-This repository is configured for Railway deployment:
-- **Railway**: Automatic deployment from GitHub
-- **Environment**: Production-ready configuration
-- **Database**: PostgreSQL on Railway
+### Adding Dependencies
+```bash
+# Add to specific package
+npm install lodash --workspace=@bankim/client
+npm install express --workspace=@bankim/server
 
-### **Frontend Deployment**
-The client repository supports multiple deployment options:
-- **Vercel**: Automatic deployment
-- **Netlify**: Drag and drop deployment
-- **Railway**: Static site deployment
+# Add to shared package
+npm install zod --workspace=@bankim/shared
+```
 
-## 📞 **Support**
+### Shared Code Usage
+```typescript
+// In client or server
+import { ApiResponse, ContentItem } from '@bankim/shared';
 
-- **Backend Issues**: Create issues in this repository
-- **Frontend Issues**: Create issues in `bankimOnlineAdmin_client`
-- **API Documentation**: See `REPOSITORIES_README.md`
+const response: ApiResponse<ContentItem> = await fetch('/api/content');
+```
+
+## 📚 Documentation
+
+- **Setup Guide**: `docs/QUICK_START_GUIDE.md`
+- **Deployment**: `docs/RAILWAY_DEPLOYMENT.md`
+- **Database**: `docs/DATABASE_SETUP_GUIDE.md`
+- **API Documentation**: `docs/REPOSITORIES_README.md`
+
+## 🛠️ Tools
+
+- **Turborepo**: Incremental builds and caching
+- **TypeScript**: Type safety across packages
+- **ESLint**: Code linting
+- **Cypress**: E2E testing
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Last Updated**: August 2025
-**Version**: 1.0.0 
+**Built with ❤️ by the BankIM Development Team** 

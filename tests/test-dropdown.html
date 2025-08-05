@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdown Edit</title>
+    <style>
+        body {
+            font-family: system-ui;
+            background: #111928;
+            color: #F9FAFB;
+            padding: 40px;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #1F2A37;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #FBE54D;
+            margin-bottom: 20px;
+        }
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #374151;
+            color: #F9FAFB;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .test-link:hover {
+            background: #4B5563;
+            transform: translateY(-1px);
+        }
+        .success { color: #10B981; }
+        .error { color: #EF4444; }
+        .info { color: #60A5FA; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Testing SharedDropdownEdit Component</h1>
+    
+    <div class="test-section">
+        <h2>Test Links</h2>
+        <p class="info">Click these links to test the shared dropdown edit component:</p>
+        
+        <a href="http://localhost:3002/content/mortgage/dropdown-edit/25" class="test-link" target="_blank">
+            📊 Mortgage Dropdown Edit (ID: 25)
+        </a>
+        
+        <a href="http://localhost:3003/content/mortgage/dropdown-edit/25" class="test-link" target="_blank">
+            📊 Mortgage Dropdown Edit (Port 3003)
+        </a>
+        
+        <a href="http://localhost:3002/content/mortgage-refi/dropdown-edit/30" class="test-link" target="_blank">
+            🔄 Mortgage-Refi Dropdown Edit (ID: 30)
+        </a>
+        
+        <a href="http://localhost:3002/content/credit/dropdown-edit/40" class="test-link" target="_blank">
+            💳 Credit Dropdown Edit (ID: 40)
+        </a>
+    </div>
+    
+    <div class="test-section">
+        <h2>Expected Behavior</h2>
+        <ul>
+            <li class="success">✅ Page should load with dark theme matching the design</li>
+            <li class="success">✅ Breadcrumb navigation should show correct path</li>
+            <li class="success">✅ Title fields for RU and HE should be displayed</li>
+            <li class="success">✅ Dropdown options should be loaded and editable</li>
+            <li class="success">✅ Add/Delete option buttons should work</li>
+            <li class="success">✅ Save button should be disabled until changes are made</li>
+            <li class="success">✅ Back button should navigate to previous page</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Component Features</h2>
+        <ul>
+            <li>🎨 <strong>Dark Theme:</strong> Consistent with BankIM design system</li>
+            <li>🌐 <strong>Multilingual:</strong> Support for RU/HE/EN based on content type</li>
+            <li>⚙️ <strong>Configuration-Driven:</strong> Behavior changes based on content type</li>
+            <li>📱 <strong>Responsive:</strong> Works on different screen sizes</li>
+            <li>🔄 <strong>Real-time Updates:</strong> Changes tracked and save button enabled</li>
+            <li>🎯 <strong>Type-Safe:</strong> Full TypeScript support</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Testing Checklist</h2>
+        <ol>
+            <li>Open the mortgage dropdown edit link</li>
+            <li>Verify the page loads without errors</li>
+            <li>Check that existing content is displayed</li>
+            <li>Try editing the title fields</li>
+            <li>Add a new dropdown option</li>
+            <li>Delete an option (if more than one exists)</li>
+            <li>Save the changes</li>
+            <li>Verify navigation back works correctly</li>
+        </ol>
+    </div>
+</body>
+</html>

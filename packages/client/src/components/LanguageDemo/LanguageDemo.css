@@ -1,0 +1,53 @@
+.language-demo {
+  background: #374151;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.language-demo h2 {
+  color: #F59E0B;
+  margin-bottom: 1rem;
+}
+
+.demo-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.demo-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #4B5563;
+  color: #F9FAFB;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.demo-btn:hover {
+  background: #6B7280;
+}
+
+.demo-btn.primary {
+  background: #3B82F6;
+}
+
+.demo-btn.primary:hover {
+  background: #2563EB;
+}
+
+.demo-btn.danger {
+  background: #EF4444;
+}
+
+.demo-btn.danger:hover {
+  background: #DC2626;
+}
+
+.demo-info p {
+  color: #D1D5DB;
+  margin: 0.5rem 0;
+}

@@ -1,0 +1,482 @@
+/* SharedHeader Component Styles - Based on Figma Admin Panel Design System */
+
+/* Import Arimo font */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&display=swap');
+
+/* Navbar Initial */
+.navbar-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 189px;
+  
+  width: 100%;
+  height: 98px;
+  
+  background: #111928;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.navbar-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+  
+  width: 96px;
+  height: 42px;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.logo-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 96px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-frame {
+  width: 96px;
+  height: 42.86px;
+  position: relative;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Logo Image */
+.logo-image {
+  width: 96px;
+  height: 42.86px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.logo-image:hover {
+  transform: scale(1.05);
+}
+
+/* Language Selector Frame */
+.language-selector-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0px;
+  gap: 8px;
+  isolation: isolate;
+  
+  width: 90px;
+  height: 24px;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  position: relative;
+}
+
+/* Language Selector */
+.language-selector {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 12px;
+  
+  width: 90px;
+  height: 24px;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  z-index: 0;
+}
+
+.language-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  font-family: 'Arimo', sans-serif;
+}
+
+.selected-language {
+  width: 54px;
+  height: 21px;
+  
+  font-family: 'Arimo', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: #FFFFFF;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.dropdown-arrow {
+  width: 24px;
+  height: 24px;
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(0deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  
+  position: absolute;
+  width: 155px;
+  height: 83px;
+  left: -70px;
+  top: 32px;
+  
+  background: #374151;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  z-index: 1;
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 0px;
+  
+  width: 155px;
+  height: 82px;
+  
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+/* Nav Link */
+.nav-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 12px;
+  
+  width: 155px;
+  height: 37px;
+  
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid #F59E0B;
+}
+
+/* Flag Icons */
+.flag-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Russia Flag */
+.russia-flag {
+  position: relative;
+}
+
+.russia-flag .flag-white {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 67.39%;
+  background: #F0F0F0;
+}
+
+.russia-flag .flag-blue {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 32.61%;
+  bottom: 28.26%;
+  background: #0052B4;
+}
+
+.russia-flag .flag-red {
+  position: absolute;
+  left: 3.11%;
+  right: 3.11%;
+  top: 67.39%;
+  bottom: 0%;
+  background: #D80027;
+}
+
+/* Israel Flag */
+.israel-flag {
+  position: relative;
+}
+
+.israel-flag .flag-white-bg {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F0F0F0;
+}
+
+.israel-flag .star-of-david {
+  position: absolute;
+  left: 31.17%;
+  right: 31.18%;
+  top: 28.27%;
+  bottom: 28.26%;
+  background: #0052B4;
+}
+
+.israel-flag .flag-blue-stripe-top {
+  position: absolute;
+  left: 7.34%;
+  right: 7.34%;
+  top: 10.87%;
+  bottom: 76.08%;
+  background: #0052B4;
+}
+
+.israel-flag .flag-blue-stripe-bottom {
+  position: absolute;
+  left: 7.34%;
+  right: 7.34%;
+  top: 76.09%;
+  bottom: 10.87%;
+  background: #0052B4;
+}
+
+/* USA Flag */
+.usa-flag {
+  position: relative;
+  overflow: hidden;
+}
+
+.usa-flag .flag-stripes {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: linear-gradient(
+    to bottom,
+    #B22234 0%,
+    #B22234 7.69%,
+    #FFFFFF 7.69%,
+    #FFFFFF 15.38%,
+    #B22234 15.38%,
+    #B22234 23.08%,
+    #FFFFFF 23.08%,
+    #FFFFFF 30.77%,
+    #B22234 30.77%,
+    #B22234 38.46%,
+    #FFFFFF 38.46%,
+    #FFFFFF 46.15%,
+    #B22234 46.15%,
+    #B22234 53.85%,
+    #FFFFFF 53.85%,
+    #FFFFFF 61.54%,
+    #B22234 61.54%,
+    #B22234 69.23%,
+    #FFFFFF 69.23%,
+    #FFFFFF 76.92%,
+    #B22234 76.92%,
+    #B22234 84.62%,
+    #FFFFFF 84.62%,
+    #FFFFFF 92.31%,
+    #B22234 92.31%,
+    #B22234 100%
+  );
+}
+
+.usa-flag .flag-canton {
+  position: absolute;
+  left: 0%;
+  right: 60%;
+  top: 0%;
+  bottom: 46.15%;
+  background: #3C3B6E;
+}
+
+/* Language Text */
+.language-text {
+  height: 21px;
+  
+  font-family: 'Arimo', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: #F9FAFB;
+  
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1440px) {
+  .navbar-container {
+    padding: 28px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 16px 20px;
+    height: 70px;
+  }
+  
+  .logo-section {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .logo-button {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .logo-frame {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .logo-image {
+    width: 60px;
+    height: 28px;
+  }
+  
+  .language-selector-frame {
+    width: 70px;
+    height: 20px;
+  }
+  
+  .language-selector {
+    width: 70px;
+    height: 20px;
+  }
+  
+  .selected-language {
+    font-size: 12px;
+    width: 40px;
+  }
+  
+  .dropdown-arrow {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dropdown-menu {
+    width: 130px;
+    left: -50px;
+  }
+  
+  .dropdown-content {
+    width: 130px;
+  }
+  
+  .nav-link {
+    width: 130px;
+    height: 32px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 12px 15px;
+    height: 60px;
+  }
+  
+  .logo-section {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .logo-button {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .logo-frame {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .logo-image {
+    width: 50px;
+    height: 24px;
+  }
+  
+  .selected-language {
+    font-size: 11px;
+    width: 35px;
+  }
+} 

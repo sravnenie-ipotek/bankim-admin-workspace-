@@ -1,0 +1,642 @@
+/* Import Arimo font */
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
+
+/* Table Bank - Exact Figma specifications */
+.table-bank {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+
+  position: absolute;
+  width: 925px;
+  height: 507px;
+  left: 63px;
+  top: 636px;
+
+  /* gray/800 */
+  background: #1F2A37;
+  /* shadow */
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Table header */
+.table-header {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+
+  width: 925px;
+  height: 74px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.table-header__content {
+  margin: 0 auto;
+  width: 893px;
+  height: 42px;
+  position: relative;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Input Field */
+.input-field {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  position: absolute;
+  width: 409px;
+  height: 45px;
+  left: 0px;
+  top: 0px;
+}
+
+.input-field__wrapper {
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 10px;
+
+  width: 409px;
+  height: 45px;
+
+  /* gray/700 */
+  background: #374151;
+  /* gray/600 */
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.input-content {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+
+  width: 377px;
+  height: 21px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.input-text {
+  width: 351px;
+  height: 21px;
+  border: none;
+  background: transparent;
+  outline: none;
+
+  /* text-sm-14/font-normal */
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  /* identical to box height, or 21px */
+  display: flex;
+  align-items: center;
+
+  /* gray/400 */
+  color: #9CA3AF;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+.input-text::placeholder {
+  color: #9CA3AF;
+}
+
+/* Datepicker */
+.datepicker {
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 12px 16px;
+
+  position: absolute;
+  visibility: hidden;
+  width: 325px;
+  height: 42px;
+  left: 436px;
+  top: 0px;
+
+  /* gray/700 */
+  background: #374151;
+  /* gray/600 */
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+}
+
+.datepicker--visible {
+  visibility: visible;
+}
+
+.datepicker__content {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+
+  width: 293px;
+  height: 18px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+
+.calendar-icon {
+  width: 18px;
+  height: 18px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.date-input {
+  width: 267px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  outline: none;
+
+  /* leading-tight/text-sm/font-normal */
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 125%;
+  /* identical to box height, or 18px */
+  display: flex;
+  align-items: center;
+
+  /* gray/400 */
+  color: #9CA3AF;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+/* Filter Button */
+.filter-button {
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+
+  position: absolute;
+  width: 99px;
+  height: 34px;
+  left: 794px;
+  top: 4px;
+
+  /* gray/800 */
+  background: #1F2A37;
+  /* gray/600 */
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-button:hover {
+  background: #374151;
+  border-color: #6B7280;
+}
+
+.adjustments-icon {
+  width: 16px;
+  height: 16px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.filter-button__text {
+  width: 51px;
+  height: 18px;
+
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 150%;
+  /* identical to box height, or 18px */
+  letter-spacing: -0.01em;
+
+  color: #F9FAFB;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+
+/* Table Columns */
+.table-columns {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+
+  width: 925px;
+  height: 380px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+/* Column base styles */
+.column {
+  /* Auto layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+
+  height: 380px;
+
+  /* Inside auto layout */
+  flex: none;
+  flex-grow: 0;
+}
+
+/* Column specific widths */
+.column--names {
+  width: 172px;
+  order: 0;
+}
+
+.column--type {
+  width: 167px;
+  order: 1;
+}
+
+.column--status {
+  width: 202px;
+  order: 2;
+}
+
+.column--access {
+  width: 185px;
+  order: 3;
+}
+
+.column--actions {
+  width: 199px;
+  order: 4;
+}
+
+/* Table Cell styles */
+.table-cell {
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+
+  /* Inside auto layout */
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.table-cell--header {
+  height: 50px;
+
+  /* gray/700 */
+  background: #374151;
+  border-radius: 0px;
+
+  /* Inside auto layout */
+  order: 0;
+}
+
+.table-cell--data {
+  height: 54px;
+
+  /* Inside auto layout */
+  order: 2;
+}
+
+/* Header text */
+.header-text {
+  /* uppercase/text-xs/font-semibold */
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  /* identical to box height, or 18px */
+  text-transform: uppercase;
+
+  /* gray/400 */
+  color: #9CA3AF;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Data text */
+.data-text {
+  /* text-sm-14/font-semibold */
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  /* identical to box height, or 21px */
+
+  /* white */
+  color: #FFFFFF;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 1;
+}
+
+/* Border bottom */
+.border-bottom {
+  width: 100%;
+  height: 1px;
+
+  /* gray/700 */
+  background: #374151;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+/* Badge styles */
+.badge {
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 2px 10px;
+
+  min-width: 59px;
+  height: 22px;
+
+  /* gray/700 */
+  background: #374151;
+  border-radius: 6px;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Badge variants */
+.badge--active {
+  /* green/400 */
+  border: 0.5px solid #31C48D;
+}
+
+.badge--inactive {
+  /* gray/500 */
+  border: 0.5px solid #6B7280;
+}
+
+.badge--pending {
+  /* yellow/300 */
+  border: 0.5px solid #FACA15;
+}
+
+.badge--blocked {
+  /* red/400 */
+  border: 0.5px solid #F98080;
+}
+
+.badge--verification {
+  /* red/400 */
+  border: 0.5px solid #F98080;
+}
+
+/* Badge text */
+.badge__text {
+  /* text-xs-12/font-medium */
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 150%;
+  /* identical to box height, or 18px */
+  text-align: center;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+/* Badge text colors */
+.badge--active .badge__text {
+  /* green/400 */
+  color: #31C48D;
+}
+
+.badge--inactive .badge__text {
+  /* gray/300 */
+  color: #D1D5DB;
+}
+
+.badge--pending .badge__text {
+  /* yellow/300 */
+  color: #FACA15;
+}
+
+.badge--blocked .badge__text {
+  /* red/400 */
+  color: #F98080;
+}
+
+.badge--verification .badge__text {
+  /* red/400 */
+  color: #F98080;
+}
+
+/* Table Footer */
+.table-footer {
+  box-sizing: border-box;
+
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 10px;
+
+  width: 925px;
+  height: 53px;
+
+  border-top: 1px solid #374151;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 2;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.view-all-button {
+  margin: 0 auto;
+  width: 174px;
+  height: 21px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  /* identical to box height, or 21px */
+  text-align: center;
+  letter-spacing: -0.01em;
+
+  color: #FBE54D;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+
+  transition: all 0.2s ease;
+}
+
+.view-all-button:hover {
+  color: #F9E71E;
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .table-bank {
+    width: 100%;
+    max-width: 925px;
+    left: 0;
+    position: relative;
+    top: 0;
+  }
+
+  .table-header,
+  .table-columns,
+  .table-footer {
+    width: 100%;
+  }
+
+  .table-header__content {
+    width: calc(100% - 32px);
+  }
+
+  .filter-button {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-columns {
+    overflow-x: auto;
+  }
+
+  .column {
+    min-width: 150px;
+  }
+
+  .input-field {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .datepicker {
+    width: 100%;
+    max-width: 250px;
+    left: 0;
+    top: 50px;
+  }
+} 

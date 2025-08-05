@@ -1,38 +1,26 @@
 {
-  "name": "bankim-client",
+  "name": "bankim-management-portal",
   "version": "1.0.0",
-  "type": "module",
-  "description": "BankIM Management Portal - Frontend Client",
-  "main": "main.tsx",
+  "private": true,
+  "description": "BankIM Management Portal - Monorepo with client, server, and shared packages",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "test:mortgage": "cypress run --spec 'cypress/e2e/mortgage-drill-navigation.cy.ts'",
-    "test:content-errors": "cypress run --spec 'cypress/e2e/content-not-found-check.cy.ts'",
-    "test:full-drill": "cypress run --spec 'cypress/e2e/full-drill-depth-test.cy.ts'",
-    "test:all": "cypress run"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.1"
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "type-check": "turbo run type-check"
   },
   "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "turbo": "^1.11.0"
   },
-  "author": "Michael Mishayev",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "author": "BankIM Development Team",
   "license": "MIT"
 }

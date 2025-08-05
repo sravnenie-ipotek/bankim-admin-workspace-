@@ -1,0 +1,199 @@
+{
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "confirm": "Подтвердить",
+    "back": "Назад",
+    "next": "Далее",
+    "close": "Закрыть",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "actions": "Действия",
+    "status": "Статус",
+    "date": "Дата",
+    "language": "Язык",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "auth": {
+    "login": "Вход",
+    "logout": "Выйти",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "rememberMe": "Запомнить меня",
+    "forgotPassword": "Забыли пароль?",
+    "loginError": "Неверное имя пользователя или пароль",
+    "accessDenied": "Доступ запрещен",
+    "authRequired": "Требуется авторизация",
+    "authRequiredMessage": "Пожалуйста, войдите в систему для доступа к этой странице.",
+    "insufficientPermissions": "Недостаточно прав",
+    "insufficientPermissionsMessage": "У вас нет разрешения на выполнение этого действия.",
+    "yourRole": "Ваша роль",
+    "requiredRole": "Требуемая роль",
+    "requiredPermission": "Требуемое разрешение"
+  },
+  "roles": {
+    "director": "Директор",
+    "administration": "Администратор",
+    "salesManager": "Менеджер по продажам",
+    "contentManager": "Контент-менеджер",
+    "brokers": "Брокер",
+    "bankEmployee": "Сотрудник банка"
+  },
+  "menu": {
+    "dashboard": "Главная страница",
+    "clients": "Клиенты",
+    "bankEmployee": "Банк сотрудник",
+    "components": "Компоненты",
+    "header": "Заголовок",
+    "calculatorFormula": "Формула калькулятора",
+    "chat": "Чат",
+    "contentSite": "Контент сайта",
+    "settings": "Настройки",
+    "main": "Главная",
+    "menu": "Меню",
+    "mortgage": "Рассчитать ипотеку",
+    "mortgageRefi": "Рефинансирование ипо...",
+    "credit": "Расчет Кредита",
+    "creditRefi": "Рефинансирован...",
+    "general": "Общие страницы"
+  },
+  "content": {
+    "management": "Управление контентом",
+    "title": "Заголовок",
+    "description": "Описание",
+    "category": "Категория",
+    "type": "Тип",
+    "lastModified": "Последнее изменение",
+    "notModified": "Не изменялось",
+    "contentType": "Тип контента",
+    "contentKey": "Ключ контента",
+    "screenLocation": "Расположение на экране",
+    "componentType": "Тип компонента",
+    "translations": "Переводы",
+    "addNew": "Добавить новый",
+    "editContent": "Редактировать контент",
+    "deleteContent": "Удалить контент",
+    "confirmDelete": "Вы уверены, что хотите удалить этот контент?",
+    "saveChanges": "Сохранить изменения",
+    "discardChanges": "Отменить изменения",
+    "changesSaved": "Изменения сохранены",
+    "errorSaving": "Ошибка при сохранении",
+    "loadingContent": "Загрузка контента...",
+    "noContent": "Контент не найден",
+    "searchContent": "Поиск контента...",
+    "filterByCategory": "Фильтр по категории",
+    "filterByType": "Фильтр по типу",
+    "allCategories": "Все категории",
+    "allTypes": "Все типы"
+  },
+  "pages": {
+    "home": {
+      "title": "Главная страница",
+      "welcome": "Добро пожаловать в систему управления",
+      "selectRole": "Выберите роль для продолжения"
+    },
+    "salesManager": {
+      "title": "Менеджер по продажам",
+      "description": "Панель управления продажами",
+      "metrics": "Показатели продаж",
+      "reports": "Отчеты",
+      "clients": "Клиенты"
+    },
+    "administration": {
+      "title": "Администрация",
+      "description": "Административная панель",
+      "users": "Пользователи",
+      "permissions": "Разрешения",
+      "system": "Система"
+    },
+    "brokers": {
+      "title": "Брокеры",
+      "description": "Панель брокеров",
+      "portfolio": "Портфель",
+      "transactions": "Транзакции",
+      "analytics": "Аналитика"
+    },
+    "contentManager": {
+      "title": "Контент-менеджер",
+      "description": "Управление контентом и медиа-ресурсами",
+      "pages": "Страницы",
+      "media": "Медиа",
+      "seo": "SEO"
+    },
+    "director": {
+      "title": "Директор",
+      "description": "Панель директора",
+      "overview": "Обзор",
+      "reports": "Отчеты",
+      "settings": "Настройки"
+    }
+  },
+  "actions": {
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "view": "Просмотр",
+    "download": "Скачать",
+    "upload": "Загрузить",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "refresh": "Обновить",
+    "create": "Создать",
+    "update": "Обновить",
+    "approve": "Утвердить",
+    "reject": "Отклонить",
+    "submit": "Отправить",
+    "reset": "Сбросить"
+  },
+  "messages": {
+    "success": {
+      "saved": "Успешно сохранено",
+      "deleted": "Успешно удалено",
+      "updated": "Успешно обновлено",
+      "created": "Успешно создано",
+      "uploaded": "Успешно загружено"
+    },
+    "error": {
+      "general": "Произошла ошибка",
+      "notFound": "Не найдено",
+      "unauthorized": "Не авторизован",
+      "forbidden": "Доступ запрещен",
+      "validation": "Ошибка валидации",
+      "network": "Ошибка сети"
+    },
+    "confirm": {
+      "delete": "Вы уверены, что хотите удалить?",
+      "save": "Сохранить изменения?",
+      "discard": "Отменить изменения?",
+      "logout": "Вы уверены, что хотите выйти?"
+    }
+  },
+  "forms": {
+    "required": "Обязательное поле",
+    "optional": "Необязательное поле",
+    "placeholder": {
+      "enterText": "Введите текст",
+      "selectOption": "Выберите опцию",
+      "search": "Поиск...",
+      "email": "Введите email",
+      "password": "Введите пароль",
+      "name": "Введите имя"
+    },
+    "validation": {
+      "required": "Это поле обязательно",
+      "email": "Введите корректный email",
+      "minLength": "Минимальная длина {{min}} символов",
+      "maxLength": "Максимальная длина {{max}} символов",
+      "pattern": "Неверный формат"
+    }
+  },
+  "languages": {
+    "ru": "Русский",
+    "he": "עברית",
+    "en": "English"
+  }
+}

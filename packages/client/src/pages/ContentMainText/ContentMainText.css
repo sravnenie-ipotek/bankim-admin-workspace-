@@ -1,0 +1,326 @@
+/* ContentMainText Component Styles */
+/* Text editing flow implementation following Figma specifications */
+
+.content-main-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background-color: #111928;
+  color: #F9FAFB;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.content-main-text__navigation {
+  margin-bottom: 16px;
+}
+
+/* Header Section */
+.content-main-text__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.header-left .page-title {
+  font-family: Arimo, sans-serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.5;
+  color: #F9FAFB;
+  margin: 0 0 8px 0;
+}
+
+.header-left .page-subtitle {
+  font-family: Arimo, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* Main Body Layout following Figma structure */
+.content-main-text__body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  flex: 1;
+  max-width: 885px; /* Based on Figma layout width */
+}
+
+/* Text Sections */
+.text-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section-title {
+  font-family: Arimo, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #F9FAFB;
+  margin: 0;
+}
+
+/* Language Inputs Row */
+.language-inputs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.language-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-family: Arimo, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #F9FAFB;
+}
+
+.input-field {
+  position: relative;
+}
+
+.text-input {
+  width: 100%;
+  padding: 8px 16px;
+  background-color: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  color: #F9FAFB;
+  font-family: Arimo, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #FBE54D;
+  box-shadow: 0 0 0 2px rgba(251, 229, 77, 0.2);
+}
+
+.text-input::placeholder {
+  color: #6B7280;
+}
+
+.heb-input {
+  text-align: right;
+  direction: rtl;
+}
+
+.textarea-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Additional Text Items */
+.additional-text-items {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.text-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+}
+
+.item-number {
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arimo, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #F9FAFB;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+.text-item .language-inputs-row {
+  flex: 1;
+}
+
+.edit-item-btn {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.edit-item-btn:hover {
+  background-color: #374151;
+}
+
+.edit-icon {
+  font-size: 16px;
+}
+
+/* Action Buttons */
+.content-main-text__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid #374151;
+  margin-top: auto;
+}
+
+.back-button {
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid #4B5563;
+  border-radius: 8px;
+  color: #F9FAFB;
+  font-family: Arimo, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover:not(:disabled) {
+  border-color: #6B7280;
+  background-color: #374151;
+}
+
+.save-publish-button {
+  padding: 12px 32px;
+  background-color: #FBE54D;
+  border: none;
+  border-radius: 8px;
+  color: #111928;
+  font-family: Arimo, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-publish-button:hover:not(:disabled) {
+  background-color: #F59E0B;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 229, 77, 0.3);
+}
+
+.save-publish-button:disabled,
+.back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading and Error States */
+.content-main-text.loading,
+.content-main-text.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #374151;
+  border-top: 3px solid #FBE54D;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.content-main-text.loading p,
+.content-main-text.error p {
+  font-family: Arimo, sans-serif;
+  font-size: 16px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.content-main-text.error button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 6px;
+  color: #F9FAFB;
+  font-family: Arimo, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-main-text {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .content-main-text__body {
+    gap: 24px;
+  }
+  
+  .language-inputs-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .text-item {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .item-number {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+  
+  .edit-item-btn {
+    align-self: flex-end;
+    margin-top: 0;
+  }
+  
+  .content-main-text__actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .back-button,
+  .save-publish-button {
+    width: 100%;
+    text-align: center;
+  }
+} 
