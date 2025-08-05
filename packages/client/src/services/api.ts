@@ -6,7 +6,7 @@
 import { ContentPage } from '../pages/Chat/ContentManagement/types/contentTypes';
 import { ContentListItem } from '../pages/ContentListBase/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 const USE_REAL_CONTENT_DATA = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
 const CONTENT_CACHE_TTL = parseInt(import.meta.env.VITE_CONTENT_CACHE_TTL || '300000');
@@ -263,7 +263,9 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      // Use relative path for content endpoints since Vite proxy handles routing
+      const baseUrl = endpoint.startsWith('/api/content') ? '' : API_BASE_URL;
+      const response = await fetch(`${baseUrl}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,
