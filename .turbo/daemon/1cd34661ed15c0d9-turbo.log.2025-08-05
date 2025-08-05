@@ -555,3 +555,36 @@
 2025-08-05T11:18:53.561502Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/vite.config.ts.timestamp-1754392733512-8e5101014b96d8.mjs")}
 2025-08-05T11:18:53.561510Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
 2025-08-05T11:18:53.562151Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-08-05T11:21:05.861613Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2025-08-05T11:21:05.861621Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:21:12.061934Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md")}
+2025-08-05T11:21:12.061941Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:28:07.279253Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude"), AnchoredSystemPathBuf(".claude/agents")}
+2025-08-05T11:28:07.279260Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:28:35.879588Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/push-automation.md"), AnchoredSystemPathBuf(".claude/agents/push-automation.md.tmp.30199.1754393315763")}
+2025-08-05T11:28:35.879595Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:48:09.279988Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/react-frontend-specialist.md.tmp.61750.1754394489238"), AnchoredSystemPathBuf(".claude/agents/react-frontend-specialist.md")}
+2025-08-05T11:48:09.279995Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:50:08.780438Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/qa-testing-specialist.md"), AnchoredSystemPathBuf(".claude/agents/qa-testing-specialist.md.tmp.61750.1754394608707")}
+2025-08-05T11:50:08.780446Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:51:06.780464Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/content-management-specialist.md"), AnchoredSystemPathBuf(".claude/agents/content-management-specialist.md.tmp.61750.1754394666748")}
+2025-08-05T11:51:06.780471Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:52:07.880646Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/localization-specialist.md"), AnchoredSystemPathBuf(".claude/agents/localization-specialist.md.tmp.61750.1754394727801")}
+2025-08-05T11:52:07.880653Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:53:08.680327Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/backend-api-specialist.md"), AnchoredSystemPathBuf(".claude/agents/backend-api-specialist.md.tmp.61750.1754394788637")}
+2025-08-05T11:53:08.680335Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:54:11.481362Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/security-specialist.md.tmp.61750.1754394851419"), AnchoredSystemPathBuf(".claude/agents/security-specialist.md")}
+2025-08-05T11:54:11.481370Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T11:55:38.180859Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".claude/agents/typescript-types-specialist.md.tmp.61750.1754394938089"), AnchoredSystemPathBuf(".claude/agents/typescript-types-specialist.md")}
+2025-08-05T11:55:38.180866Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T12:08:48.350231Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/vite.config.ts.timestamp-1754395728251-0732d4d7634c7.mjs")}
+2025-08-05T12:08:48.350240Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
+2025-08-05T12:08:48.350363Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-08-05T12:10:07.049546Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md.tmp.61750.1754395807011"), AnchoredSystemPathBuf("README.md")}
+2025-08-05T12:10:07.049553Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-05T12:11:46.948359Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/README.md.tmp.61750.1754395906910"), AnchoredSystemPathBuf("packages/client/README.md")}
+2025-08-05T12:11:46.948366Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
+2025-08-05T12:13:25.694135Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/shared/README.md"), AnchoredSystemPathBuf("packages/shared/README.md.tmp.61750.1754396005583")}
+2025-08-05T12:13:25.694144Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/shared"), path: AnchoredSystemPathBuf("packages/shared") }}))
+2025-08-05T12:15:15.792608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/server/README.md"), AnchoredSystemPathBuf("packages/server/README.md.tmp.61750.1754396115710")}
+2025-08-05T12:15:15.792616Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/server"), path: AnchoredSystemPathBuf("packages/server") }}))
