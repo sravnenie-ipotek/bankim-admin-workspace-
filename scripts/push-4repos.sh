@@ -131,9 +131,9 @@ execute_cmd "cd packages/shared && npm run build && cd ../.." "Building shared p
 # Push to workspace repository (monorepo)
 print_info "\n🏠 Pushing to Workspace Repository (Monorepo)"
 if [ "$FORCE_PUSH" = true ]; then
-    execute_cmd "git push workspace $MAIN_BRANCH --force" "Force pushing to workspace repository"
+    execute_cmd "git push origin $MAIN_BRANCH --force" "Force pushing to workspace repository"
 else
-    execute_cmd "git push workspace $MAIN_BRANCH" "Pushing to workspace repository"
+    execute_cmd "git push origin $MAIN_BRANCH" "Pushing to workspace repository"
 fi
 
 # Push shared package to shared repository
