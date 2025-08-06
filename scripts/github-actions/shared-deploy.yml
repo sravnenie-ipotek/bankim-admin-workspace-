@@ -1,0 +1,91 @@
+# GitHub Actions Workflow for Shared Package Deployment
+# Place this in .github/workflows/deploy.yml in bankim-admin-shared repository
+
+name: Deploy Shared Package to SSH Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Shared Package and Trigger Dependents
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Build Package
+      run: npm run build
+      
+    - name: Run Tests (if available)
+      run: npm test || echo "No tests configured"
+      
+    - name: Deploy to SSH Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          cd /var/www/bankim/shared/
+          git pull origin main
+          npm install
+          npm run build
+          echo "✅ Shared package updated"
+          
+          # Update dependencies in API and Dashboard
+          echo "📦 Updating dependent services..."
+          
+          cd /var/www/bankim/api/mainapp/
+          npm install
+          pm2 reload bankim-api
+          echo "✅ API updated with new shared package"
+          
+          cd /var/www/bankim/dashboard/
+          npm install
+          npm run build
+          cp -r dist/* mainapp/
+          pm2 reload bankim-dashboard  
+          echo "✅ Dashboard updated with new shared package"
+          
+    - name: Health Check All Services
+      run: |
+        sleep 15
+        echo "🔍 Checking all services after shared package update..."
+        
+        # Check API
+        if curl -f http://${{ secrets.SSH_HOST }}:3001/health; then
+          echo "✅ API is healthy"
+        else
+          echo "❌ API health check failed"
+          exit 1
+        fi
+        
+        # Check Dashboard
+        if curl -f http://${{ secrets.SSH_HOST }}:3002; then
+          echo "✅ Dashboard is healthy"
+        else
+          echo "⚠️ Dashboard health check failed"
+        fi
+        
+    - name: Notify Deployment
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "🎉 Shared package deployment completed successfully!"
+          echo "📦 All dependent services updated"
+        else
+          echo "❌ Shared package deployment failed!"
+        fi

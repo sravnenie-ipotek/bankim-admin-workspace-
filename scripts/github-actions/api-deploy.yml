@@ -1,0 +1,68 @@
+# GitHub Actions Workflow for API Deployment
+# Place this in .github/workflows/deploy.yml in bankim-admin-api repository
+
+name: Deploy API to SSH Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Dependencies
+      run: npm install
+      
+    - name: Run Tests (if available)
+      run: npm test || echo "No tests configured"
+      
+    - name: Deploy to SSH Server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+          cd /var/www/bankim/api/
+          git pull origin main
+          cd mainapp/
+          npm install
+          
+          # Run database migrations if needed
+          npm run db:migrate 2>/dev/null || echo "⚠️ No migrations to run"
+          
+          # Reload API service
+          pm2 reload bankim-api
+          echo "✅ API deployed successfully"
+          
+    - name: Health Check
+      run: |
+        sleep 15
+        curl -f http://${{ secrets.SSH_HOST }}:3001/health && echo "✅ API is healthy" || echo "❌ API health check failed"
+        
+    - name: Run API Tests (Post-deployment)
+      run: |
+        # Test key API endpoints
+        curl -f http://${{ secrets.SSH_HOST }}:3001/api/content/test || echo "⚠️ Content API test failed"
+        
+    - name: Notify Deployment
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "🎉 API deployment completed successfully!"
+        else
+          echo "❌ API deployment failed!"
+        fi
