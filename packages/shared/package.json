@@ -20,7 +20,7 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MichaelMishaev/bankimOnlineAdmin_shared.git"
+    "url": "git+https://github.com/sravnenie-ipotek/bankim-admin-shared.git"
   },
   "devDependencies": {
     "typescript": "^5.2.2"

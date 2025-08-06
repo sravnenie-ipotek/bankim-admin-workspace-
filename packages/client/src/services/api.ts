@@ -3,6 +3,16 @@
  * Centralized API calls for all backend operations
  */
 
+import {
+  ApiResponse,
+  TextContent,
+  ContentItem,
+  ContentTranslation,
+  FormulaData,
+  UISetting,
+  Language,
+  ContentCategory,
+} from '@bankim/shared';
 import { ContentPage } from '../pages/Chat/ContentManagement/types/contentTypes';
 import { ContentListItem } from '../pages/ContentListBase/types';
 
@@ -23,77 +33,6 @@ const isPlaceholderUrl = (url: string): boolean => {
          // Removed localhost:3001 check - this is our REAL backend!
 };
 
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-interface FormulaData {
-  minTerm: string;
-  maxTerm: string;
-  financingPercentage: string;
-  bankInterestRate: string;
-  baseInterestRate: string;
-  variableInterestRate: string;
-  interestChangePeriod: string;
-  inflationIndex: string;
-  id?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-interface UISetting {
-  id: number;
-  settingKey: string;
-  settingValue: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ContentTranslation {
-  language_code: string;
-  content_value: string;
-  status: string;
-  is_default: boolean;
-}
-
-interface ContentItem {
-  id: string;
-  content_key: string;
-  content_type: string;
-  category: string;
-  screen_location: string;
-  component_type: string;
-  description: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  translations: ContentTranslation[];
-}
-
-interface Language {
-  id: number;
-  code: string;
-  name: string;
-  native_name: string;
-  direction: string;
-  is_active: boolean;
-  is_default: boolean;
-}
-
-interface ContentCategory {
-  id: number;
-  name: string;
-  display_name: string;
-  description: string;
-  parent_id: number | null;
-  sort_order: number;
-  is_active: boolean;
-}
-
 // Main Page Content interfaces following CSS example structure
 interface MainPageAction {
   id: string;                  // "Income_Main" pattern (CSS lines 354-410)
@@ -109,7 +48,7 @@ interface MainPageAction {
   createdAt: Date;
 }
 
-interface MainPageContent {
+interface LocalMainPageContent {
   pageTitle: string;           // "Калькулятор ипотеки Страница №2" (CSS line 160)
   actionCount: number;         // 33 (CSS line 172)
   lastModified: string;        // "01.08.2023 | 15:03" (CSS line 180)
@@ -117,22 +56,8 @@ interface MainPageContent {
   galleryImages: string[];     // Page state images (CSS lines 189-227)
 }
 
-// bankim_content API Response Structure
-interface ContentApiResponse {
-  status: string;
-  screen_location: string;
-  language_code: string;
-  content_count: number;
-  content: Record<string, {
-    value: string | string[];
-    component_type: string;
-    category: string;
-    language: string;
-    status: string;
-  }>;
-}
-
-interface TextContent {
+// Local interfaces specific to this API service
+interface LocalTextContent {
   id: string;
   actionNumber: number;
   titleRu: string;
@@ -166,6 +91,20 @@ interface TextContent {
   };
   lastModified: Date;
   status: string;
+}
+
+interface LocalContentApiResponse {
+  status: string;
+  screen_location: string;
+  language_code: string;
+  content_count: number;
+  content: Record<string, {
+    value: string | string[];
+    component_type: string;
+    category: string;
+    language: string;
+    status: string;
+  }>;
 }
 
 // Action count mapping based on Confluence documentation
@@ -569,7 +508,7 @@ class ApiService {
   }
 
   // Main Page Content Operations - following CSS example structure
-  async getMainPageContent(): Promise<ApiResponse<MainPageContent>> {
+  async getMainPageContent(): Promise<ApiResponse<LocalMainPageContent>> {
     try {
       // Fetch content using the correct API endpoint pattern
       const contentResponse = await this.getContentByScreen('main_page', 'ru');
@@ -610,7 +549,7 @@ class ApiService {
       // Get page title from content
       const pageTitle = apiData.content['app.main.page.title']?.value || 'Калькулятор ипотеки Страница №2';
       
-      const mainPageContent: MainPageContent = {
+      const mainPageContent: LocalMainPageContent = {
         pageTitle: typeof pageTitle === 'string' ? pageTitle : pageTitle[0],
         actionCount: actions.length,
         lastModified: new Date().toLocaleDateString('ru-RU') + ' | ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
@@ -702,8 +641,8 @@ class ApiService {
   }
 
   // New Content API Integration - following bankim_content service patterns
-  async getContentByScreen(screenLocation: string, languageCode: string): Promise<ApiResponse<ContentApiResponse>> {
-    return this.requestWithCache<ContentApiResponse>(`/api/content/${screenLocation}/${languageCode}`);
+  async getContentByScreen(screenLocation: string, languageCode: string): Promise<ApiResponse<LocalContentApiResponse>> {
+    return this.requestWithCache<LocalContentApiResponse>(`/api/content/${screenLocation}/${languageCode}`);
   }
 
   async getContentByKey(contentKey: string, languageCode: string): Promise<ApiResponse<any>> {
@@ -734,7 +673,7 @@ class ApiService {
       );
       
       // Process successful responses
-      const validResponses: ContentApiResponse[] = [];
+      const validResponses: LocalContentApiResponse[] = [];
       responses.forEach((result, index) => {
         if (result.status === 'fulfilled' && result.value.success && result.value.data) {
           validResponses.push(result.value.data);
@@ -1238,9 +1177,9 @@ class ApiService {
 
 
   // Text editing API methods
-  async getTextContent(actionId: string): Promise<ApiResponse<TextContent | null>> {
+  async getTextContent(actionId: string): Promise<ApiResponse<LocalTextContent | null>> {
     try {
-      const response = await this.request<TextContent>(`/api/content/text/${actionId}`);
+      const response = await this.request<LocalTextContent>(`/api/content/text/${actionId}`);
       return response;
     } catch (error) {
       console.error('Error fetching text content:', error);
@@ -1248,9 +1187,9 @@ class ApiService {
     }
   }
 
-  async updateTextContent(actionId: string, textData: Partial<TextContent>): Promise<ApiResponse<TextContent>> {
+  async updateTextContent(actionId: string, textData: Partial<LocalTextContent>): Promise<ApiResponse<LocalTextContent>> {
     try {
-      const response = await this.request<TextContent>(`/api/content/text/${actionId}`, {
+      const response = await this.request<LocalTextContent>(`/api/content/text/${actionId}`, {
         method: 'PUT',
         body: JSON.stringify(textData),
       });
@@ -1261,7 +1200,7 @@ class ApiService {
     }
   }
 
-  private transformApiToContentPages(apiResponses: ContentApiResponse[]): ContentPage[] {
+  private transformApiToContentPages(apiResponses: LocalContentApiResponse[]): ContentPage[] {
     const contentMap = new Map<string, Partial<ContentPage>>();
     
     apiResponses.forEach(response => {
@@ -1339,15 +1278,15 @@ export const apiService = new ApiService();
 export const clearContentCache = () => apiService.clearContentCache();
 export const getContentCacheStats = () => apiService.getCacheStats();
 export type { 
-  FormulaData, 
-  ApiResponse, 
-  UISetting, 
-  ContentItem, 
-  ContentTranslation, 
-  Language, 
-  ContentCategory,
-  MainPageContent,
+  LocalMainPageContent,
   MainPageAction,
-  ContentApiResponse,
+  LocalTextContent,
+  // Re-export shared types for backward compatibility
+  ContentItem,
+  ContentTranslation,
+  FormulaData,
+  UISetting,
+  Language,
+  ContentCategory,
   TextContent
 }; 

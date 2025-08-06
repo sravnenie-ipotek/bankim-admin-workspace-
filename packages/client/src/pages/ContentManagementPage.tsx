@@ -4,7 +4,7 @@ import SharedHeader from '../components/SharedHeader';
 import './ContentManagementPage.css';
 import { Table } from '../components/Table';
 import { TextEditModal, TextEditData, DropdownEditModal, DropdownEditData, LinkEditModal, LinkEditData } from '../components/ContentEditModals';
-import { apiService, ContentItem } from '../services/api';
+import { apiService, ContentItem, ContentTranslation } from '../services/api';
 
 interface PageState {
   id: string;
@@ -104,24 +104,34 @@ const ContentManagementPage: React.FC = () => {
     handleCloseModals();
   };
 
+  // Helper function to get translation value
+  const getTranslationValue = (translations: Record<string, string> | ContentTranslation[], languageCode: string): string => {
+    if (Array.isArray(translations)) {
+      const translation = translations.find(t => t.language_code === languageCode);
+      return translation?.content_value || '';
+    } else {
+      return translations[languageCode] || '';
+    }
+  };
+
   // Transform ContentItem data to match Table component format
   const transformedActionsData = contentItems.map((item) => {
-    const ruTranslation = item.translations.find(t => t.language_code === 'ru');
-    const heTranslation = item.translations.find(t => t.language_code === 'he');
-    const enTranslation = item.translations.find(t => t.language_code === 'en');
+    const ruTranslation = getTranslationValue(item.translations, 'ru');
+    const heTranslation = getTranslationValue(item.translations, 'he');
+    const enTranslation = getTranslationValue(item.translations, 'en');
     
-    const displayText = ruTranslation?.content_value || 
-                       enTranslation?.content_value || 
-                       heTranslation?.content_value || 
+    const displayText = ruTranslation || 
+                       enTranslation || 
+                       heTranslation || 
                        item.content_key;
 
     return {
-      id: item.id,
+      id: String(item.id),
       name: displayText,
       type: { 
-        text: item.content_type === 'dropdown' ? 'Дропдаун' : 
-              item.content_type === 'link' ? 'Ссылка' : 
-              item.content_type === 'button' ? 'Кнопка' : 'Текст', 
+        text: item.component_type === 'dropdown' ? 'Дропдаун' : 
+              item.component_type === 'link' ? 'Ссылка' : 
+              item.component_type === 'button' ? 'Кнопка' : 'Текст', 
         type: 'inactive' as const 
       },
       status: { 

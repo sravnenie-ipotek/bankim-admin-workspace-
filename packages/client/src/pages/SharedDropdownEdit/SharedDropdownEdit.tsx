@@ -118,7 +118,7 @@ const SharedDropdownEdit: React.FC = () => {
         }
         
         setContent({
-          id: item.id,
+          id: String(item.id),
           content_key: item.content_key || '',
           component_type: item.component_type || 'dropdown',
           category: item.category || '',

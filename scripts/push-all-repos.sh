@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# BankIM Management Portal - Full Repository Push Automation
-# This script synchronizes all repositories: main, client, server, shared, and management
+# BankIM Management Portal - 4-Repository Push Automation
+# This script synchronizes all repositories: workspace (monorepo), dashboard (client), api (server), and shared
 
 set -e
 

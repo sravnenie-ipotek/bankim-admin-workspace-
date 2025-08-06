@@ -22,7 +22,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../Chat/ContentManagement/components/Breadcrumb/Breadcrumb';
 import { useNavigation } from '../../contexts/NavigationContext';
 import './ContentMainText.css';
-import { apiService, TextContent } from '../../services/api';
+import { apiService, LocalTextContent } from '../../services/api';
 
 type Language = 'ru' | 'he' | 'en';
 
@@ -33,7 +33,7 @@ const ContentMainText: React.FC = () => {
   
   // States
   const [isLoading, setIsLoading] = useState(false);
-  const [textData, setTextData] = useState<TextContent | null>(null);
+  const [textData, setTextData] = useState<LocalTextContent | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 

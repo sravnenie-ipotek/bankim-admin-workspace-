@@ -181,14 +181,16 @@ const SharedContentEditForm: React.FC<SharedContentEditFormProps> = ({ contentTy
   
   // Get configuration for this content type
   const config = contentConfigs[contentType];
+
+  useEffect(() => {
+    if (config) {
+      fetchContentItem();
+    }
+  }, [itemId, contentType, config]);
   
   if (!config) {
     return <div className="shared-edit-error">Unknown content type: {contentType}</div>;
   }
-
-  useEffect(() => {
-    fetchContentItem();
-  }, [itemId, contentType]);
 
   const fetchContentItem = async () => {
     try {
