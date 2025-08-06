@@ -1,252 +1,245 @@
 # BankIM Database Setup Guide
 
-## 🗄️ Database Options
+## 🗄️ Database Configuration
 
-This project supports multiple database configurations for different environments:
+This project uses PostgreSQL databases for content management with multiple environment configurations.
 
-### 1. **Local SQLite Testing** (Recommended for development)
-- **File**: `server/database-local.js` + `server/server-local.js`
-- **Database**: SQLite file (`bankim_local_test.db`)
-- **Use Case**: Local development and testing
-- **Pros**: No setup required, fast, lightweight
-- **Cons**: SQLite only, not for production
+### **Database Architecture**
 
-### 2. **Railway PostgreSQL** (Production)
-- **File**: `server/database-railway.js` + `server/server-railway.js`
-- **Database**: PostgreSQL on Railway cloud
-- **Use Case**: Production deployment
-- **Pros**: Cloud database, scalable, production-ready
-- **Cons**: Requires Railway setup
+The BankIM Management Portal uses **multiple PostgreSQL databases**:
 
-### 3. **Legacy SQLite** (Original)
-- **File**: `server/database.js` + `server/server.js`
-- **Database**: SQLite file (`bankim_test.db`)
-- **Use Case**: Original development setup
-- **Status**: Kept for backward compatibility
+- **bankim_content**: UI content and multilingual translations (primary)
+- **bankim_core**: Business logic, formulas, user permissions  
+- **bankim_management**: Portal-specific administrative data
 
 ## 🚀 Quick Start
 
-### Option 1: Local SQLite Testing (Fastest)
+### Environment Setup
 ```bash
-# Run local SQLite test server (auto-installs SQLite dependencies)
-npm run test:server
+# Copy environment template
+cp .env.template .env
 
-# Test it
-curl http://localhost:3001/health
-curl http://localhost:3001/api/users
-
-# Restore production package (removes SQLite dependencies)
-npm run restore:production
+# Configure database connections
+nano .env
 ```
 
-### Option 2: Railway PostgreSQL (Production)
+### Required Environment Variables
 ```bash
-# Deploy to Railway (automatic on git push)
-# No local command needed - uses Railway deployment
+# Primary content database
+CONTENT_DATABASE_URL=postgresql://user:password@host:port/bankim_content
 
-# Test after deployment
-curl https://your-railway-url.railway.app/health
-curl https://your-railway-url.railway.app/api/users
+# Core business logic database  
+CORE_DATABASE_URL=postgresql://user:password@host:port/bankim_core
+
+# Management database
+MANAGEMENT_DATABASE_URL=postgresql://user:password@host:port/bankim_management
+
+# Fallback for legacy compatibility
+DATABASE_URL=postgresql://user:password@host:port/bankim_content
 ```
 
-### Option 3: Legacy SQLite (Original)
+## 🔧 Development Commands
+
+### Start Development Server
 ```bash
-# Run original SQLite server
-npm run server
+# Start all services (client + server)
+npm run dev
 
-# Test it
-curl http://localhost:3001/health
-curl http://localhost:3001/api/users
+# Start server only
+npm run dev --workspace=@bankim/server
+
+# Start client only  
+npm run dev --workspace=@bankim/client
 ```
 
-## 📋 Database Comparison
-
-| Feature | Local SQLite | Railway PostgreSQL | Legacy SQLite |
-|---------|-------------|-------------------|---------------|
-| **Setup** | ✅ Zero setup | ⚠️ Requires Railway | ✅ Zero setup |
-| **Speed** | ✅ Very fast | ⚠️ Network dependent | ✅ Very fast |
-| **Scalability** | ❌ Single user | ✅ Highly scalable | ❌ Single user |
-| **Production** | ❌ Not suitable | ✅ Production ready | ❌ Not suitable |
-| **Testing** | ✅ Perfect | ⚠️ Requires cloud | ✅ Good |
-| **Sample Data** | ✅ 6 users (Local) | ✅ 5 users (Railway) | ✅ 5 users (Original) |
-
-## 🔧 Commands Summary
-
+### Database Management
 ```bash
-# Local SQLite Testing (NEW)
-npm run test:server          # Start local SQLite test server
+# Run database migrations
+npm run db:migrate --workspace=@bankim/server
 
-# Railway PostgreSQL (Production)
-npm start                    # Used by Railway deployment only
+# Check database status
+npm run db:status --workspace=@bankim/server
 
-# Legacy SQLite (Original)
-npm run server               # Original SQLite server
-npm run dev:server           # Same as above
-
-# Frontend Development
-npm run dev                  # Start React frontend (port 3002)
-```
-
-## 📦 Package Management System
-
-**Important**: This project uses a dynamic package management system to avoid Railway deployment issues with SQLite:
-
-### How it works:
-1. **Main package.json**: Production-ready (no SQLite dependencies)
-2. **Auto-generated files**:
-   - `package-local.json`: Includes SQLite for local development
-   - `package-production.json`: Backup of production package.json
-
-### Scripts:
-- `npm run test:server`: Auto-installs SQLite dependencies and runs local server
-- `npm run restore:production`: Restores production package.json (removes SQLite)
-
-### Why this approach:
-- **Railway deployment**: No SQLite compilation issues
-- **Local development**: Full SQLite support when needed
-- **Git safety**: Only tracks the production package.json
-
-## 🗂️ File Structure
-
-```
-server/
-├── database-local.js        # 🆕 Local SQLite for testing
-├── server-local.js          # 🆕 Local SQLite server
-├── database-railway.js      # 🌐 Railway PostgreSQL
-├── server-railway.js        # 🌐 Railway PostgreSQL server
-├── database.js              # 📦 Legacy SQLite
-├── server.js                # 📦 Legacy SQLite server
-├── bankim_local_test.db     # 🗄️ Local test database (auto-generated)
-├── bankim_test.db           # 🗄️ Legacy database (auto-generated)
-└── README.md                # Documentation
-
-Railway deployment files:
-├── railway.json             # 🚀 Railway deployment configuration
-└── RAILWAY_DEPLOYMENT.md    # 📖 Railway deployment guide
-
-Package management files:
-├── package-local.json       # 🧪 Local development package (includes SQLite)
-├── package-production.json  # 🏭 Production package backup (no SQLite)
-└── .gitignore               # 🔒 Excludes local package files
+# Seed database with sample data
+npm run seed --workspace=@bankim/server
 ```
 
 ## 🧪 Testing Your Setup
 
-### Local SQLite Testing
+### Health Check
 ```bash
-# Start server
-npm run test:server
-
-# Test health
+# Test server health
 curl http://localhost:3001/health
-# Expected: {"status":"OK","message":"BankIM Local SQLite Test API is running",...}
+# Expected: {"status":"OK","message":"BankIM API Server is running",...}
 
 # Get database info
-curl http://localhost:3001/api/db-info
-# Expected: {"database":"SQLite Local Test Database","type":"SQLite",...}
+curl http://localhost:3001/api/db/status
+# Expected: {"database":"PostgreSQL","type":"PostgreSQL",...}
+```
 
-# Get all users
+### API Endpoints
+```bash
+# Test content endpoints
+curl http://localhost:3001/api/content/mortgage
+curl http://localhost:3001/api/content/credit
+
+# Test user endpoints (if configured)
 curl http://localhost:3001/api/users
-# Expected: 6 users with "(Local)" in names
+```
 
-# Create new user
-curl -X POST http://localhost:3001/api/users \
+## 🗂️ File Structure
+
+```
+packages/server/
+├── server.js                   # Main Express server
+├── config/
+│   ├── database-content.js     # Content database config
+│   ├── database-core.js        # Core database config
+│   └── database-management.js  # Management database config
+├── scripts/
+│   ├── migrate.js              # Database migration script
+│   ├── seed-database.js        # Sample data seeder
+│   └── db-status.js           # Database status checker
+└── routes/
+    ├── content.js              # Content management routes
+    ├── auth.js                 # Authentication routes
+    └── health.js               # Health check routes
+```
+
+## 📦 Database Schema
+
+### Content Database (bankim_content)
+```sql
+-- Main content items
+content_items (
+  id, content_key, component_type, category, 
+  screen_location, app_context_id, is_active,
+  created_at, updated_at
+)
+
+-- Multilingual translations
+content_translations (
+  id, content_item_id, language_code, 
+  content_value, created_at, updated_at
+)
+
+-- Application contexts (4 types)
+application_contexts (
+  id, context_code, context_name, 
+  description, is_active
+)
+
+-- Supported languages
+languages (
+  id, language_code, language_name,
+  is_rtl, is_active
+)
+```
+
+### Core Database (bankim_core)
+```sql
+-- Business formulas and calculations
+formulas (
+  id, formula_name, formula_type,
+  calculation_logic, parameters
+)
+
+-- User permissions and roles
+user_permissions (
+  id, user_id, permission_type,
+  resource_access, role_level
+)
+```
+
+## 🔄 Migration System
+
+### Running Migrations
+```bash
+# Check migration status
+npm run db:status --workspace=@bankim/server
+
+# Run pending migrations
+npm run db:migrate --workspace=@bankim/server
+
+# Seed sample data
+npm run seed --workspace=@bankim/server
+```
+
+### Migration Files
+```
+packages/server/migrations/
+├── 001_initial_content_schema.sql
+├── 002_add_application_contexts.sql  
+├── 003_add_language_support.sql
+└── 004_add_user_permissions.sql
+```
+
+## 🌍 Multilingual Support
+
+### Supported Languages
+- **Hebrew (he)**: Primary language with RTL support
+- **Russian (ru)**: Cyrillic script support
+- **English (en)**: International accessibility
+
+### Translation Management
+```bash
+# Get content in specific language
+curl "http://localhost:3001/api/content/mortgage?lang=he"
+
+# Update translation
+curl -X PUT "http://localhost:3001/api/content/123/translations" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Test User","email":"test@example.com","role":"user","status":"active"}'
+  -d '{"he":"Hebrew text","ru":"Russian text","en":"English text"}'
 ```
 
-### Railway PostgreSQL
+## 🔐 Security Configuration
+
+### Database Security
+- **SSL Connections**: Use `sslmode=require` in production
+- **Connection Pooling**: Configured for optimal performance
+- **Query Parameterization**: Protection against SQL injection
+- **Role-Based Access**: Database-level user permissions
+
+### Environment Security
 ```bash
-# Test after Railway deployment
-curl https://your-railway-url.railway.app/health
-# Expected: {"status":"OK","message":"BankIM Railway Database API is running - Test Deploy",...}
-
-curl https://your-railway-url.railway.app/api/db-info
-# Expected: {"database":"PostgreSQL on Railway","type":"PostgreSQL",...}
-
-curl https://your-railway-url.railway.app/api/users
-# Expected: 5 users with Railway emails
+# Use strong database passwords
+# Enable SSL for all database connections
+# Restrict database access by IP (production)
+# Regular backup and recovery procedures
 ```
 
-## 🔄 Switching Between Databases
+## 🚦 Deployment
 
-### For Development Work:
+### Production Environment Variables
 ```bash
-# Stop any running servers (Ctrl+C)
-npm run test:server    # Use local SQLite
+# Set in production environment
+NODE_ENV=production
+CONTENT_DATABASE_URL=postgresql://prod_user:password@prod_host/bankim_content
+CORE_DATABASE_URL=postgresql://prod_user:password@prod_host/bankim_core
+MANAGEMENT_DATABASE_URL=postgresql://prod_user:password@prod_host/bankim_management
 ```
 
-### For Production Testing:
+### Build and Deploy
 ```bash
-# Push to git (triggers Railway deployment)
-git push origin main
+# Build all packages
+npm run build
 
-# Test Railway URL after deployment
+# Deploy to all repositories
+npm run push:all
 ```
-
-### For Legacy Testing:
-```bash
-# Stop any running servers (Ctrl+C)
-npm run server         # Use original SQLite
-```
-
-## 🎯 Recommended Workflow
-
-1. **Local Development**: Use `npm run test:server` (SQLite)
-2. **Feature Testing**: Test with local SQLite first
-3. **Pre-deployment**: Push to Railway for PostgreSQL testing
-4. **Production**: Railway automatically uses PostgreSQL
-
-## 🆕 What's New in Local SQLite Testing
-
-### Enhanced Sample Data
-- **6 test users** (vs 5 in other setups)
-- **"(Local)" suffix** in names for easy identification
-- **Local email domains** (e.g., `john.local@bankim.com`)
-
-### Improved Database Info
-- **Environment detection** (`local`)
-- **Database type** clearly marked (`SQLite`)
-- **File path** shown for debugging
-
-### Better Console Output
-- **Clear server type** identification
-- **Database type** in startup message
-- **Local-specific** messaging
-
-## 🚨 Important Notes
-
-### Local SQLite Testing
-- ✅ **Perfect for development** - no external dependencies
-- ✅ **Fast and reliable** - no network issues
-- ✅ **Isolated testing** - your own database file
-- ⚠️ **Not for production** - use Railway for production
-
-### Railway PostgreSQL
-- ✅ **Production ready** - scalable cloud database
-- ✅ **Automatic deployment** - via git push
-- ✅ **SSL encryption** - secure connections
-- ✅ **No SQLite dependencies** - uses package.railway.json and nixpacks.toml
-- ⚠️ **Requires setup** - Railway account needed
-
-### Database Files
-- `bankim_local_test.db` - Local SQLite testing
-- `bankim_test.db` - Legacy SQLite
-- Both are auto-generated and can be deleted safely
 
 ## 🛠️ Troubleshooting
 
-### Local SQLite Issues
+### Connection Issues
 ```bash
-# Delete database file and restart
-rm server/bankim_local_test.db
-npm run test:server
-```
+# Test database connectivity
+npm run db:status --workspace=@bankim/server
 
-### Railway PostgreSQL Issues
-```bash
-# Check Railway logs in dashboard
-# Verify DATABASE_URL environment variable
+# Check environment variables
+env | grep DATABASE_URL
+
+# Verify PostgreSQL service
+pg_isready -h hostname -p port
 ```
 
 ### Port Conflicts
@@ -256,11 +249,56 @@ lsof -i :3001
 
 # Kill process if needed
 kill -9 <PID>
+
+# Use different port
+PORT=3002 npm run dev --workspace=@bankim/server
 ```
+
+### Performance Issues
+```bash
+# Check database performance
+curl http://localhost:3001/api/db/stats
+
+# Monitor connection pool
+curl http://localhost:3001/api/db/pool-status
+```
+
+## 📊 Monitoring
+
+### Database Health Monitoring
+- **Connection Pool Status**: Active/idle connections
+- **Query Performance**: Slow query logging
+- **Database Size**: Storage usage monitoring
+- **Backup Status**: Regular backup verification
+
+### Application Metrics
+- **API Response Times**: Endpoint performance tracking
+- **Error Rates**: Error monitoring and alerting
+- **Content Cache**: Cache hit/miss ratios
+- **User Activity**: Access pattern analysis
 
 ---
 
-**Choose your database setup based on your needs:**
-- **🧪 Testing**: `npm run test:server` (Local SQLite)
-- **🚀 Production**: Push to Railway (PostgreSQL)
-- **📦 Legacy**: `npm run server` (Original SQLite)
+## 🎯 Quick Commands Reference
+
+```bash
+# Development
+npm run dev                              # Start all services
+npm run dev --workspace=@bankim/server   # Server only
+npm run dev --workspace=@bankim/client   # Client only
+
+# Database
+npm run db:migrate --workspace=@bankim/server   # Run migrations
+npm run db:status --workspace=@bankim/server    # Check status
+npm run seed --workspace=@bankim/server         # Seed data
+
+# Testing
+curl http://localhost:3001/health               # Health check
+curl http://localhost:3001/api/content/mortgage # Test API
+
+# Deployment
+npm run build           # Build all packages
+npm run push:all        # Deploy to repositories
+```
+
+**For detailed API documentation, see individual package README files.**
