@@ -49,6 +49,263 @@ import LanguageTest from './components/LanguageTest/LanguageTest';
 // Chat component now imported above
 
 
+// Placeholder components with "В разработке" notice
+const UserManagement = () => (
+  <AdminLayout title="Управление пользователями" activeMenuItem="user-management">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Система управления пользователями находится в активной разработке</p>
+        <ul>
+          <li>Создание и редактирование пользователей</li>
+          <li>Управление профилями</li>
+          <li>Настройка доступа</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const RolesPermissions = () => (
+  <AdminLayout title="Роли и разрешения" activeMenuItem="roles-permissions">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Система ролей и разрешений находится в активной разработке</p>
+        <ul>
+          <li>Настройка ролей пользователей</li>
+          <li>Управление разрешениями</li>
+          <li>Контроль доступа к функциям</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const ActiveSessions = () => (
+  <AdminLayout title="Активные сессии" activeMenuItem="active-sessions">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Мониторинг активных сессий находится в активной разработке</p>
+        <ul>
+          <li>Просмотр активных сессий</li>
+          <li>Завершение сессий</li>
+          <li>История подключений</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const AnalyticsDashboard = () => (
+  <AdminLayout title="Аналитика" activeMenuItem="analytics-dashboard">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Панель аналитики находится в активной разработке</p>
+        <ul>
+          <li>Визуализация данных</li>
+          <li>Ключевые метрики</li>
+          <li>Интерактивные графики</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const Reports = () => (
+  <AdminLayout title="Отчеты" activeMenuItem="reports">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Система отчетов находится в активной разработке</p>
+        <ul>
+          <li>Генерация отчетов</li>
+          <li>Экспорт данных</li>
+          <li>Автоматические отчеты</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const UserStats = () => (
+  <AdminLayout title="Статистика пользователей" activeMenuItem="user-stats">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Статистика пользователей находится в активной разработке</p>
+        <ul>
+          <li>Анализ активности</li>
+          <li>Поведенческие метрики</li>
+          <li>Сегментация пользователей</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const Conversion = () => (
+  <AdminLayout title="Конверсия" activeMenuItem="conversion">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Анализ конверсии находится в активной разработке</p>
+        <ul>
+          <li>Воронки конверсии</li>
+          <li>A/B тестирование</li>
+          <li>Оптимизация пользовательского пути</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const GeneralSettings = () => (
+  <AdminLayout title="Общие настройки" activeMenuItem="general-settings">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Общие настройки системы находятся в активной разработке</p>
+        <ul>
+          <li>Конфигурация приложения</li>
+          <li>Системные параметры</li>
+          <li>Общие предпочтения</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const ApiConfiguration = () => (
+  <AdminLayout title="API конфигурация" activeMenuItem="api-configuration">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Конфигурация API находится в активной разработке</p>
+        <ul>
+          <li>Настройка API endpoints</li>
+          <li>Управление токенами</li>
+          <li>Лимиты и квоты</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const Security = () => (
+  <AdminLayout title="Безопасность" activeMenuItem="security">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Настройки безопасности находятся в активной разработке</p>
+        <ul>
+          <li>Политики безопасности</li>
+          <li>Аутентификация</li>
+          <li>Аудит безопасности</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const Integrations = () => (
+  <AdminLayout title="Интеграции" activeMenuItem="integrations">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Управление интеграциями находится в активной разработке</p>
+        <ul>
+          <li>Настройка интеграций</li>
+          <li>Веб-хуки</li>
+          <li>API подключения</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const BanksList = () => (
+  <AdminLayout title="Список банков" activeMenuItem="banks-list">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Управление списком банков находится в активной разработке</p>
+        <ul>
+          <li>Добавление банков</li>
+          <li>Редактирование информации</li>
+          <li>Управление статусами</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const BankSettings = () => (
+  <AdminLayout title="Настройки банков" activeMenuItem="bank-settings">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Настройки банков находятся в активной разработке</p>
+        <ul>
+          <li>Конфигурация банков</li>
+          <li>Параметры взаимодействия</li>
+          <li>Специальные настройки</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const EventLog = () => (
+  <AdminLayout title="Журнал событий" activeMenuItem="event-log">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Журнал системных событий находится в активной разработке</p>
+        <ul>
+          <li>Просмотр событий</li>
+          <li>Фильтрация записей</li>
+          <li>Экспорт логов</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const SystemErrors = () => (
+  <AdminLayout title="Ошибки системы" activeMenuItem="system-errors">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Мониторинг системных ошибок находится в активной разработке</p>
+        <ul>
+          <li>Отслеживание ошибок</li>
+          <li>Анализ сбоев</li>
+          <li>Уведомления об ошибках</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
+const AuditActions = () => (
+  <AdminLayout title="Аудит действий" activeMenuItem="audit-actions">
+    <div className="development-notice">
+      <div className="notice-card">
+        <h3>🚧 В разработке</h3>
+        <p>Система аудита действий находится в активной разработке</p>
+        <ul>
+          <li>Журнал пользовательских действий</li>
+          <li>Трекинг изменений</li>
+          <li>Отчеты по активности</li>
+        </ul>
+      </div>
+    </div>
+  </AdminLayout>
+)
+
 // Role components with AdminLayout
 const SalesManager = () => (
   <AdminLayout title="Менеджер по продажам" activeMenuItem="sales-manager">
@@ -373,6 +630,33 @@ const AppRouter: React.FC = () => {
         <Route path="/sales-manager" element={<SalesManager />} />
         <Route path="/brokers" element={<Brokers />} />
         <Route path="/content-manager" element={<ContentManager />} />
+
+        {/* Users submenu routes */}
+        <Route path="/users/management" element={<UserManagement />} />
+        <Route path="/users/roles-permissions" element={<RolesPermissions />} />
+        <Route path="/users/sessions" element={<ActiveSessions />} />
+
+        {/* Analytics submenu routes */}
+        <Route path="/analytics/dashboard" element={<AnalyticsDashboard />} />
+        <Route path="/analytics/reports" element={<Reports />} />
+        <Route path="/analytics/user-stats" element={<UserStats />} />
+        <Route path="/analytics/conversion" element={<Conversion />} />
+
+        {/* Settings submenu routes */}
+        <Route path="/settings/general" element={<GeneralSettings />} />
+        <Route path="/settings/api-config" element={<ApiConfiguration />} />
+        <Route path="/settings/security" element={<Security />} />
+        <Route path="/settings/integrations" element={<Integrations />} />
+
+        {/* Banks submenu routes */}
+        <Route path="/banks/list" element={<BanksList />} />
+        <Route path="/banks/settings" element={<BankSettings />} />
+        <Route path="/banks/api-config" element={<ApiConfiguration />} />
+
+        {/* System Logs submenu routes */}
+        <Route path="/system-logs/events" element={<EventLog />} />
+        <Route path="/system-logs/errors" element={<SystemErrors />} />
+        <Route path="/system-logs/audit" element={<AuditActions />} />
 
         <Route 
           path="/calculator-formula" 

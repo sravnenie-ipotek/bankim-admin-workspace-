@@ -17,7 +17,9 @@
     "date": "Date",
     "language": "Language",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "goToDashboard": "Go to dashboard",
+    "selectLanguage": "Select language"
   },
   "auth": {
     "login": "Login",
@@ -46,6 +48,26 @@
   },
   "menu": {
     "dashboard": "Dashboard",
+    "users": "Users",
+    "userManagement": "User Management",
+    "rolesPermissions": "Roles and Permissions",
+    "activeSessions": "Active Sessions",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "userStats": "User Statistics",
+    "conversion": "Conversion",
+    "settings": "Settings",
+    "generalSettings": "General Settings",
+    "apiConfig": "API Configuration",
+    "security": "Security",
+    "integrations": "Integrations",
+    "banks": "Banks",
+    "banksList": "Banks List",
+    "bankSettings": "Bank Settings",
+    "systemLogs": "System Logs",
+    "eventLog": "Event Log",
+    "systemErrors": "System Errors",
+    "auditActions": "Audit Actions",
     "clients": "Clients",
     "bankEmployee": "Bank Employee",
     "components": "Components",
@@ -53,7 +75,6 @@
     "calculatorFormula": "Calculator Formula",
     "chat": "Chat",
     "contentSite": "Site Content",
-    "settings": "Settings",
     "main": "Main",
     "menu": "Menu",
     "mortgage": "Calculate Mortgage",
@@ -169,7 +190,8 @@
       "delete": "Are you sure you want to delete?",
       "save": "Save changes?",
       "discard": "Discard changes?",
-      "logout": "Are you sure you want to logout?"
+      "logout": "Are you sure you want to logout?",
+      "leave": "Are you sure you want to leave this page? Your changes may be lost."
     }
   },
   "forms": {

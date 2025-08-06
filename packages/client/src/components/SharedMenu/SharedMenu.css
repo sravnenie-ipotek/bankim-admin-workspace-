@@ -18,6 +18,14 @@
   transition: all 0.3s ease;
 }
 
+/* RTL Support for Sidebar - Position it on the right */
+[dir="rtl"] .sidebar {
+  position: fixed;
+  right: 0;
+  left: auto;
+  z-index: 100;
+}
+
 /* Content */
 .content {
   /* Auto layout */
@@ -54,6 +62,12 @@
   order: 0;
   align-self: stretch;
   flex-grow: 0;
+}
+
+/* RTL Support for Logo */
+[dir="rtl"] .logo {
+  align-items: flex-end;
+  padding: 20px 20px 0px 0px;
 }
 
 /* Logo Container */
@@ -980,6 +994,87 @@
   justify-content: space-between;
   width: 100%;
   /* ... existing styles remain the same ... */
+}
+
+/* ================================
+   RTL (Right-to-Left) Support
+   ================================ */
+
+/* RTL Support for Menu Navigation */
+[dir="rtl"] .navlink-sidebar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .left-content {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .pages {
+  text-align: right;
+}
+
+[dir="rtl"] .submenu-label {
+  text-align: right;
+}
+
+[dir="rtl"] .sublink-sidebar {
+  flex-direction: row-reverse;
+}
+
+/* RTL Support for Dropdown Arrow */
+[dir="rtl"] .dropdown-arrow {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .dropdown-arrow.expanded {
+  transform: scaleX(-1) rotate(180deg);
+}
+
+/* RTL Support for Icon Badge */
+[dir="rtl"] .icon-badge {
+  order: -1;
+}
+
+/* RTL Support for Main Navigation */
+[dir="rtl"] .main {
+  padding: 0px 20px 0px 0px;
+}
+
+/* RTL Support for Bottom Navigation */
+[dir="rtl"] .bottom {
+  padding: 0px 20px 0px 0px;
+}
+
+/* RTL Support for Submenu Items */
+[dir="rtl"] .submenu {
+  padding-right: 0px;
+  padding-left: 16px;
+}
+
+[dir="rtl"] .submenu-item {
+  padding-right: 0px;
+  padding-left: 16px;
+}
+
+/* RTL Support for Mobile Layout */
+@media (max-width: 768px) {
+  [dir="rtl"] .sidebar {
+    right: -265px;
+    left: auto;
+  }
+  
+  [dir="rtl"] .sidebar.mobile-open {
+    right: 0;
+  }
+}
+
+/* RTL Support for Responsive Layouts */
+@media (max-width: 1200px) {
+  [dir="rtl"] .sidebar {
+    position: fixed;
+    right: 0;
+    left: auto;
+  }
 }
 
  

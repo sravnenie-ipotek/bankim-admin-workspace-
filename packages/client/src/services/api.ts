@@ -197,7 +197,7 @@ class ApiService {
   
   private readonly CACHE_TTL = CONTENT_CACHE_TTL; // Configurable TTL from environment
 
-  private async request<T>(
+  async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
@@ -338,6 +338,33 @@ class ApiService {
   // Database Info
   async getDbInfo(): Promise<ApiResponse<any>> {
     return this.request('/api/db-info');
+  }
+
+  // Bank Operations
+  async getAllBanks(): Promise<ApiResponse<any[]>> {
+    return this.request('/api/banks');
+  }
+
+  async getBankById(id: number): Promise<ApiResponse<any>> {
+    return this.request(`/api/banks/${id}`);
+  }
+
+  async getBankConfiguration(bankId: number): Promise<ApiResponse<any>> {
+    return this.request(`/api/banks/${bankId}/configuration`);
+  }
+
+  async saveBankConfiguration(bankId: number, configData: any): Promise<ApiResponse<any>> {
+    return this.request(`/api/banks/${bankId}/configuration`, {
+      method: 'PUT',
+      body: JSON.stringify(configData),
+    });
+  }
+
+  async updateBankConfiguration(bankId: number, configData: any): Promise<ApiResponse<any>> {
+    return this.request(`/api/banks/${bankId}/configuration`, {
+      method: 'PUT', 
+      body: JSON.stringify(configData),
+    });
   }
 
   // User Operations (existing)

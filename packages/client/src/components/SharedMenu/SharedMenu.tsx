@@ -19,6 +19,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SharedMenu.css';
 import logo from '../../assets/images/logo/primary-logo05-1.svg';
 import { useFontSettings } from '../../hooks/useFontSettings';
@@ -50,6 +51,7 @@ export interface SharedMenuProps {
 
 const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onItemClick }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const { fontSettings, loading: fontLoading } = useFontSettings();
   const { setCurrentSubmenu } = useNavigation();
@@ -104,48 +106,94 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     { id: 'content-general', label: t('menu.general'), path: '/content/general' }
   ];
 
+  // Users sub-menu items
+  const usersSubItems: SubMenuItem[] = [
+    { id: 'user-management', label: t('menu.userManagement'), path: '/users/management' },
+    { id: 'roles-permissions', label: t('menu.rolesPermissions'), path: '/users/roles-permissions' },
+    { id: 'active-sessions', label: t('menu.activeSessions'), path: '/users/sessions' }
+  ];
+
+  // Analytics sub-menu items
+  const analyticsSubItems: SubMenuItem[] = [
+    { id: 'dashboard', label: t('menu.dashboard'), path: '/analytics/dashboard' },
+    { id: 'reports', label: t('menu.reports'), path: '/analytics/reports' },
+    { id: 'user-stats', label: t('menu.userStats'), path: '/analytics/user-stats' },
+    { id: 'conversion', label: t('menu.conversion'), path: '/analytics/conversion' }
+  ];
+
+  // Settings sub-menu items
+  const settingsSubItems: SubMenuItem[] = [
+    { id: 'general-settings', label: t('menu.generalSettings'), path: '/settings/general' },
+    { id: 'api-config', label: t('menu.apiConfig'), path: '/settings/api-config' },
+    { id: 'security', label: t('menu.security'), path: '/settings/security' },
+    { id: 'integrations', label: t('menu.integrations'), path: '/settings/integrations' }
+  ];
+
+  // Banks sub-menu items
+  const banksSubItems: SubMenuItem[] = [
+    { id: 'banks-list', label: t('menu.banksList'), path: '/banks/list' },
+    { id: 'bank-settings', label: t('menu.bankSettings'), path: '/banks/settings' },
+    { id: 'api-configuration', label: t('menu.apiConfig'), path: '/banks/api-config' }
+  ];
+
+  // System Logs sub-menu items
+  const systemLogsSubItems: SubMenuItem[] = [
+    { id: 'event-log', label: t('menu.eventLog'), path: '/system-logs/events' },
+    { id: 'system-errors', label: t('menu.systemErrors'), path: '/system-logs/errors' },
+    { id: 'audit-actions', label: t('menu.auditActions'), path: '/system-logs/audit' }
+  ];
+
   // Main navigation items per Confluence business logic
   const mainNavItems: NavItem[] = [
     {
-      id: 'dashboard',
-      icon: 'chart-pie',
-      label: t('menu.dashboard'), // Action #2: Dashboard
-      active: activeItem === 'dashboard'
+      id: 'chat',
+      icon: 'messages',
+      label: t('menu.chat')
     },
     {
       id: 'users',
       icon: 'users-group',
-      label: t('menu.clients') // Action #3: Clients/Users
+      label: t('menu.users'),
+      hasDropdown: true,
+      subItems: usersSubItems
     },
     {
-      id: 'bank-employee',
+      id: 'analytics',
+      icon: 'chart-pie',
+      label: t('menu.analytics'),
+      hasDropdown: true,
+      subItems: analyticsSubItems
+    },
+    {
+      id: 'settings',
+      icon: 'cog',
+      label: t('menu.settings'),
+      hasDropdown: true,
+      subItems: settingsSubItems
+    },
+    {
+      id: 'banks',
       icon: 'bank',
-      label: t('menu.bankEmployee') // Action #4: Bank Employee
+      label: t('menu.banks'),
+      hasDropdown: true,
+      subItems: banksSubItems
     },
     {
-      id: 'component-showcase',
-      icon: 'ui-kit',
-      label: t('menu.components') // Action #5: Components
-    },
-    {
-      id: 'shared-header-preview',
-      icon: 'computer-header',
-      label: t('menu.header') // Action #6: Header
+      id: 'system-logs',
+      icon: 'file-lines',
+      label: t('menu.systemLogs'),
+      hasDropdown: true,
+      subItems: systemLogsSubItems
     },
     {
       id: 'calculator-formula',
       icon: 'calculator',
-      label: t('menu.calculatorFormula') // Action #7: Calculator Formula
-    },
-    {
-      id: 'chat',
-      icon: 'messages',
-      label: t('menu.chat') // Action #8: Chat
+      label: t('menu.calculatorFormula')
     },
     {
       id: 'content-management',
       icon: 'file-edit',
-      label: t('menu.contentSite'), // Action #9: Content Management (standalone)
+      label: t('menu.contentSite'),
       hasDropdown: true,
       subItems: contentSubItems
     }
@@ -154,14 +202,9 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   // Bottom navigation items per Confluence business logic
   const bottomNavItems: NavItem[] = [
     {
-      id: 'settings',
-      icon: 'cog',
-      label: t('menu.settings') // Action #8: Settings
-    },
-    {
       id: 'logout',
       icon: 'arrow-right-to-bracket-outline',
-      label: t('auth.logout') // Action #9: Logout
+      label: t('auth.logout') // Logout
     }
   ];
 
@@ -173,6 +216,17 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
       return;
     }
     
+    // Handle direct navigation for non-dropdown items
+    const navigationMap: Record<string, string> = {
+      'calculator-formula': '/calculator-formula',
+      'chat': '/chat',
+      'logout': '/' // Could add logout logic here
+    };
+    
+    if (navigationMap[itemId]) {
+      navigate(navigationMap[itemId]);
+    }
+    
     if (onItemClick) {
       onItemClick(itemId);
     }
@@ -181,6 +235,49 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
   const handleSubItemClick = (subItemId: string, subItemLabel: string) => {
     // Set the current submenu in navigation context
     setCurrentSubmenu(subItemId, subItemLabel);
+    
+    // Handle submenu navigation
+    const subNavigationMap: Record<string, string> = {
+      // Users submenu
+      'user-management': '/users/management',
+      'roles-permissions': '/users/roles-permissions',
+      'active-sessions': '/users/sessions',
+      
+      // Analytics submenu
+      'dashboard': '/analytics/dashboard',
+      'reports': '/analytics/reports',
+      'user-stats': '/analytics/user-stats',
+      'conversion': '/analytics/conversion',
+      
+      // Settings submenu
+      'general-settings': '/settings/general',
+      'api-config': '/settings/api-config',
+      'security': '/settings/security',
+      'integrations': '/settings/integrations',
+      
+      // Banks submenu
+      'banks-list': '/banks/list',
+      'bank-settings': '/banks/settings',
+      'api-configuration': '/banks/api-config',
+      
+      // System Logs submenu
+      'event-log': '/system-logs/events',
+      'system-errors': '/system-logs/errors',
+      'audit-actions': '/system-logs/audit',
+      
+      // Content submenu (existing)
+      'content-main': '/content/main',
+      'content-menu': '/content/menu',
+      'content-mortgage': '/content/mortgage',
+      'content-mortgage-refi': '/content/mortgage-refi',
+      'content-credit': '/content/credit',
+      'content-credit-refi': '/content/credit-refi',
+      'content-general': '/content/general'
+    };
+    
+    if (subNavigationMap[subItemId]) {
+      navigate(subNavigationMap[subItemId]);
+    }
     
     if (onItemClick) {
       onItemClick(subItemId);

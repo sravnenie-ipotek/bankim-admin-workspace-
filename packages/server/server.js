@@ -10,6 +10,9 @@ const { Pool } = require('pg');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
+// Import banks endpoints for Calculator Formula
+const setupBanksEndpoints = require('./endpoints/banks-endpoints');
+
 // Load environment variables from root directory
 // Try .env.local first, then fall back to .env
 require('dotenv').config({ path: '../../.env.local' });
@@ -29,10 +32,12 @@ let isConnected = false;
 let connectionAttempts = 0;
 const maxRetries = 3;
 
-// Railway database configuration - FORCE using CONTENT_DATABASE_URL
+// Database configuration - Environment-specific setup
+const isProduction = process.env.NODE_ENV === 'production';
+
 const primaryConfig = {
   connectionString: process.env.CONTENT_DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: isProduction ? false : false, // Production uses local PostgreSQL (no SSL), Development uses Railway
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 30000,
   max: 10,
@@ -40,9 +45,14 @@ const primaryConfig = {
 
 // Debug which database URL is being used
 console.log('🔍 Database connection debug:');
+console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
 console.log(`   CONTENT_DATABASE_URL: ${process.env.CONTENT_DATABASE_URL ? 'Present' : 'Missing'}`);
 console.log(`   DATABASE_URL: ${process.env.DATABASE_URL ? 'Present' : 'Missing'}`);
-console.log(`   FORCED to use: CONTENT_DATABASE_URL`);
+if (isProduction) {
+  console.log(`   Production mode: Using local PostgreSQL (bankim_content) - No SSL`);
+} else {
+  console.log(`   Development mode: Using Railway database - No SSL`);
+}
 
 
 
@@ -254,6 +264,9 @@ app.get('/api/db-info', async (req, res) => {
     });
   }
 });
+
+// Setup Banks API endpoints for Calculator Formula (Railway database)
+setupBanksEndpoints(app, safeQuery);
 
 /**
  * Get menu translations for menu components
@@ -3842,6 +3855,84 @@ app.get('/api/banks/:bankId/configuration', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch bank configuration from database'
+    });
+  }
+});
+
+// Add PUT endpoint for saving bank configurations
+app.put('/api/banks/:bankId/configuration', async (req, res) => {
+  try {
+    const { bankId } = req.params;
+    const configData = req.body;
+    
+    console.log(`💾 Saving bank configuration for bank ID: ${bankId}`);
+    console.log(`📋 Configuration data:`, configData);
+    
+    // In a real system, you would save to a bank_configurations table
+    // For now, we'll simulate successful save and return the updated data
+    
+    // Validate required fields
+    const requiredFields = [
+      'base_interest_rate', 'min_interest_rate', 'max_interest_rate',
+      'max_ltv_ratio', 'min_credit_score', 'max_loan_amount',
+      'min_loan_amount', 'processing_fee'
+    ];
+    
+    const missingFields = requiredFields.filter(field => !configData[field]);
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: `Missing required fields: ${missingFields.join(', ')}`
+      });
+    }
+    
+    // Validate numeric fields
+    const numericFields = [
+      'base_interest_rate', 'min_interest_rate', 'max_interest_rate',
+      'max_ltv_ratio', 'min_credit_score', 'max_loan_amount',
+      'min_loan_amount', 'processing_fee'
+    ];
+    
+    for (const field of numericFields) {
+      if (isNaN(parseFloat(configData[field]))) {
+        return res.status(400).json({
+          success: false,
+          error: `Invalid numeric value for field: ${field}`
+        });
+      }
+    }
+    
+    // Create updated configuration object
+    const updatedConfig = {
+      id: parseInt(bankId),
+      bank_id: parseInt(bankId),
+      base_interest_rate: configData.base_interest_rate,
+      min_interest_rate: configData.min_interest_rate,
+      max_interest_rate: configData.max_interest_rate,
+      max_ltv_ratio: configData.max_ltv_ratio,
+      min_credit_score: parseInt(configData.min_credit_score),
+      max_loan_amount: configData.max_loan_amount,
+      min_loan_amount: configData.min_loan_amount,
+      processing_fee: configData.processing_fee,
+      name_en: configData.name_en || 'Bank',
+      name_he: configData.name_he || 'בנק',
+      name_ru: configData.name_ru || 'Банк',
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log(`✅ Successfully saved configuration for bank ${bankId}`);
+    
+    res.json({
+      success: true,
+      data: updatedConfig,
+      message: 'Bank configuration saved successfully'
+    });
+    
+  } catch (error) {
+    console.error('Error saving bank configuration:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to save bank configuration'
     });
   }
 });

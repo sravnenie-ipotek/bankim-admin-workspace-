@@ -37,7 +37,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
   onLogoClick
 }) => {
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
 
   console.log('SharedHeader render: current language =', language);
@@ -52,7 +52,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
     }
 
     if (confirmNavigation) {
-      const message = confirmationMessage || 'Are you sure you want to leave this page? Your changes may be lost.';
+      const message = confirmationMessage || t('messages.confirm.leave');
       
       if (window.confirm(message)) {
         navigate(navigateTo);
@@ -87,7 +87,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
               type="button"
               className="logo-button"
               onClick={handleLogoClick}
-              aria-label="Go to dashboard"
+              aria-label={t('common.goToDashboard')}
             >
             <div className="logo-frame">
               {/* Primary SVG logo from public folder */}
@@ -108,7 +108,7 @@ const SharedHeader: React.FC<SharedHeaderProps> = ({
             <button 
               className="language-button"
               onClick={toggleLanguageDropdown}
-              aria-label="Select language"
+              aria-label={t('common.selectLanguage')}
             >
               <span className="selected-language">{LANGUAGES[language].name}</span>
               <div className={`dropdown-arrow ${isLanguageDropdownOpen ? 'open' : ''}`}>

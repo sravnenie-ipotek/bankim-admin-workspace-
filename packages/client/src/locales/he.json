@@ -17,7 +17,9 @@
     "date": "תאריך",
     "language": "שפה",
     "yes": "כן",
-    "no": "לא"
+    "no": "לא",
+    "goToDashboard": "עבור ללוח הבקרה",
+    "selectLanguage": "בחר שפה"
   },
   "auth": {
     "login": "כניסה",
@@ -46,6 +48,26 @@
   },
   "menu": {
     "dashboard": "דף הבית",
+    "users": "משתמשים",
+    "userManagement": "ניהול משתמשים",
+    "rolesPermissions": "תפקידים והרשאות",
+    "activeSessions": "פעילות פתוחה",
+    "analytics": "ניתוח נתונים",
+    "reports": "דוחות",
+    "userStats": "סטטיסטיקת משתמשים",
+    "conversion": "המרה",
+    "settings": "הגדרות",
+    "generalSettings": "הגדרות כלליות",
+    "apiConfig": "הגדרות API",
+    "security": "אבטחה",
+    "integrations": "אינטגרציות",
+    "banks": "בנקים",
+    "banksList": "רשימת בנקים",
+    "bankSettings": "הגדרות בנקים",
+    "systemLogs": "לוגים מערכת",
+    "eventLog": "יומן אירועים",
+    "systemErrors": "שגיאות מערכת",
+    "auditActions": "אודיט פעולות",
     "clients": "לקוחות",
     "bankEmployee": "עובד בנק",
     "components": "רכיבים",
@@ -53,7 +75,6 @@
     "calculatorFormula": "נוסחת מחשבון",
     "chat": "צ'אט",
     "contentSite": "תוכן האתר",
-    "settings": "הגדרות",
     "main": "ראשי",
     "menu": "תפריט",
     "mortgage": "חישוב משכנתא",
@@ -169,7 +190,8 @@
       "delete": "האם אתה בטוח שברצונך למחוק?",
       "save": "לשמור שינויים?",
       "discard": "לבטל שינויים?",
-      "logout": "האם אתה בטוח שברצונך לצאת?"
+      "logout": "האם אתה בטוח שברצונך לצאת?",
+      "leave": "האם אתה בטוח שברצונך לעזוב עמוד זה? השינויים שלך עלולים להאבד."
     }
   },
   "forms": {

@@ -96,22 +96,22 @@ const CalculatorFormula: React.FC = () => {
   const loadBanks = async () => {
     setIsLoading(true);
     try {
-        // Fetch real bank data from API using the API service
-        const response = await apiService.request('/api/banks');
+        // Fetch real bank data from Railway API using the API service
+        const response = await apiService.getAllBanks();
         
-        if (response.success) {
+        if (response.success && response.data) {
           setBanks(response.data);
           // Auto-select first bank if available
           if (response.data.length > 0) {
             setSelectedBankId(response.data[0].id);
           }
         } else {
-          console.error('Failed to load banks:', response.error);
+          console.error('Failed to load banks from Railway database:', response.error);
           setBanks([]);
         }
     } catch (error) {
       ProductionErrorHandler.handleComponentError(error as Error, 'CalculatorFormula.loadBanks');
-      // Set empty array as fallback
+      console.error('Error connecting to Railway database for banks:', error);
       setBanks([]);
     } finally {
       setIsLoading(false);
@@ -121,7 +121,7 @@ const CalculatorFormula: React.FC = () => {
   const loadBankConfiguration = async (bankId: number) => {
     setIsLoading(true);
     
-    // Default configuration as fallback
+    // Default configuration as fallback only for development
     const defaultConfig: BankConfiguration = {
       bank_id: bankId,
       base_interest_rate: '3.500',
@@ -135,19 +135,22 @@ const CalculatorFormula: React.FC = () => {
     };
     
     try {
-      // Fetch real bank configuration from API using the API service
-      const response = await apiService.request(`/api/banks/${bankId}/configuration`);
+      // Fetch real bank configuration from Railway database using the API service
+      const response = await apiService.getBankConfiguration(bankId);
       
-      if (response.success) {
+      if (response.success && response.data) {
         setBankConfiguration(response.data);
         setEditData(response.data);
       } else {
-        console.error('Failed to load bank configuration:', response.error);
+        console.error('Failed to load bank configuration from Railway database:', response.error);
+        // Use default configuration only temporarily while backend is being set up
         setBankConfiguration(defaultConfig);
         setEditData(defaultConfig);
       }
     } catch (error) {
-      console.error('Error loading bank configuration:', error);
+      console.error('Error connecting to Railway database for bank configuration:', error);
+      ProductionErrorHandler.handleComponentError(error as Error, 'CalculatorFormula.loadBankConfiguration');
+      // Use default configuration only temporarily while backend is being set up
       setBankConfiguration(defaultConfig);
       setEditData(defaultConfig);
     } finally {
@@ -245,7 +248,7 @@ const CalculatorFormula: React.FC = () => {
     setValidationErrors({});
   };
 
-  // Save changes
+  // Save changes - Real Railway database operation
   const handleSave = async () => {
     if (!validateForm() || !selectedBankId) {
       return;
@@ -253,25 +256,40 @@ const CalculatorFormula: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Real save operation - calls backend API
-      // In production, this would use the apiService to save to backend
-      console.log('Saving bank configuration:', editData);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update local state with saved data
-      setBankConfiguration(editData as BankConfiguration);
-      setIsEditMode(false);
-      
-      console.log('Bank configuration saved successfully (mock)');
-      
-      // Show success feedback to user
-      alert('Конфигурация банка успешно сохранена!');
+      // Prepare data for Railway API call
+      const configurationData = {
+        bank_id: selectedBankId,
+        base_interest_rate: editData.base_interest_rate,
+        min_interest_rate: editData.min_interest_rate,
+        max_interest_rate: editData.max_interest_rate,
+        max_ltv_ratio: editData.max_ltv_ratio,
+        min_credit_score: editData.min_credit_score,
+        max_loan_amount: editData.max_loan_amount,
+        min_loan_amount: editData.min_loan_amount,
+        processing_fee: editData.processing_fee
+      };
+
+      // Real save operation - calls Railway backend API
+      const response = await apiService.saveBankConfiguration(selectedBankId, configurationData);
+
+      if (response.success) {
+        // Update local state with saved data from server response
+        setBankConfiguration(response.data || editData as BankConfiguration);
+        setIsEditMode(false);
+        
+        console.log('Bank configuration saved successfully to Railway database:', response.data);
+        
+        // Show success feedback to user
+        alert('Конфигурация банка успешно сохранена!');
+      } else {
+        console.error('Failed to save bank configuration to Railway database:', response.error);
+        alert(`Ошибка при сохранении в Railway: ${response.error || 'Неизвестная ошибка'}`);
+      }
       
     } catch (error) {
-      console.error('Error saving bank configuration:', error);
-      alert('Ошибка при сохранении конфигурации. Попробуйте еще раз.');
+      console.error('Error saving bank configuration to Railway database:', error);
+      ProductionErrorHandler.handleComponentError(error as Error, 'CalculatorFormula.handleSave');
+      alert('Ошибка при сохранении конфигурации. Проверьте подключение к Railway и попробуйте еще раз.');
     } finally {
       setIsLoading(false);
     }

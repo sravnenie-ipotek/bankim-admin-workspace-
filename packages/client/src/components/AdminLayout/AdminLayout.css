@@ -28,6 +28,12 @@
   min-width: 44px;
 }
 
+/* RTL Support for Mobile Menu */
+[dir="rtl"] .mobile-menu-toggle {
+  left: auto;
+  right: 1rem;
+}
+
 .mobile-menu-toggle:hover {
   background: #374151;
   transform: translateY(-2px);
@@ -54,6 +60,12 @@
   min-height: 100vh;
   transition: all 0.3s ease;
   background: #1F2A37; /* Match sidebar background */
+}
+
+/* RTL Support for Main Content */
+[dir="rtl"] .admin-main-content {
+  margin-left: 0;
+  margin-right: 265px;
 }
 
 /* Page content area (excludes header) */
