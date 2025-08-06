@@ -202,9 +202,8 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      // Use relative path for content endpoints since Vite proxy handles routing
-      const baseUrl = endpoint.startsWith('/api/content') ? '' : API_BASE_URL;
-      const response = await fetch(`${baseUrl}${endpoint}`, {
+      // Always use relative path for API calls to work with Vite proxy
+      const response = await fetch(endpoint, {
         headers: {
           'Content-Type': 'application/json',
           ...options.headers,

@@ -22,7 +22,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout/AdminLayout';
-// import { apiService } from '../services/api'; // Available for future backend integration
+import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import ProductionErrorHandler from '../utils/errorHandler';
 import './CalculatorFormula.css';
@@ -96,18 +96,17 @@ const CalculatorFormula: React.FC = () => {
   const loadBanks = async () => {
     setIsLoading(true);
     try {
-        // Fetch real bank data from API
-        const response = await fetch('/api/banks');
-        const banksData = await response.json();
+        // Fetch real bank data from API using the API service
+        const response = await apiService.request('/api/banks');
         
-        if (banksData.success) {
-          setBanks(banksData.data);
+        if (response.success) {
+          setBanks(response.data);
           // Auto-select first bank if available
-          if (banksData.data.length > 0) {
-            setSelectedBankId(banksData.data[0].id);
+          if (response.data.length > 0) {
+            setSelectedBankId(response.data[0].id);
           }
         } else {
-          console.error('Failed to load banks:', banksData.error);
+          console.error('Failed to load banks:', response.error);
           setBanks([]);
         }
     } catch (error) {
@@ -136,15 +135,14 @@ const CalculatorFormula: React.FC = () => {
     };
     
     try {
-      // Fetch real bank configuration from API
-      const response = await fetch(`/api/banks/${bankId}/configuration`);
-      const configData = await response.json();
+      // Fetch real bank configuration from API using the API service
+      const response = await apiService.request(`/api/banks/${bankId}/configuration`);
       
-      if (configData.success) {
-        setBankConfiguration(configData.data);
-        setEditData(configData.data);
+      if (response.success) {
+        setBankConfiguration(response.data);
+        setEditData(response.data);
       } else {
-        console.error('Failed to load bank configuration:', configData.error);
+        console.error('Failed to load bank configuration:', response.error);
         setBankConfiguration(defaultConfig);
         setEditData(defaultConfig);
       }

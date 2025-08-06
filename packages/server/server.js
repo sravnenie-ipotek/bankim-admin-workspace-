@@ -3722,6 +3722,130 @@ app.post('/api/auth-verify', (req, res) => {
   }
 });
 
+// Banks API endpoints for calculator formula
+app.get('/api/banks', async (req, res) => {
+  try {
+    console.log('🔍 Banks endpoint called');
+    
+    // Fetch banks from database using SSH tunnel connection
+    const banksQuery = `
+      SELECT DISTINCT 
+        ci.id,
+        ci.content_key,
+        ci.is_active,
+        ci.updated_at,
+        MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as name_en,
+        MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as name_he,
+        MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as name_ru
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id 
+        AND ct.status = 'approved'
+      WHERE ci.content_key LIKE '%bank%'
+        AND ci.component_type = 'option'
+        AND ci.is_active = TRUE
+      GROUP BY ci.id, ci.content_key, ci.is_active, ci.updated_at
+      ORDER BY ci.id
+    `;
+    
+    const result = await safeQuery(banksQuery);
+    console.log(`📊 Banks query returned ${result.rows.length} rows`);
+    
+    if (result.rows.length > 0) {
+      console.log(`📋 First row sample:`, result.rows[0]);
+    }
+    
+    // Transform database results to API format
+    const banks = result.rows.map((row, index) => ({
+      id: row.id,
+      name_en: row.name_en || `Bank ${index + 1}`,
+      name_he: row.name_he || `בנק ${index + 1}`,
+      name_ru: row.name_ru || `Банк ${index + 1}`,
+      is_active: row.is_active
+    }));
+    
+    console.log(`✅ Formatted ${banks.length} banks`);
+    
+    res.json({
+      success: true,
+      data: banks
+    });
+  } catch (error) {
+    console.error('Error fetching banks:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch banks from database'
+    });
+  }
+});
+
+app.get('/api/banks/:bankId/configuration', async (req, res) => {
+  try {
+    const { bankId } = req.params;
+    console.log(`🔍 Bank configuration endpoint called for bank ID: ${bankId}`);
+    
+    // Fetch bank configuration from database using SSH tunnel connection
+    const configQuery = `
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.is_active,
+        ci.updated_at,
+        MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as name_en,
+        MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as name_he,
+        MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as name_ru
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id 
+        AND ct.status = 'approved'
+      WHERE ci.id = $1
+        AND ci.is_active = TRUE
+      GROUP BY ci.id, ci.content_key, ci.is_active, ci.updated_at
+    `;
+    
+    const result = await safeQuery(configQuery, [bankId]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Bank configuration not found'
+      });
+    }
+    
+    const bankData = result.rows[0];
+    console.log(`📋 Bank data from database:`, bankData);
+    
+    // Create default configuration based on bank data
+    // In a real system, you would have a separate bank_configurations table
+    const config = {
+      id: bankData.id,
+      bank_id: bankData.id,
+      base_interest_rate: '3.500',
+      min_interest_rate: '2.800',
+      max_interest_rate: '4.500',
+      max_ltv_ratio: '75.00',
+      min_credit_score: 620,
+      max_loan_amount: '2000000.00',
+      min_loan_amount: '100000.00',
+      processing_fee: '1500.00',
+      name_en: bankData.name_en || 'Bank',
+      name_he: bankData.name_he || 'בנק',
+      name_ru: bankData.name_ru || 'Банк'
+    };
+    
+    console.log(`✅ Created configuration for bank ${bankId}`);
+    
+    res.json({
+      success: true,
+      data: config
+    });
+  } catch (error) {
+    console.error('Error fetching bank configuration:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch bank configuration from database'
+    });
+  }
+});
+
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
