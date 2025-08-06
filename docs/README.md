@@ -1,129 +1,284 @@
-# 🏗️ BankIM Management Portal
+# 🏦 BankIM Management Portal
 
-## 📋 **Repository Structure**
+**Modern React-based management portal for multilingual banking content administration**
 
-This project has been split into separate repositories for better development workflow:
+## 🏗️ **Architecture Overview**
 
-### **📁 Client Repository (Frontend)**
-- **Repository**: `bankimOnlineAdmin_client`
-- **GitHub**: https://github.com/MichaelMishaev/bankimOnlineAdmin_client
-- **Technology**: React 18 + TypeScript + Vite
+This project implements a **4-Repository Hybrid Strategy** combining unified development with independent deployment:
 
-### **📁 Server Repository (Backend)**
-- **Repository**: `bankimOnlineAdmin` (this repository)
-- **GitHub**: https://github.com/MichaelMishaev/bankimOnlineAdmin
-- **Technology**: Node.js + Express + PostgreSQL
+### **📁 Repository Structure**
 
-## 📚 **Documentation**
-
-For complete repository information and setup instructions, see:
-- **[REPOSITORIES_README.md](./REPOSITORIES_README.md)** - Complete repository structure and setup guide
+| Repository | Purpose | Technology Stack |
+|------------|---------|------------------|
+| **🏠 [bankim-admin-workspace](https://github.com/sravnenie-ipotek/bankim-admin-workspace-)** | Complete monorepo for development | Turborepo + npm workspaces |
+| **🎨 [bankim-admin-dashboard](https://github.com/sravnenie-ipotek/bankim-admin-dashboard)** | React frontend application | React 18 + TypeScript + Vite |
+| **🔧 [bankim-admin-api](https://github.com/sravnenie-ipotek/bankim-admin-api)** | Node.js backend API | Express + PostgreSQL |
+| **📚 [bankim-admin-shared](https://github.com/sravnenie-ipotek/bankim-admin-shared)** | Shared TypeScript types & utilities | TypeScript library |
 
 ## 🚀 **Quick Start**
 
-### **Backend Development (This Repository)**
+### **Development Setup (Monorepo)**
+
 ```bash
-# Install dependencies
+# Clone the complete workspace
+git clone git@github.com:sravnenie-ipotek/bankim-admin-workspace-.git
+cd bankim-admin-workspace-
+
+# Install all dependencies
 npm install
 
-# Start development server
-npm run backend:dev
-
-# Run database migrations
-npm run backend:migrate
-```
-
-### **Frontend Development**
-```bash
-# Clone client repository
-git clone git@github.com:MichaelMishaev/bankimOnlineAdmin_client.git
-cd bankimOnlineAdmin_client
-
-# Install dependencies
-npm install
-
-# Start development server
+# Start all services in development mode
 npm run dev
 ```
 
-## 🗄️ **Database Architecture**
+**Access Points:**
+- **Frontend**: http://localhost:3002
+- **Backend API**: http://localhost:3001
+- **Content Management**: http://localhost:3002/content-management
 
-This repository contains the backend API and database management:
-
-- **Content Database**: Multi-language content management
-- **Core Database**: Business logic and calculations
-- **Management Database**: Admin operations and user management
-
-## 🔧 **Available Scripts**
+### **Individual Repository Development**
 
 ```bash
-# Backend Development
-npm run backend:dev      # Start backend server
-npm run backend:start    # Start production server
-npm run backend:test     # Run backend tests
+# Frontend only
+git clone git@github.com:sravnenie-ipotek/bankim-admin-dashboard.git
+cd bankim-admin-dashboard
+npm install && npm run dev
 
-# Database Management
-npm run backend:migrate  # Run database migrations
-npm run backend:status   # Check database status
-
-# Full Stack Development
-npm run full-dev         # Start both frontend and backend
+# Backend only
+git clone git@github.com:sravnenie-ipotek/bankim-admin-api.git
+cd bankim-admin-api
+npm install && npm run dev
 ```
 
-## 📊 **Technology Stack**
+## 📦 **Technology Stack**
 
-### **Backend (This Repository)**
+### **Frontend (Dashboard)**
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite 5.0
+- **Routing**: React Router 6.8
+- **Testing**: Cypress 14.5
+- **Styling**: CSS3 with CSS Variables
+
+### **Backend (API)**
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
-- **Database**: PostgreSQL (Railway)
-- **Authentication**: JWT
+- **Database**: PostgreSQL
+- **Authentication**: JWT tokens
 - **API**: RESTful endpoints
 
-### **Frontend (Client Repository)**
-- **Framework**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Routing**: React Router DOM
-- **Styling**: CSS3 with CSS Variables
-- **Languages**: Russian, English, Hebrew (RTL)
+### **Shared Package**
+- **TypeScript Types**: Content interfaces, API responses
+- **Utilities**: Content validation, translation helpers
+- **Distribution**: Git-based package distribution
 
-## 🌐 **API Endpoints**
+### **Development Tools**
+- **Monorepo**: Turborepo for build orchestration
+- **Package Manager**: npm workspaces
+- **Code Quality**: ESLint + TypeScript strict mode
+- **Deployment**: Automated 4-repository push system
 
-### **Content Management**
-- `GET /api/content/:contentType` - Get content by type
-- `POST /api/content/:contentType` - Create new content
-- `PUT /api/content/:contentType/:id` - Update content
-- `DELETE /api/content/:contentType/:id` - Delete content
+## 🎯 **Key Features**
 
-### **Authentication**
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/verify` - Verify JWT token
+### **Multilingual Content Management**
+- **Languages**: Hebrew (RTL), Russian (Cyrillic), English
+- **Content Types**: Text, dropdowns, links, formulas
+- **Real-time Editing**: Inline content editing with modals
+- **Database-driven**: PostgreSQL content storage
 
-### **Health & Status**
-- `GET /health` - Server health check
-- `GET /api/db/status` - Database status
+### **Role-Based Access Control**
+- **Director**: Super admin dashboard
+- **Administration**: System management
+- **Content Manager**: Content creation tools
+- **Sales Manager**: Sales dashboard
+- **Bank Employee**: Content editing
+- **Brokers**: Partner portal
 
-## 🚀 **Deployment**
+### **Financial Calculation Tools**
+- **Mortgage Calculator**: Interest rates, payment schedules
+- **Credit Products**: Application workflows
+- **Refinancing**: Mortgage and credit refinancing options
 
-### **Backend Deployment**
-This repository is configured for Railway deployment:
-- **Railway**: Automatic deployment from GitHub
-- **Environment**: Production-ready configuration
-- **Database**: PostgreSQL on Railway
+## 🗄️ **Database Architecture**
 
-### **Frontend Deployment**
-The client repository supports multiple deployment options:
-- **Vercel**: Automatic deployment
-- **Netlify**: Drag and drop deployment
-- **Railway**: Static site deployment
+The system uses multiple PostgreSQL databases:
+
+- **bankim_content**: UI content and multilingual translations
+- **bankim_core**: Business logic, formulas, user permissions
+- **bankim_management**: Portal-specific administrative data
+
+### **Environment Configuration**
+```bash
+# Copy template and configure
+cp env.template .env
+
+# Required environment variables
+CONTENT_DATABASE_URL=postgresql://...
+CORE_DATABASE_URL=postgresql://...
+MANAGEMENT_DATABASE_URL=postgresql://...
+```
+
+## 🔧 **Development Scripts**
+
+### **Monorepo Commands**
+```bash
+# Development
+npm run dev              # Start all packages in parallel
+npm run build            # Build all packages
+npm run test             # Run all tests
+npm run lint             # Lint all packages
+
+# Deployment
+npm run push:all         # Deploy to all 4 repositories
+npm run push:workspace   # Push workspace only
+npm run push:dashboard   # Push dashboard only
+npm run push:api         # Push API only
+npm run push:shared      # Push shared package only
+```
+
+### **Package-Specific Commands**
+```bash
+# Client package (Frontend)
+npm run dev --workspace=@bankim/client
+npm run build --workspace=@bankim/client
+npm run test:all --workspace=@bankim/client
+
+# Server package (Backend)
+npm run dev --workspace=@bankim/server
+npm run db:migrate --workspace=@bankim/server
+npm run test --workspace=@bankim/server
+
+# Shared package (Types)
+npm run build --workspace=@bankim/shared
+npm run dev --workspace=@bankim/shared
+```
+
+## 🧪 **Testing Strategy**
+
+### **End-to-End Testing (Cypress)**
+```bash
+# Interactive test runner
+npm run cypress:open --workspace=@bankim/client
+
+# Specific test suites
+npm run test:mortgage --workspace=@bankim/client
+npm run test:content-errors --workspace=@bankim/client
+npm run test:full-drill --workspace=@bankim/client
+```
+
+### **Test Coverage Areas**
+- Authentication workflows
+- Content management CRUD operations
+- Multilingual content switching
+- Financial calculator accuracy
+- Role-based access control
+- Responsive design validation
+
+## 🚦 **Deployment Strategy**
+
+### **4-Repository Deployment System**
+
+The deployment system automatically filters and transforms content for each target repository:
+
+```bash
+# Deploy to all repositories
+npm run push:all
+
+# Deploy with custom message
+npm run push:all -m "Feature: Add new calculator"
+
+# Dry run (preview changes)
+npm run push:dry-run
+```
+
+**Deployment Process:**
+1. **Workspace**: Complete monorepo pushed for development
+2. **Dashboard**: Client package filtered with git-based shared dependency
+3. **API**: Server package filtered with git-based shared dependency
+4. **Shared**: Types package with semantic versioning
+
+### **Dependency Transformation**
+- **Development**: `file:../shared` for local package linking
+- **Deployment**: `git+https://github.com/.../bankim-admin-shared.git` for remote access
+
+## 📚 **Documentation**
+
+### **Available Guides**
+- **[REPOSITORIES_README.md](./REPOSITORIES_README.md)** - Complete 4-repository architecture guide
+- **[CLAUDE.md](./CLAUDE.md)** - Development instructions for AI assistance
+- **[DATABASE_SETUP_GUIDE.md](./DATABASE_SETUP_GUIDE.md)** - Database configuration
+- **[QUICK_START_GUIDE.md](./QUICK_START_GUIDE.md)** - Fast development setup
+- **[MONOREPO_SETUP_COMPLETE.md](./MONOREPO_SETUP_COMPLETE.md)** - Monorepo configuration
+
+### **Architecture Documentation**
+- **[systemTranslationLogic.md](./systemTranslationLogic.md)** - Translation system
+- **[SSH_SERVER_HIERARCHY.md](./SSH_SERVER_HIERARCHY.md)** - Server architecture
+- **[CHECK_BANKIM_ONLINE.md](./CHECK_BANKIM_ONLINE.md)** - Health monitoring
+
+## 🔐 **Security Features**
+
+- **JWT Authentication**: Secure token-based authentication
+- **Role-based Access**: Granular permission system
+- **CORS Protection**: Cross-origin request security
+- **Helmet Integration**: Security headers and protection
+- **Rate Limiting**: API request rate limiting
+- **Input Validation**: Data sanitization and validation
+
+## 🌍 **Internationalization**
+
+### **Language Support**
+- **Hebrew (he)**: Primary language with RTL support
+- **Russian (ru)**: Cyrillic script support  
+- **English (en)**: International accessibility
+
+### **RTL (Right-to-Left) Features**
+- Automatic layout mirroring for Hebrew
+- Direction-aware CSS styling
+- Text alignment based on language direction
+- Form layout adaptation for RTL languages
+
+## 📊 **Performance Optimization**
+
+- **Code Splitting**: React lazy loading and Suspense
+- **Bundle Analysis**: Vite bundle optimization
+- **API Caching**: 5-minute TTL with ETag validation
+- **Tree Shaking**: Unused code elimination
+- **Responsive Images**: Optimized asset loading
+
+## 🤝 **Contributing**
+
+### **Development Workflow**
+1. Clone workspace repository
+2. Create feature branch from `main`
+3. Install dependencies: `npm install`
+4. Start development: `npm run dev`
+5. Run tests: `npm run test`
+6. Deploy: `npm run push:all`
+
+### **Code Standards**
+- TypeScript strict mode required
+- ESLint for code quality
+- Functional components with hooks
+- Comprehensive type definitions
+- E2E test coverage for new features
 
 ## 📞 **Support**
 
-- **Backend Issues**: Create issues in this repository
-- **Frontend Issues**: Create issues in `bankimOnlineAdmin_client`
-- **API Documentation**: See `REPOSITORIES_README.md`
+- **Issues**: Create issues in respective repositories
+- **Documentation**: Comprehensive inline documentation
+- **Type Safety**: Full TypeScript interface coverage
+- **Testing**: Cypress E2E test examples
 
 ---
 
-**Last Updated**: August 2025
-**Version**: 1.0.0 
+## 🔗 **Repository Links**
+
+- **[🏠 Workspace](https://github.com/sravnenie-ipotek/bankim-admin-workspace-)** - Complete development environment
+- **[🎨 Dashboard](https://github.com/sravnenie-ipotek/bankim-admin-dashboard)** - React frontend application
+- **[🔧 API](https://github.com/sravnenie-ipotek/bankim-admin-api)** - Node.js backend service
+- **[📚 Shared](https://github.com/sravnenie-ipotek/bankim-admin-shared)** - TypeScript types & utilities
+
+**Copyright © 2024 BankIM Development Team**
+
+---
+
+**🚀 Ready to develop? Run `npm install && npm run dev` and visit `http://localhost:3002`**
