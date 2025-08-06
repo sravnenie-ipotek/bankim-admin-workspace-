@@ -104,9 +104,9 @@ cd packages/shared && npm run build && cd ../..
 # Push to workspace repository
 print_status "Pushing to workspace repository..."
 if [ "$FORCE_PUSH" = true ]; then
-    git push workspace $MAIN_BRANCH --force
+    git push origin $MAIN_BRANCH --force
 else
-    git push workspace $MAIN_BRANCH
+    git push origin $MAIN_BRANCH
 fi
 
 print_success "Workspace repository updated successfully!"

@@ -1,0 +1,14 @@
+
+NODE_ENV=production is not supported in the .env file. Only
+NODE_ENV=production is not supported in the .env file. Only NODE_ENV=development is supported to create a development 
+NODE_ENV=production is not supported in the .env file. Only NODE_ENV=development is supported to create a development build of your project. If you need to set process.env.NODE_
+NODE_ENV=production is not supported in the .env file. Only NODE_ENV=development is supported to create a development build of your project. If you need to set process.env.NODE_ENV, you can set it in the Vite config instead.
+Port 3002 is in use, trying another one...
+
+  VITE v5.4.19  ready in 71 ms
+
+  ➜  Local:   http://localhost:3003/
+  ➜  Network: http://10.239.115.36:3003/
+  ➜  press h + enter to show help  ➜  Network: http://10.239.115.36:3003/
+  ➜  press h + enter to show helpzsh: command not found: de
+  ➜  press h + enter to show helpzsh: command not found: dev[A

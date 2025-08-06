@@ -1,0 +1,462 @@
+/* Content Mortgage Edit Page Styles */
+.mortgage-edit-container {
+  padding: 0;
+  background: #111928;
+  min-height: 100vh;
+  color: #F9FAFB;
+  font-family: 'Arimo', Arial, sans-serif;
+  margin-left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: #9CA3AF;
+}
+
+.error-state {
+  color: #EF4444;
+}
+
+/* Breadcrumb */
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0 16px 0;
+  margin-left: 105px;
+  margin-right: 145px;
+  background: transparent;
+}
+
+.breadcrumb-item {
+  color: #9CA3AF;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-item:hover:not(.active) {
+  color: #E5E7EB;
+}
+
+.breadcrumb-item.active {
+  color: #F9FAFB;
+  cursor: default;
+}
+
+.breadcrumb-separator {
+  color: #4B5563;
+  font-size: 20px;
+  opacity: 0.5;
+}
+
+.breadcrumb-separator::after {
+  content: '›';
+}
+
+/* Page Header */
+.page-header-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-left: 105px;
+  margin-right: 145px;
+  margin-bottom: 32px;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.language-selector-edit {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #1F2A37;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.language-selector-edit:hover {
+  background: #374151;
+}
+
+.language-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: #F9FAFB;
+}
+
+.language-chevron {
+  width: 16px;
+  height: 16px;
+  object-fit: fill;
+}
+
+.page-title-edit {
+  font-size: 30px;
+  font-weight: 700;
+  color: #F9FAFB;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #9CA3AF;
+}
+
+/* Last Edit Info */
+.last-edit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #1F2A37;
+  border-radius: 8px;
+  padding: 24px 89px 24px 24px;
+  margin-bottom: 32px;
+  margin-left: 105px;
+  width: fit-content;
+}
+
+.last-edit-label {
+  font-size: 14px;
+  color: #9CA3AF;
+}
+
+.last-edit-date {
+  font-size: 18px;
+  font-weight: 700;
+  color: #F9FAFB;
+}
+
+/* Section Container */
+.section-container {
+  margin: 0 0 40px 105px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #F9FAFB;
+  margin: 0 0 16px 0;
+}
+
+/* Input Groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.text-input {
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  padding: 8px 16px 9px 16px;
+  font-size: 14px;
+  color: #FFFFFF;
+  width: 290px;
+  transition: all 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #6366F1;
+  background: #1F2A37;
+}
+
+.text-input.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Add Option Button */
+.add-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #9CA3AF;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-option-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #E5E7EB;
+}
+
+.add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: #6366F1;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Options List */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+  background: #1F2A37;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+
+.option-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #374151;
+  border-radius: 50%;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.option-inputs {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.option-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.option-input {
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #FFFFFF;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.option-input:focus {
+  outline: none;
+  border-color: #6366F1;
+  background: #111928;
+}
+
+.option-input.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Option Actions */
+.option-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.option-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #374151;
+  border: 1px solid #4B5563;
+  border-radius: 6px;
+  color: #9CA3AF;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-action-btn:hover:not(:disabled) {
+  background: #4B5563;
+  color: #FFFFFF;
+}
+
+.option-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.option-action-btn.delete {
+  color: #EF4444;
+}
+
+.option-action-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #EF4444;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1F2A37;
+  padding: 24px 0;
+  margin-left: 264px;
+  margin-top: auto;
+  min-height: 89px;
+}
+
+.action-buttons-row {
+  width: 885px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.action-buttons-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 8px;
+  border: 1px solid #9CA3AF;
+  padding: 10px 92px;
+  color: #F9FAFB;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #E5E7EB;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #FBE54D;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 23px;
+  color: #111928;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: #FCD34D;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 229, 77, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mortgage-edit-container {
+    padding: 0;
+    margin-left: 0;
+  }
+
+  .breadcrumb-container,
+  .page-header-edit,
+  .section-container {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .last-edit-info {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .action-buttons {
+    margin-left: 0;
+    padding: 24px 20px;
+  }
+
+  .page-title-edit {
+    font-size: 24px;
+  }
+
+  .option-inputs {
+    flex-direction: column;
+  }
+
+  .option-row {
+    flex-wrap: wrap;
+  }
+
+  .option-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    width: 100%;
+    padding: 12px 24px;
+  }
+}
