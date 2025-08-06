@@ -18,8 +18,12 @@
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
-    "@bankim/shared": "file:../shared",
+    "@bankim/shared": "git+https://github.com/sravnenie-ipotek/bankim-admin-shared.git",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1"
