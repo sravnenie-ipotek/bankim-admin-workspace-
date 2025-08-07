@@ -98,6 +98,29 @@
     "translations": "Translations",
     "addNew": "Add New",
     "editContent": "Edit Content",
+    "pages": {
+      "list": "Pages List"
+    },
+    "search": {
+      "placeholder": "Search by name, ID, page number"
+    },
+    "table": {
+      "pageName": "PAGE NAME",
+      "actionCount": "NUMBER OF ACTIONS",
+      "lastModified": "LAST MODIFIED"
+    },
+    "loading": "Loading pages...",
+    "error": {
+      "loading": "Loading error"
+    },
+    "noData": "No data to display.",
+    "page": {
+      "number": "Page #"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of"
+    },
     "deleteContent": "Delete Content",
     "confirmDelete": "Are you sure you want to delete this content?",
     "saveChanges": "Save Changes",
@@ -217,6 +240,14 @@
     "ru": "Russian",
     "he": "Hebrew",
     "en": "English"
+  },
+  "navigation": {
+    "tabs": {
+      "public": "Before Registration",
+      "userPortal": "User Portal",
+      "adminSite": "Admin Panel for Sites",
+      "adminBank": "Admin Panel for Banks"
+    }
   },
   "calculator": {
     "title": "Calculator Formula",

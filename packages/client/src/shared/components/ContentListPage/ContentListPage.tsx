@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import { ContentTable, ContentTableColumn } from '../ContentTable';
 import { Pagination } from '../../../components';
 import './ContentListPage.css';
@@ -33,16 +34,11 @@ export interface ContentListPageProps {
   itemsPerPage?: number;
 }
 
-const defaultTabs: TabConfig[] = [
-  { id: 'public', label: 'До регистрации', active: true },
-  { id: 'user_portal', label: 'Личный кабинет' },
-  { id: 'cms', label: 'Админ панель для сайтов' },
-  { id: 'bank_ops', label: 'Админ панель для банков' }
-];
+// Default tabs will be generated dynamically using translations
 
 const ContentListPage: React.FC<ContentListPageProps> = ({
   title,
-  tabs = defaultTabs,
+  tabs,
   activeTab = 'public',
   onTabChange,
   searchValue = '',
@@ -54,7 +50,19 @@ const ContentListPage: React.FC<ContentListPageProps> = ({
   error = null,
   itemsPerPage = 12
 }) => {
+  const { t } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Generate default tabs with translations
+  const defaultTabs: TabConfig[] = [
+    { id: 'public', label: t('navigation.tabs.public'), active: true },
+    { id: 'user_portal', label: t('navigation.tabs.userPortal') },
+    { id: 'cms', label: t('navigation.tabs.adminSite') },
+    { id: 'bank_ops', label: t('navigation.tabs.adminBank') }
+  ];
+
+  // Use provided tabs or default to translated tabs
+  const finalTabs = tabs || defaultTabs;
 
   // Calculate pagination
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -71,9 +79,9 @@ const ContentListPage: React.FC<ContentListPageProps> = ({
         <h1 className="page-title">{title}</h1>
 
         {/* Tab Navigation */}
-        {tabs && tabs.length > 0 && (
+        {finalTabs && finalTabs.length > 0 && (
           <div className="tab-navigation">
-            {tabs.map((tab, index) => (
+            {finalTabs.map((tab, index) => (
               <React.Fragment key={tab.id}>
                 <button
                   className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
@@ -81,7 +89,7 @@ const ContentListPage: React.FC<ContentListPageProps> = ({
                 >
                   {tab.label}
                 </button>
-                {index < tabs.length - 1 && <div className="tab-separator" />}
+                {index < finalTabs.length - 1 && <div className="tab-separator" />}
               </React.Fragment>
             ))}
           </div>

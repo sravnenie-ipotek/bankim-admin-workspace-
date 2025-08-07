@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './TabNavigation.css';
 
 /**
@@ -7,22 +8,24 @@ import './TabNavigation.css';
  * Based on devHelp/contentMenu/cssPages/types.md
  */
 const TabNavigation: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="tab-navigation">
       <div className="tab-item active">
-        <span className="tab-text">До регистрации</span>
+        <span className="tab-text">{t('navigation.tabs.public')}</span>
       </div>
       <div className="tab-separator"></div>
       <div className="tab-item">
-        <span className="tab-text">Личный кабинет</span>
+        <span className="tab-text">{t('navigation.tabs.userPortal')}</span>
       </div>
       <div className="tab-separator"></div>
       <div className="tab-item">
-        <span className="tab-text">Админ панель для сайтов</span>
+        <span className="tab-text">{t('navigation.tabs.adminSite')}</span>
       </div>
       <div className="tab-separator"></div>
       <div className="tab-item">
-        <span className="tab-text">Админ панель для банков</span>
+        <span className="tab-text">{t('navigation.tabs.adminBank')}</span>
       </div>
       <div className="tab-separator"></div>
     </div>

@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import { ContentListPage, ContentTableColumn } from '../../shared/components';
 import './ContentMortgage.css';
@@ -77,11 +78,11 @@ interface MortgageData {
 const ContentMortgage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language } = useLanguage();
   const [mortgageData, setMortgageData] = useState<MortgageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   useEffect(() => {
@@ -129,7 +130,7 @@ const ContentMortgage: React.FC = () => {
     };
 
     fetchMortgageData();
-  }, []);
+  }, [language]); // Re-fetch data when language changes
 
 
   const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
@@ -173,8 +174,8 @@ const ContentMortgage: React.FC = () => {
       width: '362px',
       render: (_value, item, index) => {
         const pageNum = item.page_number ?? (index + 1);
-        const title = selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                     selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+        const title = language === 'ru' ? (item.translations?.ru || item.content_key) :
+                     language === 'he' ? (item.translations?.he || item.content_key) :
                      (item.translations?.en || item.content_key);
         const fullText = `${pageNum}. ${title}`;
         return (

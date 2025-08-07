@@ -98,6 +98,29 @@
     "translations": "תרגומים",
     "addNew": "הוסף חדש",
     "editContent": "ערוך תוכן",
+    "pages": {
+      "list": "רשימת דפים"
+    },
+    "search": {
+      "placeholder": "חפש לפי שם, מזהה, מספר דף"
+    },
+    "table": {
+      "pageName": "שם הדף",
+      "actionCount": "מספר פעולות",
+      "lastModified": "שינויים אחרונים"
+    },
+    "loading": "טוען דפים...",
+    "error": {
+      "loading": "שגיאה בטעינה"
+    },
+    "noData": "אין נתונים להצגה.",
+    "page": {
+      "number": "דף מספר"
+    },
+    "pagination": {
+      "showing": "מציג",
+      "of": "מתוך"
+    },
     "deleteContent": "מחק תוכן",
     "confirmDelete": "האם אתה בטוח שברצונך למחוק תוכן זה?",
     "saveChanges": "שמור שינויים",
@@ -217,6 +240,14 @@
     "ru": "רוסית",
     "he": "עברית",
     "en": "אנגלית"
+  },
+  "navigation": {
+    "tabs": {
+      "public": "לפני הרשמה",
+      "userPortal": "פורטל אישי",
+      "adminSite": "פאנל ניהול לאתרים",
+      "adminBank": "פאנל ניהול לבנקים"
+    }
   },
   "calculator": {
     "title": "נוסחת מחשבון",
