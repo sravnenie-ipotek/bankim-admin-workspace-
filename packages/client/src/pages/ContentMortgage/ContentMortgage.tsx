@@ -15,15 +15,15 @@ import { ContentListPage, ContentTableColumn } from '../../shared/components';
 import './ContentMortgage.css';
 
 // Helper function to format date for display
-const formatLastModified = (dateString: string | null | undefined): string => {
+const formatLastModified = (dateString: string | null | undefined, t: (key: string) => string): string => {
   if (!dateString) {
-    return 'Не изменялось';
+    return t('content.notModified');
   }
   
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return 'Не изменялось';
+      return t('content.notModified');
     }
     
     // Format date in Israel timezone using Intl.DateTimeFormat
@@ -46,7 +46,7 @@ const formatLastModified = (dateString: string | null | undefined): string => {
      
     return `${day}.${month}.${year} | ${hours}:${minutes}`;
   } catch (error) {
-    return 'Не изменялось';
+    return t('content.notModified');
   }
 };
 
@@ -78,7 +78,7 @@ interface MortgageData {
 const ContentMortgage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [mortgageData, setMortgageData] = useState<MortgageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -165,12 +165,11 @@ const ContentMortgage: React.FC = () => {
     );
   }, [mortgageData?.mortgage_items, searchTerm]);
 
-
   // Define columns for the ContentTable
   const columns: ContentTableColumn[] = [
     {
       key: 'name',
-      title: 'НАЗВАНИЕ СТРАНИЦЫ',
+      title: t('content.table.pageName'),
       width: '362px',
       render: (_value, item, index) => {
         const pageNum = item.page_number ?? (index + 1);
@@ -187,16 +186,16 @@ const ContentMortgage: React.FC = () => {
     },
     {
       key: 'actionCount',
-      title: 'Количество действий',
+      title: t('content.table.actionCount'),
       width: '224px',
       align: 'center',
       render: (value) => <span>{value || 1}</span>
     },
     {
       key: 'lastModified',
-      title: 'Были изменения',
+      title: t('content.table.lastModified'),
       width: '224px',
-      render: (value) => <span>{formatLastModified(value)}</span>
+      render: (value) => <span>{formatLastModified(value, t)}</span>
     }
   ];
 

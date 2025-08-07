@@ -10,7 +10,7 @@ describe('Admin Portal Navigation Test - All Links Except Content Management', (
 
   before(() => {
     // Visit the admin portal
-    cy.visit('http://185.253.72.80:3002');
+    cy.visit('http://localhost:4002');
     
     // Wait for the page to load
     cy.wait(2000);

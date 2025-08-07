@@ -1,18 +1,21 @@
 import React from 'react';
 import { ContentListBase } from '../ContentListBase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 /**
  * ContentGeneral component displays the general pages content section
  * following Confluence Page 3 specification for "Общие страницы"
  */
 const ContentGeneral: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <ContentListBase
-      sectionTitle="Общие страницы"
+      sectionTitle={t('menu.general')}
       contentType="general"
       breadcrumbItems={[
-        { label: 'Контент сайта', isActive: false },
-        { label: 'Общие страницы', isActive: true }
+        { label: t('menu.contentSite'), isActive: false },
+        { label: t('menu.general'), isActive: true }
       ]}
     />
   );

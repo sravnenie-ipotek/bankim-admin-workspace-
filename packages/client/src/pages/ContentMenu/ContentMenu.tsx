@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import { ContentPageWrapper } from '../../components/ContentPageWrapper';
 import './ContentMenu.css';
@@ -40,24 +41,24 @@ interface MenuData {
 const ContentMenu: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, t } = useLanguage();
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [currentPage, setCurrentPage] = useState(location.state?.fromPage || 1);
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   // Helper function to format date for display
   const formatLastModified = (dateString: string | null | undefined): string => {
     if (!dateString) {
-      return 'Не изменялось';
+      return t('content.notModified');
     }
     
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) {
-        return 'Не изменялось';
+        return t('content.notModified');
       }
       
       const day = date.getDate().toString().padStart(2, '0');
@@ -68,7 +69,7 @@ const ContentMenu: React.FC = () => {
       
       return `${day}.${month}.${year} | ${hours}:${minutes}`;
     } catch (error) {
-      return 'Не изменялось';
+      return t('content.notModified');
     }
   };
 
@@ -91,18 +92,18 @@ const ContentMenu: React.FC = () => {
           console.log('✅ Successfully loaded menu content:', normalizedData);
         } else {
           console.error('❌ Failed to fetch menu translations from database:', response.error);
-          setError(response.error || 'Failed to fetch menu translations from database');
+          setError(response.error || t('content.error.loading'));
         }
       } catch (err) {
         console.error('❌ Error fetching menu data:', err);
-        setError('Failed to load menu data');
+        setError(t('content.error.loading'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchMenuData();
-  }, []);
+  }, [language]); // Re-fetch when language changes
 
   const handleViewClick = (item: MenuSection) => {
     // Use the actual screen_location from the item
@@ -143,12 +144,12 @@ const ContentMenu: React.FC = () => {
 
   if (loading) {
     return (
-      <ContentPageWrapper title="Меню">
+      <ContentPageWrapper title={t('menu.menu')}>
         <div className="content-main">
           <div className="content-main__content">
             <div className="loading-container">
               <div className="loading-spinner"></div>
-              <p>Загрузка данных меню...</p>
+              <p>{t('content.loadingContent')}</p>
             </div>
           </div>
         </div>
@@ -158,12 +159,12 @@ const ContentMenu: React.FC = () => {
 
   if (error) {
     return (
-      <ContentPageWrapper title="Меню">
+      <ContentPageWrapper title={t('menu.menu')}>
         <div className="content-main">
           <div className="content-main__content">
             <div className="error-container">
-              <p>Ошибка: {error}</p>
-              <button onClick={() => window.location.reload()}>Попробовать снова</button>
+              <p>{t('content.error.loading')}: {error}</p>
+              <button onClick={() => window.location.reload()}>{t('actions.refresh')}</button>
             </div>
           </div>
         </div>
@@ -172,11 +173,11 @@ const ContentMenu: React.FC = () => {
   }
 
   return (
-    <ContentPageWrapper title="Меню" showTabNavigation={false}>
+    <ContentPageWrapper title={t('menu.menu')} showTabNavigation={false}>
       <div className="content-main">
         {/* Content Section */}
         <div className="content-main__content">
-          <h2 className="content-main__subtitle">Список страниц</h2>
+          <h2 className="content-main__subtitle">{t('content.pages.list')}</h2>
           
           <div className="content-main__table-container">
             {/* Search Bar */}
@@ -187,39 +188,21 @@ const ContentMenu: React.FC = () => {
               </svg>
               <input
                 type="text"
-                placeholder="Искать по названию, ID, номеру страницы"
+                placeholder={t('content.search.placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
               />
             </div>
 
-            {/* Language Selector */}
-            <div className="language-selector-container">
-              <div className="language-selector" onClick={() => {
-                // Cycle through languages
-                if (selectedLanguage === 'ru') setSelectedLanguage('he');
-                else if (selectedLanguage === 'he') setSelectedLanguage('en');
-                else setSelectedLanguage('ru');
-              }}>
-                <span className="language-text">
-                  {selectedLanguage === 'ru' ? 'Русский' : 
-                   selectedLanguage === 'he' ? 'עברית' : 
-                   'English'}
-                </span>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </div>
 
             {/* Table */}
             <div className="content-main__table">
               {/* Table Header */}
               <div className="table-header">
-                <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
-                <div className="header-cell actions-count">Количество действий</div>
-                <div className="header-cell last-modified">Были изменения</div>
+                <div className="header-cell page-name">{t('content.table.pageName')}</div>
+                <div className="header-cell actions-count">{t('content.table.actionCount')}</div>
+                <div className="header-cell last-modified">{t('content.table.lastModified')}</div>
                 <div className="header-cell actions"></div>
               </div>
 
@@ -230,8 +213,8 @@ const ContentMenu: React.FC = () => {
                     <div className="table-cell page-name">
                       {(() => {
                         const pageNum = item.page_number ?? (startIndex + index + 1);
-                        const title = selectedLanguage === 'ru' ? item.translations.ru :
-                                     selectedLanguage === 'he' ? item.translations.he :
+                        const title = language === 'ru' ? item.translations.ru :
+                                     language === 'he' ? item.translations.he :
                                      item.translations.en || item.content_key;
                         return `${pageNum}. ${title}`;
                       })()}
@@ -261,7 +244,7 @@ const ContentMenu: React.FC = () => {
             {/* Pagination */}
             <div className="content-main__pagination">
               <span className="pagination-info">
-                Показывает {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} из {filteredItems.length}
+                {t('content.pagination.showing')} {startIndex + 1}-{Math.min(endIndex, filteredItems.length)} {t('content.pagination.of')} {filteredItems.length}
               </span>
               <div className="pagination-controls">
                                  <button 

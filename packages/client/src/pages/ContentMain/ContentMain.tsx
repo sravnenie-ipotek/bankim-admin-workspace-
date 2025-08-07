@@ -18,6 +18,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import './ContentMain.css';
 
@@ -35,6 +36,7 @@ interface ContentPage {
 
 const ContentMain: React.FC = () => {
   const navigate = useNavigate();
+  const { language, t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [contentPages, setContentPages] = useState<ContentPage[]>([]);
@@ -42,163 +44,256 @@ const ContentMain: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const itemsPerPage = 20;
 
-  // Fetch content pages from API
+  // Fetch content pages from API with language support
   useEffect(() => {
     const fetchContentPages = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        console.log('🔄 Fetching content pages from API...');
-        const response = await apiService.getSitePages();
+        console.log(`🔄 Fetching content pages from API for language: ${language}...`);
         
-        if (response.success && response.data) {
-          console.log('✅ Content pages loaded from database:', response.data);
-          setContentPages(response.data);
-        } else {
-          console.error('❌ Failed to load content pages:', response.error);
-          setError(response.error || 'Failed to load content pages');
+        // Fetch main content in the selected language
+        const mainResponse = await apiService.getContentByScreen('main', language);
+        
+        if (mainResponse.success && mainResponse.data) {
+          console.log('✅ Main content loaded from database:', mainResponse.data);
           
-          // Fallback to hardcoded data
+          // Transform the content to match ContentPage format
+          const transformedPages: ContentPage[] = [];
+          
+          // Map content items to pages
+          const pageMapping = {
+            'main_step1': { id: 'main', pageNumber: 1, path: '/content/main/drill/main_step1' },
+            'main_step2': { id: 'main', pageNumber: 1, path: '/content/main/drill/main_step2' }
+          };
+          
+          // Get main content items
+          if (mainResponse.data.content) {
+            Object.entries(mainResponse.data.content).forEach(([contentKey, item]) => {
+              const pageInfo = pageMapping[contentKey as keyof typeof pageMapping];
+              if (pageInfo) {
+                transformedPages.push({
+                  id: pageInfo.id,
+                  title: item.value as string || contentKey,
+                  pageNumber: pageInfo.pageNumber,
+                  actionCount: 0, // TODO: Get action count from mapping or API
+                  lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }),
+                  path: pageInfo.path
+                });
+              }
+            });
+          }
+          
+          // Add fallback pages if no content found
+          if (transformedPages.length === 0) {
+            console.log('📝 Using fallback hardcoded data...');
+            const fallbackTitles = {
+              ru: {
+                main: 'Главная',
+                menu: 'Меню',
+                mortgage: 'Рассчитать ипотеку',
+                'mortgage-refi': 'Рефинансирование ипотеки',
+                credit: 'Расчет кредита',
+                'credit-refi': 'Рефинансирование кредита',
+                general: 'Общие страницы'
+              },
+              he: {
+                main: 'עמוד ראשי',
+                menu: 'תפריט',
+                mortgage: 'חישוב משכנתא',
+                'mortgage-refi': 'מימון מחדש של משכנתא',
+                credit: 'חישוב אשראי',
+                'credit-refi': 'מימון מחדש של אשראי',
+                general: 'דפים כלליים'
+              },
+              en: {
+                main: 'Main',
+                menu: 'Menu',
+                mortgage: 'Calculate Mortgage',
+                'mortgage-refi': 'Mortgage Refinancing',
+                credit: 'Credit Calculation',
+                'credit-refi': 'Credit Refinancing',
+                general: 'General Pages'
+              }
+            };
+            
+            const titles = fallbackTitles[language as keyof typeof fallbackTitles] || fallbackTitles.ru;
+            
+            setContentPages([
+              {
+                id: 'main',
+                title: titles.main,
+                pageNumber: 1,
+                actionCount: 7,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '#'
+              },
+              {
+                id: 'menu',
+                title: titles.menu,
+                pageNumber: 2,
+                actionCount: 17,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/menu'
+              },
+              {
+                id: 'mortgage',
+                title: titles.mortgage,
+                pageNumber: 3,
+                actionCount: 12,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/mortgage'
+              },
+              {
+                id: 'mortgage-refi',
+                title: titles['mortgage-refi'],
+                pageNumber: 4,
+                actionCount: 8,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/mortgage-refi'
+              },
+              {
+                id: 'credit',
+                title: titles.credit,
+                pageNumber: 5,
+                actionCount: 9,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/credit'
+              },
+              {
+                id: 'credit-refi',
+                title: titles['credit-refi'],
+                pageNumber: 6,
+                actionCount: 6,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/credit-refi'
+              },
+              {
+                id: 'general',
+                title: titles.general,
+                pageNumber: 7,
+                actionCount: 15,
+                lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
+                path: '/content/general'
+              }
+            ]);
+          } else {
+            setContentPages(transformedPages);
+          }
+        } else {
+          console.error('❌ Failed to load content pages:', mainResponse.error);
+          setError(mainResponse.error || 'Failed to load content pages');
+          
+          // Use fallback data
           console.log('📝 Using fallback hardcoded data...');
+          const fallbackTitles = {
+            ru: {
+              main: 'Главная',
+              menu: 'Меню',
+              mortgage: 'Рассчитать ипотеку',
+              'mortgage-refi': 'Рефинансирование ипотеки',
+              credit: 'Расчет кредита',
+              'credit-refi': 'Рефинансирование кредита',
+              general: 'Общие страницы'
+            },
+            he: {
+              main: 'עמוד ראשי',
+              menu: 'תפריט',
+              mortgage: 'חישוב משכנתא',
+              'mortgage-refi': 'מימון מחדש של משכנתא',
+              credit: 'חישוב אשראי',
+              'credit-refi': 'מימון מחדש של אשראי',
+              general: 'דפים כלליים'
+            },
+            en: {
+              main: 'Main',
+              menu: 'Menu',
+              mortgage: 'Calculate Mortgage',
+              'mortgage-refi': 'Mortgage Refinancing',
+              credit: 'Credit Calculation',
+              'credit-refi': 'Credit Refinancing',
+              general: 'General Pages'
+            }
+          };
+          
+          const titles = fallbackTitles[language as keyof typeof fallbackTitles] || fallbackTitles.ru;
+          
           setContentPages([
             {
               id: 'main',
-              title: 'Главная',
+              title: titles.main,
               pageNumber: 1,
               actionCount: 7,
-              lastModified: '15.12.2024, 02:00',
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '#'
             },
             {
               id: 'menu',
-              title: 'Меню',
+              title: titles.menu,
               pageNumber: 2,
               actionCount: 17,
-              lastModified: '15.12.2024, 02:00',
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/menu'
             },
             {
               id: 'mortgage',
-              title: 'Рассчитать ипотеку',
+              title: titles.mortgage,
               pageNumber: 3,
               actionCount: 12,
-              lastModified: '15.12.2024, 02:00',
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/mortgage'
             },
             {
               id: 'mortgage-refi',
-              title: 'Рефинансирование ипотеки',
+              title: titles['mortgage-refi'],
               pageNumber: 4,
               actionCount: 8,
-              lastModified: '15.12.2024, 02:00',
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/mortgage-refi'
             },
             {
               id: 'credit',
-              title: 'Расчет кредита',
+              title: titles.credit,
               pageNumber: 5,
-              actionCount: 15,
-              lastModified: '15.12.2024, 02:00',
+              actionCount: 9,
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/credit'
             },
             {
               id: 'credit-refi',
-              title: 'Рефинансирование кредита',
+              title: titles['credit-refi'],
               pageNumber: 6,
               actionCount: 6,
-              lastModified: '15.12.2024, 02:00',
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/credit-refi'
             },
             {
               id: 'general',
-              title: 'Общие страницы',
+              title: titles.general,
               pageNumber: 7,
-              actionCount: 23,
-              lastModified: '15.12.2024, 02:00',
+              actionCount: 15,
+              lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/general'
             }
           ]);
         }
       } catch (error) {
         console.error('❌ Error fetching content pages:', error);
-        setError(error instanceof Error ? error.message : 'Unknown error occurred');
-        
-        // Fallback to hardcoded data on error
-        console.log('📝 Using fallback hardcoded data due to error...');
-        setContentPages([
-          {
-            id: 'main_step1',
-            title: 'Главная - Навигация',
-            pageNumber: 1,
-            actionCount: 3,
-            lastModified: '30.07.2025, 23:00',
-            path: '/content/main/drill/main_step1'
-          },
-          {
-            id: 'main_step2',
-            title: 'Главная - Настройки',
-            pageNumber: 2,
-            actionCount: 2,
-            lastModified: '30.07.2025, 23:00',
-            path: '/content/main/drill/main_step2'
-          },
-          {
-            id: 'menu',
-            title: 'Меню',
-            pageNumber: 2,
-            actionCount: 17,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/menu'
-          },
-          {
-            id: 'mortgage',
-            title: 'Рассчитать ипотеку',
-            pageNumber: 3,
-            actionCount: 12,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/mortgage'
-          },
-          {
-            id: 'mortgage-refi',
-            title: 'Рефинансирование ипотеки',
-            pageNumber: 4,
-            actionCount: 8,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/mortgage-refi'
-          },
-          {
-            id: 'credit',
-            title: 'Расчет кредита',
-            pageNumber: 5,
-            actionCount: 15,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/credit'
-          },
-          {
-            id: 'credit-refi',
-            title: 'Рефинансирование кредита',
-            pageNumber: 6,
-            actionCount: 6,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/credit-refi'
-          },
-          {
-            id: 'general',
-            title: 'Общие страницы',
-            pageNumber: 7,
-            actionCount: 23,
-            lastModified: '15.12.2024, 02:00',
-            path: '/content/general'
-          }
-        ]);
+        setError('Failed to load content pages');
       } finally {
         setLoading(false);
       }
     };
 
     fetchContentPages();
-  }, []);
+  }, [language]);
 
   // Filter pages based on search
   const filteredPages = contentPages.filter(page =>
@@ -224,7 +319,7 @@ const ContentMain: React.FC = () => {
     <div className="content-main">
       {/* Content Section */}
       <div className="content-main__content">
-        <h2 className="content-main__subtitle">Список страниц</h2>
+        <h2 className="content-main__subtitle">{t('content.pages.list')}</h2>
         
         <div className="content-main__table-container">
           {/* Search Bar */}
@@ -235,7 +330,7 @@ const ContentMain: React.FC = () => {
             </svg>
             <input
               type="text"
-              placeholder="Искать по названию, ID, номеру страницы"
+              placeholder={t('content.search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -246,25 +341,25 @@ const ContentMain: React.FC = () => {
           <div className="content-main__table">
             {/* Table Header */}
             <div className="table-header">
-              <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
-              <div className="header-cell actions-count">Количество действии</div>
-              <div className="header-cell last-modified">Были изменения</div>
+              <div className="header-cell page-name">{t('content.table.pageName')}</div>
+              <div className="header-cell actions-count">{t('content.table.actionCount')}</div>
+              <div className="header-cell last-modified">{t('content.table.lastModified')}</div>
               <div className="header-cell actions"></div>
             </div>
 
             {/* Table Body */}
             <div className="table-body">
               {loading ? (
-                <div className="loading-message">Загрузка страниц...</div>
+                <div className="loading-message">{t('content.loading')}</div>
               ) : error ? (
-                <div className="error-message">Ошибка загрузки: {error}</div>
+                <div className="error-message">{t('content.error.loading')}: {error}</div>
               ) : displayedPages.length === 0 ? (
-                <div className="no-data-message">Нет данных для отображения.</div>
+                <div className="no-data-message">{t('content.noData')}</div>
               ) : (
                 displayedPages.map((page) => (
                   <div key={page.id} className="table-row">
                     <div className="table-cell page-name">
-                      {page.title} Страница №{page.pageNumber}
+                      {page.title} {t('content.page.number')} {page.pageNumber}
                     </div>
                     <div className="table-cell actions-count">
                       {page.actionCount}
@@ -292,7 +387,7 @@ const ContentMain: React.FC = () => {
           {/* Pagination */}
           <div className="content-main__pagination">
             <span className="pagination-info">
-              Показывает {startIndex + 1}-{endIndex} из {totalItems}
+              {t('content.pagination.showing')} {startIndex + 1}-{endIndex} {t('content.pagination.of')} {totalItems}
             </span>
             <div className="pagination-controls">
               <button 

@@ -1,0 +1,50 @@
+{
+  "name": "bankim-browserstack-tests",
+  "version": "1.0.0",
+  "description": "BrowserStack automation tests for BankIM multilingual portal",
+  "main": "calculator-formula.test.js",
+  "scripts": {
+    "test": "node calculator-formula.test.js",
+    "test:desktop": "BROWSER_TYPE=desktop node calculator-formula.test.js",
+    "test:mobile": "BROWSER_TYPE=mobile node calculator-formula.test.js",
+    "test:rtl": "BROWSER_TYPE=rtl node calculator-formula.test.js",
+    "test:single": "SINGLE_BROWSER=true node calculator-formula.test.js",
+    "test:language": "TEST_LANGUAGE=${LANG:-en} node calculator-formula.test.js",
+    "test:chrome": "BROWSER_FILTER=chrome node calculator-formula.test.js",
+    "test:safari": "BROWSER_FILTER=safari node calculator-formula.test.js",
+    "test:dropdown-persistence": "node calculator-formula-dropdown-persistence-test.js",
+    "test:localhost": "node calculator-formula-localhost-test.js",
+    "setup": "npm install && node -e \"console.log('✅ BrowserStack tests setup complete')\"",
+    "validate": "node -e \"require('./setup.js'); console.log('✅ Configuration valid')\"",
+    "start-local": "node scripts/start-browserstack-local.js",
+    "stop-local": "node scripts/stop-browserstack-local.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.15.0",
+    "browserstack-local": "^1.5.1",
+    "dotenv": "^16.3.1",
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "chai": "^4.3.10"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "browserstack",
+    "selenium",
+    "automation",
+    "testing",
+    "multilingual",
+    "banking",
+    "rtl",
+    "hebrew",
+    "dropdown",
+    "cross-browser"
+  ],
+  "author": "BankIM Development Team",
+  "license": "MIT"
+}

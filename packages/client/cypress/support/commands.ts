@@ -88,7 +88,7 @@ Cypress.Commands.add('navigateToDrill', (pageIndex: number) => {
 
 // Login command for admin portal
 Cypress.Commands.add('loginAdminPortal', () => {
-  cy.visit('http://185.253.72.80:3002');
+  cy.visit('http://localhost:4002');
   
   // Wait for page load
   cy.wait(2000);

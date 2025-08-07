@@ -3,7 +3,7 @@ import { mortgageHelpers } from '../support/mortgage-helpers';
 describe('Advanced Mortgage Calculation Flow', () => {
   // Test configuration
   const testConfig = {
-    baseUrl: 'http://localhost:5173',
+    baseUrl: 'http://localhost:4002',
     defaultTimeout: 10000,
     smsTimeout: 30000
   };

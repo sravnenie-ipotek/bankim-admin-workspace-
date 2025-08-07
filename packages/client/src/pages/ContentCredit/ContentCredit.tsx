@@ -9,21 +9,22 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import { ContentListPage, ContentTableColumn } from '../../shared/components';
 import { ContentListItem } from '../ContentListBase/types';
 import './ContentCredit.css';
 
 // Helper function to format date for display
-const formatLastModified = (dateString: string | null | undefined): string => {
+const formatLastModified = (dateString: string | null | undefined, t: (key: string) => string): string => {
   if (!dateString) {
-    return 'Не изменялось';
+    return t('content.notModified');
   }
   
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return 'Не изменялось';
+      return t('content.notModified');
     }
     
     const day = date.getDate().toString().padStart(2, '0');
@@ -34,7 +35,7 @@ const formatLastModified = (dateString: string | null | undefined): string => {
     
     return `${day}.${month}.${year} | ${hours}:${minutes}`;
   } catch (error) {
-    return 'Не изменялось';
+    return t('content.notModified');
   }
 };
 
@@ -47,11 +48,11 @@ interface CreditData {
 const ContentCredit: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, t } = useLanguage();
   const [creditData, setCreditData] = useState<CreditData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const [selectedLanguage] = useState<'ru' | 'he' | 'en'>('ru');
   const itemsPerPage = 12;
 
   useEffect(() => {
@@ -79,11 +80,11 @@ const ContentCredit: React.FC = () => {
           console.log('📋 First item:', response.data[0]); // Log first item to see structure
         } else {
           console.error('❌ Failed to fetch credit translations from database:', response.error);
-          setError(response.error || 'Failed to fetch credit translations from database');
+          setError(response.error || t('content.error.loading'));
         }
       } catch (err) {
         console.error('❌ Error fetching credit data:', err);
-        setError('Failed to load credit data');
+        setError(t('content.error.loading'));
       } finally {
         setLoading(false);
         console.log('🏁 Credit data fetch completed');
@@ -91,7 +92,7 @@ const ContentCredit: React.FC = () => {
     };
 
     fetchCreditData();
-  }, []);
+  }, [language]); // Re-fetch when language changes
 
   const handleViewClick = (item: ContentListItem) => {
     // Use the actual screen_location from the item
@@ -142,12 +143,12 @@ const ContentCredit: React.FC = () => {
   const columns: ContentTableColumn[] = [
     {
       key: 'name',
-      title: 'НАЗВАНИЕ СТРАНИЦЫ',
+      title: t('content.table.pageName'),
       width: '362px',
       render: (_value, item, index) => {
         const pageNum = (item as any).page_number ?? (index + 1);
-        const title = selectedLanguage === 'ru' ? (item.translations?.ru || item.content_key) :
-                     selectedLanguage === 'he' ? (item.translations?.he || item.content_key) :
+        const title = language === 'ru' ? (item.translations?.ru || item.content_key) :
+                     language === 'he' ? (item.translations?.he || item.content_key) :
                      (item.translations?.en || item.content_key);
         const fullText = `${pageNum}. ${title}`;
         return (
@@ -159,16 +160,16 @@ const ContentCredit: React.FC = () => {
     },
     {
       key: 'actionCount',
-      title: 'Количество действий',
+      title: t('content.table.actionCount'),
       width: '224px',
       align: 'center',
       render: (value) => <span>{value || 1}</span>
     },
     {
       key: 'lastModified',
-      title: 'Были изменения',
+      title: t('content.table.lastModified'),
       width: '224px',
-      render: (value) => <span>{formatLastModified(value)}</span>
+      render: (value) => <span>{formatLastModified(value, t)}</span>
     }
   ];
 

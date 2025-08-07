@@ -9,7 +9,7 @@ This directory contains Cypress tests to check for errors when navigating throug
 npm install --save-dev cypress @types/cypress
 ```
 
-2. Make sure the application is running on http://localhost:3002:
+2. Make sure the application is running on http://localhost:4002:
 ```bash
 npm run full-dev
 ```
@@ -131,7 +131,7 @@ The code has been updated to:
 ## Manual Testing
 
 To manually reproduce the issue:
-1. Go to http://localhost:3002/content/mortgage
+1. Go to http://localhost:4002/content/mortgage
 2. Click on any of the 4 pages (arrow buttons on the right)
 3. In the drill page, click on any action item's arrow button
 4. Check the browser console for errors

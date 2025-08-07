@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import './ContentTable.css';
 
 export interface ContentTableColumn {
@@ -35,20 +36,25 @@ const ContentTable: React.FC<ContentTableProps> = ({
   columns,
   data,
   onRowAction,
-  searchPlaceholder = 'Искать по названию, ID, номеру страницы',
+  searchPlaceholder,
   searchValue = '',
   onSearchChange,
   showSearch = true,
   loading = false,
   error = null,
-  emptyMessage = 'Нет данных для отображения',
+  emptyMessage,
   className = ''
 }) => {
+  const { t } = useLanguage();
+  
+  // Use translation functions with fallback to props
+  const finalSearchPlaceholder = searchPlaceholder || t('content.search.placeholder');
+  const finalEmptyMessage = emptyMessage || t('content.noData');
   if (loading) {
     return (
       <div className="content-table-loading">
         <div className="loading-spinner"></div>
-        <p>Загрузка данных...</p>
+        <p>{t('content.loading')}</p>
       </div>
     );
   }
@@ -56,8 +62,8 @@ const ContentTable: React.FC<ContentTableProps> = ({
   if (error) {
     return (
       <div className="content-table-error">
-        <p>Ошибка: {error}</p>
-        <button onClick={() => window.location.reload()}>Попробовать снова</button>
+        <p>{t('content.error.loading')}: {error}</p>
+        <button onClick={() => window.location.reload()}>{t('actions.refresh')}</button>
       </div>
     );
   }
@@ -78,7 +84,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
               </svg>
               <input
                 type="text"
-                placeholder={searchPlaceholder}
+                placeholder={finalSearchPlaceholder}
                 value={searchValue}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 className="search-input"
@@ -112,7 +118,7 @@ const ContentTable: React.FC<ContentTableProps> = ({
         <div className="content-table-body">
           {data.length === 0 ? (
             <div className="content-table-empty">
-              <p>{emptyMessage}</p>
+              <p>{finalEmptyMessage}</p>
             </div>
           ) : (
             data.map((item, index) => (

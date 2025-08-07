@@ -15,11 +15,13 @@ const setupBanksEndpoints = require('./endpoints/banks-endpoints');
 
 // Load environment variables from root directory
 // Try .env.local first, then fall back to .env
-require('dotenv').config({ path: '../../.env.local' });
-require('dotenv').config({ path: '../../.env' });
+const path = require('path');
+const rootDir = path.resolve(__dirname, '../..');
+require('dotenv').config({ path: path.join(rootDir, '.env.local') });
+require('dotenv').config({ path: path.join(rootDir, '.env') });
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 4000;
 
 console.log('Environment variables:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -129,6 +131,7 @@ app.use(cors({
     'http://localhost:3005',
     'http://localhost:3006',
     'http://localhost:3007',
+    'http://localhost:4002',  // Add the correct frontend port
     'http://localhost:5173',
     'https://bankim-management-portal.railway.app'
   ],
@@ -689,10 +692,10 @@ app.get('/api/content/main', async (req, res) => {
   try {
     console.log('🔄 Fetching main content list...');
     
-    // Get main steps from database - simplified query
+    // Get main steps from database - with all translations
     const result = await safeQuery(
-      'SELECT ci.id, ci.content_key, ci.component_type, ci.category, ci.screen_location, ci.page_number, ci.is_active, ci.updated_at, ct_ru.content_value as title_ru, (SELECT COUNT(*) FROM content_items ci2 WHERE ci2.screen_location = ci.screen_location) as action_count FROM content_items ci LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = $1 AND ct_ru.status = $2 WHERE ci.component_type = $3 AND ci.category = $4 AND ci.is_active = true ORDER BY ci.page_number ASC',
-      ['ru', 'approved', 'step', 'main_steps']
+      'SELECT ci.id, ci.content_key, ci.component_type, ci.category, ci.screen_location, ci.page_number, ci.is_active, ci.updated_at, ct_ru.content_value as title_ru, ct_he.content_value as title_he, ct_en.content_value as title_en, (SELECT COUNT(*) FROM content_items ci2 WHERE ci2.screen_location = ci.screen_location) as action_count FROM content_items ci LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id AND ct_ru.language_code = $1 AND ct_ru.status = $2 LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id AND ct_he.language_code = $3 AND ct_he.status = $2 LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id AND ct_en.language_code = $4 AND ct_en.status = $2 WHERE ci.component_type = $5 AND ci.category = $6 AND ci.is_active = true ORDER BY ci.page_number ASC',
+      ['ru', 'approved', 'he', 'en', 'step', 'main_steps']
     );
 
     if (!result || !result.rows) {

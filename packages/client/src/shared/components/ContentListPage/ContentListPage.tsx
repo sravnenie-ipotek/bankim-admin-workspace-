@@ -97,7 +97,7 @@ const ContentListPage: React.FC<ContentListPageProps> = ({
 
         {/* Content Section */}
         <div className="content-section">
-          <h2 className="section-title">Список страниц</h2>
+          <h2 className="section-title">{t('content.pages.list')}</h2>
 
           {/* Content Table */}
           <ContentTable
@@ -115,7 +115,7 @@ const ContentListPage: React.FC<ContentListPageProps> = ({
           {!loading && !error && data.length > 0 && (
             <div className="content-list-pagination">
               <span className="pagination-info">
-                Показывает {startIndex + 1}-{Math.min(endIndex, data.length)} из {data.length}
+                {t('content.pagination.showing')} {startIndex + 1}-{Math.min(endIndex, data.length)} {t('content.pagination.of')} {data.length}
               </span>
               <Pagination
                 currentPage={currentPage}

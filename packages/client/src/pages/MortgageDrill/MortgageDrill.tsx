@@ -13,6 +13,7 @@ import './MortgageDrill.css';
 import { apiService } from '../../services/api';
 import { Pagination, InlineEdit } from '../../components';
 import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints } from '../../utils/contentTypeUtils';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface MortgageAction {
   id: string;
@@ -43,6 +44,7 @@ const MortgageDrill: React.FC = () => {
   const { pageId } = useParams<{ pageId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
   const [drillData, setDrillData] = useState<MortgageDrillData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,11 +147,11 @@ const MortgageDrill: React.FC = () => {
           actions: actions
         });
       } else {
-        setError('Не удалось загрузить данные');
+        setError(t('content.error.loading'));
       }
     } catch (err) {
       console.error('❌ Error fetching drill data:', err);
-      setError('Ошибка загрузки данных');
+      setError(t('content.error.loading'));
     } finally {
       setLoading(false);
     }
@@ -390,7 +392,7 @@ const MortgageDrill: React.FC = () => {
     return (
       <div className="mortgage-drill-loading">
         <div className="loading-spinner"></div>
-        <p>Загрузка данных страницы...</p>
+        <p>{t('content.loadingContent')}</p>
       </div>
     );
   }
@@ -398,8 +400,8 @@ const MortgageDrill: React.FC = () => {
   if (error) {
     return (
       <div className="mortgage-drill-error">
-        <p>Ошибка: {error}</p>
-        <button onClick={handleBack}>Вернуться назад</button>
+        <p>{t('content.error.loading')}: {error}</p>
+        <button onClick={handleBack}>{t('common.back')}</button>
       </div>
     );
   }
@@ -407,8 +409,8 @@ const MortgageDrill: React.FC = () => {
   if (!drillData) {
     return (
       <div className="mortgage-drill-error">
-        <p>Данные не найдены</p>
-        <button onClick={handleBack}>Вернуться назад</button>
+        <p>{t('content.noContent')}</p>
+        <button onClick={handleBack}>{t('common.back')}</button>
       </div>
     );
   }
@@ -419,9 +421,9 @@ const MortgageDrill: React.FC = () => {
       <div className="mortgage-drill-main">
         {/* Breadcrumb */}
         <div className="breadcrumb-container">
-          <span className="breadcrumb-item" onClick={handleBack}>Контент сайта</span>
+          <span className="breadcrumb-item" onClick={handleBack}>{t('menu.contentSite')}</span>
           <div className="breadcrumb-separator"></div>
-          <span className="breadcrumb-item" onClick={handleBack}>Главная</span>
+          <span className="breadcrumb-item" onClick={handleBack}>{t('menu.main')}</span>
           <div className="breadcrumb-separator"></div>
           <span className="breadcrumb-item active">{drillData.pageTitle}</span>
         </div>
@@ -434,21 +436,21 @@ const MortgageDrill: React.FC = () => {
         {/* Info Cards */}
         <div className="info-cards-row">
           <div className="info-card">
-            <span className="info-label">Количество действий</span>
+            <span className="info-label">{t('content.table.actionCount')}</span>
             <span className="info-value">{visibleActions.length}</span>
           </div>
           <div className="info-card">
-            <span className="info-label">Последнее редактирование</span>
+            <span className="info-label">{t('content.table.lastModified')}</span>
             <span className="info-value">{formatLastModified(drillData.lastModified)}</span>
           </div>
         </div>
 
         {/* Page Preview Section */}
         <div className="page-preview-section">
-          <h2 className="section-title">Страница и ее состояния</h2>
+          <h2 className="section-title">{t('content.pages.list')}</h2>
           <div className="page-preview-container">
             <div className="page-preview-placeholder">
-              <span>Предварительный просмотр калькулятора ипотеки</span>
+              <span>{t('menu.mortgage')}</span>
             </div>
           </div>
         </div>
@@ -466,7 +468,7 @@ const MortgageDrill: React.FC = () => {
         </div>
 
         {/* Actions List Title */}
-        <h2 className="section-title">Список действий на странице</h2>
+        <h2 className="section-title">{t('content.table.actionCount')}</h2>
 
         {/* Table Section */}
         <div className="table-section">
@@ -486,7 +488,7 @@ const MortgageDrill: React.FC = () => {
                         </svg>
                         <input
                           type="text"
-                          placeholder="Искать по названию, ID, номеру страницы"
+                          placeholder={t('content.search.placeholder')}
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
                           style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--gray-400, #9CA3AF)', fontSize: '14px', fontFamily: 'Arimo', fontWeight: '400', lineHeight: '21px', flex: 1 }}
@@ -501,7 +503,7 @@ const MortgageDrill: React.FC = () => {
                       <path id="Union" fillRule="evenodd" clipRule="evenodd" d="M0.666504 3.46685C0.666504 1.71402 1.68758 0.333313 3.00755 0.333313H12.9922C14.3122 0.333313 15.3332 1.71402 15.3332 3.46685C15.3332 4.28415 14.9974 5.02664 14.4718 5.58069L10.6665 9.52712V12.8668C10.6665 13.3553 10.3781 13.7943 9.93136 13.9799L7.59803 14.9466C7.05307 15.1723 6.42474 14.9081 6.18612 14.3503C6.08565 14.1172 6.08565 13.8548 6.18612 13.6217V9.52712L2.52808 5.58069C2.00242 5.02664 1.6666 4.28415 1.6666 3.46685H0.666504ZM3.00755 2.33331C2.5767 2.33331 2.6666 2.95273 2.6666 3.46685C2.6666 3.66545 2.72946 3.88552 2.93685 4.10611L6.83975 8.23616C6.95236 8.35487 7.01385 8.5118 7.01163 8.67425L6.99994 13.4668L8.66658 12.7668V8.67425C8.66435 8.5118 8.72585 8.35487 8.83846 8.23616L12.5281 4.10611C12.7355 3.88552 12.9983 3.66545 12.9983 3.46685C12.9983 2.95273 13.423 2.33331 12.9922 2.33331H3.00755Z" fill="#F9FAFB"/>
                     </g>
                   </svg>
-                  <div style={{ color: 'var(--gray-50, #F9FAFB)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '500', lineHeight: '18px' }}>Фильтры</div>
+                  <div style={{ color: 'var(--gray-50, #F9FAFB)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '500', lineHeight: '18px' }}>{t('common.filter')}</div>
                 </div>
               </div>
             </div>
@@ -512,7 +514,7 @@ const MortgageDrill: React.FC = () => {
             <div className="table-column" style={{ width: '180px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
-                  НОМЕР ДЕЙСТВИЯ
+                  {t('content.table.actionCount').toUpperCase()}
                 </div>
               </div>
               <div className="column-divider"></div>
@@ -552,7 +554,7 @@ const MortgageDrill: React.FC = () => {
             <div className="table-column" style={{ width: '126px' }}>
               <div className="column-header">
                 <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
-                  ТИП
+                  {t('content.type').toUpperCase()}
                 </div>
               </div>
               <div className="column-divider"></div>
@@ -590,7 +592,7 @@ const MortgageDrill: React.FC = () => {
                           onSave={(newValue) => {
                             setEditedValues(prev => ({ ...prev, ru: newValue }));
                           }}
-                          placeholder="Введите текст..."
+                          placeholder={t('forms.placeholder.enterText')}
                           className="drill-table-inline-edit"
                           startInEditMode={true}
                           hideButtons={true}
@@ -643,7 +645,7 @@ const MortgageDrill: React.FC = () => {
                           onSave={(newValue) => {
                             setEditedValues(prev => ({ ...prev, he: newValue }));
                           }}
-                          placeholder="הזן טקסט..."
+                          placeholder={t('forms.placeholder.enterText')}
                           className="drill-table-inline-edit"
                           startInEditMode={true}
                           hideButtons={true}
@@ -705,7 +707,7 @@ const MortgageDrill: React.FC = () => {
                                 setEditingRowId(null);
                                 setEditedValues({});
                               }}
-                              title="Сохранить"
+                              title={t('common.save')}
                               style={{
                                 backgroundColor: '#10B981',
                                 border: 'none',
@@ -729,7 +731,7 @@ const MortgageDrill: React.FC = () => {
                                 setEditingRowId(null);
                                 setEditedValues({});
                               }}
-                              title="Отменить"
+                              title={t('common.cancel')}
                               style={{
                                 backgroundColor: '#EF4444',
                                 border: 'none',
@@ -755,7 +757,7 @@ const MortgageDrill: React.FC = () => {
                               setEditingRowId(action.id);
                               setEditedValues({});
                             }}
-                            title="Редактировать"
+                            title={t('common.edit')}
                             style={{ 
                               backgroundColor: 'transparent',
                               border: '1px solid #4B5563',
@@ -782,7 +784,7 @@ const MortgageDrill: React.FC = () => {
                             console.log('🚀 Arrow clicked for action:', action);
                             handleEditClick(action);
                           }}
-                          title="Редактировать"
+                          title={t('common.edit')}
                           style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'rgb(255, 255, 255)', backgroundColor: 'transparent', border: '1px solid rgb(55, 65, 81)', width: '40px', height: '40px', borderRadius: '4px' }}
                         >
                           →
@@ -799,9 +801,9 @@ const MortgageDrill: React.FC = () => {
             {/* Pagination */}
             <div style={{ alignSelf: 'stretch', padding: '16px', borderTop: '1px var(--gray-700, #374151) solid', justifyContent: 'space-between', alignItems: 'center', display: 'inline-flex' }}>
               <div>
-                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}>Показывает </span>
+                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}>{t('content.pagination.showing')} </span>
                 <span style={{ color: 'white', fontSize: '14px', fontFamily: 'Inter', fontWeight: '600', lineHeight: '21px' }}>{startIndex + 1}-{Math.min(endIndex, filteredActions.length)}</span>
-                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}> из </span>
+                <span style={{ color: '#9CA3AF', fontSize: '14px', fontFamily: 'Inter', fontWeight: '400', lineHeight: '21px' }}> {t('content.pagination.of')} </span>
                 <span style={{ color: 'white', fontSize: '14px', fontFamily: 'Inter', fontWeight: '600', lineHeight: '21px' }}>{filteredActions.length}</span>
               </div>
               <Pagination
