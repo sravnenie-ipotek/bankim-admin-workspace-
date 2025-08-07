@@ -121,3 +121,4 @@ ssh_connection.md
 server_credentials.md
 SSH_SERVER_HIERARCHY.md.claude-code/
 tests/browserstack/
+/.claude-code/
