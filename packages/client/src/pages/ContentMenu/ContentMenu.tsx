@@ -201,7 +201,7 @@ const ContentMenu: React.FC = () => {
               {/* Table Header */}
               <div className="table-header">
                 <div className="header-cell page-name">{t('content.table.pageName')}</div>
-                <div className="header-cell actions-count">{t('content.table.actionCount')}</div>
+                <div className="header-cell actions-count">Номер действия</div>
                 <div className="header-cell last-modified">{t('content.table.lastModified')}</div>
                 <div className="header-cell actions"></div>
               </div>

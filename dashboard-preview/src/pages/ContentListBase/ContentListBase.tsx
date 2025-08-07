@@ -213,7 +213,7 @@ const ContentListBase: React.FC<ContentListBaseProps> = ({
               <span className="text8">НАЗВАНИЕ СТРАНИЦЫ</span>
             </div>
             <div className="header-cell column12">
-              <span className="text10">Количество действий</span>
+              <span className="text10">Номер действия</span>
             </div>
             <div className="header-cell column12">
               <span className="text10">Были изменения</span>

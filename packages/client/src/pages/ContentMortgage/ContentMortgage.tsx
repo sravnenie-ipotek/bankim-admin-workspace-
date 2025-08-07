@@ -186,15 +186,15 @@ const ContentMortgage: React.FC = () => {
     },
     {
       key: 'actionCount',
-      title: t('content.table.actionCount'),
-      width: '224px',
+      title: 'Номер действия',
+      width: '160px',
       align: 'center',
       render: (value) => <span>{value || 1}</span>
     },
     {
       key: 'lastModified',
       title: t('content.table.lastModified'),
-      width: '224px',
+      width: '160px',
       render: (value) => <span>{formatLastModified(value, t)}</span>
     }
   ];

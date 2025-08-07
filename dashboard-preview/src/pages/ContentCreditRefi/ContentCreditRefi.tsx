@@ -139,15 +139,15 @@ const ContentCreditRefi: React.FC = () => {
     },
     {
       key: 'actionCount',
-      title: 'Количество действий',
-      width: '224px',
+      title: 'Номер действия',
+      width: '160px',
       align: 'center',
       render: (value) => <span>{value || 1}</span>
     },
     {
       key: 'lastModified',
       title: 'Были изменения',
-      width: '224px',
+      width: '160px',
       render: (value) => <span>{formatLastModified(value)}</span>
     }
   ];

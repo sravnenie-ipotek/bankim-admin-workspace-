@@ -218,7 +218,7 @@ const ContentMenu: React.FC = () => {
               {/* Table Header */}
               <div className="table-header">
                 <div className="header-cell page-name">НАЗВАНИЕ СТРАНИЦЫ</div>
-                <div className="header-cell actions-count">Количество действий</div>
+                <div className="header-cell actions-count">Номер действия</div>
                 <div className="header-cell last-modified">Были изменения</div>
                 <div className="header-cell actions"></div>
               </div>

@@ -216,7 +216,7 @@ const ContentMortgageTable: React.FC = () => {
               <div className="table-header">
                 <div className="header-cell page-name-cell">НАЗВАНИЕ СТРАНИЦЫ</div>
                 <div className="header-cell" style={{ width: '150px', textAlign: 'center' }}>ТИП КОНТЕНТА</div>
-                <div className="header-cell actions-count-cell">КОЛИЧЕСТВО ДЕЙСТВИЙ</div>
+                <div className="header-cell actions-count-cell">НОМЕР ДЕЙСТВИЯ</div>
                 <div className="header-cell last-modified-cell">БЫЛИ ИЗМЕНЕНИЯ</div>
                 <div className="header-cell action-buttons-cell"></div>
               </div>

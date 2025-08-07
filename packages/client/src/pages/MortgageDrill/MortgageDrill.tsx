@@ -436,7 +436,7 @@ const MortgageDrill: React.FC = () => {
         {/* Info Cards */}
         <div className="info-cards-row">
           <div className="info-card">
-            <span className="info-label">{t('content.table.actionCount')}</span>
+            <span className="info-label">Номер действия</span>
             <span className="info-value">{visibleActions.length}</span>
           </div>
           <div className="info-card">
