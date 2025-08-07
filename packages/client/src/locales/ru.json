@@ -217,5 +217,49 @@
     "ru": "Русский",
     "he": "עברית",
     "en": "English"
+  },
+  "calculator": {
+    "title": "Формула калькулятора",
+    "editFormula": "Редактировать формулу",
+    "saveChanges": "Сохранить изменения",
+    "cancel": "Отменить",
+    "loading": "Загрузка...",
+    "selectBank": "Выберите банк",
+    "unknownBank": "Неизвестный банк",
+    "bankSelection": "Выбор банка",
+    "bankForConfiguration": "Банк для настройки",
+    "selectBankOption": "Выберите банк...",
+    "settingsForBank": "Настройки для банка",
+    "noConfigurationNotice": "У данного банка пока нет конфигурации. Будет создана новая при сохранении.",
+    "editOnlyDirectors": "Редактирование доступно только директорам",
+    "yourRole": "Ваша роль",
+    "sections": {
+      "interestRates": "Процентные ставки",
+      "loanParameters": "Параметры кредитования",
+      "loanAmountLimits": "Лимиты по сумме кредита"
+    },
+    "fields": {
+      "baseInterestRate": "Базовая процентная ставка",
+      "minInterestRate": "Минимальная ставка",
+      "maxInterestRate": "Максимальная ставка",
+      "maxLtvRatio": "Максимальный LTV",
+      "minCreditScore": "Минимальный кредитный рейтинг",
+      "processingFee": "Комиссия за обработку",
+      "minLoanAmount": "Минимальная сумма",
+      "maxLoanAmount": "Максимальная сумма"
+    },
+    "validation": {
+      "required": "Поле \"{{field}}\" обязательно для заполнения",
+      "numericOnly": "Поле \"{{field}}\" должно содержать только цифры и точки",
+      "validNumber": "Поле \"{{field}}\" должно содержать корректное числовое значение",
+      "maxGreaterThanMin": "Максимальная ставка должна быть больше минимальной",
+      "maxAmountGreaterThanMin": "Максимальная сумма должна быть больше минимальной"
+    },
+    "messages": {
+      "saveSuccess": "Конфигурация банка успешно сохранена!",
+      "saveError": "Ошибка при сохранении в Railway: {{error}}",
+      "connectionError": "Ошибка при сохранении конфигурации. Проверьте подключение к Railway и попробуйте еще раз.",
+      "unknownError": "Неизвестная ошибка"
+    }
   }
 }

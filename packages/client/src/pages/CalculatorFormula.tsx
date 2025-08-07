@@ -24,6 +24,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout/AdminLayout';
 import { apiService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import ProductionErrorHandler from '../utils/errorHandler';
 import './CalculatorFormula.css';
 
@@ -60,6 +61,9 @@ interface ValidationErrors {
 const CalculatorFormula: React.FC = () => {
   // Authentication and permissions
   const { user, hasPermission, isRole } = useAuth();
+  
+  // Language context
+  const { t } = useLanguage();
   
   // Check if user can edit calculator formula (Directors only)
   const canEdit = isRole('director') && hasPermission('edit', 'calculator-formula');
@@ -168,18 +172,18 @@ const CalculatorFormula: React.FC = () => {
   // Validation function for numeric inputs (numbers and dots only)
   const validateNumericInput = (value: string, fieldName: string): string | null => {
     if (!value || !value.toString().trim()) {
-      return `Поле "${fieldName}" обязательно для заполнения`;
+      return t('calculator.validation.required', { field: fieldName });
     }
     
     // Allow only numbers and dots
     const numericPattern = /^[0-9.]+$/;
     if (!numericPattern.test(value.toString())) {
-      return `Поле "${fieldName}" должно содержать только цифры и точки`;
+      return t('calculator.validation.numericOnly', { field: fieldName });
     }
     
     // Check for valid decimal number
     if (isNaN(parseFloat(value.toString()))) {
-      return `Поле "${fieldName}" должно содержать корректное числовое значение`;
+      return t('calculator.validation.validNumber', { field: fieldName });
     }
     
     return null;
@@ -190,14 +194,14 @@ const CalculatorFormula: React.FC = () => {
     const errors: ValidationErrors = {};
     
     const fields = {
-      base_interest_rate: 'Базовая процентная ставка',
-      min_interest_rate: 'Минимальная ставка',
-      max_interest_rate: 'Максимальная ставка',
-      max_ltv_ratio: 'Максимальный LTV',
-      min_credit_score: 'Минимальный кредитный рейтинг',
-      max_loan_amount: 'Максимальная сумма кредита',
-      min_loan_amount: 'Минимальная сумма кредита',
-      processing_fee: 'Комиссия за обработку'
+      base_interest_rate: t('calculator.fields.baseInterestRate'),
+      min_interest_rate: t('calculator.fields.minInterestRate'),
+      max_interest_rate: t('calculator.fields.maxInterestRate'),
+      max_ltv_ratio: t('calculator.fields.maxLtvRatio'),
+      min_credit_score: t('calculator.fields.minCreditScore'),
+      max_loan_amount: t('calculator.fields.maxLoanAmount'),
+      min_loan_amount: t('calculator.fields.minLoanAmount'),
+      processing_fee: t('calculator.fields.processingFee')
     };
 
     Object.entries(fields).forEach(([key, label]) => {
@@ -210,11 +214,11 @@ const CalculatorFormula: React.FC = () => {
 
     // Additional validation: min should be less than max
     if (parseFloat(editData.min_interest_rate || '0') >= parseFloat(editData.max_interest_rate || '0')) {
-      errors.max_interest_rate = 'Максимальная ставка должна быть больше минимальной';
+      errors.max_interest_rate = t('calculator.validation.maxGreaterThanMin');
     }
 
     if (parseFloat(editData.min_loan_amount || '0') >= parseFloat(editData.max_loan_amount || '0')) {
-      errors.max_loan_amount = 'Максимальная сумма должна быть больше минимальной';
+      errors.max_loan_amount = t('calculator.validation.maxAmountGreaterThanMin');
     }
 
     setValidationErrors(errors);
@@ -280,16 +284,16 @@ const CalculatorFormula: React.FC = () => {
         console.log('Bank configuration saved successfully to Railway database:', response.data);
         
         // Show success feedback to user
-        alert('Конфигурация банка успешно сохранена!');
+        alert(t('calculator.messages.saveSuccess'));
       } else {
         console.error('Failed to save bank configuration to Railway database:', response.error);
-        alert(`Ошибка при сохранении в Railway: ${response.error || 'Неизвестная ошибка'}`);
+        alert(t('calculator.messages.saveError', { error: response.error || t('calculator.messages.unknownError') }));
       }
       
     } catch (error) {
       console.error('Error saving bank configuration to Railway database:', error);
       ProductionErrorHandler.handleComponentError(error as Error, 'CalculatorFormula.handleSave');
-      alert('Ошибка при сохранении конфигурации. Проверьте подключение к Railway и попробуйте еще раз.');
+      alert(t('calculator.messages.connectionError'));
     } finally {
       setIsLoading(false);
     }
@@ -340,33 +344,25 @@ const CalculatorFormula: React.FC = () => {
 
   // Get selected bank name
   const getSelectedBankName = (): string => {
-    if (!selectedBankId) return 'Выберите банк';
+    if (!selectedBankId) return t('calculator.selectBank');
     const bank = banks.find(b => b.id === selectedBankId);
-    return bank ? bank.name_ru : 'Неизвестный банк';
+    return bank ? bank.name_ru : t('calculator.unknownBank');
   };
 
   // Helper function to get display names for roles
   const getRoleDisplayName = (role: string): string => {
-    const roleNames: Record<string, string> = {
-      'director': 'Директор',
-      'administration': 'Администратор',
-      'sales-manager': 'Менеджер по продажам',
-      'content-manager': 'Контент-менеджер',
-      'brokers': 'Брокер',
-      'bank-employee': 'Сотрудник банка'
-    };
-    return roleNames[role] || role;
+    return t(`calculator.roles.${role}`, { fallback: role });
   };
 
   return (
     <AdminLayout 
-      title="Формула калькулятора" 
+      title={t('calculator.title')} 
       activeMenuItem="calculator-formula"
     >
       <div className="calculator-formula-page">
         {/* Action 3: Page Title */}
         <div className="page-header">
-          <h1 className="page-title">Формула калькулятора</h1>
+          <h1 className="page-title">{t('calculator.title')}</h1>
           
           {/* Action 4: Edit Formula Button - Directors Only */}
           {!isEditMode && selectedBankId && (
@@ -380,17 +376,17 @@ const CalculatorFormula: React.FC = () => {
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M11.5 1.5L14.5 4.5L5 14H2V11L11.5 1.5Z" stroke="currentColor" strokeWidth="1.5"/>
                   </svg>
-                  Редактировать формулу
+                  {t('calculator.editFormula')}
                 </button>
               ) : (
                 <div className="permission-notice">
                   <span className="notice-icon">🔒</span>
                   <span className="notice-text">
-                    Редактирование доступно только директорам
+                    {t('calculator.editOnlyDirectors')}
                   </span>
                   {user && (
                     <span className="current-role">
-                      (Ваша роль: {getRoleDisplayName(user.role)})
+                      ({t('calculator.yourRole')}: {getRoleDisplayName(user.role)})
                     </span>
                   )}
                 </div>
@@ -401,22 +397,22 @@ const CalculatorFormula: React.FC = () => {
 
         {isLoading && (
           <div className="loading-indicator">
-            Загрузка...
+            {t('calculator.loading')}
           </div>
         )}
 
         {/* Bank Selection Dropdown */}
         <div className="bank-selection-section">
-          <h2 className="section-title">Выбор банка</h2>
+          <h2 className="section-title">{t('calculator.bankSelection')}</h2>
           <div className="bank-selector">
-            <label className="formula-label">Банк для настройки:</label>
+            <label className="formula-label">{t('calculator.bankForConfiguration')}:</label>
             <select 
               className="bank-dropdown"
               value={selectedBankId || ''}
               onChange={(e) => handleBankSelection(parseInt(e.target.value))}
               disabled={isLoading || isEditMode}
             >
-              <option value="">Выберите банк...</option>
+              <option value="">{t('calculator.selectBankOption')}</option>
               {banks.map(bank => (
                 <option key={bank.id} value={bank.id}>
                   {bank.name_ru} ({bank.name_en})
@@ -431,43 +427,43 @@ const CalculatorFormula: React.FC = () => {
             
             {/* Current Bank Info */}
             <div className="current-bank-info">
-              <h3>Настройки для банка: <strong>{getSelectedBankName()}</strong></h3>
+              <h3>{t('calculator.settingsForBank')}: <strong>{getSelectedBankName()}</strong></h3>
               {!bankConfiguration && (
                 <div className="no-config-notice">
-                  ⚠️ У данного банка пока нет конфигурации. Будет создана новая при сохранении.
+                  ⚠️ {t('calculator.noConfigurationNotice')}
                 </div>
               )}
             </div>
 
             {/* Interest Rate Section */}
             <div className="formula-section">
-              <h2 className="section-title">Процентные ставки</h2>
+              <h2 className="section-title">{t('calculator.sections.interestRates')}</h2>
               
               <div className="formula-grid">
-                {renderInputField('base_interest_rate', 'Базовая процентная ставка (%)', '3.500')}
-                {renderInputField('min_interest_rate', 'Минимальная ставка (%)', '2.800')}
-                {renderInputField('max_interest_rate', 'Максимальная ставка (%)', '4.500')}
+                {renderInputField('base_interest_rate', t('calculator.fields.baseInterestRate') + ' (%)', '3.500')}
+                {renderInputField('min_interest_rate', t('calculator.fields.minInterestRate') + ' (%)', '2.800')}
+                {renderInputField('max_interest_rate', t('calculator.fields.maxInterestRate') + ' (%)', '4.500')}
               </div>
             </div>
 
             {/* Loan Parameters Section */}
             <div className="formula-section">
-              <h2 className="section-title">Параметры кредитования</h2>
+              <h2 className="section-title">{t('calculator.sections.loanParameters')}</h2>
               
               <div className="formula-grid">
-                {renderInputField('max_ltv_ratio', 'Максимальный LTV (%)', '75.00')}
-                {renderInputField('min_credit_score', 'Минимальный кредитный рейтинг', '620', true)}
-                {renderInputField('processing_fee', 'Комиссия за обработку (₪)', '1500.00')}
+                {renderInputField('max_ltv_ratio', t('calculator.fields.maxLtvRatio') + ' (%)', '75.00')}
+                {renderInputField('min_credit_score', t('calculator.fields.minCreditScore'), '620', true)}
+                {renderInputField('processing_fee', t('calculator.fields.processingFee') + ' (₪)', '1500.00')}
               </div>
             </div>
 
             {/* Loan Amount Section */}
             <div className="formula-section">
-              <h2 className="section-title">Лимиты по сумме кредита</h2>
+              <h2 className="section-title">{t('calculator.sections.loanAmountLimits')}</h2>
               
               <div className="formula-row">
-                {renderInputField('min_loan_amount', 'Минимальная сумма (₪)', '100000.00')}
-                {renderInputField('max_loan_amount', 'Максимальная сумма (₪)', '2000000.00')}
+                {renderInputField('min_loan_amount', t('calculator.fields.minLoanAmount') + ' (₪)', '100000.00')}
+                {renderInputField('max_loan_amount', t('calculator.fields.maxLoanAmount') + ' (₪)', '2000000.00')}
               </div>
             </div>
 
@@ -479,14 +475,14 @@ const CalculatorFormula: React.FC = () => {
                   onClick={handleSave}
                   disabled={isLoading}
                 >
-                  Сохранить изменения
+                  {t('calculator.saveChanges')}
                 </button>
                 <button 
                   className="cancel-btn"
                   onClick={handleCancel}
                   disabled={isLoading}
                 >
-                  Отменить
+                  {t('calculator.cancel')}
                 </button>
               </div>
             )}

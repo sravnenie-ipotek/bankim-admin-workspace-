@@ -217,5 +217,49 @@
     "ru": "Russian",
     "he": "Hebrew",
     "en": "English"
+  },
+  "calculator": {
+    "title": "Calculator Formula",
+    "editFormula": "Edit Formula",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "selectBank": "Select bank",
+    "unknownBank": "Unknown bank",
+    "bankSelection": "Bank Selection",
+    "bankForConfiguration": "Bank for configuration",
+    "selectBankOption": "Select bank...",
+    "settingsForBank": "Settings for bank",
+    "noConfigurationNotice": "This bank doesn't have configuration yet. New one will be created when saved.",
+    "editOnlyDirectors": "Editing is available only to directors",
+    "yourRole": "Your role",
+    "sections": {
+      "interestRates": "Interest Rates",
+      "loanParameters": "Loan Parameters",
+      "loanAmountLimits": "Loan Amount Limits"
+    },
+    "fields": {
+      "baseInterestRate": "Base Interest Rate",
+      "minInterestRate": "Minimum Rate",
+      "maxInterestRate": "Maximum Rate",
+      "maxLtvRatio": "Maximum LTV",
+      "minCreditScore": "Minimum Credit Score",
+      "processingFee": "Processing Fee",
+      "minLoanAmount": "Minimum Amount",
+      "maxLoanAmount": "Maximum Amount"
+    },
+    "validation": {
+      "required": "Field \"{{field}}\" is required",
+      "numericOnly": "Field \"{{field}}\" must contain only numbers and dots",
+      "validNumber": "Field \"{{field}}\" must contain a valid numeric value",
+      "maxGreaterThanMin": "Maximum rate must be greater than minimum",
+      "maxAmountGreaterThanMin": "Maximum amount must be greater than minimum"
+    },
+    "messages": {
+      "saveSuccess": "Bank configuration saved successfully!",
+      "saveError": "Error saving to Railway: {{error}}",
+      "connectionError": "Error saving configuration. Check Railway connection and try again.",
+      "unknownError": "Unknown error"
+    }
   }
 }

@@ -217,5 +217,49 @@
     "ru": "רוסית",
     "he": "עברית",
     "en": "אנגלית"
+  },
+  "calculator": {
+    "title": "נוסחת מחשבון",
+    "editFormula": "ערוך נוסחה",
+    "saveChanges": "שמור שינויים",
+    "cancel": "ביטול",
+    "loading": "טוען...",
+    "selectBank": "בחר בנק",
+    "unknownBank": "בנק לא ידוע",
+    "bankSelection": "בחירת בנק",
+    "bankForConfiguration": "בנק לתצורה",
+    "selectBankOption": "בחר בנק...",
+    "settingsForBank": "הגדרות עבור בנק",
+    "noConfigurationNotice": "לבנק זה אין תצורה עדיין. תצורה חדשה תיווצר בשמירה.",
+    "editOnlyDirectors": "עריכה זמינה רק למנהלים",
+    "yourRole": "התפקיד שלך",
+    "sections": {
+      "interestRates": "ריביות",
+      "loanParameters": "פרמטרי הלוואה",
+      "loanAmountLimits": "גבולות סכום הלוואה"
+    },
+    "fields": {
+      "baseInterestRate": "ריבית בסיס",
+      "minInterestRate": "ריבית מינימלית",
+      "maxInterestRate": "ריבית מקסימלית",
+      "maxLtvRatio": "LTV מקסימלי",
+      "minCreditScore": "דירוג אשראי מינימלי",
+      "processingFee": "עמלת עיבוד",
+      "minLoanAmount": "סכום מינימלי",
+      "maxLoanAmount": "סכום מקסימלי"
+    },
+    "validation": {
+      "required": "שדה \"{{field}}\" הוא חובה",
+      "numericOnly": "שדה \"{{field}}\" חייב להכיל רק מספרים ונקודות",
+      "validNumber": "שדה \"{{field}}\" חייב להכיל ערך מספרי תקין",
+      "maxGreaterThanMin": "הריבית המקסימלית חייבת להיות גבוהה מהמינימלית",
+      "maxAmountGreaterThanMin": "הסכום המקסימלי חייב להיות גבוה מהמינימלי"
+    },
+    "messages": {
+      "saveSuccess": "תצורת הבנק נשמרה בהצלחה!",
+      "saveError": "שגיאה בשמירה ל-Railway: {{error}}",
+      "connectionError": "שגיאה בשמירת התצורה. בדוק את החיבור ל-Railway ונסה שוב.",
+      "unknownError": "שגיאה לא ידועה"
+    }
   }
 }
