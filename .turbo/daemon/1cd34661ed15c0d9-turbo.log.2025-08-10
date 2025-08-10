@@ -24,3 +24,7 @@
 2025-08-10T07:01:47.108452Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/vite.config.ts.timestamp-1754809307009-48a595da9d0f9.mjs")}
 2025-08-10T07:01:47.108470Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
 2025-08-10T07:01:47.108648Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-08-10T07:02:23.008996Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/package.json"), AnchoredSystemPathBuf("packages/client/package.json.backup")}
+2025-08-10T07:02:23.009006Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
+2025-08-10T07:02:42.508909Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/package.json"), AnchoredSystemPathBuf("packages/client/package.json.backup")}
+2025-08-10T07:02:42.508926Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
