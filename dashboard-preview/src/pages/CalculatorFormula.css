@@ -134,7 +134,7 @@
 }
 
 .formula-input {
-  padding: 12px 16px;
+  padding: 12px 32px 12px 16px; /* Increased right padding to 32px to match display values */
   border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;
   font-family: 'Arimo', sans-serif;
@@ -331,7 +331,7 @@
   
   .formula-input,
   .formula-display-value {
-    padding: 10px 12px;
+    padding: 10px 28px 10px 12px; /* Maintained right padding for mobile */
     font-size: 14px;
   }
   
@@ -575,7 +575,7 @@
 
 /* Enhanced Display Values for Bank Configuration */
 .formula-display-value {
-  padding: 12px 16px;
+  padding: 12px 32px 12px 16px; /* Increased right padding to 32px for green indicator space */
   background-color: rgba(55, 65, 81, 0.2);
   border: 2px solid rgba(75, 85, 99, 0.5);
   border-radius: 8px;

@@ -63,7 +63,7 @@ const CalculatorFormula: React.FC = () => {
   const { user, hasPermission, isRole } = useAuth();
   
   // Language context
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Check if user can edit calculator formula (Directors only)
   const canEdit = isRole('director') && hasPermission('edit', 'calculator-formula');
@@ -342,11 +342,24 @@ const CalculatorFormula: React.FC = () => {
     );
   };
 
+  // Get bank display name based on current language with sensible fallbacks
+  const getBankDisplayName = (bank: Bank): string => {
+    switch (language) {
+      case 'he':
+        return bank.name_he || bank.name_ru || bank.name_en || t('calculator.unknownBank');
+      case 'en':
+        return bank.name_en || bank.name_ru || bank.name_he || t('calculator.unknownBank');
+      case 'ru':
+      default:
+        return bank.name_ru || bank.name_en || bank.name_he || t('calculator.unknownBank');
+    }
+  };
+
   // Get selected bank name
   const getSelectedBankName = (): string => {
     if (!selectedBankId) return t('calculator.selectBank');
     const bank = banks.find(b => b.id === selectedBankId);
-    return bank ? bank.name_ru : t('calculator.unknownBank');
+    return bank ? getBankDisplayName(bank) : t('calculator.unknownBank');
   };
 
   // Helper function to get display names for roles
@@ -415,7 +428,7 @@ const CalculatorFormula: React.FC = () => {
               <option value="">{t('calculator.selectBankOption')}</option>
               {banks.map(bank => (
                 <option key={bank.id} value={bank.id}>
-                  {bank.name_ru} ({bank.name_en})
+                  {getBankDisplayName(bank)}
                 </option>
               ))}
             </select>
