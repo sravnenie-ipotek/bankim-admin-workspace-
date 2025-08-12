@@ -1,0 +1,759 @@
+# BankIM Admin API — Server Architecture
+
+## Overview
+Node.js + Express REST API serving admin operations, content delivery, and system management. It connects to three PostgreSQL databases for clear separation of concerns: content, core business logic, and management.
+
+## Technology Stack
+- **Runtime**: Node.js 18+ with Express 4.18
+- **Databases**: PostgreSQL 14+ with connection pooling
+- **Sessions**: `express-session` + `connect-pg-simple` (PostgreSQL-backed)
+- **Security**: Helmet, CORS, rate limiting, bcrypt (12 rounds)
+- **Configuration**: Environment variables (`.env` in dev, platform vars in prod)
+- **Shared Types**: `@bankim/shared` package for type safety
+- **Logging**: File-based with rotation (`logs/backend.log`, `logs/dev.log`)
+
+## ASCII Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           Client Applications                            │
+├─────────────────┬───────────────────┬───────────────────────────────────┤
+│ Admin Dashboard │  Mobile Apps      │  External Systems                 │
+│   (React SPA)   │  (API Consumers)  │  (Webhooks/Integrations)         │
+└────────┬────────┴──────────┬────────┴──────────┬────────────────────────┘
+         │                   │                   │
+         └───────────────────┼───────────────────┘
+                            │
+                     HTTPS (Port 3001)
+                            │
+┌───────────────────────────▼─────────────────────────────────────────────┐
+│                         Express Server Layer                             │
+├──────────────────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
+│  │   Helmet     │  │     CORS     │  │ Rate Limiter │  │   Logger   │  │
+│  │  (Security)  │  │  (Origins)   │  │  (Throttle)  │  │  (Winston) │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └─────┬──────┘  │
+│         └──────────────────┼──────────────────┼────────────────┘         │
+│                            ▼                  ▼                          │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │                    Session Middleware (PostgreSQL)                 │  │
+│  │          express-session + connect-pg-simple + bcrypt              │  │
+│  └────────────────────────────┬───────────────────────────────────────┘  │
+│                               ▼                                          │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │                         Route Handlers                             │  │
+│  ├────────────────────────────────────────────────────────────────────┤  │
+│  │  /api/auth/*   │  /api/content/*  │  /api/banks/*  │  /api/health  │  │
+│  │  /api/ui-*     │  /api/calculate/* │  /api/stats   │  /api/debug/* │  │
+│  └────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────┬─────────────────────────────────────────┘
+                                │
+                    Database Connection Pools
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        ▼                       ▼                       ▼
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+│ bankim_content│     │  bankim_core  │     │bankim_management│
+│   Database    │     │   Database    │     │   Database     │
+├───────────────┤     ├───────────────┤     ├────────────────┤
+│ • content_items│    │ • user_perms  │     │ • admin_users  │
+│ • translations│     │ • bank_configs│     │ • system_settings│
+│ • categories  │     │ • formulas    │     │ • feature_flags│
+│ • dropdowns   │     │ • ui_settings │     │ • metrics      │
+│ • audit_log   │     │ • sessions    │     │ • login_audit  │
+└───────────────┘     └───────────────┘     └────────────────┘
+```
+
+## Service Composition
+
+### Core Server Files
+```
+packages/server/
+├── server.js                    # Main Express application (3900+ lines)
+├── auth-middleware.js           # Authentication & session management
+├── endpoints/
+│   └── banks-endpoints.js      # Banks API endpoints
+├── config/
+│   ├── database-content.js     # Content DB connection pool
+│   ├── database-core.js        # Core DB connection pool
+│   └── database-management.js  # Management DB connection pool
+├── database/
+│   ├── bankim_content_schema.sql    # Main content schema
+│   ├── session-audit-tables.sql     # Session & audit tables
+│   └── *.sql                         # Additional schemas
+├── migrations/
+│   ├── 001_add_dropdown_options.sql
+│   ├── 002_add_application_contexts.sql
+│   └── ...                           # Versioned migrations
+└── scripts/
+    ├── migrate.js               # Database migration runner
+    ├── db-status.js            # Database health checker
+    ├── seed-database.js        # Data seeding utility
+    └── verify-*.js             # Verification utilities
+```
+
+## Complete API Endpoints
+
+### Authentication & Session Management
+```
+POST   /api/auth/login              # User login (email, password)
+POST   /api/auth/logout             # Destroy session
+GET    /api/auth/me                 # Current user info
+POST   /api/auth-verify             # Verify authentication status
+```
+
+### Content Management APIs
+```
+# Main Content
+GET    /api/content/main            # List main content items
+GET    /api/content/main/drill/:pageId    # Drill into main content
+
+# Menu Content  
+GET    /api/content/menu            # Get menu structure
+GET    /api/content/menu/translations     # Menu translations
+GET    /api/content/menu/drill/:sectionId # Menu drill-down
+
+# Mortgage Content
+GET    /api/content/mortgage        # List mortgage content
+GET    /api/content/mortgage/drill/:stepId        # Mortgage drill-down
+GET    /api/content/mortgage/all-items            # All mortgage items
+GET    /api/content/mortgage/:contentKey/options  # Dropdown options
+GET    /api/content/mortgage/:contentKey/dropdown # Dropdown container
+PUT    /api/content/mortgage/:id    # Update mortgage content
+
+# Mortgage Refinance
+GET    /api/content/mortgage-refi   # List mortgage-refi content
+GET    /api/content/mortgage-refi/drill/:stepId   # Refi drill-down
+GET    /api/content/mortgage-refi/:contentKey/options    # Refi options
+GET    /api/content/mortgage-refi/:contentKey/dropdown   # Refi dropdown
+
+# Credit Content
+GET    /api/content/credit          # List credit content
+GET    /api/content/credit/drill/:stepId          # Credit drill-down
+
+# Credit Refinance
+GET    /api/content/credit-refi     # List credit-refi content
+GET    /api/content/credit-refi/drill/:stepId     # Credit-refi drill
+
+# General Content
+GET    /api/content/general         # General content pages
+GET    /api/content/site-pages      # Site pages summary
+
+# Generic Content Access
+GET    /api/content/:screen_location/:language_code  # By screen & lang
+GET    /api/content/:content_key/:language_code      # By key & lang
+GET    /api/content/item/:itemId    # Get specific item
+GET    /api/content/text/:actionId  # Get text content
+
+# Content Updates
+PUT    /api/content-items/:content_item_id/translations/:language_code
+```
+
+### Dropdown Management APIs
+```
+# Generic Dropdown Operations
+GET    /api/content/dropdown/:contentType/:contentKey/options   # Options
+GET    /api/content/dropdown/:contentType/:contentKey/container # Container
+GET    /api/content/dropdown/:contentType/:contentKey/validate  # Validate
+
+# Specific Dropdown Endpoints
+GET    /api/content/main_page/action/:actionNumber/options      # Main options
+GET    /api/content/main_page/action/:actionNumber/dropdown     # Main dropdown
+```
+
+### Banks & Financial APIs
+```
+GET    /api/banks                   # List all active banks
+GET    /api/banks/:bankId/configuration    # Bank configuration
+PUT    /api/banks/:bankId/configuration    # Update bank config
+```
+
+### System & Utility APIs
+```
+# Health & Status
+GET    /health                      # Basic health check
+GET    /api/database-status         # Database connection status
+GET    /api/db-info                 # Database information
+
+# Settings & Configuration
+GET    /api/ui-settings             # UI configuration
+GET    /api/languages               # Supported languages
+GET    /api/content-categories      # Content categories
+
+# Statistics & Debug
+GET    /api/content/stats           # Content statistics
+GET    /api/debug/credit-data       # Debug credit data
+```
+
+## Request/Response Flow
+
+```
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│  Client  │────▶│  Helmet  │────▶│   CORS   │────▶│   Rate   │
+└──────────┘     └──────────┘     └──────────┘     │  Limiter │
+                                                    └────┬─────┘
+                                                         │
+                                                         ▼
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│ Database │◀────│  Handler │◀────│   Auth   │◀────│  Session │
+└──────────┘     └──────────┘     │Middleware│     │   Store  │
+                                   └──────────┘     └──────────┘
+```
+
+## Authentication & Authorization
+
+### Session Management
+```javascript
+// Session configuration
+{
+  store: new pgSession({
+    pool: managementPool,
+    tableName: 'session',
+    createTableIfMissing: false
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax'
+  }
+}
+```
+
+### User Roles & Permissions
+```sql
+-- Admin user roles
+CREATE TYPE user_role AS ENUM (
+  'super_admin',    -- Full system access
+  'admin',          -- Standard admin access
+  'editor',         -- Content editing rights
+  'viewer',         -- Read-only access
+  'director',       -- Director-level access
+  'administration' -- Administrative staff
+);
+```
+
+### Authentication Flow
+1. User submits credentials to `/api/auth/login`
+2. Server validates against `admin_users` table
+3. Password verified using bcrypt (12 rounds)
+4. Session created in PostgreSQL
+5. Session cookie sent to client
+6. All subsequent requests include session cookie
+7. `requireAuth` middleware validates session
+
+## Database Schema
+
+### Content Database (bankim_content)
+```sql
+-- Core Tables
+content_items (
+  id, content_key, content_type, category,
+  screen_location, component_type, description, is_active
+)
+
+content_translations (
+  id, content_item_id, language_code, content_value,
+  is_default, status
+)
+
+content_categories (
+  id, name, display_name, description, parent_id, sort_order
+)
+
+dropdown_options (
+  id, content_item_id, option_key, option_value,
+  display_order, is_default, is_active
+)
+
+content_audit_log (
+  id, timestamp, user_id, content_item_id, action_type,
+  old_value, new_value, ip_address
+)
+```
+
+### Core Database (bankim_core)
+```sql
+-- Business Logic Tables
+user_permissions (
+  id, user_id, resource_type, resource_id, permission_level
+)
+
+bank_configurations (
+  id, bank_id, config_key, config_value, environment
+)
+
+calculation_formulas (
+  id, formula_name, formula_expression, parameters, version
+)
+
+ui_settings (
+  id, setting_key, setting_value, component, user_role
+)
+```
+
+### Management Database (bankim_management)
+```sql
+-- System Tables
+admin_users (
+  id, email, password_hash, first_name, last_name,
+  role, is_active, last_login
+)
+
+system_settings (
+  id, setting_key, setting_value, category, updated_by
+)
+
+feature_flags (
+  id, flag_name, is_enabled, rollout_percentage, conditions
+)
+
+login_audit_log (
+  id, timestamp, email, success, ip_address, user_agent
+)
+```
+
+## Security Controls
+
+### Request Security
+```javascript
+// Helmet configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3002',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Rate limiting
+app.use(rateLimit({
+  windowMs: process.env.RATE_LIMIT_WINDOW_MS || 900000, // 15 minutes
+  max: process.env.RATE_LIMIT_MAX || 100,
+  message: 'Too many requests from this IP'
+}));
+```
+
+### Input Validation
+- SQL injection prevention via parameterized queries
+- XSS protection through content sanitization
+- Request body size limits (10mb default)
+- Type validation on all inputs
+- Whitelist-based field filtering
+
+## Configuration & Environment Variables
+
+### Required Environment Variables
+```bash
+# Database URLs
+CONTENT_DATABASE_URL=postgresql://user:pass@host:5432/bankim_content
+CORE_DATABASE_URL=postgresql://user:pass@host:5432/bankim_core
+MANAGEMENT_DATABASE_URL=postgresql://user:pass@host:5432/bankim_management
+
+# Alternative database config (fallback)
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=bankim_content
+DB_USER=bankim_admin
+DB_PASSWORD=secure_password
+
+# Server Configuration
+PORT=3001
+NODE_ENV=development|production
+API_BASE_URL=http://localhost:3001
+
+# Security
+SESSION_SECRET=your-super-secure-session-secret
+BCRYPT_ROUNDS=12
+JWT_SECRET=your-jwt-secret (if using JWT)
+JWT_EXPIRES_IN=24h
+
+# CORS
+CORS_ORIGIN=http://localhost:3002
+ALLOWED_ORIGINS=http://localhost:3002,http://localhost:3000
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
+RATE_LIMIT_MAX=100           # requests per window
+
+# Logging
+LOG_LEVEL=info|debug|error
+LOG_FILE=logs/backend.log
+```
+
+## Error Handling
+
+### Error Response Format
+```javascript
+{
+  success: false,
+  error: {
+    code: "CONTENT_NOT_FOUND",
+    message: "The requested content item was not found",
+    details: { 
+      contentId: "invalid-id",
+      searchLocation: "mortgage_step_1"
+    },
+    field: "id"  // For validation errors
+  }
+}
+```
+
+### Error Codes
+```
+AUTH_REQUIRED         - Authentication required
+AUTH_INVALID         - Invalid credentials
+AUTH_EXPIRED         - Session expired
+PERMISSION_DENIED    - Insufficient permissions
+CONTENT_NOT_FOUND    - Content item not found
+VALIDATION_ERROR     - Input validation failed
+DATABASE_ERROR       - Database operation failed
+RATE_LIMIT_EXCEEDED  - Too many requests
+SERVER_ERROR         - Internal server error
+```
+
+## Operations & Monitoring
+
+### Health Endpoints
+```javascript
+// Basic health check
+GET /health
+Response: {
+  status: "healthy",
+  timestamp: "2024-01-10T10:00:00Z",
+  uptime: 3600,
+  version: "1.0.0"
+}
+
+// Database status
+GET /api/database-status
+Response: {
+  connected: true,
+  databases: {
+    content: "connected",
+    core: "connected",
+    management: "connected"
+  },
+  pool: {
+    total: 10,
+    idle: 8,
+    waiting: 0
+  }
+}
+
+// Detailed health
+GET /api/health/detailed
+Response: {
+  status: "healthy",
+  checks: {
+    database: "pass",
+    redis: "pass",
+    disk: "pass",
+    memory: "pass"
+  },
+  metrics: {
+    requestsPerMinute: 150,
+    averageResponseTime: 45,
+    errorRate: 0.01
+  }
+}
+```
+
+### Logging Strategy
+```
+logs/
+├── backend.log      # Main application log
+├── dev.log         # Development environment log
+├── error.log       # Error-only log
+├── access.log      # HTTP access log
+└── audit.log       # Security audit log
+```
+
+### Performance Metrics
+- Request/response times logged
+- Database query performance tracked
+- Memory usage monitored
+- Connection pool statistics
+- Error rates and types
+
+## Deployment Architecture
+
+### Production Deployment
+```
+┌─────────────────────────────────────────────────────┐
+│                   Load Balancer                      │
+│                  (SSL Termination)                   │
+└──────────┬──────────────────────┬───────────────────┘
+           │                      │
+     ┌─────▼─────┐          ┌─────▼─────┐
+     │  Server   │          │  Server   │
+     │ Instance 1│          │ Instance 2│
+     │  (3001)   │          │  (3001)   │
+     └─────┬─────┘          └─────┬─────┘
+           │                      │
+           └──────────┬───────────┘
+                      │
+            ┌─────────▼──────────┐
+            │   PostgreSQL       │
+            │    Cluster         │
+            │  (Primary/Replica) │
+            └────────────────────┘
+```
+
+### Deployment Commands
+```bash
+# Development
+npm run dev              # Start with nodemon
+npm run debug           # Start with debugging
+
+# Production
+npm start               # Start server
+npm run migrate         # Run migrations
+npm run seed           # Seed database
+npm run health-check   # Verify deployment
+
+# Docker
+docker build -t bankim-api .
+docker run -p 3001:3001 --env-file .env bankim-api
+```
+
+### Platform Support
+- **Railway**: Auto-deploy from GitHub
+- **Heroku**: Buildpack-based deployment
+- **AWS ECS**: Container-based deployment
+- **Kubernetes**: Helm charts available
+- **Docker**: Full containerization support
+
+## Performance Optimizations
+
+### Database Optimizations
+- Connection pooling (10 connections per pool)
+- Prepared statements for frequent queries
+- Strategic indexes on lookup columns
+- Query result caching for static content
+- Batch operations for bulk updates
+
+### API Optimizations
+- Response compression (gzip)
+- ETags for cache validation
+- Cache-Control headers
+- Pagination for large datasets
+- Field filtering on responses
+
+### Caching Strategy
+```javascript
+// Cache headers for static content
+res.set({
+  'Cache-Control': 'public, max-age=3600',
+  'ETag': generateETag(content),
+  'Last-Modified': content.updated_at
+});
+
+// Dynamic content caching
+const cacheKey = `content:${screen_location}:${language}`;
+const cached = await redis.get(cacheKey);
+if (cached) return res.json(JSON.parse(cached));
+```
+
+## Development Workflow
+
+### Local Development Setup
+```bash
+# Install dependencies
+npm install
+
+# Setup databases
+npm run db:create
+npm run db:migrate
+npm run db:seed
+
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+npm run test:integration
+npm run test:e2e
+```
+
+### Git Hooks
+```bash
+# Pre-commit
+- ESLint validation
+- Prettier formatting
+- Unit test execution
+
+# Pre-push
+- Full test suite
+- Security audit
+- Build verification
+```
+
+### Code Quality Tools
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Jest**: Unit testing
+- **Supertest**: API testing
+- **NYC**: Code coverage
+- **Husky**: Git hooks
+
+## Troubleshooting Guide
+
+### Common Issues
+
+#### Database Connection Errors
+```bash
+# Check connection
+npm run db:status
+
+# Verify credentials
+psql $DATABASE_URL -c "SELECT 1"
+
+# Reset connections
+npm run db:reset-pools
+```
+
+#### Session Issues
+```bash
+# Clear sessions
+npm run sessions:clear
+
+# Verify session table
+psql -c "SELECT * FROM session LIMIT 1"
+```
+
+#### Performance Issues
+```bash
+# Analyze slow queries
+npm run db:analyze
+
+# Check connection pools
+npm run db:pool-stats
+
+# Profile memory usage
+npm run profile:memory
+```
+
+## Migration Guide
+
+### Running Migrations
+```bash
+# Check pending migrations
+npm run migrate:status
+
+# Run all migrations
+npm run migrate:up
+
+# Rollback last migration
+npm run migrate:down
+
+# Create new migration
+npm run migrate:create add_new_feature
+```
+
+### Migration Best Practices
+1. Always backup before migrations
+2. Test migrations in staging first
+3. Include rollback scripts
+4. Version control all migrations
+5. Document breaking changes
+
+## API Testing
+
+### Test Coverage
+```
+Unit Tests: 85%
+Integration Tests: 70%
+E2E Tests: 60%
+```
+
+### Test Commands
+```bash
+# Run all tests
+npm test
+
+# Run specific suite
+npm run test:auth
+npm run test:content
+npm run test:banks
+
+# Generate coverage report
+npm run test:coverage
+```
+
+### Example Test
+```javascript
+describe('POST /api/auth/login', () => {
+  it('should authenticate valid user', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'admin@bankim.com',
+        password: 'SecurePass123!'
+      });
+    
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.headers['set-cookie']).toBeDefined();
+  });
+});
+```
+
+## Future Enhancements
+
+### Planned Features
+- GraphQL API layer
+- WebSocket support for real-time updates
+- Redis caching layer
+- Elasticsearch for advanced search
+- Message queue integration (RabbitMQ/Kafka)
+- API versioning (v1, v2)
+- OpenAPI/Swagger documentation
+- Prometheus metrics export
+- Distributed tracing (Jaeger)
+- Blue-green deployment support
+
+### Performance Goals
+- < 100ms average response time
+- 99.9% uptime SLA
+- Support 10,000 concurrent users
+- < 1% error rate
+- Horizontal scaling capability
+
+## Support & Documentation
+
+### Key Files Reference
+- `server.js` - Main application entry
+- `auth-middleware.js` - Authentication logic
+- `config/*.js` - Database configurations
+- `database/*.sql` - Schema definitions
+- `migrations/*.sql` - Schema changes
+- `scripts/*.js` - Utility scripts
+- `logs/*.log` - Application logs
+- `README.md` - Quick start guide
+- `API.md` - API documentation
+
+### Contact & Resources
+- Documentation: `/docs/api`
+- Health Dashboard: `/api/health`
+- Support: support@bankim.com
+- Repository: github.com/bankim/api

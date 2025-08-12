@@ -30,3 +30,22 @@
 2025-08-10T07:02:42.508926Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
 2025-08-10T07:02:56.809058Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/package.json.backup"), AnchoredSystemPathBuf("packages/client/package.json")}
 2025-08-10T07:02:56.809067Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
+2025-08-10T07:03:36.207547Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/client/package.json"), AnchoredSystemPathBuf("packages/client/package.json.backup")}
+2025-08-10T07:03:36.207556Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }}))
+2025-08-10T07:03:36.207764Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-08-10T07:03:38.808435Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/server/package.json"), AnchoredSystemPathBuf("packages/client/package.json"), AnchoredSystemPathBuf("packages/server/package.json.backup"), AnchoredSystemPathBuf("packages/client/package.json.backup")}
+2025-08-10T07:03:38.808446Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/client"), path: AnchoredSystemPathBuf("packages/client") }, WorkspacePackage { name: Other("@bankim/server"), path: AnchoredSystemPathBuf("packages/server") }}))
+2025-08-10T07:03:41.808430Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages/server/package.json"), AnchoredSystemPathBuf("packages/server/package.json.backup")}
+2025-08-10T07:03:41.808441Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@bankim/server"), path: AnchoredSystemPathBuf("packages/server") }}))
+2025-08-10T10:28:47.346714Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture")}
+2025-08-10T10:28:47.346744Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-10T10:28:53.346469Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture/client")}
+2025-08-10T10:28:53.346477Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-10T10:28:59.446435Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture/server")}
+2025-08-10T10:28:59.446443Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-10T10:30:43.246615Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture/client")}
+2025-08-10T10:30:43.246628Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-10T10:30:54.846611Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture/server")}
+2025-08-10T10:30:54.846619Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-08-10T10:30:59.446767Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("docs/Architecture/client"), AnchoredSystemPathBuf("docs/Architecture/server")}
+2025-08-10T10:30:59.446782Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))

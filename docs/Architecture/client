@@ -1,0 +1,245 @@
+# BankIM Admin Panel — Client Architecture
+
+## Overview
+The admin dashboard is a React + TypeScript single-page application (SPA) built with Vite. It consumes the Admin API for content, settings, and administrative functions. End-to-end types are shared via `@bankim/shared` to keep contracts and models consistent with the backend.
+
+## Architecture Layers
+
+```
++---------------------------------------------------------------------------------+
+|                                 Admin Client (SPA)                              |
+|                                                                                 |
+|  Presentation/UI Layer                                                          |
+|  - Components: Admin layout, menus, tables, modals, forms                       |
+|  - Pages: Content screens (mortgage/credit/general/menu), edit & drill views    |
+|                                                                                 |
+|  Routing Layer                                                                  |
+|  - React Router routes in App.tsx                                               |
+|  - Optional `ProtectedRoute` for RBAC gating                                    |
+|                                                                                 |
+|  State/Context Layer                                                            |
+|  - AuthContext (user/session/roles/permissions)                                 |
+|  - LanguageContext, NavigationContext                                           |
+|                                                                                 |
+|  Data Access Layer                                                              |
+|  - API Service (`api.ts`) with ETag/TTL caching                                 |
+|  - Shared types (`@bankim/shared`)                                              |
+|                                                                                 |
+|  Cross-cutting Concerns                                                         |
+|  - Error boundaries, i18n, feature flags, logging                               |
+|                                                                                 |
++---------------------------------------------------------------------------------+
+```
+
+### Presentation/UI Layer
+- Components
+  - `packages/client/src/components/AdminLayout/*`
+  - `packages/client/src/components/SharedHeader/*`
+  - `packages/client/src/components/SharedMenu/*`
+  - Editing UI: `components/ContentEditModals/*`, shared table/form primitives
+- Pages
+  - `packages/client/src/pages/*` (e.g., `ContentMain`, `ContentMortgage`, `ContentCredit`)
+  - Shared scaffolding: `SharedContentScreen`, `SharedContentEdit`, `SharedContentEditForm`
+- Error boundaries
+  - `packages/client/src/components/ErrorBoundary/*` wrap sensitive routes/pages
+
+ASCII — UI composition
+```
+AppShell
+  ├─ AdminLayout
+  │   ├─ SharedHeader
+  │   ├─ SharedMenu
+  │   └─ ContentArea (Outlet)
+  │       ├─ Page: ContentMortgage
+  │       ├─ Page: ContentCredit
+  │       └─ Page: ContentMenuEdit / Drill / TextEdit ...
+  └─ ErrorBoundary
+```
+
+### Routing Layer
+- Centralized routing in `packages/client/src/App.tsx` using `<Routes>` / `<Route>`.
+- `ProtectedRoute` component is available for RBAC gating of routes.
+- During development, some routes are intentionally relaxed to speed up workflows.
+
+ASCII — routing overview
+```
+/                      → Dashboard / Overview
+/content/mortgage      → ContentMortgage (list/summary)
+/content/mortgage/edit → ContentMortgageEdit (form)
+/content/credit        → ContentCredit
+/content/menu          → ContentMenu
+/content/menu/edit     → ContentMenuEdit
+/qa/language           → QALanguage
+/qa/mortgage           → QAMortgage
+... (see App.tsx for complete list)
+```
+
+### State & Access Control Layer
+- Authentication Context: `packages/client/src/contexts/AuthContext.tsx`
+  - Exposes `user`, `login`, `logout`, `hasPermission`, `isRole`, `loading`.
+  - In active development, a default `director` user is injected and checks are permissive to accelerate iteration.
+  - Role → permission matrix defined as `ROLE_PERMISSIONS` in the same file.
+- Language & Navigation Contexts
+  - `packages/client/src/contexts/LanguageContext.tsx`
+  - `packages/client/src/contexts/NavigationContext.tsx`
+
+ASCII — auth context data model
+```
+User {
+  id: string
+  email: string
+  name: string
+  role: 'director' | 'administration' | 'sales-manager' | 'content-manager' | 'brokers' | 'bank-employee'
+  permissions: Array<{ action: string; resource: string }>
+}
+
+AuthContext {
+  user: User | null
+  login(email, password, role): Promise<boolean>
+  logout(): void
+  hasPermission(action, resource): boolean   // relaxed in dev
+  isRole(role): boolean                      // relaxed in dev
+  loading: boolean
+}
+```
+
+### Data Access Layer (API Client)
+- Centralized API Service: `packages/client/src/services/api.ts`
+  - `request()` – thin wrapper around fetch for JSON APIs.
+  - `requestWithCache()` – adds ETag-aware caching and TTL based on `Cache-Control`.
+  - Uses relative paths for content endpoints so Vite proxy can route to `/api` in dev.
+  - Non-content endpoints use `VITE_API_URL` base when needed.
+  - Feature flags:
+    - `VITE_USE_REAL_CONTENT_DATA` toggles real vs mock pathways for some flows.
+    - `VITE_CONTENT_CACHE_TTL` controls default TTL for cached responses.
+- Shared contracts via `@bankim/shared` keep models aligned across front/back ends.
+
+ASCII — client-side caching flow
+```
+getContentByScreen(screen, lang)
+  └─ requestWithCache('/api/content/{screen}/{lang}')
+       ├─ cacheKey = endpoint + options
+       ├─ If cached & fresh → add If-None-Match: <etag>
+       ├─ fetch()
+       │   ├─ 304 Not Modified → return cached.data
+       │   └─ 200 OK → parse ETag/Cache-Control → cache data + ETag + TTL
+       └─ on network error → return stale cache if not too old
+```
+
+### Internationalization (i18n)
+- Locale bundles: `packages/client/src/locales/{he,en,ru}.json`.
+- API delivers translations per content item (e.g., `content_translations`).
+- Pages select current language from `LanguageContext`.
+
+### Security & RBAC (Client-side)
+- Client offers UX gating via `ProtectedRoute`, `hasPermission`, and `isRole` checks from `AuthContext`.
+- In production, these are paired with server-side session checks (see server docs) — client-side checks are UX only.
+
+### Error Handling & Resilience
+- Error boundaries wrap sensitive routes to prevent full-app crashes.
+- API client falls back to cached content (if available) on transient network errors.
+- Console diagnostics are present around content flows and cache operations to aid QA.
+
+### Performance & Caching
+- ETag + TTL caching for content endpoints in the API service.
+- Avoids refetching when server returns `304 Not Modified`.
+- Client respects `Cache-Control: max-age` and `Bankim-Content-Version` sentinel headers.
+
+ASCII — content fetch (end-to-end)
+```
+[Browser] → [React Router] → [Page mounts]
+    → apiService.requestWithCache('/api/content/mortgage')
+      → (Vite proxy) → Admin API → bankim_content
+      ← 200 OK + ETag/Cache-Control
+    → cache & render
+```
+
+## Application Composition (Directories)
+- Layout & Navigation
+  - `packages/client/src/components/AdminLayout/*`
+  - `packages/client/src/components/SharedHeader/*`
+  - `packages/client/src/components/SharedMenu/*`
+- Pages (feature screens)
+  - `packages/client/src/pages/*` (e.g., `ContentMain`, `ContentMortgage`, `ContentCredit`, drill/edit variants)
+  - Shared scaffolding: `SharedContentScreen`, `SharedContentEdit`, `SharedContentEditForm`
+- Routing
+  - Centralized in `packages/client/src/App.tsx`
+  - Uses `<Routes>` and `<Route>` for feature areas
+  - `ProtectedRoute` available for RBAC gating (some uses are relaxed during development)
+- Error Boundaries
+  - `packages/client/src/components/ErrorBoundary/*` wrap sensitive routes/pages
+
+ASCII — directory map (condensed)
+```
+packages/client/src/
+  components/
+    AdminLayout/
+    SharedHeader/
+    SharedMenu/
+    ErrorBoundary/
+    ...
+  contexts/
+    AuthContext.tsx
+    LanguageContext.tsx
+    NavigationContext.tsx
+  pages/
+    ContentMortgage/
+    ContentCredit/
+    ContentMenu/
+    ... (Edit, Drill, Refi variants)
+  services/
+    api.ts
+  locales/
+    en.json, he.json, ru.json
+  App.tsx
+```
+
+## Routing Model (Examples)
+- Top-level routes defined in `App.tsx` map to layout-wrapped feature pages:
+  - Content management and verification flows
+  - Role-oriented dashboards (e.g., `Director`, `Administration`, `SalesManager`)
+  - Utilities (calculator formula, QA showcase, components palette)
+
+## Configuration & Feature Flags
+- `VITE_API_URL`: optional base URL for non-content endpoints.
+- `VITE_USE_REAL_CONTENT_DATA`: when `true`, prefer real API responses and disable placeholder checks.
+- `VITE_CONTENT_CACHE_TTL`: default TTL (ms) for cached content responses.
+
+## Build, Dev, Deploy
+- Dev: Vite dev server with hot module replacement.
+- Build: Vite production build producing optimized static assets.
+- Deploy: Static hosting (e.g., Vercel/Netlify) per 4-repo strategy.
+  - `VITE_API_URL` points to the deployed Admin API origin.
+  - `@bankim/shared` imported via git dependency to align contracts.
+
+## Key Files & Directories
+- `packages/client/src/App.tsx` — entry router and app composition
+- `packages/client/src/contexts/AuthContext.tsx` — auth + RBAC
+- `packages/client/src/services/api.ts` — API client and caching
+- `packages/client/src/components/AdminLayout/*` — layout and chrome
+- `packages/client/src/pages/*` — feature pages
+- `packages/client/src/locales/*` — translations
+
+## Typical Flows (ASCII)
+Login flow (paired with server-side session)
+```
+LoginForm → AuthContext.login(email, password)
+  → (dev) simulate → set default or role-based user
+  → (prod) POST /api/auth/login → Set-Cookie session → user stored in context
+  → navigate to protected routes
+```
+
+Content edit flow
+```
+Page mounts → load list via apiService.getContentByContentType('mortgage')
+  → select item → edit modal/form → submit PUT/POST
+  → on success: clear or invalidate content cache
+  → refetch or optimistic update → render
+```
+
+RBAC gating (client UX)
+```
+ProtectedRoute(check = hasPermission('manage', 'content'))
+  ├─ allowed → render children
+  └─ denied   → redirect / show 403 component
+```
