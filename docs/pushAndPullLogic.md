@@ -11,6 +11,11 @@ This guide explains how to push code changes and pull updates using the BankIM M
 - **Deployment**: Code is automatically synced to specialized repositories
 - **Workflow**: Automated push commands handle both workspace and deployment repositories
 
+**⚠️ CRITICAL WORKFLOW RULE**: 
+- **PACKAGES ARE THE LEADING SOURCE** - Each package (`client`, `server`, `shared`) is the authoritative source
+- **MONOREPO IS DERIVED** - The monorepo workspace is updated FROM the packages, not the other way around
+- **PACKAGE-FIRST DEVELOPMENT** - Always develop and commit in the individual packages first, then sync to monorepo
+
 ---
 
 ## 🚀 **PUSHING CODE CHANGES**
@@ -32,60 +37,94 @@ git push origin main     # Push only to workspace (use for work-in-progress)
 
 ### **Step-by-Step Push Workflow**
 
-#### **1. Complete Your Development Work**
+#### **1. Complete Your Development Work in Individual Packages**
 ```bash
-# Make sure you're in the workspace root
-cd bankim-admin-workspace/
+# ⚠️ IMPORTANT: Work in individual packages first, not monorepo
 
-# Run tests to verify your changes
-npm run test
+# For client changes:
+cd packages/client/
+# Make your changes
+git add .
+git commit -m "feat: add new component"
+git push origin main
 
-# Build all packages to verify they compile
-npm run build
+# For server changes:
+cd packages/server/
+# Make your changes  
+git add .
+git commit -m "feat: add new API endpoint"
+git push origin main
+
+# For shared changes:
+cd packages/shared/
+# Make your changes
+git add .
+git commit -m "feat: add new types"
+git push origin main
+
+# Then sync to monorepo:
+cd ../../
+npm run sync:from-packages
 ```
 
-#### **2. Stage and Commit Your Changes**
+#### **2. Sync Changes from Packages to Monorepo**
 ```bash
-# Check what files have changed
+# ⚠️ CRITICAL: Monorepo is updated FROM packages, not the other way around
+
+# After committing in individual packages, sync to monorepo:
+cd bankim-admin-workspace/
+
+# Pull latest changes from all package repositories
+git pull dashboard main
+git pull api main  
+git pull shared main
+
+# Or use automated sync command:
+npm run sync:from-packages
+
+# Verify monorepo is in sync with packages
 git status
-
-# Add files to staging
-git add .
-
-# Or add specific files
-git add packages/client/src/components/NewComponent.tsx
-git add packages/server/src/routes/newEndpoint.js
-
-# Commit with clear message following conventional commits
-git commit -m "feat: add new mortgage calculator feature"
-git commit -m "fix: resolve authentication issue in login flow"
-git commit -m "docs: update API documentation for content system"
+git log --oneline -10
 ```
 
 #### **3. Choose Your Push Strategy**
 
 **Option A: Push Specific Package (Recommended)**
 ```bash
+# ⚠️ PACKAGE-FIRST: Push to individual package repositories first
+
 # If you only changed client code
-npm run push:dashboard
+cd packages/client/
+git push origin main
 
 # If you only changed server code  
-npm run push:api
+cd packages/server/
+git push origin main
 
 # If you only changed shared types/utilities
-npm run push:shared
-```
-
-**Option B: Push All Changes**
-```bash
-# If you changed multiple packages
-npm run push:all
-```
-
-**Option C: Workspace-Only Push (Work in Progress)**
-```bash
-# For work-in-progress or collaboration
+cd packages/shared/
 git push origin main
+
+# Then sync monorepo from packages
+cd ../../
+npm run sync:from-packages
+```
+
+**Option B: Push All Packages**
+```bash
+# Push all individual packages first
+cd packages/client/ && git push origin main && cd ../..
+cd packages/server/ && git push origin main && cd ../..
+cd packages/shared/ && git push origin main && cd ../..
+
+# Then sync monorepo
+npm run sync:from-packages
+```
+
+**Option C: Monorepo-Only Sync (After Package Updates)**
+```bash
+# Only sync monorepo from updated packages
+npm run sync:from-packages
 ```
 
 #### **4. Verify Push Success**
