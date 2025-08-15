@@ -122,3 +122,30 @@ server_credentials.md
 SSH_SERVER_HIERARCHY.md.claude-code/
 tests/browserstack/
 /.claude-code/
+
+# API Keys and Tokens
+*_TOKEN*
+*_KEY*
+*_SECRET*
+*_PASSWORD*
+figd_*
+ATATT*
+*.key
+*.token
+*.secret
+
+# Figma and Design Tokens
+figma_token.txt
+figma_key.txt
+.figma_token
+.figma_key
+
+# Atlassian Tokens
+atlassian_token.txt
+jira_token.txt
+.atlassian_token
+.jira_token
+
+# Work Reports (may contain sensitive data)
+*_WORK_REPORT*.md
+*_REPORT*.md
