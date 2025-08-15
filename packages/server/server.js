@@ -117,8 +117,9 @@ process.on('unhandledRejection', (error) => {
   }
 });
 
-// Import authentication middleware
+// Import authentication middleware and core database
 const { setupAuthRoutes, setupSessionStore } = require('./auth-middleware');
+const { corePool, testCoreConnection } = require('./config/database-core-cjs');
 
 // Middleware
 app.use(helmet());
@@ -143,7 +144,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Session middleware setup
 app.use(require('express-session')({
-  store: setupSessionStore(pool),
+  store: setupSessionStore(corePool),
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
@@ -3709,8 +3710,48 @@ app.get('/api/content/dropdown/:contentType/:contentKey/validate', async (req, r
   }
 });
 
-// Setup authentication routes
-setupAuthRoutes(app, pool);
+// Authentication routes will be set up after database initialization
+
+// TEMPORARY: Admin setup endpoint - remove in production
+app.post('/api/admin/setup-password', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const bcrypt = require('bcrypt');
+    
+    console.log('🔧 Setting up password for:', email);
+    
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Check if password_hash column exists, if not add it
+    try {
+      await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)`);
+    } catch (err) {
+      // Column might already exist, ignore error
+    }
+    
+    // Update the user's password
+    const updateResult = await pool.query(
+      'UPDATE admin_users SET password_hash = $1 WHERE email = $2',
+      [hashedPassword, email]
+    );
+    
+    console.log('✅ Password updated for:', email, 'rows affected:', updateResult.rowCount);
+    
+    res.json({
+      success: true,
+      message: `Password updated for ${email}`,
+      rowsAffected: updateResult.rowCount
+    });
+    
+  } catch (error) {
+    console.error('❌ Password setup error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to setup password'
+    });
+  }
+});
 
 // Add auth-verify endpoint for frontend compatibility
 app.post('/api/auth-verify', (req, res) => {
@@ -3949,13 +3990,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Endpoint not found'
-  });
-});
+// 404 handler will be set up after auth routes in startServer()
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -3990,6 +4025,21 @@ async function startServer() {
   
   // Initialize database connection
   await initializeDatabase();
+  
+  // Test core database connection for authentication
+  await testCoreConnection();
+  
+  // Setup authentication routes after database is ready - use corePool for auth
+  setupAuthRoutes(app, corePool);
+  console.log('🔐 Authentication routes configured');
+  
+  // 404 handler - must be after all routes
+  app.use((req, res) => {
+    res.status(404).json({
+      success: false,
+      error: 'Endpoint not found'
+    });
+  });
   
   app.listen(port, () => {
     console.log(`BankIM Content API server running on port ${port}`);

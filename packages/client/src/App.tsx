@@ -16,7 +16,7 @@ import MainDrill from './pages/MainDrill/MainDrill'
 import { AdminLayout, ErrorBoundary } from './components'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { NavigationProvider } from './contexts/NavigationContext'
-// import AdminLogin from './components/AdminLogin/AdminLogin'
+import AdminLogin from './components/AdminLogin/AdminLogin'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { QAShowcase } from './components/QAShowcase/QAShowcase';
 import QAMortgage from './pages/QAMortgage';
@@ -602,7 +602,7 @@ const Dashboard = () => (
 
 // Main App Router Component
 const AppRouter: React.FC = () => {
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -615,14 +615,15 @@ const AppRouter: React.FC = () => {
     );
   }
 
-  // TEMPORARY: Disable authentication for testing
-  // if (!user) {
-  //   return <AdminLogin />;
-  // }
+  // Enable authentication
+  if (!user) {
+    return <AdminLogin />;
+  }
 
   return (
     <div className="app">
       <Routes>
+        <Route path="/login" element={<AdminLogin />} />
         <Route path="/" element={<Navigate to="/content-management" replace />} />
         <Route path="/dev" element={<Dashboard />} />
         <Route path="/director" element={<Director />} />

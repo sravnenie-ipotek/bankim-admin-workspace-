@@ -94,46 +94,92 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// API base URL from environment or default
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
+// Map database roles to frontend roles
+const mapDatabaseRoleToFrontendRole = (dbRole: string): UserRole => {
+  const roleMap: Record<string, UserRole> = {
+    'super_admin': 'director',
+    'content_manager': 'content-manager',
+    'administration': 'administration',
+    'sales-manager': 'sales-manager',
+    'brokers': 'brokers',
+    'bank-employee': 'bank-employee'
+  };
+  
+  return roleMap[dbRole] || 'content-manager'; // Default to content-manager if unknown
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // TEMPORARILY DISABLED: Always provide a default user for development
+  // Check for existing session on app load
   useEffect(() => {
-    // Create a default director user with all permissions
-    const defaultUser: User = {
-      id: 'temp_director',
-      email: 'director@bankim.com',
-      name: 'Temporary Director',
-      role: 'director',
-      permissions: ROLE_PERMISSIONS['director'] || []
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            const mappedRole = mapDatabaseRoleToFrontendRole(data.user.role);
+            const userData: User = {
+              id: data.user.id,
+              email: data.user.email,
+              name: data.user.name,
+              role: mappedRole,
+              permissions: ROLE_PERMISSIONS[mappedRole] || []
+            };
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    setUser(defaultUser);
-    setLoading(false);
-    
-    console.log('🔓 TEMPORARILY DISABLED: Using default director user for development');
+
+    checkAuthStatus();
   }, []);
 
-  const login = async (email: string, _password: string, role: UserRole): Promise<boolean> => {
+  const login = async (email: string, password: string, role: UserRole): Promise<boolean> => {
     setLoading(true);
     
     try {
-      // Real authentication - calls backend API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      });
       
-      const userData: User = {
-        id: `user_${Date.now()}`,
-        email,
-        name: email.split('@')[0], // Extract name from email
-        role,
-        permissions: ROLE_PERMISSIONS[role] || []
-      };
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        const mappedRole = mapDatabaseRoleToFrontendRole(data.user.role);
+        const userData: User = {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.name,
+          role: mappedRole,
+          permissions: ROLE_PERMISSIONS[mappedRole] || []
+        };
 
-      setUser(userData);
-      localStorage.setItem('bankIM_admin_user', JSON.stringify(userData));
-      setLoading(false);
-      return true;
+        setUser(userData);
+        setLoading(false);
+        return true;
+      } else {
+        console.error('Login failed:', data.error);
+        setLoading(false);
+        return false;
+      }
     } catch (error) {
       console.error('Login failed:', error);
       setLoading(false);
@@ -141,21 +187,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('bankIM_admin_user');
+  const logout = async () => {
+    try {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('bankIM_admin_user');
+    }
   };
 
   const hasPermission = (action: string, resource: string): boolean => {
-    // TEMPORARILY DISABLED: Always return true for development
-    console.log('🔓 TEMPORARILY DISABLED: Permission check bypassed:', action, resource);
-    return true;
+    if (!user || !user.permissions) {
+      return false;
+    }
+    
+    return user.permissions.some(permission => 
+      permission.action === action && permission.resource === resource
+    );
   };
 
   const isRole = (role: UserRole): boolean => {
-    // TEMPORARILY DISABLED: Always return true for development
-    console.log('🔓 TEMPORARILY DISABLED: Role check bypassed:', role);
-    return true;
+    return user?.role === role;
   };
 
   const value: AuthContextType = {

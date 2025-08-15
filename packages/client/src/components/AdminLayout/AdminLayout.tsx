@@ -14,6 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import { TopNavigation } from '../TopNavigation';
 import { SharedMenu } from '../SharedMenu';
+import { useAuth } from '../../contexts/AuthContext';
 import './AdminLayout.css';
 
 interface AdminLayoutProps {
@@ -93,12 +94,18 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     // TODO: Implement notifications logic
   };
 
-  const handleProfileMenuClick = (action: string) => {
+  const { logout, user } = useAuth();
+
+  const handleProfileMenuClick = async (action: string) => {
     console.log('Profile menu action:', action);
-    // TODO: Implement profile menu actions
+    
     if (action === 'logout') {
-      // Handle logout logic
-      console.log('Logout clicked');
+      try {
+        await logout();
+        console.log('User logged out successfully');
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
     }
   };
 
@@ -154,7 +161,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         break;
       case 'logout':
         // Handle logout logic
-        console.log('Logout clicked');
+        handleProfileMenuClick('logout');
         break;
       // Handle submenu navigation
       case 'content-main':
@@ -277,7 +284,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         <TopNavigation
           selectedLanguage={selectedLanguage}
           notificationCount={notificationCount}
-          userProfile={userProfile}
+          userProfile={userProfile || (user ? {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            initials: user.name.split(' ').map(n => n[0]).join('').toUpperCase()
+          } : undefined)}
           bankContext={bankContext}
           onLanguageChange={handleLanguageChange}
           onTechSupportClick={handleTechSupportClick}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Вход№1|E-Mail|Default|RU</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body {
+			font-family: system-ui;
+		}
+	</style>
+</head>
+<body>
+		<div class="bg-white">
+		<div class="flex flex-col self-stretch bg-[#111928] pb-[147px]">
+			<div class="flex items-center self-stretch py-7 px-[189px] mb-28">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/von02keu_expires_30_days.png" 
+					class="w-24 h-[42px] object-fill"
+				/>
+				<div class="flex flex-1 justify-end items-center gap-[15px]">
+					<span class="text-white text-sm font-bold" >
+						Русский
+					</span>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/t6h80hdo_expires_30_days.png" 
+						class="w-6 h-6 object-fill"
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col items-start self-stretch bg-[#1F2A37] py-10 mb-28 mx-[408px] gap-8 rounded-lg" style="box-shadow: 0px 1px 2px #0000001A">
+				<div class="flex flex-col items-start ml-6 gap-3">
+					<span class="text-gray-50 text-2xl font-bold" >
+						Вход
+					</span>
+					<span class="text-gray-400 text-sm" >
+						Войти в аккаунт
+					</span>
+				</div>
+				<div class="flex flex-col self-stretch mx-6 gap-6">
+					<div class="flex flex-col items-start self-stretch gap-2">
+						<span class="text-white text-sm font-bold" >
+							Email
+						</span>
+						<div class="flex items-center self-stretch bg-gray-700 py-3 px-4 gap-2.5 rounded-lg border border-solid border-gray-600">
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/czi4akvg_expires_30_days.png" 
+								class="w-4 h-4 object-fill"
+							/>
+							<input
+								type="text"
+								placeholder="Введите еmail"
+								class="flex-1 self-stretch text-gray-400 bg-transparent text-sm border-0"
+							/>
+						</div>
+					</div>
+					<div class="flex flex-col items-start self-stretch gap-2">
+						<span class="text-white text-sm font-bold" >
+							Должность
+						</span>
+						<button class="flex items-center self-stretch bg-gray-700 text-left p-3 rounded-lg border border-solid border-gray-600"
+							onclick="alert('Pressed!')"}>
+							<span class="flex-1 text-gray-400 text-sm" >
+								Выберите должность
+							</span>
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/6e0wsg8o_expires_30_days.png" 
+								class="w-4 h-4 object-fill"
+							/>
+						</button>
+					</div>
+					<div class="flex flex-col items-start self-stretch gap-2">
+						<span class="text-white text-sm font-bold" >
+							Введите пароль
+						</span>
+						<button class="flex items-center self-stretch bg-gray-700 text-left py-3 px-4 rounded-lg border border-solid border-gray-600"
+							onclick="alert('Pressed!')"}>
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/wm0ap1lb_expires_30_days.png" 
+								class="w-4 h-4 mr-2.5 object-fill"
+							/>
+							<span class="flex-1 text-gray-400 text-sm" >
+								Введите пароль
+							</span>
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/m73b9ijz_expires_30_days.png" 
+								class="w-4 h-4 object-fill"
+							/>
+						</button>
+					</div>
+					<button class="flex flex-col items-center self-stretch bg-[#FBE54D] text-left py-2.5 rounded-lg border-0"
+						onclick="alert('Pressed!')"}>
+						<span class="text-[#111928] text-sm font-bold" >
+							Войти
+						</span>
+					</button>
+				</div>
+			</div>
+			<img
+				src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/kpmxd02b_expires_30_days.png" 
+				class="self-stretch h-12 object-fill"
+			/>
+		</div>
+	</div>
+</body>
+</html>
