@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsc -w -p tsconfig.json",
+    "build": "npx tsc -p tsconfig.json",
+    "dev": "npx tsc -w -p tsconfig.json",
     "test": "echo 'No tests yet'",
     "lint": "echo 'No linting yet'",
-    "type-check": "tsc --noEmit",
+    "type-check": "npx tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "files": [
