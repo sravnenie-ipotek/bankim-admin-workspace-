@@ -39,6 +39,9 @@ const MortgageDropdownEdit: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Detect if this is mortgage-refi content based on URL path
+  const isMortgageRefi = location.pathname.includes('/mortgage-refi/');
+  
   // Content state
   const [content, setContent] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,8 +121,11 @@ const MortgageDropdownEdit: React.FC = () => {
 
   const loadDropdownOptions = async (contentKey: string) => {
     try {
-      console.log(`📋 Loading dropdown options for content key: ${contentKey}`);
-      const response = await apiService.getMortgageDropdownOptions(contentKey);
+      console.log(`📋 Loading dropdown options for content key: ${contentKey} (isMortgageRefi: ${isMortgageRefi})`);
+      // Call appropriate API based on content type
+      const response = isMortgageRefi 
+        ? await apiService.getMortgageRefiDropdownOptions(contentKey)
+        : await apiService.getMortgageDropdownOptions(contentKey);
       
       if (response.success && response.data && Array.isArray(response.data)) {
         const loadedOptions: DropdownOption[] = response.data.map((option: any) => ({
@@ -163,8 +169,9 @@ const MortgageDropdownEdit: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Use returnPath from state if available, otherwise default to mortgage list
-    const returnPath = location.state?.returnPath || '/content/mortgage';
+    // Use returnPath from state if available, otherwise default based on content type
+    const defaultPath = isMortgageRefi ? '/content/mortgage-refi' : '/content/mortgage';
+    const returnPath = location.state?.returnPath || defaultPath;
     
     navigate(returnPath, { 
       state: { 
@@ -206,8 +213,9 @@ const MortgageDropdownEdit: React.FC = () => {
         console.log('✅ Successfully saved all translations');
         setHasChanges(false);
         
-        // Use returnPath from state if available, otherwise default to mortgage list
-        const returnPath = location.state?.returnPath || '/content/mortgage';
+        // Use returnPath from state if available, otherwise default based on content type
+        const defaultPath = isMortgageRefi ? '/content/mortgage-refi' : '/content/mortgage';
+        const returnPath = location.state?.returnPath || defaultPath;
         
         navigate(returnPath, { 
           state: { 
@@ -300,12 +308,12 @@ const MortgageDropdownEdit: React.FC = () => {
         <div className="dropdown-edit-main">
           {/* Breadcrumb */}
           <div className="breadcrumb">
-            <div className="breadcrumb-item" onClick={() => navigate('/content/mortgage')}>
+            <div className="breadcrumb-item" onClick={() => navigate(isMortgageRefi ? '/content/mortgage-refi' : '/content/mortgage')}>
               Контент сайта
             </div>
             <div className="breadcrumb-arrow"></div>
             <div className="breadcrumb-item breadcrumb-active" onClick={handleBack}>
-              Главная страница Страница №1
+              {isMortgageRefi ? 'Рефинансирование ипотеки' : 'Главная страница Страница №1'}
             </div>
             <div className="breadcrumb-arrow"></div>
             <div className="breadcrumb-item breadcrumb-active">

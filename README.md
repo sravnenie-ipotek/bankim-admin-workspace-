@@ -6,6 +6,15 @@
 
 The BankIM Management Portal is a sophisticated financial content management system designed for Israeli banks, providing multilingual support (Hebrew, Russian, English) with advanced calculation engines for mortgages, credits, and refinancing products. The system features role-based access control, dynamic content management, and comprehensive audit trails.
 
+## 🚨 Database Setup (START HERE)
+
+**Before any development work:**
+- 📖 **[DATABASE_CONFIGURATION.md](DATABASE_CONFIGURATION.md)** - Complete database setup guide
+- ⚡ **[DATABASE_QUICKREF.md](DATABASE_QUICKREF.md)** - 2-minute quick start guide
+- 🧪 **Test your database:** `npm run test:db --workspace=@bankim/server`
+
+**Expected content counts:** 32, 20, 4, 6 refinance items. If you see 0s or 1s, you're connected to the wrong database!
+
 ## 🏗️ Repository Architecture
 
 This project uses a **multi-repository monorepo structure** where each component has its own repository while being developed together:

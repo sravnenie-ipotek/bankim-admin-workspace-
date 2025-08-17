@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Контентстраницы№4.1Dropdown|Default|RU</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body {
+			font-family: system-ui;
+		}
+	</style>
+</head>
+<body>
+		<div class="bg-white">
+		<div class="flex flex-col items-start self-stretch bg-[#111928] pb-[311px]">
+			<div class="flex items-start bg-[#1F2A37]">
+				<div class="flex flex-col shrink-0 items-start pb-[818px]">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/18oig179_expires_30_days.png" 
+						class="w-[264px] h-12 mb-10 object-fill"
+					/>
+					<div class="flex items-start mb-[23px] ml-5 gap-3">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/o2w8c4yx_expires_30_days.png" 
+							class="w-6 h-6 object-fill"
+						/>
+						<span class="text-white text-base font-bold" >
+							Главная
+						</span>
+					</div>
+					<div class="flex flex-col items-start mb-6 mx-3 gap-3">
+						<button class="flex items-start bg-gray-700 text-left p-2 mx-2 rounded border-0"
+							onclick="alert('Pressed!')"}>
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/xtzhsaz9_expires_30_days.png" 
+								class="w-6 h-6 mr-3 object-fill"
+							/>
+							<span class="text-white text-base font-bold mr-[43px]" >
+								Контент сайта
+							</span>
+							<img
+								src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/o1uzm84q_expires_30_days.png" 
+								class="w-6 h-6 rounded object-fill"
+							/>
+						</button>
+						<div class="flex flex-col items-end mx-2 gap-4">
+							<span class="text-[#FBE54D] text-sm font-bold mr-[124px]" >
+								Главная
+							</span>
+							<span class="text-white text-sm font-bold mr-[140px]" >
+								Меню
+							</span>
+							<span class="text-white text-sm font-bold mr-11" >
+								Рассчитать ипотеку
+							</span>
+							<div class="flex flex-col items-center">
+								<span class="text-white text-sm font-bold" >
+									Рефинансирование Ипотеки
+								</span>
+							</div>
+							<span class="text-white text-sm font-bold mr-[75px]" >
+								Расчет Кредита
+							</span>
+							<span class="text-white text-sm font-bold mr-[51px]" >
+								РефинансированиеКредита
+							</span>
+							<span class="text-white text-sm font-bold mr-16" >
+								Общие страницы
+							</span>
+						</div>
+					</div>
+					<div class="flex items-start mb-[23px] ml-5 gap-3">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/cu62u5qr_expires_30_days.png" 
+							class="w-6 h-6 object-fill"
+						/>
+						<span class="text-white text-base font-bold" >
+							Чат
+						</span>
+					</div>
+					<div class="bg-gray-700 w-[264px] h-[1px] mb-6">
+					</div>
+					<div class="flex items-start mb-6 ml-5 gap-3">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/ontvl6vw_expires_30_days.png" 
+							class="w-6 h-6 object-fill"
+						/>
+						<span class="text-white text-base font-bold" >
+							Настройки
+						</span>
+					</div>
+					<div class="flex items-start ml-5 gap-3">
+						<img
+							src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/mlbdlk7i_expires_30_days.png" 
+							class="w-6 h-6 object-fill"
+						/>
+						<span class="text-white text-base font-bold" >
+							Выйти
+						</span>
+					</div>
+				</div>
+				<div class="bg-gray-700 w-[1px] h-[1419px]">
+				</div>
+			</div>
+			<div class="flex justify-end items-center self-stretch bg-[#1F2A37] py-6 pl-[667px] pr-10 mb-[51px] ml-[265px] gap-8" style="box-shadow: 0px 2px 4px #0000000D">
+				<div class="flex shrink-0 items-center gap-[15px]">
+					<span class="text-gray-50 text-sm font-bold" >
+						Русский
+					</span>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/oerqcyfd_expires_30_days.png" 
+						class="w-6 h-6 object-fill"
+					/>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/z3uizz3l_expires_30_days.png" 
+					class="w-10 h-10 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/gbzpfysi_expires_30_days.png" 
+					class="w-10 h-10 object-fill"
+				/>
+				<div class="flex shrink-0 items-center gap-3">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/n68bhekz_expires_30_days.png" 
+						class="w-8 h-8 object-fill"
+					/>
+					<div class="flex flex-col shrink-0 items-center">
+						<span class="text-gray-50 text-sm font-bold" >
+							Александр пушкин
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/6g9cjv1v_expires_30_days.png" 
+						class="w-6 h-6 object-fill"
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col items-start self-stretch mb-8 ml-[370px] mr-[145px] gap-4">
+				<div class="flex items-center gap-4 rounded-md">
+					<div class="flex flex-col shrink-0 items-center pb-[1px]">
+						<span class="text-gray-400 text-sm font-bold" >
+							Контент сайта
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/76of7m9q_expires_30_days.png" 
+						class="w-5 h-5 rounded-md object-fill"
+					/>
+					<div class="flex flex-col shrink-0 items-center pb-[1px]">
+						<span class="text-gray-400 text-sm font-bold" >
+							Главная страница Страница  №1
+						</span>
+					</div>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/9mjsb0nn_expires_30_days.png" 
+						class="w-5 h-5 rounded-md object-fill"
+					/>
+					<div class="flex flex-col shrink-0 items-center pb-[1px]">
+						<span class="text-gray-400 text-sm font-bold" >
+							Действие №3
+						</span>
+					</div>
+				</div>
+				<div class="flex items-center self-stretch gap-[15px]">
+					<span class="text-gray-50 text-3xl font-bold" >
+						Номер дейcтвия №3 | Основной источник дохода
+					</span>
+					<div class="flex flex-col shrink-0 items-center pb-[1px]">
+						<span class="text-gray-400 text-sm" >
+							Home_page
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="flex flex-col items-start bg-[#1F2A37] py-6 pl-6 pr-[89px] mb-8 ml-[370px] gap-3 rounded-lg">
+				<span class="text-gray-400 text-sm" >
+					Последнее редактирование
+				</span>
+				<span class="text-gray-50 text-lg font-bold" >
+					01.08.2023 | 12:03
+				</span>
+			</div>
+			<span class="text-gray-50 text-xl font-bold mb-4 ml-[370px]" >
+				Заголовки действий
+			</span>
+			<div class="flex flex-col items-start ml-[370px] gap-2">
+				<span class="text-white text-sm font-bold" >
+					RU
+				</span>
+				<div class="flex flex-col items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[106px] rounded-lg border border-solid border-gray-600">
+					<span class="text-white text-sm" >
+						Основой источник дохода
+					</span>
+				</div>
+			</div>
+			<div class="flex flex-col items-start self-stretch mb-[37px] ml-[688px] mr-[463px] gap-2">
+				<span class="text-white text-sm font-bold" >
+					HEB
+				</span>
+				<div class="flex flex-col self-stretch bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+					<span class="text-white text-sm text-right" >
+						מקור הכנסה עיקרי
+					</span>
+				</div>
+			</div>
+			<div class="flex flex-col items-end self-stretch">
+				<button class="flex items-center bg-transparent text-left py-2 px-3 mr-[145px] gap-2 rounded-lg border border-solid border-gray-400"
+					onclick="alert('Pressed!')"}>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/uryc6qmt_expires_30_days.png" 
+						class="w-4 h-4 rounded-lg object-fill"
+					/>
+					<span class="text-gray-50 text-sm font-bold" >
+						Добавить вариант
+					</span>
+				</button>
+			</div>
+			<span class="text-gray-50 text-xl font-bold mb-10 ml-[370px]" >
+				Опции ответов
+			</span>
+			<div class="flex items-center px-[42px] mb-6 ml-[370px] gap-12">
+				<div class="flex shrink-0 items-start pr-0.5 gap-[22px]">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/c5rbcvog_expires_30_days.png" 
+						class="w-6 h-6 object-fill"
+					/>
+					<span class="text-white text-base font-bold" >
+						1
+					</span>
+				</div>
+				<div class="flex shrink-0 items-start gap-5">
+					<div class="flex flex-col shrink-0 items-start gap-2">
+						<span class="text-white text-sm font-bold" >
+							RU
+						</span>
+						<div class="flex flex-col items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+							<span class="text-white text-sm" >
+								Cотрудник
+							</span>
+						</div>
+					</div>
+					<div class="flex flex-col shrink-0 items-center gap-2">
+						<span class="text-white text-sm font-bold" >
+							HEB
+						</span>
+						<div class="flex flex-col items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+							<span class="text-white text-sm" >
+								עוֹבֵד
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="flex shrink-0 items-start gap-4">
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/mu1yu8u2_expires_30_days.png" 
+						class="w-8 h-8 object-fill"
+					/>
+					<img
+						src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/ryjt1tu4_expires_30_days.png" 
+						class="w-8 h-8 object-fill"
+					/>
+				</div>
+			</div>
+			<div class="flex items-center px-[42px] mb-6 ml-[370px]">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/cqf9ofic_expires_30_days.png" 
+					class="w-6 h-6 mr-[22px] object-fill"
+				/>
+				<span class="text-white text-base font-bold mr-[50px]" >
+					2
+				</span>
+				<div class="flex shrink-0 items-start mr-12 gap-5">
+					<div class="flex flex-col shrink-0 items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							Cотрудник
+						</span>
+					</div>
+					<div class="flex flex-col shrink-0 items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							עוֹבֵד
+						</span>
+					</div>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/jyj1jpny_expires_30_days.png" 
+					class="w-8 h-8 mr-4 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/xo9nj29y_expires_30_days.png" 
+					class="w-8 h-8 object-fill"
+				/>
+			</div>
+			<div class="flex flex-col items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] ml-[515px] rounded-lg border border-solid border-gray-600">
+				<span class="text-white text-sm" >
+					Cотрудник
+				</span>
+			</div>
+			<div class="flex flex-col self-stretch bg-gray-700 pt-2 pb-[9px] px-4 ml-[830px] mr-[315px] rounded-lg border border-solid border-gray-600">
+				<span class="text-white text-sm text-right" >
+					עוֹבֵד
+				</span>
+			</div>
+			<img
+				src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/u2lfesg1_expires_30_days.png" 
+				class="w-8 h-8 ml-[1173px] object-fill"
+			/>
+			<img
+				src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/2yek6mc5_expires_30_days.png" 
+				class="w-8 h-8 ml-[1221px] object-fill"
+			/>
+			<img
+				src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/t3o0gz10_expires_30_days.png" 
+				class="w-6 h-6 ml-[412px] object-fill"
+			/>
+			<span class="text-white text-base font-bold ml-[458px]" >
+				3
+			</span>
+			<div class="flex items-start bg-[#1F2A37] py-6 pl-[564px] pr-[145px] mb-[5px] ml-[264px] gap-4">
+				<button class="flex flex-col shrink-0 items-start bg-transparent text-left py-2.5 px-[92px] rounded-lg border border-solid border-gray-400"
+					onclick="alert('Pressed!')"}>
+					<span class="text-gray-50 text-sm font-bold" >
+						Назад
+					</span>
+				</button>
+				<button class="flex flex-col shrink-0 items-start bg-[#FBE54D] text-left py-2.5 px-[23px] rounded-lg border-0"
+					onclick="alert('Pressed!')"}>
+					<span class="text-[#111928] text-sm font-bold" >
+						Сохранить и опубликовать
+					</span>
+				</button>
+			</div>
+			<div class="flex items-center px-[42px] mb-6 ml-[370px]">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/84rs5y8m_expires_30_days.png" 
+					class="w-6 h-6 mr-[22px] object-fill"
+				/>
+				<span class="text-white text-base font-bold mr-[50px]" >
+					5
+				</span>
+				<div class="flex shrink-0 items-start mr-12 gap-5">
+					<div class="flex flex-col shrink-0 items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							Cотрудник
+						</span>
+					</div>
+					<div class="flex flex-col shrink-0 items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							עוֹבֵד
+						</span>
+					</div>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/zsbfj25n_expires_30_days.png" 
+					class="w-8 h-8 mr-4 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/0bjwdug0_expires_30_days.png" 
+					class="w-8 h-8 object-fill"
+				/>
+			</div>
+			<div class="flex items-center px-[42px] mb-6 ml-[370px]">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/nlc4hwl4_expires_30_days.png" 
+					class="w-6 h-6 mr-[22px] object-fill"
+				/>
+				<span class="text-white text-base font-bold mr-[50px]" >
+					6
+				</span>
+				<div class="flex shrink-0 items-start mr-12 gap-5">
+					<div class="flex flex-col shrink-0 items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							Cотрудник
+						</span>
+					</div>
+					<div class="flex flex-col shrink-0 items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							עוֹבֵד
+						</span>
+					</div>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/8elhgeqm_expires_30_days.png" 
+					class="w-8 h-8 mr-4 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/2ryh11al_expires_30_days.png" 
+					class="w-8 h-8 object-fill"
+				/>
+			</div>
+			<div class="flex items-center px-[42px] mb-6 ml-[370px]">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/x3g0cxgv_expires_30_days.png" 
+					class="w-6 h-6 mr-[22px] object-fill"
+				/>
+				<span class="text-white text-base font-bold mr-[50px]" >
+					7
+				</span>
+				<div class="flex shrink-0 items-start mr-12 gap-5">
+					<div class="flex flex-col shrink-0 items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							Cотрудник
+						</span>
+					</div>
+					<div class="flex flex-col shrink-0 items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							עוֹבֵד
+						</span>
+					</div>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/ydqh14ud_expires_30_days.png" 
+					class="w-8 h-8 mr-4 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/n9b3w6yt_expires_30_days.png" 
+					class="w-8 h-8 object-fill"
+				/>
+			</div>
+			<div class="flex items-center px-[42px] ml-[370px]">
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/17avpu6u_expires_30_days.png" 
+					class="w-6 h-6 mr-[22px] object-fill"
+				/>
+				<span class="text-white text-base font-bold mr-[50px]" >
+					8
+				</span>
+				<div class="flex shrink-0 items-start mr-12 gap-5">
+					<div class="flex flex-col shrink-0 items-start bg-gray-700 pt-2 pb-[9px] pl-4 pr-[212px] rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							Cотрудник
+						</span>
+					</div>
+					<div class="flex flex-col shrink-0 items-center bg-gray-700 pt-2 pb-[9px] px-4 rounded-lg border border-solid border-gray-600">
+						<span class="text-white text-sm" >
+							עוֹבֵד
+						</span>
+					</div>
+				</div>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/kl4m2k72_expires_30_days.png" 
+					class="w-8 h-8 mr-4 object-fill"
+				/>
+				<img
+					src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/bJ75Zn4C2U/2io3q7j3_expires_30_days.png" 
+					class="w-8 h-8 object-fill"
+				/>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

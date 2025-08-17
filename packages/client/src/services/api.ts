@@ -149,12 +149,21 @@ const ACTION_COUNT_MAPPING: Record<string, number> = {
 // Function to get action count for content item
 const getActionCountForItem = (item: any): number => {
   // FIRST: Use database value if available (prioritize real data!)
-  if (item.actionCount && item.actionCount > 0) {
-    return parseInt(item.actionCount);
+  if (typeof item.actionCount === 'number') {
+    return item.actionCount; // Allow 0 values for placeholder steps
   }
   
-  if (item.action_count && item.action_count > 0) {
-    return parseInt(item.action_count);
+  if (typeof item.action_count === 'number') {
+    return item.action_count; // Allow 0 values for placeholder steps
+  }
+  
+  // Handle string values
+  if (item.actionCount !== undefined && item.actionCount !== null) {
+    return parseInt(item.actionCount) || 0;
+  }
+  
+  if (item.action_count !== undefined && item.action_count !== null) {
+    return parseInt(item.action_count) || 0;
   }
   
   // FALLBACK: Try exact match in hardcoded mapping

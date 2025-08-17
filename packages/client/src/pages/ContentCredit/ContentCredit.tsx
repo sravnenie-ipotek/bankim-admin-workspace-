@@ -62,16 +62,33 @@ const ContentCredit: React.FC = () => {
       try {
         setLoading(true);
         console.log('🔄 Fetching credit translations from database...');
-        const response = await apiService.getContentByContentType('credit');
+        const response = await apiService.getCreditContent();
         
         console.log('📊 Raw API response:', response);
         
         if (response.success && response.data) {
-          // Data is already normalized by apiService.getContentByContentType
+          // Handle the credit API response structure and normalize to ContentListItem format
+          const creditItems = response.data.credit_items || [];
+          const normalizedItems = creditItems.map((item: any) => ({
+            id: item.id || '',
+            title: item.translations?.ru || item.content_key || '',
+            actionCount: item.actionCount || 0,
+            lastModified: item.last_modified || new Date().toISOString(),
+            contentType: 'mixed' as const,
+            pageNumber: parseInt(item.page_number) || 1,
+            screen_location: item.screen_location || item.content_key,
+            content_key: item.content_key,
+            component_type: item.component_type,
+            category: item.category,
+            description: item.description,
+            is_active: item.is_active,
+            translations: item.translations
+          }));
+          
           const normalizedData: CreditData = {
             status: 'success',
-            content_count: response.data.length,
-            credit_items: response.data
+            content_count: normalizedItems.length,
+            credit_items: normalizedItems
           };
           
           setCreditData(normalizedData);

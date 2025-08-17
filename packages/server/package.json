@@ -8,6 +8,8 @@
     "dev": "nodemon server.js",
     "seed": "node scripts/seed-database.js",
     "test": "jest",
+    "test:db": "node test-db-connection.js",
+    "db:test": "node test-db-connection.js",
     "lint": "eslint . --ext .js",
     "format": "prettier --write .",
     "db:migrate": "node scripts/migrate.js",
@@ -21,7 +23,7 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@bankim/shared": "git+https://github.com/sravnenie-ipotek/bankim-admin-shared.git",
+    "@bankim/shared": "*",
     "bcrypt": "^5.1.1",
     "connect-pg-simple": "^9.0.1",
     "cors": "^2.8.5",

@@ -538,10 +538,27 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  /* Fix hover movement - prevent any layout changes */
+  box-sizing: border-box;
+  will-change: background-color;
+  /* Prevent any size or position changes */
+  min-width: 225px;
+  max-width: 225px;
+  min-height: 41px; /* 10px top + 21px line-height + 10px bottom */
+  max-height: 41px;
 }
 
 .back-button:hover {
   background: var(--gray-700, #374151);
+  /* Explicitly maintain all positioning and sizing properties */
+  width: 225px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  outline: 1px var(--gray-400, #9CA3AF) solid;
+  outline-offset: -1px;
+  transform: translateX(-50%);
+  position: absolute;
+  left: 50%;
 }
 
 .back-button-text {

@@ -5,6 +5,23 @@ export default defineConfig({
     baseUrl: 'http://localhost:4002',
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      let logs: any[] = [];
+      
+      on('task', {
+        log(entry) {
+          logs.push(entry);
+          return null;
+        },
+        getLogs() {
+          return logs;
+        },
+        clearLogs() {
+          logs = [];
+          return null;
+        }
+      });
+      
+      return config;
     },
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'cypress/support/e2e.ts',

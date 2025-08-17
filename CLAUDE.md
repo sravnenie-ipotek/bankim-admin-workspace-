@@ -13,6 +13,16 @@ npm install
 npm run db:migrate --workspace=@bankim/server
 ```
 
+### Database Testing & Verification
+```bash
+# 🚨 CRITICAL: Test database connection before development
+npm run test:db --workspace=@bankim/server    # Verify correct database connection
+npm run db:test --workspace=@bankim/server    # Alternative command
+
+# Expected output: 32, 20, 4, 6 content items for refinance steps
+# If you see all 0s or 1s, you're connected to wrong database!
+```
+
 ### Development (Turborepo)
 ```bash
 # Start all packages in development mode (client + server)
@@ -158,6 +168,8 @@ BankIM Management Portal Ecosystem
    - Granular permissions system with action-resource combinations
 
 ## Database Architecture
+
+**🚨 CRITICAL: Before any database work, see [DATABASE_CONFIGURATION.md](DATABASE_CONFIGURATION.md) for bulletproof setup instructions and troubleshooting.**
 
 The system integrates with multiple PostgreSQL databases:
 

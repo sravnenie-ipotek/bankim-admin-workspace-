@@ -143,7 +143,7 @@ const ContentMortgageRefi: React.FC = () => {
       title: 'Номер действия',
       width: '160px',
       align: 'center',
-      render: (value) => <span>{value || 1}</span>
+      render: (value) => <span>{typeof value === 'number' ? value : 0}</span>
     },
     {
       key: 'lastModified',

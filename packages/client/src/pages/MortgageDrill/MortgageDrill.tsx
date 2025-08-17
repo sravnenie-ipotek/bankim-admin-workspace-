@@ -114,11 +114,22 @@ const MortgageDrill: React.FC = () => {
               const response = await apiService.getMortgageAllItems();
       
       if (response.success && response.data) {
+        console.log('📊 Response data structure:', response.data);
+        
         // Use the data from the new all-items endpoint
-        const { pageTitle, actionCount, actions: allActions } = response.data;
+        const allItems = response.data.all_items;
+        const contentCount = response.data.content_count || 0;
+
+        // Ensure allItems is an array before mapping
+        if (!Array.isArray(allItems)) {
+          console.error('❌ all_items is not an array:', allItems);
+          console.error('Full response data:', response.data);
+          setError(t('content.error.loading'));
+          return;
+        }
 
         // Transform to drill data format 
-        const actions: MortgageAction[] = allActions.map((item: any) => ({
+        const actions: MortgageAction[] = allItems.map((item: any) => ({
           id: item.id,
           actionNumber: item.actionNumber,
           content_key: item.content_key || '',
@@ -137,8 +148,8 @@ const MortgageDrill: React.FC = () => {
         }));
 
         setDrillData({
-          pageTitle: pageTitle,
-          actionCount: actionCount,
+          pageTitle: `Mortgage Step ${pageId?.replace('mortgage_step', '') || '1'}`,
+          actionCount: contentCount,
           lastModified: actions.length > 0 ? 
             actions.reduce((latest, action) => 
               new Date(action.last_modified) > new Date(latest) ? action.last_modified : latest, 

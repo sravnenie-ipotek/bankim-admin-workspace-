@@ -65,7 +65,25 @@ const MortgageRefiDrill: React.FC = () => {
       
       if (drillResponse.success && drillResponse.data) {
         const drillData = drillResponse.data as any;
-        const { pageTitle, actionCount, actions } = drillData;
+        const { pageTitle, actionCount, actions, is_placeholder, step_info } = drillData;
+
+        // Check if this is a placeholder step
+        if (is_placeholder || !actions || actions.length === 0) {
+          // Handle placeholder steps (2-4)
+          const placeholderTitle = step_info?.title || {};
+          setDrillData({
+            pageTitle: placeholderTitle.ru || placeholderTitle.en || `Step ${pageId}`,
+            actionCount: 0,
+            lastModified: new Date().toISOString(),
+            actions: []
+          });
+          
+          // Set a helpful message for placeholder steps
+          if (is_placeholder) {
+            setError(step_info?.message || 'Этот шаг еще не настроен в базе данных. Контент будет доступен после добавления.');
+          }
+          return;
+        }
 
         // Transform to drill data format
         const transformedActions: MortgageRefiAction[] = actions.map((item: any) => ({
@@ -367,10 +385,22 @@ const MortgageRefiDrill: React.FC = () => {
   }
 
   if (error) {
+    // Check if this is a placeholder step message
+    const isPlaceholder = error.includes('еще не настроен') || error.includes('not yet configured');
+    
     return (
-      <div className="mortgage-drill-error">
-        <p>Ошибка: {error}</p>
-        <button onClick={handleBack}>Вернуться назад</button>
+      <div className={isPlaceholder ? "mortgage-drill-placeholder" : "mortgage-drill-error"}>
+        <div className="placeholder-container">
+          <h2>{drillData?.pageTitle || `Шаг ${pageId}`}</h2>
+          <p className={isPlaceholder ? "placeholder-message" : "error-message"}>{error}</p>
+          {isPlaceholder && (
+            <div className="placeholder-info">
+              <p>📝 Этот шаг будет доступен после добавления контента в базу данных.</p>
+              <p>Пожалуйста, обратитесь к администратору для настройки этого раздела.</p>
+            </div>
+          )}
+          <button onClick={handleBack} className="back-button">Вернуться назад</button>
+        </div>
       </div>
     );
   }
