@@ -4,8 +4,8 @@ import './AdminLogin.css';
 
 const AdminLogin: React.FC = () => {
   const { login, loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@bankim.com');
+  const [password, setPassword] = useState('admin123');
   const [selectedRole, setSelectedRole] = useState<UserRole>('director');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);

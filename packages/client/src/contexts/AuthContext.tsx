@@ -125,12 +125,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (response.ok) {
           const data = await response.json();
-          if (data.success && data.user) {
-            const mappedRole = mapDatabaseRoleToFrontendRole(data.user.role);
+          if (data.success && data.data && data.data.user) {
+            const mappedRole = mapDatabaseRoleToFrontendRole(data.data.user.role);
             const userData: User = {
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.name,
+              id: data.data.user.id,
+              email: data.data.user.email,
+              name: data.data.user.name,
               role: mappedRole,
               permissions: ROLE_PERMISSIONS[mappedRole] || []
             };
@@ -163,11 +163,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
       
       if (response.ok && data.success) {
-        const mappedRole = mapDatabaseRoleToFrontendRole(data.user.role);
+        const mappedRole = mapDatabaseRoleToFrontendRole(data.data.user.role);
         const userData: User = {
-          id: data.user.id,
-          email: data.user.email,
-          name: data.user.name,
+          id: data.data.user.id,
+          email: data.data.user.email,
+          name: data.data.user.name,
           role: mappedRole,
           permissions: ROLE_PERMISSIONS[mappedRole] || []
         };

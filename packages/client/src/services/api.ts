@@ -1043,9 +1043,9 @@ class ApiService {
         if (contentType === 'mortgage' && response.data.mortgage_content) {
           contentArray = response.data.mortgage_content;
           console.log(`✅ Found mortgage_content:`, contentArray.length);
-        } else if (contentType === 'mortgage-refi' && response.data.mortgage_content) {
-          contentArray = response.data.mortgage_content;
-          console.log(`✅ Found mortgage_content for mortgage-refi:`, contentArray.length);
+        } else if (contentType === 'mortgage-refi' && response.data.mortgage_refi_items) {
+          contentArray = response.data.mortgage_refi_items;
+          console.log(`✅ Found mortgage_refi_items:`, contentArray.length);
         } else if (contentType === 'credit' && response.data.credit_content) {
           contentArray = response.data.credit_content;
           console.log(`✅ Found credit_content:`, contentArray.length);
