@@ -13,14 +13,11 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean",
     "type-check": "turbo run type-check",
-    "push:all": "./scripts/push-4repos.sh",
-    "push:workspace": "./scripts/push-workspace.sh",
-    "push:dashboard": "./scripts/push-dashboard.sh",
-    "push:api": "./scripts/push-api.sh",
-    "push:shared": "./scripts/push-shared.sh",
-    "push:dry-run": "./scripts/push-4repos.sh --dry-run",
-    "sync": "./scripts/push-4repos.sh -m 'Automated sync'",
-    "deploy:all": "npm run build && npm run push:all"
+    "deploy": "npm run build && npm run type-check && git push origin main",
+    "deploy:force": "npm run build && git push origin main",
+    "deploy:test": "npm run build && npm run type-check && npm test --workspace=@bankim/client && git push origin main",
+    "validate": "npm run type-check && npm run build",
+    "start": "turbo run dev --parallel"
   },
   "devDependencies": {
     "turbo": "^1.11.0"
