@@ -94,8 +94,8 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// API base URL from environment or default
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+// API base URL - use proxy in development, environment URL in production
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:4000');
 
 // Map database roles to frontend roles
 const mapDatabaseRoleToFrontendRole = (dbRole: string): UserRole => {

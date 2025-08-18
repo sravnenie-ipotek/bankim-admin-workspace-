@@ -16,7 +16,7 @@ import {
 import { ContentPage } from '../pages/Chat/ContentManagement/types/contentTypes';
 import { ContentListItem } from '../pages/ContentListBase/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:4000');
 
 const USE_REAL_CONTENT_DATA = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
 const CONTENT_CACHE_TTL = parseInt(import.meta.env.VITE_CONTENT_CACHE_TTL || '300000');
@@ -762,6 +762,14 @@ class ApiService {
     return this.request<any[]>(`/api/content/mortgage-refi/${encodeURIComponent(contentKey)}/options`);
   }
 
+  async getCreditDropdownOptions(contentKey: string): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(`/api/content/credit/${encodeURIComponent(contentKey)}/options`);
+  }
+
+  async getCreditRefiDropdownOptions(contentKey: string): Promise<ApiResponse<any[]>> {
+    return this.request<any[]>(`/api/content/credit-refi/${encodeURIComponent(contentKey)}/options`);
+  }
+
   // Generic content operations - handles any content type
   async getContentByType(contentType: string): Promise<ApiResponse<any>> {
     try {
@@ -1303,6 +1311,211 @@ class ApiService {
         actionCount: page.actionCount || 1
       } as ContentPage))
       .sort((a, b) => (a.pageNumber || 0) - (b.pageNumber || 0));
+  }
+  // ============================================
+  // JSONB Dropdown Management Methods
+  // ============================================
+
+  /**
+   * Get all available screens with dropdowns
+   */
+  async getDropdownScreens(): Promise<ApiResponse<Array<{ screen: string; dropdownCount: number }>>> {
+    try {
+      console.log('🔄 Fetching available dropdown screens...');
+      const response = await this.request<any>('/api/admin/dropdown-screens');
+      
+      if (response.success && response.data) {
+        console.log(`✅ Found ${response.data.length} screens with dropdowns`);
+        return response;
+      } else {
+        console.error('❌ Failed to fetch dropdown screens:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching dropdown screens:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch dropdown screens'
+      };
+    }
+  }
+
+  /**
+   * Get all dropdowns for a specific screen
+   */
+  async getScreenDropdowns(screen: string, language: string = 'en'): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Fetching dropdowns for screen: ${screen} (${language})...`);
+      const response = await this.requestWithCache<any>(`/api/admin/dropdowns/${screen}/${language}`);
+      
+      if (response.success && response.data) {
+        console.log(`✅ Successfully fetched ${response.data.length} dropdowns for ${screen}`);
+        return response;
+      } else {
+        console.error(`❌ Failed to fetch dropdowns for ${screen}:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error fetching dropdowns for ${screen}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to fetch dropdowns for ${screen}`
+      };
+    }
+  }
+
+  /**
+   * Get single dropdown configuration by key
+   */
+  async getDropdownByKey(dropdownKey: string): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Fetching dropdown configuration: ${dropdownKey}...`);
+      const response = await this.requestWithCache<any>(`/api/admin/dropdown/${dropdownKey}`);
+      
+      if (response.success && response.data) {
+        console.log(`✅ Successfully fetched dropdown: ${dropdownKey}`);
+        return response;
+      } else {
+        console.error(`❌ Failed to fetch dropdown ${dropdownKey}:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error fetching dropdown ${dropdownKey}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to fetch dropdown ${dropdownKey}`
+      };
+    }
+  }
+
+  /**
+   * Update dropdown configuration
+   */
+  async updateDropdown(dropdownKey: string, dropdownData: any): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Updating dropdown: ${dropdownKey}...`);
+      
+      const response = await this.request<any>(`/api/admin/dropdown/${dropdownKey}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ dropdown_data: dropdownData })
+      });
+      
+      if (response.success) {
+        console.log(`✅ Successfully updated dropdown: ${dropdownKey}`);
+        // Clear cache after successful update
+        this.clearContentCache();
+        return response;
+      } else {
+        console.error(`❌ Failed to update dropdown ${dropdownKey}:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error updating dropdown ${dropdownKey}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to update dropdown ${dropdownKey}`
+      };
+    }
+  }
+
+  /**
+   * Create new dropdown configuration
+   */
+  async createDropdown(screenLocation: string, fieldName: string, dropdownData: any): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Creating new dropdown: ${screenLocation}_${fieldName}...`);
+      
+      const response = await this.request<any>('/api/admin/dropdown', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          screen_location: screenLocation,
+          field_name: fieldName,
+          dropdown_data: dropdownData
+        })
+      });
+      
+      if (response.success) {
+        console.log(`✅ Successfully created dropdown: ${screenLocation}_${fieldName}`);
+        // Clear cache after successful creation
+        this.clearContentCache();
+        return response;
+      } else {
+        console.error(`❌ Failed to create dropdown:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error creating dropdown:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to create dropdown'
+      };
+    }
+  }
+
+  /**
+   * Delete dropdown (soft delete)
+   */
+  async deleteDropdown(dropdownKey: string): Promise<ApiResponse<any>> {
+    try {
+      console.log(`🔄 Deleting dropdown: ${dropdownKey}...`);
+      
+      const response = await this.request<any>(`/api/admin/dropdown/${dropdownKey}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.success) {
+        console.log(`✅ Successfully deleted dropdown: ${dropdownKey}`);
+        // Clear cache after successful deletion
+        this.clearContentCache();
+        return response;
+      } else {
+        console.error(`❌ Failed to delete dropdown ${dropdownKey}:`, response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error(`❌ Error deleting dropdown ${dropdownKey}:`, error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : `Failed to delete dropdown ${dropdownKey}`
+      };
+    }
+  }
+
+  /**
+   * Validate dropdown data structure
+   */
+  async validateDropdownData(dropdownData: any): Promise<ApiResponse<{ isValid: boolean; errors: string[] }>> {
+    try {
+      console.log('🔄 Validating dropdown data structure...');
+      
+      const response = await this.request<any>('/api/admin/dropdown/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ dropdown_data: dropdownData })
+      });
+      
+      if (response.success) {
+        console.log('✅ Dropdown data validation complete');
+        return response;
+      } else {
+        console.error('❌ Dropdown data validation failed:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error validating dropdown data:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to validate dropdown data'
+      };
+    }
   }
 }
 

@@ -12,7 +12,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import '../MortgageDrill/MortgageDrill.css'; // Use same styles as MortgageDrill for consistency
 import { apiService } from '../../services/api';
 import { Pagination, InlineEdit } from '../../components';
-import { detectContentTypeFromPath, generateContentPaths, generateApiEndpoints } from '../../utils/contentTypeUtils';
+import { detectContentTypeFromPath, generateContentPaths } from '../../utils/contentTypeUtils';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface CreditAction {
@@ -199,7 +199,7 @@ const CreditDrill: React.FC = () => {
     // For text types - navigate to text edit page
     else if (componentTypeLower === 'text' || 
         componentTypeLower === 'label' ||
-        componentTypeLower === 'field_label' ||
+        (componentTypeLower === 'field_label' && typeDisplay !== 'Дропдаун') || // Only treat field_label as text if it's not a dropdown
         componentTypeLower === 'link' ||
         componentTypeLower === 'button' ||
         componentTypeLower === 'title' ||
@@ -236,8 +236,27 @@ const CreditDrill: React.FC = () => {
       return 'Дропдаун';
     }
     
+    // For credit content, check if this is a field_label that has associated options
+    // Credit dropdowns are stored as field_label + multiple option components
+    if (typeLower === 'field_label' && contentKey) {
+      // Check if there are option components with matching base key
+      const hasOptions = drillData?.actions?.some(action => 
+        (action.component_type?.toLowerCase() === 'option' || 
+         action.component_type?.toLowerCase() === 'dropdown_option') &&
+        action.content_key?.startsWith(contentKey.replace('_label', ''))
+      );
+      if (hasOptions) {
+        return 'Дропдаун';
+      }
+    }
+    
     // Map component types to display text
-    if (typeLower === 'dropdown' || typeLower === 'select' || typeLower === 'option' || typeLower === 'combo') {
+    if (typeLower === 'dropdown' || 
+        typeLower === 'dropdown_container' || 
+        typeLower === 'select' || 
+        typeLower === 'option' || 
+        typeLower === 'dropdown_option' ||
+        typeLower === 'combo') {
       return 'Дропдаун';
     } else if (typeLower === 'link' || typeLower === 'hyperlink' || typeLower === 'url') {
       return 'Ссылка';
@@ -263,10 +282,25 @@ const CreditDrill: React.FC = () => {
 
   // Visible actions (exclude dropdown options from display)
   const visibleActions = useMemo(() => {
-    return filteredActions.filter(action => 
-      action.component_type?.toLowerCase() !== 'option'
-    );
-  }, [filteredActions]);
+    const visible = filteredActions.filter(action => {
+      const typeLower = action.component_type?.toLowerCase();
+      // Hide individual dropdown options - they should only appear in dropdown edit pages
+      return typeLower !== 'option' && 
+             typeLower !== 'dropdown_option' && 
+             typeLower !== 'field_option';
+    });
+    
+    // Debug logging
+    console.log('📊 Credit Drill Visibility Check:', {
+      totalActions: drillData?.actions?.length || 0,
+      filteredActions: filteredActions.length,
+      visibleActions: visible.length,
+      dropdownContainers: visible.filter(a => a.component_type === 'dropdown_container').length,
+      types: [...new Set(visible.map(a => a.component_type))]
+    });
+    
+    return visible;
+  }, [filteredActions, drillData]);
 
   // Pagination logic
   const totalPages = Math.ceil(visibleActions.length / itemsPerPage);
@@ -530,28 +564,49 @@ const CreditDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action) => (
-                <React.Fragment key={`ru-${action.id}`}>
-                  <div className="column-cell">
-                    <InlineEdit
-                      value={editingRowId === action.id && editedValues.ru !== undefined ? editedValues.ru : extractDisplayText(action.translations.ru, 'ru')}
-                      onSave={(newValue) => handleInlineUpdate(action.id, 'ru', newValue)}
-                      className="inline-edit-cell"
-                      isEditing={editingRowId === action.id}
-                      onEditingChange={(editing) => {
-                        if (editing) {
-                          setEditingRowId(action.id);
-                          setEditedValues({ ru: action.translations.ru, he: action.translations.he });
-                        } else if (editingRowId === action.id) {
-                          setEditingRowId(null);
-                          setEditedValues({});
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+              {currentActions.map((action) => {
+                const isEditing = editingRowId === action.id;
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`ru-${action.id}`}>
+                    <div className="column-cell">
+                      {isEditing && isLink ? (
+                        <InlineEdit
+                          value={editedValues.ru !== undefined ? editedValues.ru : extractDisplayText(action.translations.ru, 'ru')}
+                          onSave={(newValue) => handleInlineUpdate(action.id, 'ru', newValue)}
+                          className="inline-edit-cell"
+                          startInEditMode={true}
+                          onCancel={() => {
+                            setEditingRowId(null);
+                            setEditedValues({});
+                          }}
+                        />
+                      ) : (
+                        <div 
+                          style={{ 
+                            color: 'var(--white, white)', 
+                            fontSize: '14px', 
+                            fontFamily: 'Arimo', 
+                            fontWeight: '400', 
+                            lineHeight: '21px', 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis', 
+                            whiteSpace: 'nowrap',
+                            paddingLeft: '0px',
+                            opacity: '1'
+                          }} 
+                          title={extractDisplayText(action.translations.ru, 'ru')}
+                        >
+                          {extractDisplayText(action.translations.ru, 'ru')}
+                        </div>
+                      )}
+                    </div>
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
 
             {/* Column 5: КОНТЕНТ ИВРИТ */}
@@ -562,49 +617,169 @@ const CreditDrill: React.FC = () => {
                 </div>
               </div>
               <div className="column-divider"></div>
-              {currentActions.map((action) => (
-                <React.Fragment key={`he-${action.id}`}>
-                  <div className="column-cell">
-                    <InlineEdit
-                      value={editingRowId === action.id && editedValues.he !== undefined ? editedValues.he : extractDisplayText(action.translations.he, 'he')}
-                      onSave={(newValue) => handleInlineUpdate(action.id, 'he', newValue)}
-                      className="inline-edit-cell inline-edit-rtl"
-                      isEditing={editingRowId === action.id}
-                      onEditingChange={(editing) => {
-                        if (editing) {
-                          setEditingRowId(action.id);
-                          setEditedValues({ ru: action.translations.ru, he: action.translations.he });
-                        } else if (editingRowId === action.id) {
-                          setEditingRowId(null);
-                          setEditedValues({});
-                        }
-                      }}
-                      dir="rtl"
-                    />
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+              {currentActions.map((action) => {
+                const isEditing = editingRowId === action.id;
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`he-${action.id}`}>
+                    <div className="column-cell">
+                      {isEditing && isLink ? (
+                        <InlineEdit
+                          value={editedValues.he !== undefined ? editedValues.he : extractDisplayText(action.translations.he, 'he')}
+                          onSave={(newValue) => handleInlineUpdate(action.id, 'he', newValue)}
+                          className="inline-edit-cell inline-edit-rtl"
+                          startInEditMode={true}
+                          onCancel={() => {
+                            setEditingRowId(null);
+                            setEditedValues({});
+                          }}
+                          dir="rtl"
+                        />
+                      ) : (
+                        <div 
+                          style={{ 
+                            color: 'var(--white, white)', 
+                            fontSize: '14px', 
+                            fontFamily: 'Arimo', 
+                            fontWeight: '400', 
+                            lineHeight: '21px', 
+                            overflow: 'hidden', 
+                            textOverflow: 'ellipsis', 
+                            whiteSpace: 'nowrap',
+                            paddingLeft: '0px',
+                            opacity: '1',
+                            direction: 'rtl',
+                            textAlign: 'right'
+                          }} 
+                          title={extractDisplayText(action.translations.he, 'he')}
+                        >
+                          {extractDisplayText(action.translations.he, 'he')}
+                        </div>
+                      )}
+                    </div>
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
 
-            {/* Column 6: ДЕЙСТВИЯ */}
-            <div className="table-column" style={{ width: '120px' }}>
-              <div className="column-header">
-                <div style={{ color: 'var(--gray-400, #9CA3AF)', fontSize: '12px', fontFamily: 'Arimo', fontWeight: '600', textTransform: 'uppercase', lineHeight: '18px' }}>
-                  {t('content.actions').toUpperCase()}
-                </div>
-              </div>
+            {/* Column 6: ДЕЙСТВИЯ - Arrow button like MortgageDrill */}
+            <div className="table-column" style={{ width: '125px' }}>
+              <div className="column-header" style={{ height: '50px' }}></div>
               <div className="column-divider"></div>
-              {currentActions.map((action) => (
-                <React.Fragment key={`actions-${action.id}`}>
-                  <div className="column-cell">
-                    <button className="action-button" onClick={() => handleEditClick(action)}>
-                      {t('common.edit')}
-                    </button>
-                  </div>
-                  <div className="column-divider"></div>
-                </React.Fragment>
-              ))}
+              {currentActions.map((action) => {
+                const typeDisplay = getComponentTypeDisplay(action.component_type, action.content_key);
+                const isLink = typeDisplay === 'Ссылка';
+                
+                return (
+                  <React.Fragment key={`edit-${action.id}`}>
+                    <div className="column-cell">
+                      {isLink ? (
+                        editingRowId === action.id ? (
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <button
+                              className="inline-edit-btn save"
+                              onClick={async () => {
+                                // Save both RU and HE translations if they were edited
+                                if (editedValues.ru !== undefined) {
+                                  await handleInlineUpdate(action.id, 'ru', editedValues.ru);
+                                }
+                                if (editedValues.he !== undefined) {
+                                  await handleInlineUpdate(action.id, 'he', editedValues.he);
+                                }
+                                setEditingRowId(null);
+                                setEditedValues({});
+                              }}
+                              title={t('common.save')}
+                              style={{
+                                backgroundColor: '#10B981',
+                                border: 'none',
+                                borderRadius: '4px',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: '#fff',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              ✓
+                            </button>
+                            <button
+                              className="inline-edit-btn cancel"
+                              onClick={() => {
+                                setEditingRowId(null);
+                                setEditedValues({});
+                              }}
+                              title={t('common.cancel')}
+                              style={{
+                                backgroundColor: '#EF4444',
+                                border: 'none',
+                                borderRadius: '4px',
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: '#fff',
+                                fontSize: '16px',
+                                fontWeight: 'bold'
+                              }}
+                            >
+                              ✗
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className="inline-edit-trigger"
+                            onClick={() => {
+                              setEditingRowId(action.id);
+                              setEditedValues({});
+                            }}
+                            title={t('common.edit')}
+                            style={{ 
+                              backgroundColor: 'transparent',
+                              border: '1px solid #4B5563',
+                              borderRadius: '4px',
+                              width: '32px',
+                              height: '32px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              color: '#9CA3AF',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M11.854 1.146a.5.5 0 0 1 0 .708L5.207 8.5l-.853 2.853a.5.5 0 0 0 .61.61l2.853-.853 6.646-6.647a.5.5 0 0 0 0-.707l-2-2a.5.5 0 0 0-.707 0l-1.902 1.902zm1.141 1.563L11.293 4.41 9.585 2.702l1.702-1.701 1.708 1.708z" fill="currentColor"/>
+                            </svg>
+                          </button>
+                        )
+                      ) : (
+                        <div 
+                          className="edit-icon-button"
+                          onClick={() => {
+                            console.log('🚀 Arrow clicked for action:', action);
+                            handleEditClick(action);
+                          }}
+                          title={t('common.edit')}
+                          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'rgb(255, 255, 255)', backgroundColor: 'transparent', border: '1px solid rgb(55, 65, 81)', width: '40px', height: '40px', borderRadius: '4px' }}
+                        >
+                          →
+                        </div>
+                      )}
+                    </div>
+                    <div className="column-divider"></div>
+                  </React.Fragment>
+                );
+              })}
             </div>
           </div>
           </div>
@@ -616,6 +791,8 @@ const CreditDrill: React.FC = () => {
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={filteredActions.length}
+              itemsPerPage={itemsPerPage}
               onPageChange={handlePageChange}
             />
           </div>

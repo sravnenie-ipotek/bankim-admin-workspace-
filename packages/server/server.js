@@ -432,6 +432,182 @@ app.get('/api/content/credit-refi', async (req, res) => {
 });
 
 /**
+ * Get credit dropdown options by content key
+ * GET /api/content/credit/:contentKey/options
+ * Returns dropdown options for a specific credit content item
+ */
+app.get('/api/content/credit/:contentKey/options', async (req, res) => {
+  try {
+    const { contentKey } = req.params;
+    console.log(`🔄 Fetching dropdown options for credit content key: ${contentKey}`);
+
+    // Query for ONLY dropdown options related to this specific dropdown
+    // Credit uses dot notation: credit_step1.field.loan_purpose
+    // Options are: credit_step1.field.loan_purpose.option_name
+    const basePattern = contentKey; // Use the key as-is for credit
+    
+    const optionsResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as titleRu,
+        ct_he.content_value as titleHe,
+        ct_en.content_value as titleEn,
+        jsonb_build_object(
+          'ru', COALESCE(ct_ru.content_value, ''),
+          'he', COALESCE(ct_he.content_value, ''),
+          'en', COALESCE(ct_en.content_value, '')
+        ) as translations
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND ct_en.status = 'approved'
+      WHERE ci.component_type IN ('option', 'dropdown_option', 'field_option')
+        AND ci.content_key LIKE $1 || '.%'
+        AND ci.is_active = true
+      ORDER BY ci.content_key
+    `, [basePattern]);
+
+    console.log(`📋 Found ${optionsResult.rows.length} potential dropdown options for content key: ${contentKey}`);
+
+    if (optionsResult.rows.length > 0) {
+      // Format the response to match expected API format
+      const options = optionsResult.rows.map(row => ({
+        id: row.id,
+        content_key: row.content_key,
+        component_type: row.component_type,
+        titleRu: row.titleru || '',
+        titleHe: row.titlehe || '',
+        titleEn: row.titleen || '',
+        translations: row.translations,
+        is_active: row.is_active,
+        updated_at: row.updated_at
+      }));
+
+      console.log(`✅ Returning ${options.length} dropdown options for credit content`);
+      res.json({
+        success: true,
+        data: options
+      });
+    } else {
+      // Return empty array but successful response - frontend will handle fallback
+      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
+      res.json({
+        success: true,
+        data: []
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Get credit dropdown options error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Get credit-refi dropdown options by content key
+ * GET /api/content/credit-refi/:contentKey/options
+ * Returns dropdown options for a specific credit-refi content item
+ */
+app.get('/api/content/credit-refi/:contentKey/options', async (req, res) => {
+  const { contentKey } = req.params;
+  
+  try {
+    console.log(`🔄 Fetching credit-refi dropdown options for contentKey: ${contentKey}`);
+    
+    // Extract base pattern (remove _label or _ph suffix if present) 
+    const basePattern = contentKey.replace(/_label$|_ph$/, '');
+    console.log(`🔍 Searching for options with base pattern: ${basePattern}`);
+
+    // Query for dropdown options with flexible pattern matching
+    const optionsResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as titleRu,
+        ct_he.content_value as titleHe,
+        ct_en.content_value as titleEn,
+        jsonb_build_object(
+          'ru', COALESCE(ct_ru.content_value, ''),
+          'he', COALESCE(ct_he.content_value, ''),
+          'en', COALESCE(ct_en.content_value, '')
+        ) as translations
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND ct_en.status = 'approved'
+      WHERE ci.component_type = 'option'
+        AND ci.content_key LIKE $1 || '%'
+        AND ci.is_active = true
+        AND ci.content_key != $1
+      ORDER BY ci.content_key
+    `, [basePattern]);
+
+    if (optionsResult.rows.length > 0) {
+      const options = optionsResult.rows.map(row => ({
+        id: row.id,
+        content_key: row.content_key,
+        component_type: row.component_type,
+        ru: row.titleru || row.translations?.ru || '',
+        he: row.titlehe || row.translations?.he || '',
+        en: row.titleen || row.translations?.en || '',
+        titleRu: row.titleru || '',
+        titleHe: row.titlehe || '',
+        titleEn: row.titleen || '',
+        translations: row.translations,
+        is_active: row.is_active,
+        updated_at: row.updated_at
+      }));
+
+      console.log(`✅ Returning ${options.length} dropdown options for credit-refi content`);
+      res.json({
+        success: true,
+        data: options
+      });
+    } else {
+      // Return empty array but successful response - frontend will handle fallback
+      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
+      res.json({
+        success: true,
+        data: []
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Get credit-refi dropdown options error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+/**
  * Get regular credit content
  * GET /api/content/credit
  */
@@ -635,6 +811,93 @@ app.get('/api/content/mortgage-refi/drill/:stepId', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Get mortgage-refi drill content error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Get mortgage dropdown options by content key
+ * GET /api/content/mortgage/:contentKey/options
+ * Returns dropdown options for a specific mortgage content item
+ */
+app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
+  try {
+    const { contentKey } = req.params;
+    console.log(`🔄 Fetching dropdown options for mortgage content key: ${contentKey}`);
+
+    // Query for ONLY dropdown options related to this specific dropdown
+    // First get the base content key pattern to find related options
+    const basePattern = contentKey.replace(/_label$|_ph$/, ''); // Remove _label or _ph suffixes
+    
+    const optionsResult = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.updated_at,
+        ct_ru.content_value as titleRu,
+        ct_he.content_value as titleHe,
+        ct_en.content_value as titleEn,
+        jsonb_build_object(
+          'ru', COALESCE(ct_ru.content_value, ''),
+          'he', COALESCE(ct_he.content_value, ''),
+          'en', COALESCE(ct_en.content_value, '')
+        ) as translations
+      FROM content_items ci
+      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+        AND ct_ru.language_code = 'ru' 
+        AND ct_ru.status = 'approved'
+      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+        AND ct_he.language_code = 'he' 
+        AND ct_he.status = 'approved'
+      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+        AND ct_en.language_code = 'en' 
+        AND ct_en.status = 'approved'
+      WHERE ci.component_type = 'option'
+        AND ci.content_key LIKE $1 || '%'
+        AND ci.is_active = true
+        AND ci.content_key != $1
+      ORDER BY ci.content_key
+    `, [basePattern]);
+
+    console.log(`📋 Found ${optionsResult.rows.length} potential dropdown options for content key: ${contentKey}`);
+
+    if (optionsResult.rows.length > 0) {
+      // Format the response to match expected API format
+      const options = optionsResult.rows.map(row => ({
+        id: row.id,
+        content_key: row.content_key,
+        component_type: row.component_type,
+        titleRu: row.titleru || '',
+        titleHe: row.titlehe || '',
+        titleEn: row.titleen || '',
+        translations: row.translations,
+        is_active: row.is_active,
+        updated_at: row.updated_at
+      }));
+
+      console.log(`✅ Returning ${options.length} dropdown options for mortgage content`);
+      res.json({
+        success: true,
+        data: options
+      });
+    } else {
+      // Return empty array but successful response - frontend will handle fallback
+      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
+      res.json({
+        success: true,
+        data: []
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Get mortgage dropdown options error:', error);
     res.status(500).json({ 
       success: false, 
       error: error.message 
@@ -1381,6 +1644,204 @@ app.get('/api/auth/me', (req, res) => {
     res.status(401).json({
       success: false,
       error: 'Not authenticated'
+    });
+  }
+});
+
+// ============================================
+// JSONB Dropdown Management Routes
+// ============================================
+
+// Import dropdown service
+const dropdownService = require('./services/dropdownService.js');
+const { requireAuth } = require('./auth-middleware.js');
+
+// Get all available screens with dropdowns
+app.get('/api/admin/dropdown-screens', requireAuth, async (req, res) => {
+  try {
+    const screens = await dropdownService.getAvailableScreens();
+    res.json({
+      success: true,
+      data: screens,
+      jsonb_source: true
+    });
+  } catch (error) {
+    console.error('Error fetching dropdown screens:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get all dropdowns for a specific screen
+app.get('/api/admin/dropdowns/:screen/:language', requireAuth, async (req, res) => {
+  try {
+    const { screen, language } = req.params;
+    const dropdowns = await dropdownService.getScreenDropdowns(screen, language);
+    
+    res.json({
+      success: true,
+      screen_location: screen,
+      language_code: language,
+      jsonb_source: true,
+      data: dropdowns,
+      performance: {
+        query_count: 1,
+        source: 'jsonb'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching dropdowns:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get single dropdown configuration
+app.get('/api/admin/dropdown/:key', requireAuth, async (req, res) => {
+  try {
+    const { key } = req.params;
+    const dropdown = await dropdownService.getDropdownByKey(key);
+    
+    if (!dropdown) {
+      return res.status(404).json({
+        success: false,
+        error: `Dropdown not found: ${key}`
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: dropdown
+    });
+  } catch (error) {
+    console.error('Error fetching dropdown:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Update dropdown configuration
+app.put('/api/admin/dropdown/:key', requireAuth, async (req, res) => {
+  try {
+    const { key } = req.params;
+    const { dropdown_data } = req.body;
+    
+    // Validate the data structure
+    const validation = dropdownService.validateDropdownData(dropdown_data);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        errors: validation.errors
+      });
+    }
+    
+    // Update with user info from session
+    const updated = await dropdownService.updateDropdown(
+      key,
+      dropdown_data,
+      req.session.user
+    );
+    
+    res.json({
+      success: true,
+      message: 'Dropdown updated successfully',
+      data: updated
+    });
+  } catch (error) {
+    console.error('Error updating dropdown:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Create new dropdown
+app.post('/api/admin/dropdown', requireAuth, async (req, res) => {
+  try {
+    const { screen_location, field_name, dropdown_data } = req.body;
+    
+    // Validate required fields
+    if (!screen_location || !field_name || !dropdown_data) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: screen_location, field_name, dropdown_data'
+      });
+    }
+    
+    // Validate the data structure
+    const validation = dropdownService.validateDropdownData(dropdown_data);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        errors: validation.errors
+      });
+    }
+    
+    // Create with user info from session
+    const created = await dropdownService.createDropdown(
+      screen_location,
+      field_name,
+      dropdown_data,
+      req.session.user
+    );
+    
+    res.json({
+      success: true,
+      message: 'Dropdown created successfully',
+      data: created
+    });
+  } catch (error) {
+    console.error('Error creating dropdown:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Delete dropdown (soft delete)
+app.delete('/api/admin/dropdown/:key', requireAuth, async (req, res) => {
+  try {
+    const { key } = req.params;
+    
+    await dropdownService.deleteDropdown(key, req.session.user);
+    
+    res.json({
+      success: true,
+      message: `Dropdown ${key} deleted successfully`
+    });
+  } catch (error) {
+    console.error('Error deleting dropdown:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Validate dropdown data structure
+app.post('/api/admin/dropdown/validate', requireAuth, async (req, res) => {
+  try {
+    const { dropdown_data } = req.body;
+    
+    const validation = dropdownService.validateDropdownData(dropdown_data);
+    
+    res.json({
+      success: validation.isValid,
+      errors: validation.errors
+    });
+  } catch (error) {
+    console.error('Error validating dropdown:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });

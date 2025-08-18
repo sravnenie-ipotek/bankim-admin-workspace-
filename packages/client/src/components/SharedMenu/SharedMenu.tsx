@@ -103,7 +103,8 @@ const SharedMenu: React.FC<SharedMenuProps> = ({ activeItem = 'dashboard', onIte
     { id: 'content-mortgage-refi', label: t('menu.mortgageRefi'), path: '/content/mortgage-refi' },
     { id: 'content-credit', label: t('menu.credit'), path: '/content/credit' },
     { id: 'content-credit-refi', label: t('menu.creditRefi'), path: '/content/credit-refi' },
-    { id: 'content-general', label: t('menu.general'), path: '/content/general' }
+    { id: 'content-general', label: t('menu.general'), path: '/content/general' },
+    { id: 'dropdown-admin', label: 'JSONB Dropdowns', path: '/dropdown-admin' }
   ];
 
   // Users sub-menu items

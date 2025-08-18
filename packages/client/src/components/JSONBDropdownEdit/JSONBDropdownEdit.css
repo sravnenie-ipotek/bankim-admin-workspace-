@@ -1,0 +1,690 @@
+/* JSONBDropdownEdit Component Styles - EXACT COPY of MortgageDropdownEdit CSS */
+
+.dropdown-edit-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--gray-900, #111928);
+  position: relative;
+  z-index: 1;
+  /* Override AdminLayout background completely */
+  margin: -40px;
+  padding: 40px;
+}
+
+.dropdown-edit-main {
+  padding: 24px;
+  padding-bottom: 120px;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  border-radius: 6px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  display: inline-flex;
+  width: 925px;
+}
+
+.breadcrumb-item {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  color: var(--gray-400, #9CA3AF);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+  cursor: pointer;
+}
+
+.breadcrumb-active {
+  font-weight: 600;
+}
+
+.breadcrumb-arrow {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.breadcrumb-arrow::after {
+  content: '';
+  width: 6.67px;
+  height: 11.67px;
+  left: 6.67px;
+  top: 4.17px;
+  position: absolute;
+  background: var(--gray-400, #9CA3AF);
+  clip-path: polygon(0 0, 60% 50%, 0 100%);
+}
+
+/* Page Title */
+.page-title-section {
+  width: 925px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: inline-flex;
+  margin-top: 24px;
+}
+
+.page-title-content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  display: inline-flex;
+}
+
+.page-title-row {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  display: inline-flex;
+}
+
+.page-title {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: var(--gray-50, #F9FAFB);
+  font-size: 30px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 45px;
+}
+
+.page-subtitle {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  color: var(--gray-400, #9CA3AF);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  line-height: 21px;
+}
+
+/* Last Modified Card */
+.last-modified-card {
+  width: 295px;
+  padding: 24px;
+  background: var(--gray-800, #1F2A37);
+  overflow: hidden;
+  border-radius: 8px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: inline-flex;
+  margin-top: 24px;
+  align-self: flex-start;
+}
+
+.last-modified-content {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+  display: inline-flex;
+}
+
+.last-modified-label {
+  color: var(--gray-400, #9CA3AF);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  line-height: 21px;
+}
+
+.last-modified-date {
+  color: var(--gray-50, #F9FAFB);
+  font-size: 18px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 27px;
+}
+
+/* Section Headers */
+.section-header {
+  color: var(--gray-50, #F9FAFB);
+  font-size: 20px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 30px;
+  margin-bottom: 24px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Action Headers Section */
+.action-headers-section {
+  margin-top: 24px;
+  background: transparent;
+  width: 925px;
+}
+
+/* Input Field Styling - Design Specification Compliance
+ * 
+ * Design Requirements:
+ * - Padding: 8px 16px 9px 16px (top, right, bottom, left)
+ * - Hebrew RTL text needs extra right padding (20px vs 16px)
+ * - Width: 320px for comfortable text spacing
+ * - Background: #374151, Border: 1px solid #4B5563, Radius: 8px
+ *
+ * Critical Fix: Moved padding from container to input field to prevent
+ * text sliding out and ensure proper spacing for Hebrew text
+ */
+
+.headers-input-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.input-group {
+  width: 295px; /* Match option input width for alignment */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  display: flex;
+}
+
+.input-label {
+  align-self: stretch;
+  color: var(--white, white);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.input-label-right {
+  text-align: right;
+}
+
+.input-container {
+  align-self: stretch;
+  padding: 0; /* Remove container padding - let input handle its own padding */
+  background: var(--gray-700, #374151);
+  border-radius: 8px;
+  outline: 1px var(--gray-600, #4B5563) solid;
+  outline-offset: -1px;
+  justify-content: flex-start;
+  align-items: stretch; /* Allow input to fill container height */
+  gap: 0; /* Remove gap for cleaner input styling */
+  display: inline-flex;
+}
+
+.input-wrapper {
+  flex: 1 1 0;
+  justify-content: flex-start;
+  align-items: stretch; /* Match input-container alignment */
+  gap: 0; /* Remove gap for cleaner input styling */
+  display: flex;
+}
+
+.text-input {
+  flex: 1 1 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px 16px 9px 16px; /* Design spec padding: top right bottom left */
+  color: var(--white, white);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  line-height: 21px;
+  min-height: 21px; /* Ensure consistent height */
+}
+
+.text-input-right {
+  text-align: right;
+  padding: 8px 20px 9px 16px; /* Extra right padding for RTL Hebrew text */
+  direction: rtl; /* Ensure proper RTL text flow */
+}
+
+/* Text overflow prevention */
+.text-input,
+.text-input-right {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Add Option Section */
+.add-option-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  width: 925px;
+}
+
+.add-option-button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  outline: 1px var(--gray-400, #9CA3AF) solid;
+  outline-offset: -1px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  display: inline-flex;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.add-option-button:hover {
+  background: var(--gray-800, #1F2A37);
+}
+
+.add-icon {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-icon::after {
+  content: '';
+  width: 9.33px;
+  height: 9.33px;
+  left: 3.33px;
+  top: 3.33px;
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 1V9M1 5H9' stroke='%23F9FAFB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.add-option-text {
+  color: var(--gray-50, #F9FAFB);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+/* Dropdown Options Section */
+.dropdown-options-section {
+  margin-top: 24px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.options-list {
+  width: 925px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 24px;
+  display: inline-flex;
+}
+
+/* Dropdown Option Row */
+.option-row {
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  display: inline-flex;
+}
+
+.option-drag-section {
+  width: 55px;
+  height: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.option-number {
+  color: white;
+  font-size: 16px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  line-height: 24px;
+  position: absolute;
+  left: 46px;
+  top: 0px;
+}
+
+.hamburger-icon {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hamburger-icon::after {
+  content: '';
+  width: 16px;
+  height: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='12' viewBox='0 0 16 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1H15M1 6H15M1 11H15' stroke='%23F9FAFB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.option-inputs {
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  display: flex;
+}
+
+.option-input-group {
+  width: 295px; /* Match header input width for perfect alignment */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  display: inline-flex;
+}
+
+.option-actions {
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  display: flex;
+}
+
+.action-button {
+  padding: 4px;
+  border-radius: 9999px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button {
+  background: var(--gray-700, #374151);
+}
+
+.edit-button:hover {
+  background: var(--gray-600, #4B5563);
+}
+
+.delete-button {
+  background: var(--red-400, #F98080);
+}
+
+.delete-button:hover {
+  background: var(--red-500, #EF4444);
+}
+
+.edit-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.edit-icon::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg width='17' height='17' viewBox='0 0 17 17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 14.875H15.375M12.0625 2.0625C12.3398 1.78516 12.7207 1.625 13.125 1.625C13.3242 1.625 13.5215 1.66431 13.7041 1.74063C13.8867 1.81694 14.0508 1.92861 14.1875 2.0625C14.3242 2.19639 14.4359 2.36049 14.5122 2.54309C14.5885 2.72569 14.6279 2.92298 14.6279 3.12213C14.6279 3.32127 14.5885 3.51856 14.5122 3.70116C14.4359 3.88376 14.3242 4.04786 14.1875 4.18175L4.9375 13.4375L1.625 14.375L2.5625 11.0625L12.0625 2.0625Z' stroke='%23F9FAFB' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.delete-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.delete-icon::after {
+  content: '';
+  width: 16px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='20' viewBox='0 0 18 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 5L15.1327 17.1425C15.0579 18.1891 14.187 19 13.1378 19H4.86224C3.81296 19 2.94208 18.1891 2.86732 17.1425L2 5M7 9V15M11 9V15M12 5V2C12 1.44772 11.5523 1 11 1H7C6.44772 1 6 1.44772 6 2V5M1 5H17' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 18px;
+}
+
+/* Bottom Actions */
+.bottom-actions {
+  width: 100%;
+  padding: 24px 0;
+  position: fixed;
+  bottom: 0;
+  left: 265px; /* Match AdminLayout sidebar width */
+  right: 0;
+  background: var(--gray-800, #1F2A37);
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  display: flex;
+  box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.bottom-actions-row {
+  align-self: stretch;
+  justify-content: center !important;
+  align-items: center;
+  display: flex;
+  padding: 0 2rem; /* Add inner padding for content */
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.bottom-actions-spacer {
+  width: 225px;
+  padding: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+}
+
+.bottom-actions-buttons {
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+
+.back-button {
+  width: 225px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  outline: 1px var(--gray-400, #9CA3AF) solid;
+  outline-offset: -1px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: background-color 0.2s ease;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Fix hover movement - prevent any layout changes */
+  box-sizing: border-box;
+  will-change: background-color;
+  /* Prevent any size or position changes */
+  min-width: 225px;
+  max-width: 225px;
+  min-height: 41px; /* 10px top + 21px line-height + 10px bottom */
+  max-height: 41px;
+}
+
+.back-button:hover {
+  background: var(--gray-700, #374151);
+  /* Explicitly maintain all positioning and sizing properties */
+  width: 225px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  outline: 1px var(--gray-400, #9CA3AF) solid;
+  outline-offset: -1px;
+  transform: translateX(-50%);
+  position: absolute;
+  left: 50%;
+}
+
+.back-button-text {
+  color: var(--gray-50, #F9FAFB);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.save-button {
+  width: 225px;
+  padding: 10px 20px;
+  overflow: hidden;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+  border: none;
+  transition: background-color 0.2s ease;
+  margin-left: auto;
+}
+
+.save-button-enabled {
+  background: #FBE54D !important;
+  cursor: pointer;
+}
+
+.save-button-enabled:hover {
+  background: var(--primary-600, #F7DC0B);
+}
+
+.save-button-disabled {
+  background: var(--gray-600, #4B5563);
+  cursor: not-allowed;
+}
+
+.save-button-text-enabled {
+  color: var(--gray-900, #111928);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.save-button-text-disabled {
+  color: var(--gray-400, #9CA3AF);
+  font-size: 14px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1023px) {
+  .bottom-actions {
+    left: 0; /* No sidebar on mobile */
+  }
+  
+  .bottom-actions-row {
+    padding: 0 1.5rem;
+  }
+  
+  .page-title-section,
+  .options-list {
+    max-width: 100%;
+  }
+  
+  .headers-input-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .input-group {
+    width: 100%;
+  }
+  
+  .option-row {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .option-inputs {
+    width: 100%;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .option-input-group {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bottom-actions-row {
+    padding: 0 1rem;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .bottom-actions-buttons {
+    width: 100%;
+    justify-content: center !important;
+    gap: 16px;
+    position: static;
+  }
+  
+  .back-button {
+    position: static;
+    transform: none;
+    width: calc(50% - 8px);
+  }
+  
+  .save-button {
+    margin-left: 0;
+    width: calc(50% - 8px);
+  }
+  
+  .option-drag-section {
+    display: none; /* Hide drag on mobile */
+  }
+  
+  .option-actions {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
