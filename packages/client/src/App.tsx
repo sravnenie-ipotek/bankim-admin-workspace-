@@ -1176,9 +1176,9 @@ const AppRouter: React.FC = () => {
           path="/content/:contentType" 
           element={
             <ErrorBoundary>
-              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+              <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}>
                 <SharedContentScreen />
-              {/* </ProtectedRoute> */}
+              </ProtectedRoute>
             </ErrorBoundary>
           } 
         />

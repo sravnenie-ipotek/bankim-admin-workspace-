@@ -20,6 +20,8 @@
     "start": "turbo run dev --parallel"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "playwright": "^1.54.2",
     "turbo": "^1.11.0"
   },
   "engines": {

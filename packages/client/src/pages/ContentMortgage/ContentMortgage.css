@@ -1,8 +1,99 @@
 /* Content Mortgage Page - Custom styles */
 
-/* Page-specific overrides can go here if needed */
-
-/* Example: If you need to override any shared component styles for this page */
 .content-mortgage-page {
-  /* Custom styles specific to mortgage page */
+  padding: 24px;
+  background: #111827;
+  min-height: 100vh;
+}
+
+/* Loading and Error states */
+.content-mortgage-loading,
+.content-mortgage-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #9CA3AF;
+  font-size: 14px;
+}
+
+.loading-spinner {
+  padding: 20px;
+  color: #60A5FA;
+}
+
+.error-message {
+  padding: 20px;
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* View Mode Toggle */
+.view-mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: #1F2937;
+  padding: 4px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.view-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #9CA3AF;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.view-mode-btn:hover {
+  background: rgba(55, 65, 81, 0.5);
+  color: #E5E7EB;
+}
+
+.view-mode-btn.active {
+  background: #374151;
+  color: #60A5FA;
+}
+
+.view-mode-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Search Container */
+.search-container {
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 16px;
+  background: #1F2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #E5E7EB;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #60A5FA;
+  background: #111827;
+}
+
+.search-input::placeholder {
+  color: #6B7280;
 }

@@ -1,0 +1,111 @@
+{
+  "mortgage": {
+    "id": "mortgage",
+    "title": "Рассчитать ипотеку",
+    "section": "3.1",
+    "children": [
+      {
+        "id": "service_1",
+        "title": "Услуга 1. До регистрации",
+        "children": [
+          {
+            "id": "mortgage_2",
+            "confluence_num": "2",
+            "title": "Калькулятор ипотеки",
+            "screen_location": "mortgage_step1"
+          },
+          {
+            "id": "mortgage_3",
+            "confluence_num": "3",
+            "title": "Ввод номера телефона",
+            "screen_location": "mortgage_phone"
+          },
+          {
+            "id": "mortgage_3_1",
+            "confluence_num": "3.1",
+            "title": "Ввод кода",
+            "screen_location": "mortgage_code_input"
+          },
+          {
+            "id": "mortgage_4",
+            "confluence_num": "4",
+            "title": "Анкета личных данных",
+            "screen_location": "mortgage_step2"
+          },
+          {
+            "id": "mortgage_5",
+            "confluence_num": "5",
+            "title": "Анкета партнера. Личные данные",
+            "screen_location": "mortgage_step3"
+          },
+          {
+            "id": "mortgage_6",
+            "confluence_num": "6",
+            "title": "Анкета партнера. Доходы",
+            "screen_location": "mortgage_step4"
+          },
+          {
+            "id": "mortgage_7",
+            "confluence_num": "7",
+            "title": "Анкета доходов. Наемный работник",
+            "screen_location": "mortgage_income_employee"
+          }
+        ]
+      },
+      {
+        "id": "service_2",
+        "title": "Услуга 2. Созаемщик",
+        "children": [
+          {
+            "id": "mortgage_8",
+            "confluence_num": "8",
+            "title": "Личные данные созаемщика",
+            "screen_location": "mortgage_coborrower_personal"
+          },
+          {
+            "id": "mortgage_9",
+            "confluence_num": "9",
+            "title": "Доходы созаемщика",
+            "screen_location": "mortgage_coborrower_income"
+          }
+        ]
+      },
+      {
+        "id": "service_3",
+        "title": "Общие экраны",
+        "children": [
+          {
+            "id": "mortgage_10",
+            "confluence_num": "10",
+            "title": "Экран загрузки",
+            "screen_location": "mortgage_loading"
+          },
+          {
+            "id": "mortgage_11",
+            "confluence_num": "11",
+            "title": "Выбор программ ипотеки",
+            "screen_location": "mortgage_program_selection"
+          },
+          {
+            "id": "mortgage_12",
+            "confluence_num": "12",
+            "title": "Регистрация",
+            "screen_location": "mortgage_registration"
+          },
+          {
+            "id": "mortgage_13",
+            "confluence_num": "13",
+            "title": "Форма входа страница",
+            "screen_location": "mortgage_login"
+          },
+          {
+            "id": "mortgage_14",
+            "confluence_num": "14",
+            "title": "Восстановить пароль",
+            "screen_location": "mortgage_password_recovery"
+          }
+        ]
+      }
+    ]
+  }
+}

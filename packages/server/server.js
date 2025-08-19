@@ -72,7 +72,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       SELECT DISTINCT
         ci.screen_location,
         ci.component_type,
-        COUNT(*) OVER (PARTITION BY ci.screen_location) as action_count,
+        COUNT(*) FILTER (WHERE ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')) OVER (PARTITION BY ci.screen_location) as action_count,
         MAX(ci.updated_at) OVER (PARTITION BY ci.screen_location) as last_modified,
         MIN(ci.id) OVER (PARTITION BY ci.screen_location) as representative_id,
         MIN(ci.page_number) OVER (PARTITION BY ci.screen_location) as page_number,
@@ -136,7 +136,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
       WITH step_data AS (
         SELECT 
           ci.screen_location,
-          COUNT(*) FILTER (WHERE ci.component_type != 'option') as action_count,
+          COUNT(*) FILTER (WHERE ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')) as action_count,
           MAX(ci.updated_at) as last_modified,
           MIN(ci.id) as representative_id,
           MIN(ci.page_number) as page_number,
@@ -325,7 +325,7 @@ app.get('/api/content/credit-refi', async (req, res) => {
       SELECT DISTINCT
         ci.screen_location,
         ci.component_type,
-        COUNT(*) OVER (PARTITION BY ci.screen_location) as action_count,
+        COUNT(*) FILTER (WHERE ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')) OVER (PARTITION BY ci.screen_location) as action_count,
         MAX(ci.updated_at) OVER (PARTITION BY ci.screen_location) as last_modified,
         MIN(ci.id) OVER (PARTITION BY ci.screen_location) as representative_id,
         MIN(ci.page_number) OVER (PARTITION BY ci.screen_location) as page_number,
@@ -644,6 +644,7 @@ app.get('/api/content/credit', async (req, res) => {
         FROM content_items ci
         WHERE ci.screen_location ~ '^credit_step[1-3]$'
           AND ci.is_active = TRUE
+          AND ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')
         GROUP BY ci.screen_location
       )
       SELECT * FROM screen_summaries ORDER BY screen_location;
@@ -1000,62 +1001,43 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
  */
 app.get('/api/content/mortgage', async (req, res) => {
   try {
-    console.log('🔄 Fetching mortgage content from database...');
+    console.log('🔄 Fetching mortgage content with Confluence navigation structure...');
     
-    // Use clean screen_location based approach for regular mortgage content
+    // Use navigation_mapping table to get Confluence-ordered screens
     const result = await safeQuery(`
-      WITH screen_summaries AS (
-        SELECT 
-          ci.screen_location,
-          COUNT(*) as action_count,
-          MAX(ci.updated_at) as last_modified,
-          MIN(ci.id) as representative_id,
-          MIN(ci.page_number) as page_number,
-          -- Get title translations from the main title content for each screen
-          CASE ci.screen_location
-            WHEN 'mortgage_step1' THEN 'Ипотека - Шаг 1'
-            WHEN 'mortgage_step2' THEN 'Ипотека - Шаг 2'
-            WHEN 'mortgage_step3' THEN 'Ипотека - Шаг 3'
-            WHEN 'mortgage_step4' THEN 'Ипотека - Шаг 4'
-            ELSE ci.screen_location
-          END as title_ru,
-          CASE ci.screen_location
-            WHEN 'mortgage_step1' THEN 'משכנתא - שלב 1'
-            WHEN 'mortgage_step2' THEN 'משכנתא - שלב 2'
-            WHEN 'mortgage_step3' THEN 'משכנתא - שלב 3'
-            WHEN 'mortgage_step4' THEN 'משכנתא - שלב 4'
-            ELSE ci.screen_location
-          END as title_he,
-          CASE ci.screen_location
-            WHEN 'mortgage_step1' THEN 'Mortgage - Step 1'
-            WHEN 'mortgage_step2' THEN 'Mortgage - Step 2'
-            WHEN 'mortgage_step3' THEN 'Mortgage - Step 3'
-            WHEN 'mortgage_step4' THEN 'Mortgage - Step 4'
-            ELSE ci.screen_location
-          END as title_en
-        FROM content_items ci
-        WHERE ci.screen_location ~ '^mortgage_step[1-4]$'
-          AND ci.is_active = TRUE
-          AND ci.component_type != 'option'
-        GROUP BY ci.screen_location
-        HAVING COUNT(*) > 0
-      )
       SELECT 
-        ss.representative_id as id,
-        ss.screen_location as content_key,
+        nm.confluence_num,
+        nm.confluence_title_ru as title_ru,
+        nm.confluence_title_he as title_he,
+        nm.confluence_title_en as title_en,
+        nm.screen_location,
+        nm.screen_location as content_key,
+        nm.sort_order,
         'step' as component_type,
         'mortgage_steps' as category,
-        ss.screen_location,
-        ss.page_number,
-        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as description,
         true as is_active,
-        ss.action_count,
-        COALESCE(ss.title_ru, ss.title_en, 'Unnamed Step') as title_ru,
-        COALESCE(ss.title_he, ss.title_en, 'Unnamed Step') as title_he,
-        COALESCE(ss.title_en, ss.title_ru, 'Unnamed Step') as title_en,
-        ss.last_modified as updated_at
-      FROM screen_summaries ss
-      ORDER BY ss.screen_location
+        COUNT(ci.id) as action_count,
+        MAX(ci.updated_at) as last_modified,
+        MIN(ci.id) as representative_id,
+        MIN(ci.page_number) as page_number,
+        nm.confluence_title_ru as description,
+        MAX(ci.updated_at) as updated_at
+      FROM navigation_mapping nm
+      LEFT JOIN content_items ci 
+        ON ci.screen_location = nm.screen_location
+        AND ci.is_active = TRUE
+        AND ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')
+      WHERE nm.parent_section = '3.1'
+        AND nm.is_active = TRUE
+        AND nm.screen_location NOT LIKE 'refinance%'
+      GROUP BY 
+        nm.confluence_num,
+        nm.confluence_title_ru,
+        nm.confluence_title_he,
+        nm.confluence_title_en,
+        nm.screen_location,
+        nm.sort_order
+      ORDER BY nm.sort_order
     `);
     
     console.log(`🔍 Mortgage query returned ${result.rows.length} rows`);
@@ -1064,14 +1046,15 @@ app.get('/api/content/mortgage', async (req, res) => {
     }
     
     const mortgageContent = result.rows.map(row => ({
-      id: row.id,
+      id: row.representative_id || row.confluence_num,
+      confluence_num: row.confluence_num,  // Add Confluence number
       content_key: row.content_key,
       component_type: row.component_type,
       category: row.category,
       screen_location: row.screen_location,
       description: row.description,
       is_active: row.is_active,
-      actionCount: row.action_count || 1,
+      actionCount: row.action_count || 0,
       page_number: row.page_number,
       translations: {
         ru: row.title_ru || '',
@@ -1139,7 +1122,7 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
         AND ct_en.status = 'approved'
       WHERE ci.screen_location ~ '^mortgage_step[1-4]$'
         AND ci.is_active = true
-        AND ci.component_type != 'option'
+        AND ci.component_type NOT IN ('option', 'dropdown_option', 'radio_option', 'field_option')
       ORDER BY ci.screen_location, ci.content_key
     `);
     
@@ -1726,6 +1709,73 @@ app.get('/api/admin/dropdown/:key', requireAuth, async (req, res) => {
   }
 });
 
+// Update content translation
+app.put('/api/content-items/:contentItemId/translations/:languageCode', async (req, res) => {
+  try {
+    const { contentItemId, languageCode } = req.params;
+    const { content_value } = req.body;
+
+    console.log(`📝 Updating translation for content item ${contentItemId}, language: ${languageCode}`);
+
+    // Validate language code
+    const validLanguages = ['ru', 'he', 'en'];
+    if (!validLanguages.includes(languageCode)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid language code'
+      });
+    }
+
+    // Update the translation in content_translations table
+    // First check if a translation exists for this content item and language
+    const checkQuery = `
+      SELECT * FROM content_translations 
+      WHERE content_item_id = $1 AND language_code = $2
+    `;
+    
+    const existing = await safeQuery(checkQuery, [contentItemId, languageCode]);
+    
+    if (existing.rows.length > 0) {
+      // Update existing translation
+      const updateQuery = `
+        UPDATE content_translations 
+        SET content_value = $1, updated_at = CURRENT_TIMESTAMP
+        WHERE content_item_id = $2 AND language_code = $3
+        RETURNING *
+      `;
+      
+      const result = await safeQuery(updateQuery, [content_value, contentItemId, languageCode]);
+      
+      console.log(`✅ Updated translation for content item ${contentItemId}, language: ${languageCode}`);
+      return res.json({
+        success: true,
+        data: result.rows[0]
+      });
+    } else {
+      // Create new translation
+      const insertQuery = `
+        INSERT INTO content_translations (content_item_id, language_code, content_value, created_at, updated_at)
+        VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        RETURNING *
+      `;
+      
+      const insertResult = await safeQuery(insertQuery, [contentItemId, languageCode, content_value]);
+      
+      console.log(`✅ Created new translation for content item ${contentItemId}, language: ${languageCode}`);
+      return res.json({
+        success: true,
+        data: insertResult.rows[0]
+      });
+    }
+  } catch (error) {
+    console.error('❌ Error updating translation:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update translation'
+    });
+  }
+});
+
 // Update dropdown configuration
 app.put('/api/admin/dropdown/:key', requireAuth, async (req, res) => {
   try {
@@ -1847,7 +1897,9 @@ app.post('/api/admin/dropdown/validate', requireAuth, async (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+const actualPort = PORT || 4000;
+app.listen(actualPort, () => {
+  console.log(`🚀 Server running on port ${actualPort}`);
+  console.log(`📊 Health check: http://localhost:${actualPort}/api/health`);
+  console.log(`📡 Content API: http://localhost:${actualPort}/api/content/mortgage`);
 });

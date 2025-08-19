@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TopNavigation } from '../TopNavigation';
 import { SharedMenu } from '../SharedMenu';
 import { useAuth } from '../../contexts/AuthContext';
@@ -77,6 +78,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const [currentActiveItem, setCurrentActiveItem] = useState(activeMenuItem);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   // TopNavigation handlers
   const handleLanguageChange = (languageCode: string) => {
@@ -133,31 +135,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     // Handle navigation based on menu item
     switch (itemId) {
       case 'dashboard':
-        window.location.href = '/';
+        navigate('/');
         break;
       case 'users':
-        window.location.href = '/users';
+        navigate('/users');
         break;
       case 'reports':
-        window.location.href = '/reports';
+        navigate('/reports');
         break;
       case 'bank-employee':
-        window.location.href = '/content-management';
+        navigate('/content-management');
         break;
       case 'user-registration':
-        window.location.href = '/user-registration';
+        navigate('/user-registration');
         break;
       case 'calculator-formula':
-        window.location.href = '/calculator-formula';
+        navigate('/calculator-formula');
         break;
       case 'chat':
-        window.location.href = '/chat';
+        navigate('/chat');
         break;
       case 'content-management':
-        window.location.href = '/content-management';
+        navigate('/content-management');
         break;
       case 'settings':
-        window.location.href = '/settings';
+        navigate('/settings');
         break;
       case 'logout':
         // Handle logout logic
@@ -165,25 +167,25 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         break;
       // Handle submenu navigation
       case 'content-main':
-        window.location.href = '/content/main';
+        navigate('/content/main');
         break;
       case 'content-menu':
-        window.location.href = '/content/menu';
+        navigate('/content/menu');
         break;
       case 'content-mortgage':
-        window.location.href = '/content/mortgage';
+        navigate('/content/mortgage');
         break;
       case 'content-mortgage-refi':
-        window.location.href = '/content/mortgage-refi';
+        navigate('/content/mortgage-refi');
         break;
       case 'content-credit':
-        window.location.href = '/content/credit';
+        navigate('/content/credit');
         break;
       case 'content-credit-refi':
-        window.location.href = '/content/credit-refi';
+        navigate('/content/credit-refi');
         break;
       case 'content-general':
-        window.location.href = '/content/general';
+        navigate('/content/general');
         break;
       default:
         break;

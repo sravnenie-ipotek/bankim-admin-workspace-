@@ -2,13 +2,17 @@
 ./scripts/kill-port-4000.sh
 ## 🏗️ **Architecture Overview**
 
-# Terminal 1 - Backend Server
-cd /Users/michaelmishayev/Projects/bankIM_management_portal/packages/server/
-npm run dev
+  # Terminal 1 - Start the server
+  cd /Users/michaelmishayev/Projects/bankIM_management_portal
+  PORT=4000 npm run dev --workspace=@bankim/server
 
-# Terminal 2 - Frontend Client  
-cd /Users/michaelmishayev/Projects/bankIM_management_portal/packages/client/
-npm run dev
+  # Terminal 2 - Start the client  
+  cd /Users/michaelmishayev/Projects/bankIM_management_portal
+  npm run dev --workspace=@bankim/client
+
+  Then navigate to http://localhost:4002/login and use:
+  - Email: admin@bankim.com
+  - Password: admin123
 
 
 

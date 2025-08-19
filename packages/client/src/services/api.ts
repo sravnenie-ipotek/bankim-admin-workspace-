@@ -217,6 +217,7 @@ class ApiService {
           'Content-Type': 'application/json',
           ...options.headers,
         },
+        credentials: 'include', // Include cookies for session management
         ...options,
       });
 
@@ -256,6 +257,7 @@ class ApiService {
       const response = await fetch(`${baseUrl}${endpoint}`, {
         ...options,
         headers,
+        credentials: 'include', // Include cookies for session management
       });
       
       // Handle 304 Not Modified - return cached data
@@ -1039,7 +1041,9 @@ class ApiService {
       
       // Test direct fetch first to compare
       try {
-        const directResponse = await fetch(`/api/content/${contentType}`);
+        const directResponse = await fetch(`/api/content/${contentType}`, {
+          credentials: 'include'
+        });
         const directResult = await directResponse.json();
         console.log(`🔗 Direct fetch result for ${contentType}:`, directResult);
       } catch (e) {
@@ -1179,6 +1183,7 @@ class ApiService {
               contentType: contentTypeValue,
               pageNumber: pageNumber,
               // Preserve additional fields for content management
+              confluence_num: item.confluence_num, // Preserve Confluence number
               screen_location: item.screen_location,
               content_key: item.content_key,
               component_type: item.component_type,

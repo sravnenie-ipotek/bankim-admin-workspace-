@@ -12,6 +12,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import { ContentListPage, ContentTableColumn } from '../../shared/components';
+import { NavigationTree, TreeNode } from '../../components/NavigationTree';
+import navigationManifest from '../../data/navigation-manifest.json';
 import './ContentMortgage.css';
 
 // Helper function to format date for display
@@ -52,6 +54,7 @@ const formatLastModified = (dateString: string | null | undefined, t: (key: stri
 
 interface MortgageTranslation {
   id: string;
+  confluence_num?: string;  // Add Confluence number from navigation mapping
   content_key: string;
   component_type: string;
   category: string;
@@ -83,6 +86,8 @@ const ContentMortgage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
+  const [viewMode, setViewMode] = useState<'table' | 'tree'>('tree');
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['mortgage', 'service_1', 'service_2', 'service_3']));
   const itemsPerPage = 12;
 
   useEffect(() => {
@@ -97,6 +102,7 @@ const ContentMortgage: React.FC = () => {
           const normalizedItems = response.data.map((item: any) => ({
             ...item,
             id: item.id || '',
+            confluence_num: item.confluence_num, // Preserve Confluence number
             content_key: item.content_key || '',
             translations: {
               ru: item.translations?.ru || item.title || '',
@@ -133,6 +139,47 @@ const ContentMortgage: React.FC = () => {
   }, [language]); // Re-fetch data when language changes
 
 
+  // Build tree structure from manifest and API data
+  const buildTreeStructure = (): TreeNode[] => {
+    if (!mortgageData?.mortgage_items) return [];
+
+    // Create a map of screen_location to mortgage items for quick lookup
+    const itemMap = new Map<string, MortgageTranslation>();
+    mortgageData.mortgage_items.forEach(item => {
+      if (item.screen_location) {
+        itemMap.set(item.screen_location, item);
+      }
+    });
+
+    // Function to process manifest nodes
+    const processNode = (node: any): TreeNode => {
+      const treeNode: TreeNode = {
+        id: node.id,
+        confluence_num: node.confluence_num,
+        title: node.title,
+        screen_location: node.screen_location,
+        children: node.children ? node.children.map(processNode) : undefined
+      };
+
+      // If this node has a screen_location, get data from API
+      if (node.screen_location && itemMap.has(node.screen_location)) {
+        const apiItem = itemMap.get(node.screen_location)!;
+        treeNode.actionCount = apiItem.actionCount;
+        treeNode.lastModified = apiItem.lastModified;
+      }
+
+      return treeNode;
+    };
+
+    // Build tree from manifest
+    const mortgageSection = navigationManifest.mortgage;
+    return [{
+      id: mortgageSection.id,
+      title: mortgageSection.title,
+      children: mortgageSection.children.map(processNode)
+    }];
+  };
+
   const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
     // Use the actual screen_location from the database
     // This ensures consistency with the database conventions documented in procceessesPagesInDB.md
@@ -150,7 +197,9 @@ const ContentMortgage: React.FC = () => {
       state: { 
         searchTerm: searchTerm,
         baseActionNumber: baseActionNumber,
-        parentItemNumber: itemIndex + 1
+        parentItemNumber: itemIndex + 1,
+        confluenceNum: item.confluence_num,  // Pass Confluence number
+        title: item.translations?.ru || item.content_key  // Pass title
       } 
     });
   };
@@ -172,7 +221,8 @@ const ContentMortgage: React.FC = () => {
       title: t('content.table.pageName'),
       width: '362px',
       render: (_value, item, index) => {
-        const pageNum = item.page_number ?? (index + 1);
+        // Use Confluence number if available, otherwise fall back to page_number or index
+        const pageNum = item.confluence_num || item.page_number || (index + 1);
         const title = language === 'ru' ? (item.translations?.ru || item.content_key) :
                      language === 'he' ? (item.translations?.he || item.content_key) :
                      (item.translations?.en || item.content_key);
@@ -186,10 +236,10 @@ const ContentMortgage: React.FC = () => {
     },
     {
       key: 'actionCount',
-      title: 'Номер действия',
+      title: 'Количество действий',
       width: '160px',
       align: 'center',
-      render: (value) => <span>{value || 1}</span>
+      render: (value) => <span>{value || 0}</span>
     },
     {
       key: 'lastModified',
@@ -206,17 +256,60 @@ const ContentMortgage: React.FC = () => {
     handleViewClick(item, actualIndex);
   };
 
+  // Handle tree node click
+  const handleTreeNodeClick = (node: TreeNode) => {
+    if (node.screen_location) {
+      // Find the corresponding item in mortgageData
+      const item = mortgageData?.mortgage_items.find(i => i.screen_location === node.screen_location);
+      if (item) {
+        const itemIndex = mortgageData?.mortgage_items.indexOf(item) || 0;
+        handleViewClick(item, itemIndex);
+      }
+    }
+  };
+
+  // Handle tree node expand/collapse
+  const handleToggleExpand = (nodeId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId);
+    } else {
+      newExpanded.add(nodeId);
+    }
+    setExpandedNodes(newExpanded);
+  };
+
+  // Build tree data
+  const treeData = useMemo(() => buildTreeStructure(), [mortgageData]);
+
+  if (loading) {
+    return (
+      <div className="content-mortgage-loading">
+        <div className="loading-spinner">Загрузка...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="content-mortgage-error">
+        <div className="error-message">{error}</div>
+      </div>
+    );
+  }
+
+  // Default to table view for now since tree needs debugging
   return (
     <ContentListPage
-      title=""  // Empty title since ContentPageWrapper already provides it
-      tabs={[]}  // Empty tabs since ContentPageWrapper already provides them
+      title=""
+      tabs={[]}
       data={filteredItems}
       columns={columns}
       onRowAction={handleRowAction}
       searchValue={searchTerm}
       onSearchChange={setSearchTerm}
-      loading={loading}
-      error={error}
+      loading={false}
+      error={null}
       itemsPerPage={itemsPerPage}
     />
   );
