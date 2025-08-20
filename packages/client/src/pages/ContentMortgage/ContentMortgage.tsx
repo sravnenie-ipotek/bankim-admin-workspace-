@@ -88,7 +88,7 @@ const ContentMortgage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
   const [viewMode, setViewMode] = useState<'table' | 'tree'>('tree');
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['mortgage', 'service_1', 'service_2', 'service_3']));
-  const itemsPerPage = 12;
+  const itemsPerPage = 15; // Show all 14 mortgage pages at once
 
   useEffect(() => {
     const fetchMortgageData = async () => {
@@ -98,7 +98,7 @@ const ContentMortgage: React.FC = () => {
         const response = await apiService.getContentByContentType('mortgage');
         
         if (response.success && response.data) {
-          // Normalize the data to ensure translations exist
+          // Data is already normalized by apiService.getContentByContentType
           const normalizedItems = response.data.map((item: any) => ({
             ...item,
             id: item.id || '',
@@ -173,33 +173,42 @@ const ContentMortgage: React.FC = () => {
 
     // Build tree from manifest
     const mortgageSection = navigationManifest.mortgage;
+    if (!mortgageSection) {
+      console.error('No mortgage section found in navigation manifest');
+      return [];
+    }
+    
+    // For mortgage, we have a nested structure with service groups
+    // So we need to map through the service groups
     return [{
       id: mortgageSection.id,
       title: mortgageSection.title,
-      children: mortgageSection.children.map(processNode)
+      children: mortgageSection.children.map(serviceGroup => ({
+        id: serviceGroup.id,
+        title: serviceGroup.title,
+        children: serviceGroup.children ? serviceGroup.children.map(processNode) : []
+      }))
     }];
   };
 
   const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
-    // Use the actual screen_location from the database
-    // This ensures consistency with the database conventions documented in procceessesPagesInDB.md
-    const stepId = item.screen_location || item.content_key;
+    // Navigate directly to the drill page for this individual page
+    const screenLocation = item.screen_location || item.content_key;
     
     // Calculate the base action number for continuous numbering
-    // Sum up all action counts of items before this one
     let baseActionNumber = 0;
     for (let i = 0; i < itemIndex; i++) {
       baseActionNumber += filteredItems[i].actionCount || 0;
     }
     
     // Navigate to drill page to show detailed actions for this page
-    navigate(`/content/mortgage/drill/${stepId}`, { 
+    navigate(`/content/mortgage/drill/${screenLocation}`, { 
       state: { 
         searchTerm: searchTerm,
         baseActionNumber: baseActionNumber,
         parentItemNumber: itemIndex + 1,
-        confluenceNum: item.confluence_num,  // Pass Confluence number
-        title: item.translations?.ru || item.content_key  // Pass title
+        confluenceNum: item.confluence_num,
+        title: item.translations?.ru || item.content_key
       } 
     });
   };

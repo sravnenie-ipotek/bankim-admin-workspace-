@@ -107,5 +107,103 @@
         ]
       }
     ]
+  },
+  "mortgage-refi": {
+    "id": "mortgage-refi",
+    "title": "Рефинансирование ипотеки",
+    "section": "4.1",
+    "children": [
+      {
+        "id": "refinance_4_1_2",
+        "confluence_num": "4.1.2",
+        "title": "Рефинансирование - Страница 2",
+        "screen_location": "refinance_step2",
+        "actionCount": 70
+      },
+      {
+        "id": "refinance_4_1_3",
+        "confluence_num": "4.1.3",
+        "title": "Модальное окно ввода номера телефона",
+        "screen_location": "phone_verification_modal",
+        "actionCount": 18
+      },
+      {
+        "id": "refinance_4_1_4",
+        "confluence_num": "4.1.4",
+        "title": "Форма личных данных заемщика",
+        "screen_location": "personal_data_form",
+        "actionCount": 24
+      },
+      {
+        "id": "refinance_4_1_5",
+        "confluence_num": "4.1.5",
+        "title": "Форма личных данных партнера",
+        "screen_location": "partner_personal_data",
+        "actionCount": 22
+      },
+      {
+        "id": "refinance_4_1_6",
+        "confluence_num": "4.1.6",
+        "title": "Форма доходов партнера",
+        "screen_location": "partner_income_form",
+        "actionCount": 26
+      },
+      {
+        "id": "refinance_4_1_7",
+        "confluence_num": "4.1.7",
+        "title": "Анкета доходов - Наемный работник",
+        "screen_location": "income_form_employed",
+        "actionCount": 32
+      },
+      {
+        "id": "refinance_4_1_8",
+        "confluence_num": "4.1.8",
+        "title": "Личные данные созаемщика",
+        "screen_location": "co_borrower_personal_data",
+        "actionCount": 31
+      },
+      {
+        "id": "refinance_4_1_9",
+        "confluence_num": "4.1.9",
+        "title": "Доходы созаемщика",
+        "screen_location": "co_borrower_income",
+        "actionCount": 32
+      },
+      {
+        "id": "refinance_4_1_10",
+        "confluence_num": "4.1.10",
+        "title": "Экран загрузки",
+        "screen_location": "loading_screen",
+        "actionCount": 6
+      },
+      {
+        "id": "refinance_4_1_11",
+        "confluence_num": "4.1.11",
+        "title": "Выбор программы ипотеки",
+        "screen_location": "program_selection",
+        "actionCount": 12
+      },
+      {
+        "id": "refinance_4_1_12",
+        "confluence_num": "4.1.12",
+        "title": "Страница регистрации",
+        "screen_location": "signup_form",
+        "actionCount": 7
+      },
+      {
+        "id": "refinance_4_1_13",
+        "confluence_num": "4.1.13",
+        "title": "Страница входа",
+        "screen_location": "login_page",
+        "actionCount": 9
+      },
+      {
+        "id": "refinance_4_1_14",
+        "confluence_num": "4.1.14",
+        "title": "Страница сброса пароля",
+        "screen_location": "password_reset",
+        "actionCount": 7
+      }
+    ]
   }
 }

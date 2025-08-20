@@ -311,6 +311,140 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
 });
 
 /**
+ * Get all individual mortgage refinancing content items
+ * GET /api/content/mortgage-refi/all-items
+ * Returns all individual content items for the refinance sections 4.1.2-4.1.14
+ */
+app.get('/api/content/mortgage-refi/all-items', async (req, res) => {
+  try {
+    console.log('🔄 Fetching all mortgage-refi content items from database...');
+    
+    // Query all content items for our refinance sections
+    const refinanceItemsQuery = `
+      SELECT DISTINCT
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.description,
+        ci.is_active,
+        ci.page_number,
+        ci.created_at,
+        ci.updated_at,
+        nm.confluence_num,
+        nm.confluence_title_ru,
+        nm.confluence_title_he,
+        nm.confluence_title_en,
+        COUNT(ci.id) OVER (PARTITION BY ci.screen_location) as action_count,
+        string_agg(ct.language_code || ':' || ct.content_value, '|||') as translations_data
+      FROM content_items ci
+      LEFT JOIN navigation_mapping nm ON ci.screen_location = nm.screen_location
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.screen_location IN (
+        'refinance_step2', 'phone_verification_modal', 'personal_data_form', 'partner_personal_data',
+        'partner_income_form', 'income_form_employed', 'co_borrower_personal_data', 'co_borrower_income',
+        'loading_screen', 'program_selection', 'signup_form', 'login_page', 'password_reset'
+      )
+      AND ci.is_active = true
+      GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, ci.screen_location, 
+               ci.description, ci.is_active, ci.page_number, ci.created_at, ci.updated_at,
+               nm.confluence_num, nm.confluence_title_ru, nm.confluence_title_he, nm.confluence_title_en
+      ORDER BY nm.confluence_num, ci.screen_location, ci.page_number, ci.content_key;
+    `;
+    
+    const itemsResult = await safeQuery(refinanceItemsQuery);
+    console.log(`🔍 Found ${itemsResult.rows.length} refinance content items`);
+    
+    // Process the results and group by screen_location to create the structure expected by frontend
+    const screenLocationGroups = {};
+    
+    itemsResult.rows.forEach(row => {
+      if (!screenLocationGroups[row.screen_location]) {
+        screenLocationGroups[row.screen_location] = {
+          screen_location: row.screen_location,
+          confluence_num: row.confluence_num,
+          confluence_title_ru: row.confluence_title_ru,
+          confluence_title_he: row.confluence_title_he,
+          confluence_title_en: row.confluence_title_en,
+          action_count: row.action_count,
+          last_modified: row.updated_at,
+          items: []
+        };
+      }
+      
+      // Parse translations
+      const translations = { ru: '', he: '', en: '' };
+      if (row.translations_data) {
+        row.translations_data.split('|||').forEach(trans => {
+          const [lang, value] = trans.split(':');
+          if (lang && value && translations.hasOwnProperty(lang)) {
+            translations[lang] = value;
+          }
+        });
+      }
+      
+      screenLocationGroups[row.screen_location].items.push({
+        id: row.id,
+        content_key: row.content_key,
+        component_type: row.component_type,
+        category: row.category,
+        screen_location: row.screen_location,
+        description: row.description,
+        is_active: row.is_active,
+        page_number: row.page_number,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+        translations: translations
+      });
+    });
+    
+    // Convert grouped data to the format expected by the frontend
+    const formattedItems = Object.values(screenLocationGroups).map(group => ({
+      id: group.items[0]?.id || group.screen_location,
+      confluence_num: group.confluence_num,
+      content_key: group.screen_location,
+      component_type: 'section',
+      category: 'refinance',
+      screen_location: group.screen_location,
+      description: group.confluence_title_ru || group.screen_location,
+      is_active: true,
+      page_number: parseInt(group.confluence_num?.replace(/\D/g, '') || '0'),
+      actionCount: group.action_count,
+      contentType: 'section',
+      translations: {
+        ru: group.confluence_title_ru || '',
+        he: group.confluence_title_he || '',
+        en: group.confluence_title_en || ''
+      },
+      lastModified: group.last_modified,
+      last_modified: group.last_modified,
+      updated_at: group.last_modified
+    }));
+    
+    console.log(`✅ Formatted ${formattedItems.length} refinance sections`);
+    console.log('📋 Sections:', formattedItems.map(item => ({
+      confluence_num: item.confluence_num,
+      screen_location: item.screen_location,
+      title: item.translations.ru,
+      actionCount: item.actionCount
+    })));
+    
+    res.json({
+      success: true,
+      data: formattedItems
+    });
+    
+  } catch (error) {
+    console.error('❌ Get mortgage-refi all-items error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+/**
  * Get credit refinancing content
  * GET /api/content/credit-refi
  * Returns content for credit refinancing screen with comprehensive step detection and fallback

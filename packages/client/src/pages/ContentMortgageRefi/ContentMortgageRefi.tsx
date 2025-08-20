@@ -53,26 +53,50 @@ const ContentMortgageRefi: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const itemsPerPage = 12;
+  const itemsPerPage = 15; // Show all 13 refinancing pages at once
 
   useEffect(() => {
     const fetchMortgageRefiData = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching mortgage-refi translations from database...');
-        const response = await apiService.getContentByContentType('mortgage-refi');
+        console.log('🔄 Fetching all 13 mortgage-refi pages from database...');
+        const response = await apiService.getMortgageRefiAllItems();
         
         if (response.success && response.data) {
-          // Data is already normalized by apiService.getContentByContentType
+          // Normalize the data to ensure translations exist
+          // Each item represents a screen_location (13 total for refinancing pages)
+          const normalizedItems = response.data.map((item: any, index: number) => ({
+            ...item,
+            id: item.id || `refi-${index}`,
+            confluence_num: item.confluence_num, // Preserve Confluence number (4.1.2 - 4.1.14)
+            content_key: item.content_key || item.screen_location || '',
+            translations: {
+              ru: item.translations?.ru || item.description || item.title || item.screen_location || '',
+              he: item.translations?.he || '',
+              en: item.translations?.en || ''
+            },
+            actionCount: item.actionCount || 0,
+            contentType: item.contentType || 'section',
+            lastModified: item.lastModified || item.last_modified || item.updated_at || new Date().toISOString()
+          }));
+          
+          // Sort by confluence_num to ensure proper order (4.1.2, 4.1.3, ..., 4.1.14)
+          normalizedItems.sort((a: any, b: any) => {
+            const numA = parseFloat(a.confluence_num?.replace('4.1.', '') || '99');
+            const numB = parseFloat(b.confluence_num?.replace('4.1.', '') || '99');
+            return numA - numB;
+          });
+          
           const normalizedData: MortgageRefiData = {
             status: 'success',
-            content_count: response.data.length,
-            mortgage_items: response.data
+            content_count: normalizedItems.length,
+            mortgage_items: normalizedItems
           };
           
           setMortgageRefiData(normalizedData);
-          console.log('✅ Successfully loaded mortgage-refi data:', normalizedData);
-          console.log('First item:', response.data[0]); // Log first item to see structure
+          console.log('✅ Successfully loaded all 13 mortgage-refi pages:', normalizedData);
+          console.log(`📊 Total refinancing pages: ${normalizedItems.length}`);
+          console.log('Pages:', normalizedItems.map((item: any) => `${item.confluence_num}: ${item.screen_location} (${item.actionCount} items)`));
         } else {
           console.error('❌ Failed to fetch mortgage-refi translations from database:', response.error);
           setError(response.error || t('content.error.loading'));
@@ -126,21 +150,31 @@ const ContentMortgageRefi: React.FC = () => {
       title: t('content.table.pageName'),
       width: '362px',
       render: (_value, item, index) => {
-        const pageNum = (item as any).page_number ?? (index + 1);
-        const title = language === 'ru' ? (item.translations?.ru || item.content_key) :
-                     language === 'he' ? (item.translations?.he || item.content_key) :
-                     (item.translations?.en || item.content_key);
+        // Display with Confluence number (4.1.2 - 4.1.14) and proper title
+        const pageNum = (item as any).confluence_num || `4.1.${index + 2}`;
+        const title = language === 'ru' ? (item.translations?.ru || (item as any).description || item.screen_location) :
+                     language === 'he' ? (item.translations?.he || (item as any).description || item.screen_location) :
+                     (item.translations?.en || (item as any).description || item.screen_location);
         const fullText = `${pageNum}. ${title}`;
+        
+        // Also show screen_location for clarity
+        const screenInfo = `(${item.screen_location})`;
+        
         return (
-          <span title={fullText.length > 30 ? fullText : undefined}>
-            {fullText}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span title={fullText.length > 30 ? fullText : undefined}>
+              {fullText}
+            </span>
+            <span style={{ fontSize: '0.85em', color: '#666', marginTop: '2px' }}>
+              {screenInfo}
+            </span>
+          </div>
         );
       }
     },
     {
       key: 'actionCount',
-      title: 'Номер действия',
+      title: 'Количество действий',
       width: '160px',
       align: 'center',
       render: (value) => <span>{typeof value === 'number' ? value : 0}</span>
