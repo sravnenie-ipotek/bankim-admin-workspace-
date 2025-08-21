@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
-const PORT = 4000; // Force port 4000 for development
+const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
@@ -24,53 +24,6 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Language validation utility
-const SUPPORTED_LANGUAGES = ['ru', 'he', 'en'];
-const DEFAULT_LANGUAGE = 'en';
-
-function validateLanguage(lang) {
-  if (!lang) return { isValid: true, language: DEFAULT_LANGUAGE, isValidFormat: true };
-  
-  if (typeof lang !== 'string' || lang.length > 10) {
-    return { isValid: false, error: 'Invalid language parameter format', isValidFormat: false };
-  }
-  
-  const normalizedLang = lang.toLowerCase().trim();
-  
-  if (!SUPPORTED_LANGUAGES.includes(normalizedLang)) {
-    // For unsupported but valid format languages, fall back to default
-    return { 
-      isValid: true, 
-      language: DEFAULT_LANGUAGE,
-      isValidFormat: true,
-      requestedLanguage: normalizedLang,
-      usingFallback: true
-    };
-  }
-  
-  return { isValid: true, language: normalizedLang, isValidFormat: true, requestedLanguage: normalizedLang };
-}
-
-// Query performance monitoring
-function logSlowQuery(queryName, startTime, rowCount = 0) {
-  const duration = Date.now() - startTime;
-  if (duration > 200) {
-    console.warn(`⚠️ SLOW QUERY: ${queryName} took ${duration}ms (returned ${rowCount} rows)`);
-  } else {
-    console.log(`⚡ ${queryName}: ${duration}ms (${rowCount} rows)`);
-  }
-  return duration;
-}
-
-// Feature flags for rollback capability
-const FEATURE_FLAGS = {
-  ENABLE_IMPROVED_DRILL_ENDPOINTS: process.env.ENABLE_IMPROVED_DRILL_ENDPOINTS !== 'false', // Default enabled
-  ENABLE_FALLBACK_LANGUAGE: process.env.ENABLE_FALLBACK_LANGUAGE !== 'false', // Default enabled
-  ENABLE_TRANSLATION_STATS: process.env.ENABLE_TRANSLATION_STATS !== 'false' // Default enabled
-};
-
-console.log('🏁 Feature flags:', FEATURE_FLAGS);
-
 // Session configuration
 app.use(session({
   store: new pgSession({
@@ -82,7 +35,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Allow cookies in development
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
@@ -102,142 +55,6 @@ const safeQuery = async (text, params = []) => {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-/**
- * Menu Content Endpoints - Must come before generic pattern routes
- */
-
-// Menu content endpoint
-app.get('/api/content/menu', async (req, res) => {
-  const startTime = Date.now();
-  
-  try {
-    console.log('🔄 Fetching menu content...');
-    
-    const result = await pool.query(`
-      SELECT 
-        ci.id,
-        ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.is_active,
-        ci.page_number,
-        ci.updated_at,
-        MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
-        MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
-        MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
-      FROM content_items ci
-      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-        AND ct.status IN ('approved', 'draft')
-      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu')
-        AND ci.is_active = TRUE
-      GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
-               ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
-      ORDER BY ci.screen_location, ci.page_number, ci.id
-    `);
-    
-    console.log(`🔍 Menu query returned ${result.rows.length} rows`);
-    
-    const menuContent = result.rows.map(row => ({
-      id: row.id,
-      content_key: row.content_key,
-      component_type: row.component_type,
-      category: row.category,
-      screen_location: row.screen_location,
-      is_active: row.is_active,
-      page_number: row.page_number,
-      translations: {
-        ru: row.text_ru || 'Translation missing',
-        he: row.text_he || 'Translation missing',
-        en: row.text_en || 'Translation missing'
-      },
-      updated_at: row.updated_at
-    }));
-    
-    res.json({
-      success: true,
-      data: {
-        status: 'success',
-        items: menuContent,
-        total_items: menuContent.length,
-        screen_locations: ['menu_navigation', 'navigation_menu']
-      }
-    });
-    
-    logSlowQuery(`menu-content`, startTime, menuContent.length);
-    console.log(`✅ Successfully returned menu content (${menuContent.length} items)`);
-  } catch (error) {
-    logSlowQuery(`menu-content-ERROR`, startTime, 0);
-    console.error('❌ Get menu content error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Menu translations endpoint 
-app.get('/api/content/menu/translations', async (req, res) => {
-  const startTime = Date.now();
-  
-  try {
-    console.log('🔄 Fetching menu translations...');
-    
-    const result = await pool.query(`
-      SELECT 
-        ci.id,
-        ci.content_key,
-        ci.screen_location,
-        ct.language_code,
-        ct.content_value,
-        ct.status,
-        ct.updated_at
-      FROM content_items ci
-      JOIN content_translations ct ON ci.id = ct.content_item_id
-      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu')
-        AND ci.is_active = TRUE
-        AND ct.status IN ('approved', 'draft')
-      ORDER BY ci.screen_location, ci.page_number, ci.id, ct.language_code
-    `);
-    
-    console.log(`🔍 Menu translations query returned ${result.rows.length} rows`);
-    
-    const translationsMap = {};
-    result.rows.forEach(row => {
-      const key = `${row.screen_location}_${row.content_key}`;
-      if (!translationsMap[key]) {
-        translationsMap[key] = {
-          id: row.id,
-          content_key: row.content_key,
-          screen_location: row.screen_location,
-          translations: {}
-        };
-      }
-      translationsMap[key].translations[row.language_code] = {
-        value: row.content_value,
-        status: row.status,
-        updated_at: row.updated_at
-      };
-    });
-    
-    const menuTranslations = Object.values(translationsMap);
-    
-    res.json({
-      success: true,
-      data: {
-        status: 'success',
-        items: menuTranslations,
-        total_items: menuTranslations.length,
-        languages: ['ru', 'he', 'en']
-      }
-    });
-    
-    logSlowQuery(`menu-translations`, startTime, menuTranslations.length);
-    console.log(`✅ Successfully returned menu translations (${menuTranslations.length} items)`);
-  } catch (error) {
-    logSlowQuery(`menu-translations-ERROR`, startTime, 0);
-    console.error('❌ Get menu translations error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
 });
 
 /**
@@ -1983,216 +1800,9 @@ app.get('/api/content/mortgage/drill/:screenLocation', async (req, res) => {
 
 // Credit drill endpoint - fetch specific content for a credit step
 app.get('/api/content/credit/drill/:screenLocation', async (req, res) => {
-  const startTime = Date.now();
-  
   try {
     const { screenLocation } = req.params;
-    
-    // Validate language parameter
-    const langValidation = validateLanguage(req.query.lang);
-    if (!langValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        error: langValidation.error,
-        supported_languages: SUPPORTED_LANGUAGES
-      });
-    }
-    
-    const requestedLang = langValidation.language; // Language to use for query
-    const userRequestedLang = langValidation.requestedLanguage || langValidation.language; // Language user asked for
-    console.log(`🔄 Fetching credit drill content for: ${screenLocation}, requested: ${userRequestedLang}, using: ${requestedLang}`);
-    
-    // Use feature flag to determine query format
-    const useImprovedQuery = FEATURE_FLAGS.ENABLE_IMPROVED_DRILL_ENDPOINTS;
-    const useFallbackLanguage = FEATURE_FLAGS.ENABLE_FALLBACK_LANGUAGE;
-    
-    let query, queryParams;
-    
-    if (useImprovedQuery) {
-      query = `
-        SELECT 
-          ci.id,
-          ci.content_key,
-          ci.component_type,
-          ci.category,
-          ci.screen_location,
-          ci.is_active,
-          ci.page_number,
-          ci.updated_at,
-          -- Primary language with optional English fallback
-          ${useFallbackLanguage ? `
-          COALESCE(
-            MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END),  -- requested language
-            MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END), -- fallback to English
-            NULL                                                             -- nothing
-          ) AS text_value,
-          ` : `
-          MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END) AS text_value,
-          `}
-          -- Check if translation exists in requested language
-          MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END) IS NOT NULL AS has_translation_requested,
-          -- Check if fallback was used (has EN but not requested language)
-          ${useFallbackLanguage ? `
-          (MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END) IS NULL 
-           AND MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) IS NOT NULL) AS fallback_used,
-          ` : `
-          false AS fallback_used,
-          `}
-          -- Keep legacy format for backward compatibility
-          MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
-          MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
-          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
-        FROM content_items ci
-        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-          AND ct.status IN ('approved', 'draft')
-        WHERE ci.screen_location = $1
-          AND ci.is_active = TRUE
-        GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
-                 ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
-        ORDER BY ci.page_number, ci.id
-      `;
-      queryParams = [screenLocation, requestedLang];
-    } else {
-      // Legacy query format
-      query = `
-        SELECT 
-          ci.id,
-          ci.content_key,
-          ci.component_type,
-          ci.category,
-          ci.screen_location,
-          ci.is_active,
-          ci.page_number,
-          ci.updated_at,
-          MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
-          MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
-          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
-        FROM content_items ci
-        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
-          AND ct.status IN ('approved', 'draft')
-        WHERE ci.screen_location = $1
-          AND ci.is_active = TRUE
-        GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
-                 ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
-        ORDER BY ci.page_number, ci.id
-      `;
-      queryParams = [screenLocation];
-    }
-    
-    const result = await pool.query(query, queryParams);
-    
-    console.log(`🔍 Credit drill query returned ${result.rows.length} rows for ${screenLocation}`);
-    
-    const drillContent = result.rows.map(row => {
-      const baseItem = {
-        id: row.id,
-        content_key: row.content_key,
-        component_type: row.component_type,
-        category: row.category,
-        screen_location: row.screen_location,
-        is_active: row.is_active,
-        page_number: row.page_number,
-        updated_at: row.updated_at
-      };
-      
-      if (useImprovedQuery) {
-        // New format with feature flags
-        return {
-          ...baseItem,
-          value: row.text_value || '',
-          has_translation: row.has_translation_requested,
-          fallback_used: row.fallback_used,
-          // Legacy format for backward compatibility
-          translations: {
-            ru: row.text_ru || 'Translation missing',
-            he: row.text_he || 'Translation missing',
-            en: row.text_en || 'Translation missing'
-          }
-        };
-      } else {
-        // Legacy format only
-        return {
-          ...baseItem,
-          translations: {
-            ru: row.text_ru || 'Translation missing',
-            he: row.text_he || 'Translation missing',
-            en: row.text_en || 'Translation missing'
-          }
-        };
-      }
-    });
-    
-    // Calculate statistics (only if improved query enabled)
-    let stats = {};
-    if (useImprovedQuery && FEATURE_FLAGS.ENABLE_TRANSLATION_STATS) {
-      stats = {
-        total_items: drillContent.length,
-        items_with_translation: drillContent.filter(item => item.has_translation).length,
-        items_using_fallback: drillContent.filter(item => item.fallback_used).length,
-        items_missing_translation: drillContent.filter(item => !item.has_translation && !item.fallback_used).length
-      };
-      stats.translation_coverage = stats.total_items > 0 ? 
-        Math.round((stats.items_with_translation / stats.total_items) * 100) : 0;
-    }
-    
-    const responseData = {
-      status: 'success',
-      pageTitle: `Credit - ${screenLocation.replace('credit_', '').replace(/_/g, ' ')}`,
-      actionCount: drillContent.length,
-      actions: drillContent.map((item, index) => ({
-        ...item,
-        actionNumber: index + 1
-      })),
-      screen_location: screenLocation // Legacy field
-    };
-    
-    // Add new fields only if improved endpoints enabled
-    if (useImprovedQuery) {
-      responseData.screenLocation = screenLocation;
-      responseData.requestedLanguage = userRequestedLang;
-      
-      if (FEATURE_FLAGS.ENABLE_TRANSLATION_STATS) {
-        responseData.stats = stats;
-      }
-    }
-    
-    res.json({
-      success: true,
-      data: responseData
-    });
-    
-    logSlowQuery(`credit-drill-${screenLocation}`, startTime, drillContent.length);
-    const coverageInfo = stats.translation_coverage !== undefined ? ` (${stats.translation_coverage}% coverage)` : '';
-    console.log(`✅ Successfully returned credit drill content for ${screenLocation}${coverageInfo}`);
-  } catch (error) {
-    logSlowQuery(`credit-drill-${screenLocation}-ERROR`, startTime, 0);
-    console.error('❌ Get credit drill content error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
-  }
-});
-
-// Credit-refi drill endpoint - fetch specific content for a credit-refi step
-app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
-  const startTime = Date.now();
-  
-  try {
-    const { screenLocation } = req.params;
-    
-    // Validate language parameter
-    const langValidation = validateLanguage(req.query.lang);
-    if (!langValidation.isValid) {
-      return res.status(400).json({
-        success: false,
-        error: langValidation.error,
-        supported_languages: SUPPORTED_LANGUAGES
-      });
-    }
-    
-    const requestedLang = langValidation.language;
-    console.log(`🔄 Fetching credit-refi drill content for: ${screenLocation}, language: ${requestedLang}`);
+    console.log(`🔄 Fetching credit drill content for: ${screenLocation}`);
     
     const result = await pool.query(`
       SELECT 
@@ -2204,18 +1814,6 @@ app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
         ci.is_active,
         ci.page_number,
         ci.updated_at,
-        -- Primary language with English fallback
-        COALESCE(
-          MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END),  -- requested language
-          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END), -- fallback to English
-          NULL                                                             -- nothing
-        ) AS text_value,
-        -- Check if translation exists in requested language
-        MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END) IS NOT NULL AS has_translation_requested,
-        -- Check if fallback was used (has EN but not requested language)
-        (MAX(CASE WHEN ct.language_code = $2 THEN ct.content_value END) IS NULL 
-         AND MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) IS NOT NULL) AS fallback_used,
-        -- Keep legacy format for backward compatibility
         MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
         MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
         MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
@@ -2227,7 +1825,78 @@ app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
       GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
                ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
       ORDER BY ci.page_number, ci.id
-    `, [screenLocation, requestedLang]);
+    `, [screenLocation]);
+    
+    console.log(`🔍 Credit drill query returned ${result.rows.length} rows for ${screenLocation}`);
+    
+    const drillContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      is_active: row.is_active,
+      page_number: row.page_number,
+      translations: {
+        ru: row.text_ru || 'Translation missing',
+        he: row.text_he || 'Translation missing',
+        en: row.text_en || 'Translation missing'
+      },
+      updated_at: row.updated_at
+    }));
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        pageTitle: `Credit Step ${screenLocation.replace('credit_step', '')}`,
+        actionCount: drillContent.length,
+        actions: drillContent.map((item, index) => ({
+          ...item,
+          actionNumber: index + 1
+        })),
+        screen_location: screenLocation
+      }
+    });
+    
+    console.log(`✅ Successfully returned credit drill content for ${screenLocation}`);
+  } catch (error) {
+    console.error('❌ Get credit drill content error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+// Credit-refi drill endpoint - fetch specific content for a credit-refi step
+app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
+  try {
+    const { screenLocation } = req.params;
+    console.log(`🔄 Fetching credit-refi drill content for: ${screenLocation}`);
+    
+    const result = await pool.query(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.page_number,
+        ci.updated_at,
+        MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
+        MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
+        MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+        AND ct.status IN ('approved', 'draft')
+      WHERE ci.screen_location = $1
+        AND ci.is_active = TRUE
+      GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
+               ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
+      ORDER BY ci.page_number, ci.id
+    `, [screenLocation]);
     
     console.log(`🔍 Credit-refi drill query returned ${result.rows.length} rows for ${screenLocation}`);
     
@@ -2239,11 +1908,6 @@ app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
       screen_location: row.screen_location,
       is_active: row.is_active,
       page_number: row.page_number,
-      // New format
-      value: row.text_value || '',
-      has_translation: row.has_translation_requested,
-      fallback_used: row.fallback_used,
-      // Legacy format for backward compatibility
       translations: {
         ru: row.text_ru || 'Translation missing',
         he: row.text_he || 'Translation missing',
@@ -2252,37 +1916,22 @@ app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
       updated_at: row.updated_at
     }));
     
-    // Calculate statistics
-    const stats = {
-      total_items: drillContent.length,
-      items_with_translation: drillContent.filter(item => item.has_translation).length,
-      items_using_fallback: drillContent.filter(item => item.fallback_used).length,
-      items_missing_translation: drillContent.filter(item => !item.has_translation && !item.fallback_used).length
-    };
-    stats.translation_coverage = stats.total_items > 0 ? 
-      Math.round((stats.items_with_translation / stats.total_items) * 100) : 0;
-    
     res.json({
       success: true,
       data: {
         status: 'success',
-        pageTitle: `Credit Refinancing - ${screenLocation.replace('credit_refi_', '').replace(/_/g, ' ')}`,
-        screenLocation,
-        requestedLanguage: requestedLang,
-        stats,
+        pageTitle: `Credit Refinancing - ${screenLocation.replace('credit_refi_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
         actionCount: drillContent.length,
         actions: drillContent.map((item, index) => ({
           ...item,
           actionNumber: index + 1
         })),
-        screen_location: screenLocation // Legacy field
+        screen_location: screenLocation
       }
     });
     
-    logSlowQuery(`credit-refi-drill-${screenLocation}`, startTime, drillContent.length);
-    console.log(`✅ Successfully returned credit-refi drill content for ${screenLocation} (${stats.translation_coverage}% coverage)`);
+    console.log(`✅ Successfully returned credit-refi drill content for ${screenLocation}`);
   } catch (error) {
-    logSlowQuery(`credit-refi-drill-${screenLocation}-ERROR`, startTime, 0);
     console.error('❌ Get credit-refi drill content error:', error);
     res.status(500).json({ 
       success: false, 
@@ -2676,13 +2325,10 @@ app.post('/api/admin/dropdown/validate', requireAuth, async (req, res) => {
   }
 });
 
-
 // Start server
 const actualPort = PORT || 4000;
 app.listen(actualPort, () => {
   console.log(`🚀 Server running on port ${actualPort}`);
   console.log(`📊 Health check: http://localhost:${actualPort}/api/health`);
   console.log(`📡 Content API: http://localhost:${actualPort}/api/content/mortgage`);
-  console.log(`🍔 Menu API: http://localhost:${actualPort}/api/content/menu`);
-  console.log(`🔧 Improved drill endpoints with COALESCE fallback enabled`);
 });

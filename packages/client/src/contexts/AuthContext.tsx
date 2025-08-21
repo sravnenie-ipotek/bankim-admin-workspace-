@@ -115,10 +115,80 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Local storage helpers
+  const saveUserToStorage = (userData: User) => {
+    try {
+      localStorage.setItem('bankIM_admin_user', JSON.stringify(userData));
+      localStorage.setItem('bankIM_admin_timestamp', Date.now().toString());
+    } catch (error) {
+      console.warn('Failed to save user to localStorage:', error);
+    }
+  };
+
+  const getUserFromStorage = (): User | null => {
+    try {
+      const userData = localStorage.getItem('bankIM_admin_user');
+      const timestamp = localStorage.getItem('bankIM_admin_timestamp');
+      
+      if (!userData || !timestamp) return null;
+      
+      // Check if session is less than 24 hours old
+      const sessionAge = Date.now() - parseInt(timestamp);
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+      
+      if (sessionAge > maxAge) {
+        // Session expired, clear storage
+        localStorage.removeItem('bankIM_admin_user');
+        localStorage.removeItem('bankIM_admin_timestamp');
+        return null;
+      }
+      
+      return JSON.parse(userData);
+    } catch (error) {
+      console.warn('Failed to get user from localStorage:', error);
+      return null;
+    }
+  };
+
+  const clearUserFromStorage = () => {
+    try {
+      localStorage.removeItem('bankIM_admin_user');
+      localStorage.removeItem('bankIM_admin_timestamp');
+    } catch (error) {
+      console.warn('Failed to clear user from localStorage:', error);
+    }
+  };
+
   // Check for existing session on app load
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
+        // First, try to get user from localStorage (immediate restore)
+        const storedUser = getUserFromStorage();
+        if (storedUser) {
+          setUser(storedUser);
+          setLoading(false);
+          
+          // Validate session with server in background
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+              credentials: 'include'
+            });
+            
+            if (!response.ok) {
+              // Server session invalid, clear local storage and reset user
+              console.log('Server session invalid, clearing local session');
+              clearUserFromStorage();
+              setUser(null);
+            }
+          } catch (error) {
+            console.warn('Background session validation failed:', error);
+            // Keep local session since server might be unreachable
+          }
+          return;
+        }
+
+        // No stored user, check server session
         const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           credentials: 'include'
         });
@@ -135,6 +205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               permissions: ROLE_PERMISSIONS[mappedRole] || []
             };
             setUser(userData);
+            saveUserToStorage(userData);
           }
         }
       } catch (error) {
@@ -173,6 +244,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
 
         setUser(userData);
+        saveUserToStorage(userData);
         setLoading(false);
         return true;
       } else {
@@ -197,7 +269,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Logout error:', error);
     } finally {
       setUser(null);
-      localStorage.removeItem('bankIM_admin_user');
+      clearUserFromStorage();
     }
   };
 

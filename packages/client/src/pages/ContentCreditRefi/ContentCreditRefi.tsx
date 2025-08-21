@@ -53,26 +53,50 @@ const ContentCreditRefi: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const itemsPerPage = 12;
+  const itemsPerPage = 15; // Show all 14 credit-refi pages at once
 
   useEffect(() => {
     const fetchCreditRefiData = async () => {
       try {
         setLoading(true);
-        console.log('🔄 Fetching credit-refi translations from database...');
-        const response = await apiService.getContentByContentType('credit-refi');
+        console.log('🔄 Fetching all 14 credit-refi pages from database...');
+        const response = await apiService.getCreditRefiAllItems();
         
         if (response.success && response.data) {
-          // Data is already normalized by apiService.getContentByContentType
+          // Normalize the data to ensure translations exist
+          // Each item represents a screen_location (14 total for credit-refi pages)
+          const normalizedItems = response.data.map((item: any, index: number) => ({
+            ...item,
+            id: item.id || `credit-refi-${index}`,
+            confluence_num: item.confluence_num, // Preserve Confluence number (6.1 - 6.1.14)
+            content_key: item.content_key || item.screen_location || '',
+            translations: {
+              ru: item.translations?.ru || item.description || item.title || item.screen_location || '',
+              he: item.translations?.he || '',
+              en: item.translations?.en || ''
+            },
+            actionCount: item.actionCount || 0,
+            contentType: item.contentType || 'section',
+            lastModified: item.lastModified || item.last_modified || item.updated_at || new Date().toISOString()
+          }));
+          
+          // Items should already be sorted by the API, but ensure proper order
+          normalizedItems.sort((a: any, b: any) => {
+            const numA = a.confluence_num === '6.1' ? 0 : parseFloat(a.confluence_num?.replace('6.1.', '') || '99');
+            const numB = b.confluence_num === '6.1' ? 0 : parseFloat(b.confluence_num?.replace('6.1.', '') || '99');
+            return numA - numB;
+          });
+          
           const normalizedData: CreditRefiData = {
             status: 'success',
-            content_count: response.data.length,
-            credit_refi_items: response.data
+            content_count: normalizedItems.length,
+            credit_refi_items: normalizedItems
           };
           
           setCreditRefiData(normalizedData);
-          console.log('✅ Successfully loaded credit-refi data:', normalizedData);
-          console.log('First item:', response.data[0]); // Log first item to see structure
+          console.log('✅ Successfully loaded all 14 credit-refi pages:', normalizedData);
+          console.log(`📊 Total credit-refi pages: ${normalizedItems.length}`);
+          console.log('Pages:', normalizedItems.map((item: any) => `${item.confluence_num}: ${item.screen_location} (${item.actionCount} items)`));
         } else {
           console.error('❌ Failed to fetch credit-refi translations from database:', response.error);
           setError(response.error || t('content.error.loading'));
@@ -126,24 +150,34 @@ const ContentCreditRefi: React.FC = () => {
       title: t('content.table.pageName'),
       width: '362px',
       render: (_value, item, index) => {
-        const pageNum = (item as any).page_number ?? (index + 1);
-        const title = language === 'ru' ? (item.translations?.ru || item.content_key) :
-                     language === 'he' ? (item.translations?.he || item.content_key) :
-                     (item.translations?.en || item.content_key);
+        // Display with Confluence number (6.1 - 6.1.14) and proper title
+        const pageNum = (item as any).confluence_num || `6.1.${index === 0 ? '' : index + 1}`;
+        const title = language === 'ru' ? (item.translations?.ru || (item as any).description || item.screen_location) :
+                     language === 'he' ? (item.translations?.he || (item as any).description || item.screen_location) :
+                     (item.translations?.en || (item as any).description || item.screen_location);
         const fullText = `${pageNum}. ${title}`;
+        
+        // Also show screen_location for clarity
+        const screenInfo = `(${item.screen_location})`;
+        
         return (
-          <span title={fullText.length > 30 ? fullText : undefined}>
-            {fullText}
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span title={fullText.length > 30 ? fullText : undefined}>
+              {fullText}
+            </span>
+            <span style={{ fontSize: '0.85em', color: '#666', marginTop: '2px' }}>
+              {screenInfo}
+            </span>
+          </div>
         );
       }
     },
     {
       key: 'actionCount',
-      title: 'Номер действия',
+      title: 'Количество действий',
       width: '160px',
       align: 'center',
-      render: (value) => <span>{value || 1}</span>
+      render: (value) => <span>{typeof value === 'number' ? value : 0}</span>
     },
     {
       key: 'lastModified',
@@ -160,8 +194,7 @@ const ContentCreditRefi: React.FC = () => {
 
   return (
     <ContentListPage
-      title=""  // Empty title since ContentPageWrapper already provides it
-      tabs={[]}  // Empty tabs since ContentPageWrapper already provides them
+      title={t('menu.creditRefi')}  // "Рефинансирование кредита"
       data={filteredItems}
       columns={columns}
       onRowAction={handleRowAction}

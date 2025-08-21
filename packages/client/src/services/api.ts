@@ -946,6 +946,48 @@ class ApiService {
     }
   }
 
+  async getCreditAllItems(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching all individual credit content items...');
+      const response = await this.requestWithCache<any>(`/api/content/credit/all-items`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched all credit items');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch all credit items:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching all credit items:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch all credit items'
+      };
+    }
+  }
+
+  async getCreditRefiAllItems(): Promise<ApiResponse<any>> {
+    try {
+      console.log('🔄 Fetching all individual credit-refi content items...');
+      const response = await this.requestWithCache<any>(`/api/content/credit-refi/all-items`);
+      
+      if (response.success && response.data) {
+        console.log('✅ Successfully fetched all credit-refi items');
+        return response;
+      } else {
+        console.error('❌ Failed to fetch all credit-refi items:', response.error);
+        return response;
+      }
+    } catch (error) {
+      console.error('❌ Error fetching all credit-refi items:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch all credit-refi items'
+      };
+    }
+  }
+
   // Menu content operations - using real bankim_content database
   async getMenuContent(): Promise<ApiResponse<any>> {
     try {
