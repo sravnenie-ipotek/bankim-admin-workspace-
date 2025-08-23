@@ -15,6 +15,9 @@
     "test:content-errors": "cypress run --spec 'cypress/e2e/content-not-found-check.cy.ts'",
     "test:full-drill": "cypress run --spec 'cypress/e2e/full-drill-depth-test.cy.ts'",
     "test:all": "cypress run",
+    "test:content-verification": "cypress run --spec 'cypress/e2e/content-verification-automation.cy.js'",
+    "test:playwright-verification": "npx playwright test tests/content-verification-playwright.spec.js",
+    "test:verify-all": "node scripts/run-content-verification.js",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

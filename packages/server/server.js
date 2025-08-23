@@ -131,7 +131,7 @@ app.get('/api/content/menu', async (req, res) => {
       FROM content_items ci
       LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         AND ct.status IN ('approved', 'draft')
-      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu')
+      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu', 'main_menu')
         AND ci.is_active = TRUE
       GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
                ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
@@ -193,7 +193,7 @@ app.get('/api/content/menu/translations', async (req, res) => {
         ct.updated_at
       FROM content_items ci
       JOIN content_translations ct ON ci.id = ct.content_item_id
-      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu')
+      WHERE ci.screen_location IN ('menu_navigation', 'navigation_menu', 'main_menu')
         AND ci.is_active = TRUE
         AND ct.status IN ('approved', 'draft')
       ORDER BY ci.screen_location, ci.page_number, ci.id, ct.language_code
