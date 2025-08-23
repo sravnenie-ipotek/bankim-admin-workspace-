@@ -12,8 +12,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { apiService } from '../../services/api';
 import { ContentListPage, ContentTableColumn } from '../../shared/components';
-import { NavigationTree, TreeNode } from '../../components/NavigationTree';
-import navigationManifest from '../../data/navigation-manifest.json';
 import './ContentMortgage.css';
 
 // Helper function to format date for display
@@ -86,8 +84,6 @@ const ContentMortgage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || '');
-  const [viewMode, setViewMode] = useState<'table' | 'tree'>('tree');
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['mortgage', 'service_1', 'service_2', 'service_3']));
   const itemsPerPage = 15; // Show all 14 mortgage pages at once
 
   useEffect(() => {
@@ -137,59 +133,6 @@ const ContentMortgage: React.FC = () => {
 
     fetchMortgageData();
   }, [language]); // Re-fetch data when language changes
-
-
-  // Build tree structure from manifest and API data
-  const buildTreeStructure = (): TreeNode[] => {
-    if (!mortgageData?.mortgage_items) return [];
-
-    // Create a map of screen_location to mortgage items for quick lookup
-    const itemMap = new Map<string, MortgageTranslation>();
-    mortgageData.mortgage_items.forEach(item => {
-      if (item.screen_location) {
-        itemMap.set(item.screen_location, item);
-      }
-    });
-
-    // Function to process manifest nodes
-    const processNode = (node: any): TreeNode => {
-      const treeNode: TreeNode = {
-        id: node.id,
-        confluence_num: node.confluence_num,
-        title: node.title,
-        screen_location: node.screen_location,
-        children: node.children ? node.children.map(processNode) : undefined
-      };
-
-      // If this node has a screen_location, get data from API
-      if (node.screen_location && itemMap.has(node.screen_location)) {
-        const apiItem = itemMap.get(node.screen_location)!;
-        treeNode.actionCount = apiItem.actionCount;
-        treeNode.lastModified = apiItem.lastModified;
-      }
-
-      return treeNode;
-    };
-
-    // Build tree from manifest
-    const mortgageSection = navigationManifest.mortgage;
-    if (!mortgageSection) {
-      console.error('No mortgage section found in navigation manifest');
-      return [];
-    }
-    
-    // For mortgage, we have a nested structure with service groups
-    // So we need to map through the service groups
-    return [{
-      id: mortgageSection.id,
-      title: mortgageSection.title,
-      children: mortgageSection.children.map(serviceGroup => ({
-        id: serviceGroup.id,
-        title: serviceGroup.title,
-        children: serviceGroup.children ? serviceGroup.children.map(processNode) : []
-      }))
-    }];
-  };
 
   const handleViewClick = (item: MortgageTranslation, itemIndex: number) => {
     // Navigate directly to the drill page for this individual page
@@ -264,32 +207,6 @@ const ContentMortgage: React.FC = () => {
     const actualIndex = filteredItems.findIndex(i => i.id === item.id);
     handleViewClick(item, actualIndex);
   };
-
-  // Handle tree node click
-  const handleTreeNodeClick = (node: TreeNode) => {
-    if (node.screen_location) {
-      // Find the corresponding item in mortgageData
-      const item = mortgageData?.mortgage_items.find(i => i.screen_location === node.screen_location);
-      if (item) {
-        const itemIndex = mortgageData?.mortgage_items.indexOf(item) || 0;
-        handleViewClick(item, itemIndex);
-      }
-    }
-  };
-
-  // Handle tree node expand/collapse
-  const handleToggleExpand = (nodeId: string) => {
-    const newExpanded = new Set(expandedNodes);
-    if (newExpanded.has(nodeId)) {
-      newExpanded.delete(nodeId);
-    } else {
-      newExpanded.add(nodeId);
-    }
-    setExpandedNodes(newExpanded);
-  };
-
-  // Build tree data
-  const treeData = useMemo(() => buildTreeStructure(), [mortgageData]);
 
   if (loading) {
     return (
