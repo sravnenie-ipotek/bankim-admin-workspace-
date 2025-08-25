@@ -586,8 +586,16 @@ jobs:
     
     steps:
       - name: 📱 Send Slack Notification
-        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          # Only send if webhook is configured
+          if [[ -z "$SLACK_WEBHOOK" ]]; then
+            echo "Slack webhook not configured, skipping notification"
+            exit 0
+          fi
+          
           # Determine overall status
           if [[ "${{ needs.deploy.result }}" == "success" && "${{ needs.post-deployment-validation.result }}" == "success" ]]; then
             STATUS="✅ SUCCESS"
@@ -615,12 +623,18 @@ jobs:
                 ]
               }]
             }" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+            "$SLACK_WEBHOOK"
       
       - name: 📧 Email Notification Summary
-        if: ${{ secrets.NOTIFICATION_EMAIL }}
+        if: always()
+        env:
+          EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
         run: |
-          echo "📧 Email notification would be sent to: ${{ secrets.NOTIFICATION_EMAIL }}"
+          if [[ -z "$EMAIL" ]]; then
+            echo "Email notification not configured, skipping"
+            exit 0
+          fi
+          echo "📧 Email notification would be sent to: $EMAIL"
           echo "Status: ${{ needs.deploy.result }}"
           echo "Environment: ${{ needs.detect-environment.outputs.environment }}"
           echo "Deployment URL: http://${{ needs.detect-environment.outputs.server_host }}:8004"
