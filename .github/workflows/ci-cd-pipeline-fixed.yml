@@ -53,7 +53,7 @@ jobs:
           npm run build || echo "No build script for shared"
       
       - name: 📤 Upload Shared Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shared-package
           path: packages/shared/dist
