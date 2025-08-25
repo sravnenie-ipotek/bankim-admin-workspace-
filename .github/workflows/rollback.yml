@@ -1,0 +1,434 @@
+# BankIM Emergency Rollback Pipeline
+# Fast rollback mechanism for production issues
+# Can be triggered manually when issues are detected
+
+name: ⚡ Emergency Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Environment for Rollback'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - test  
+        - production
+      rollback_reason:
+        description: 'Reason for rollback'
+        required: true
+        type: string
+      backup_timestamp:
+        description: 'Specific backup timestamp (optional - uses latest if empty)'
+        required: false
+        type: string
+      skip_health_check:
+        description: 'Skip post-rollback health checks (emergency only)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  ROLLBACK_TIMEOUT: 600  # 10 minutes max rollback time
+
+jobs:
+  # ==============================================================================
+  # ROLLBACK PREPARATION - Validation and Setup
+  # ==============================================================================
+  
+  rollback-preparation:
+    name: 🎯 Rollback Preparation
+    runs-on: ubuntu-latest
+    outputs:
+      server_host: ${{ steps.server.outputs.host }}
+      server_name: ${{ steps.server.outputs.name }}
+      rollback_approved: ${{ steps.approval.outputs.approved }}
+    
+    steps:
+      - name: 🎯 Set Server Configuration
+        id: server
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+            echo "host=185.220.207.52" >> $GITHUB_OUTPUT
+            echo "name=adminpanelprod-2" >> $GITHUB_OUTPUT
+          else
+            echo "host=91.202.169.54" >> $GITHUB_OUTPUT
+            echo "name=adminpaneltest-1" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 📋 Rollback Summary
+        run: |
+          echo "# ⚡ EMERGENCY ROLLBACK INITIATED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** ${{ steps.server.outputs.host }} (${{ steps.server.outputs.name }})" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** ${{ github.event.inputs.rollback_reason }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Initiated by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+      
+      - name: ✅ Production Rollback Confirmation
+        id: approval
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+            echo "🚨 PRODUCTION ROLLBACK CONFIRMED"
+            echo "Reason: ${{ github.event.inputs.rollback_reason }}"
+            echo "This action will immediately rollback the production environment"
+          fi
+          echo "approved=true" >> $GITHUB_OUTPUT
+
+  # ==============================================================================
+  # PRE-ROLLBACK STATUS - Capture Current State
+  # ==============================================================================
+  
+  capture-current-state:
+    name: 📸 Capture Current State
+    runs-on: ubuntu-latest
+    needs: rollback-preparation
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔐 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ needs.rollback-preparation.outputs.server_host }} >> ~/.ssh/known_hosts
+      
+      - name: 📸 Capture System State
+        run: |
+          echo "📸 Capturing current system state before rollback..."
+          
+          ssh root@${{ needs.rollback-preparation.outputs.server_host }} "
+            echo '📊 System Status Before Rollback:' > /tmp/pre-rollback-state.log
+            echo '=================================' >> /tmp/pre-rollback-state.log
+            echo 'Timestamp: $(date)' >> /tmp/pre-rollback-state.log
+            echo '' >> /tmp/pre-rollback-state.log
+            
+            echo '🔧 PM2 Process Status:' >> /tmp/pre-rollback-state.log
+            pm2 list >> /tmp/pre-rollback-state.log 2>&1 || echo 'PM2 not available' >> /tmp/pre-rollback-state.log
+            echo '' >> /tmp/pre-rollback-state.log
+            
+            echo '📝 Recent Application Logs:' >> /tmp/pre-rollback-state.log
+            pm2 logs --lines 20 --raw >> /tmp/pre-rollback-state.log 2>&1 || echo 'No logs available' >> /tmp/pre-rollback-state.log
+            echo '' >> /tmp/pre-rollback-state.log
+            
+            echo '📊 System Resources:' >> /tmp/pre-rollback-state.log
+            free -h >> /tmp/pre-rollback-state.log
+            df -h >> /tmp/pre-rollback-state.log
+            uptime >> /tmp/pre-rollback-state.log
+            echo '' >> /tmp/pre-rollback-state.log
+            
+            echo '🔍 Current Deployment Version:' >> /tmp/pre-rollback-state.log
+            cd /var/www/bankim || echo 'Deployment directory not found'
+            git rev-parse HEAD >> /tmp/pre-rollback-state.log 2>&1 || echo 'Git not available' >> /tmp/pre-rollback-state.log
+            git log --oneline -5 >> /tmp/pre-rollback-state.log 2>&1 || echo 'Git log not available' >> /tmp/pre-rollback-state.log
+          "
+      
+      - name: 📥 Download Current State
+        run: |
+          echo "📥 Downloading current state information..."
+          scp root@${{ needs.rollback-preparation.outputs.server_host }}:/tmp/pre-rollback-state.log ./pre-rollback-state.log
+      
+      - name: 📄 Upload Pre-Rollback State
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-rollback-state-${{ github.run_id }}
+          path: pre-rollback-state.log
+          retention-days: 30
+
+  # ==============================================================================
+  # EMERGENCY ROLLBACK EXECUTION
+  # ==============================================================================
+  
+  execute-rollback:
+    name: ⚡ Execute Rollback
+    runs-on: ubuntu-latest
+    needs: [rollback-preparation, capture-current-state]
+    environment: 
+      name: ${{ github.event.inputs.environment }}-rollback
+      url: http://${{ needs.rollback-preparation.outputs.server_host }}:8004
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔐 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ needs.rollback-preparation.outputs.server_host }} >> ~/.ssh/known_hosts
+      
+      - name: 🔍 Verify Backup Availability
+        timeout-minutes: 2
+        run: |
+          echo "🔍 Verifying backup availability..."
+          
+          ssh root@${{ needs.rollback-preparation.outputs.server_host }} "
+            echo '📋 Available Backups:'
+            ls -la /var/backups/bankim/ | head -10 || {
+              echo '❌ No backups found in /var/backups/bankim/'
+              exit 1
+            }
+            
+            # Determine which backup to use
+            if [[ -n '${{ github.event.inputs.backup_timestamp }}' ]]; then
+              BACKUP_FILE=\$(ls /var/backups/bankim/ | grep '${{ github.event.inputs.backup_timestamp }}' | head -1)
+              if [[ -z \"\$BACKUP_FILE\" ]]; then
+                echo '❌ Specified backup timestamp not found'
+                exit 1
+              fi
+            else
+              # Use latest backup
+              BACKUP_FILE=\$(ls -t /var/backups/bankim/pre-deploy-*.tar.gz | head -1)
+              if [[ -z \"\$BACKUP_FILE\" ]]; then
+                echo '❌ No pre-deployment backups found'
+                exit 1
+              fi
+            fi
+            
+            echo \"✅ Using backup: \$BACKUP_FILE\"
+            echo \"BACKUP_FILE=\$BACKUP_FILE\" >> /tmp/rollback-vars
+          "
+      
+      - name: ⚡ Execute Emergency Rollback
+        timeout-minutes: 10
+        run: |
+          echo "⚡ Starting emergency rollback process..."
+          
+          ssh root@${{ needs.rollback-preparation.outputs.server_host }} "
+            set -e
+            source /tmp/rollback-vars
+            
+            echo '🔄 Starting rollback process...'
+            
+            # Stop current services
+            echo '🛑 Stopping current services...'
+            pm2 stop all || echo 'Services already stopped'
+            
+            # Create rollback log
+            ROLLBACK_LOG=\"/var/log/bankim-rollback-\$(date +%Y%m%d-%H%M%S).log\"
+            echo 'Rollback started at \$(date)' > \"\$ROLLBACK_LOG\"
+            echo 'Reason: ${{ github.event.inputs.rollback_reason }}' >> \"\$ROLLBACK_LOG\"
+            echo 'Backup file: \$BACKUP_FILE' >> \"\$ROLLBACK_LOG\"
+            echo '' >> \"\$ROLLBACK_LOG\"
+            
+            # Backup current state before rollback
+            echo '💾 Creating emergency backup of current state...'
+            cd /var/www/bankim
+            tar -czf \"/var/backups/bankim/emergency-backup-\$(date +%Y%m%d-%H%M%S).tar.gz\" . 2>/dev/null || true
+            
+            # Extract previous backup
+            echo '📦 Extracting backup...'
+            cd /var/www/bankim
+            tar -xzf \"/var/backups/bankim/\$BACKUP_FILE\" 2>&1 | tee -a \"\$ROLLBACK_LOG\"
+            
+            # Restore permissions
+            chown -R root:root /var/www/bankim
+            chmod -R 755 /var/www/bankim
+            
+            # Install dependencies for rolled-back version
+            echo '🔧 Installing dependencies...'
+            cd /var/www/bankim/packages/server
+            npm install --production --silent 2>&1 | tee -a \"\$ROLLBACK_LOG\"
+            
+            cd /var/www/bankim/packages/client
+            npm install --production --silent 2>&1 | tee -a \"\$ROLLBACK_LOG\"
+            
+            # Rebuild client if needed
+            if [[ -f 'package.json' ]] && grep -q '\"build\"' package.json; then
+              echo '🏗️ Rebuilding client...'
+              npm run build 2>&1 | tee -a \"\$ROLLBACK_LOG\"
+            fi
+            
+            echo '✅ Rollback extraction completed' | tee -a \"\$ROLLBACK_LOG\"
+          "
+      
+      - name: 🚀 Restart Services
+        timeout-minutes: 3
+        run: |
+          echo "🚀 Restarting services after rollback..."
+          
+          ssh root@${{ needs.rollback-preparation.outputs.server_host }} "
+            cd /var/www/bankim
+            
+            echo '🚀 Starting services...'
+            pm2 start ecosystem.config.js 2>&1 || {
+              echo '⚠️ PM2 ecosystem file not found, using manual startup'
+              
+              # Manual service startup
+              cd packages/server
+              pm2 start server.js --name bankim-api --env production
+              
+              cd ../client
+              pm2 start 'npx serve dist -p 8004 -s' --name bankim-client
+            }
+            
+            # Save PM2 configuration
+            pm2 save || echo 'PM2 save failed - continuing'
+            
+            echo '✅ Services restarted'
+            pm2 list
+          "
+
+  # ==============================================================================
+  # POST-ROLLBACK VALIDATION
+  # ==============================================================================
+  
+  post-rollback-validation:
+    name: ✅ Post-Rollback Validation
+    runs-on: ubuntu-latest
+    needs: [rollback-preparation, execute-rollback]
+    if: ${{ !inputs.skip_health_check && needs.execute-rollback.result == 'success' }}
+    
+    steps:
+      - name: 🔐 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ needs.rollback-preparation.outputs.server_host }} >> ~/.ssh/known_hosts
+      
+      - name: ⏳ Service Stabilization Wait
+        run: |
+          echo "⏳ Waiting for services to stabilize after rollback..."
+          sleep 30
+      
+      - name: ✅ Health Verification
+        timeout-minutes: 5
+        run: |
+          echo "✅ Verifying system health after rollback..."
+          
+          # API Health Check
+          echo "🔍 Checking API health..."
+          for i in {1..6}; do
+            if curl -f -m 10 "http://${{ needs.rollback-preparation.outputs.server_host }}:8003/api/health"; then
+              echo "✅ API is responding"
+              break
+            else
+              echo "⏳ API not ready, waiting... (attempt $i/6)"
+              if [[ $i -eq 6 ]]; then
+                echo "❌ API health check failed after rollback"
+                ssh root@${{ needs.rollback-preparation.outputs.server_host }} "pm2 logs bankim-api --lines 20"
+                exit 1
+              fi
+              sleep 10
+            fi
+          done
+          
+          # Client Health Check
+          echo "🔍 Checking client health..."
+          if curl -f -m 10 "http://${{ needs.rollback-preparation.outputs.server_host }}:8004"; then
+            echo "✅ Client is responding"
+          else
+            echo "⚠️ Client health check failed - may require manual intervention"
+          fi
+          
+          # Service Status Check
+          ssh root@${{ needs.rollback-preparation.outputs.server_host }} "
+            echo '📊 Service Status After Rollback:'
+            pm2 list
+            
+            echo -e '\\n📝 Recent Logs:'
+            pm2 logs --lines 10 --raw
+          "
+      
+      - name: 📊 Performance Baseline After Rollback
+        run: |
+          echo "📊 Establishing performance baseline after rollback..."
+          
+          for i in {1..3}; do
+            curl -w "API Response Time: %{time_total}s\\n" -o /dev/null -s "http://${{ needs.rollback-preparation.outputs.server_host }}:8003/api/health"
+          done
+
+  # ==============================================================================
+  # ROLLBACK NOTIFICATION & REPORTING
+  # ==============================================================================
+  
+  rollback-notification:
+    name: 📱 Rollback Notifications
+    runs-on: ubuntu-latest
+    needs: [rollback-preparation, execute-rollback, post-rollback-validation]
+    if: always()
+    
+    steps:
+      - name: 🎯 Determine Rollback Status
+        id: status
+        run: |
+          if [[ "${{ needs.execute-rollback.result }}" == "success" ]]; then
+            if [[ "${{ needs.post-rollback-validation.result }}" == "success" || "${{ inputs.skip_health_check }}" == "true" ]]; then
+              echo "status=success" >> $GITHUB_OUTPUT
+              echo "message=✅ Rollback completed successfully" >> $GITHUB_OUTPUT
+              echo "color=good" >> $GITHUB_OUTPUT
+            else
+              echo "status=partial" >> $GITHUB_OUTPUT
+              echo "message=⚠️ Rollback completed but health checks failed" >> $GITHUB_OUTPUT
+              echo "color=warning" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "message=❌ Rollback failed" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 📱 Send Slack Alert
+        if: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{
+              \"text\": \"🚨 BankIM Emergency Rollback - ${{ steps.status.outputs.message }}\",
+              \"attachments\": [{
+                \"color\": \"${{ steps.status.outputs.color }}\",
+                \"fields\": [
+                  {\"title\": \"Environment\", \"value\": \"${{ github.event.inputs.environment }}\", \"short\": true},
+                  {\"title\": \"Reason\", \"value\": \"${{ github.event.inputs.rollback_reason }}\", \"short\": true},
+                  {\"title\": \"Server\", \"value\": \"${{ needs.rollback-preparation.outputs.server_host }}\", \"short\": true},
+                  {\"title\": \"Initiated By\", \"value\": \"${{ github.actor }}\", \"short\": true},
+                  {\"title\": \"Status\", \"value\": \"${{ steps.status.outputs.status }}\", \"short\": false}
+                ]
+              }]
+            }" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: 📊 Rollback Summary
+        run: |
+          echo "# ⚡ Emergency Rollback Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.status.outputs.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** ${{ needs.rollback-preparation.outputs.server_host }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** ${{ github.event.inputs.rollback_reason }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Initiated by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.status.outputs.status }}" == "success" ]]; then
+            echo "## ✅ Rollback Actions Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Services stopped successfully" >> $GITHUB_STEP_SUMMARY
+            echo "- Backup restored successfully" >> $GITHUB_STEP_SUMMARY
+            echo "- Services restarted successfully" >> $GITHUB_STEP_SUMMARY
+            
+            if [[ "${{ inputs.skip_health_check }}" != "true" ]]; then
+              echo "- Health checks passed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- Health checks skipped (emergency mode)" >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## 🔗 System Access" >> $GITHUB_STEP_SUMMARY
+            echo "- **API:** http://${{ needs.rollback-preparation.outputs.server_host }}:8003/api/health" >> $GITHUB_STEP_SUMMARY
+            echo "- **Client:** http://${{ needs.rollback-preparation.outputs.server_host }}:8004" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ❌ Rollback Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Manual intervention may be required. Check the job logs for detailed error information." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📋 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Verify application functionality" >> $GITHUB_STEP_SUMMARY
+          echo "2. Monitor system logs for issues" >> $GITHUB_STEP_SUMMARY
+          echo "3. Investigate root cause of original problem" >> $GITHUB_STEP_SUMMARY
+          echo "4. Plan proper fix and deployment" >> $GITHUB_STEP_SUMMARY

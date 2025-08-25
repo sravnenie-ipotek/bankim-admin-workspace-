@@ -1,0 +1,345 @@
+# BankIM Health Check Pipeline
+# Continuous health monitoring and alerting
+# Runs on schedule and can be triggered manually
+
+name: ❤️ Health Check
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Every 15 minutes
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - test
+        - production
+        - both
+      check_type:
+        description: 'Health check type'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - quick
+        - full
+        - deep
+      alert_threshold:
+        description: 'Alert if check fails (for testing)'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  HEALTH_CHECK_TIMEOUT: 300  # 5 minutes
+
+jobs:
+  # ==============================================================================
+  # ENVIRONMENT DETECTION
+  # ==============================================================================
+  
+  detect-targets:
+    name: 🎯 Detect Health Check Targets
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{ steps.targets.outputs.environments }}
+    
+    steps:
+      - name: Determine Target Environments
+        id: targets
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == "both" ]]; then
+            echo 'environments=["test", "production"]' >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.inputs.environment }}" != "" ]]; then
+            echo 'environments=["${{ github.event.inputs.environment }}"]' >> $GITHUB_OUTPUT
+          else
+            # Scheduled run - check both environments
+            echo 'environments=["test", "production"]' >> $GITHUB_OUTPUT
+          fi
+
+  # ==============================================================================
+  # HEALTH CHECK EXECUTION
+  # ==============================================================================
+  
+  health-check:
+    name: ❤️ Health Check (${{ matrix.environment }})
+    runs-on: ubuntu-latest
+    needs: detect-targets
+    if: always()
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ${{ fromJson(needs.detect-targets.outputs.environments) }}
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🎯 Set Environment Configuration
+        id: config
+        run: |
+          if [[ "${{ matrix.environment }}" == "production" ]]; then
+            echo "server_host=185.220.207.52" >> $GITHUB_OUTPUT
+            echo "server_name=adminpanelprod-2" >> $GITHUB_OUTPUT
+          else
+            echo "server_host=91.202.169.54" >> $GITHUB_OUTPUT
+            echo "server_name=adminpaneltest-1" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 🔐 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ steps.config.outputs.server_host }} >> ~/.ssh/known_hosts
+      
+      - name: ❤️ Basic Health Check
+        id: basic_health
+        timeout-minutes: 2
+        run: |
+          echo "🔍 Running basic health checks on ${{ matrix.environment }}..."
+          
+          # Test SSH connectivity
+          if ssh root@${{ steps.config.outputs.server_host }} "echo 'SSH OK'"; then
+            echo "ssh_status=✅ OK" >> $GITHUB_OUTPUT
+          else
+            echo "ssh_status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "basic_health_failed=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Test API health endpoint
+          api_response=$(ssh root@${{ steps.config.outputs.server_host }} "curl -f -m 10 http://localhost:8003/api/health 2>/dev/null" || echo "FAILED")
+          if [[ "$api_response" != "FAILED" ]]; then
+            echo "api_status=✅ OK" >> $GITHUB_OUTPUT
+          else
+            echo "api_status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "basic_health_failed=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Test client availability
+          client_response=$(ssh root@${{ steps.config.outputs.server_host }} "curl -f -m 10 http://localhost:8004 2>/dev/null | head -c 10" || echo "FAILED")
+          if [[ "$client_response" != "FAILED" ]]; then
+            echo "client_status=✅ OK" >> $GITHUB_OUTPUT
+          else
+            echo "client_status=❌ FAILED" >> $GITHUB_OUTPUT
+            echo "basic_health_failed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 🔧 Service Health Check
+        id: service_health
+        if: ${{ inputs.check_type == 'full' || inputs.check_type == 'deep' }}
+        timeout-minutes: 2
+        run: |
+          echo "🔧 Checking service status on ${{ matrix.environment }}..."
+          
+          # PM2 service status
+          pm2_status=$(ssh root@${{ steps.config.outputs.server_host }} "pm2 list 2>/dev/null | grep -E '(bankim-api|bankim-client)' | grep -c 'online'" || echo "0")
+          expected_services=2
+          
+          if [[ "$pm2_status" == "$expected_services" ]]; then
+            echo "pm2_status=✅ $pm2_status/$expected_services services online" >> $GITHUB_OUTPUT
+          else
+            echo "pm2_status=⚠️ $pm2_status/$expected_services services online" >> $GITHUB_OUTPUT
+            echo "service_health_warning=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Memory usage check
+          memory_usage=$(ssh root@${{ steps.config.outputs.server_host }} "free | awk 'NR==2{printf \"%.0f\", \$3*100/\$2}'")
+          if [[ $memory_usage -lt 85 ]]; then
+            echo "memory_status=✅ ${memory_usage}%" >> $GITHUB_OUTPUT
+          else
+            echo "memory_status=⚠️ ${memory_usage}%" >> $GITHUB_OUTPUT
+            echo "service_health_warning=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Disk usage check
+          disk_usage=$(ssh root@${{ steps.config.outputs.server_host }} "df / | awk 'NR==2{print \$5}' | sed 's/%//'")
+          if [[ $disk_usage -lt 85 ]]; then
+            echo "disk_status=✅ ${disk_usage}%" >> $GITHUB_OUTPUT
+          else
+            echo "disk_status=⚠️ ${disk_usage}%" >> $GITHUB_OUTPUT
+            echo "service_health_warning=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 🗄️ Database Health Check
+        id: database_health
+        if: ${{ inputs.check_type == 'full' || inputs.check_type == 'deep' }}
+        timeout-minutes: 3
+        env:
+          CONTENT_DATABASE_URL: ${{ secrets.CONTENT_DATABASE_URL }}
+          CORE_DATABASE_URL: ${{ secrets.CORE_DATABASE_URL }}
+        run: |
+          echo "🗄️ Checking database health on ${{ matrix.environment }}..."
+          
+          # Test database connectivity via server
+          db_test=$(ssh root@${{ steps.config.outputs.server_host }} "cd /var/www/bankim/packages/server && node test-db-connection.js 2>/dev/null" || echo "FAILED")
+          
+          if [[ "$db_test" == *"32, 20, 4, 6"* ]]; then
+            echo "database_status=✅ Connected & verified" >> $GITHUB_OUTPUT
+          else
+            echo "database_status=❌ Connection failed" >> $GITHUB_OUTPUT
+            echo "database_health_failed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: ⚡ Performance Check
+        id: performance_check
+        if: ${{ inputs.check_type == 'deep' }}
+        timeout-minutes: 2
+        run: |
+          echo "⚡ Running performance checks on ${{ matrix.environment }}..."
+          
+          # API response time test
+          total_time=0
+          failed_requests=0
+          
+          for i in {1..5}; do
+            response_time=$(ssh root@${{ steps.config.outputs.server_host }} "curl -w '%{time_total}' -o /dev/null -s http://localhost:8003/api/health" 2>/dev/null || echo "999")
+            
+            if [[ "$response_time" == "999" ]]; then
+              ((failed_requests++))
+            else
+              total_time=$(echo "$total_time + $response_time" | bc -l)
+            fi
+          done
+          
+          if [[ $failed_requests -eq 0 ]]; then
+            avg_response=$(echo "scale=3; $total_time / 5" | bc -l)
+            echo "api_performance=✅ ${avg_response}s average" >> $GITHUB_OUTPUT
+          else
+            echo "api_performance=❌ $failed_requests/5 requests failed" >> $GITHUB_OUTPUT
+            echo "performance_check_failed=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 📊 Health Summary
+        run: |
+          echo "# ❤️ Health Check Summary (${{ matrix.environment }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** ${{ steps.config.outputs.server_host }} (${{ steps.config.outputs.server_name }})" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## 🔍 Basic Health" >> $GITHUB_STEP_SUMMARY
+          echo "- **SSH:** ${{ steps.basic_health.outputs.ssh_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **API:** ${{ steps.basic_health.outputs.api_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Client:** ${{ steps.basic_health.outputs.client_status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ inputs.check_type }}" == "full" || "${{ inputs.check_type }}" == "deep" ]]; then
+            echo "## 🔧 Service Health" >> $GITHUB_STEP_SUMMARY
+            echo "- **PM2 Services:** ${{ steps.service_health.outputs.pm2_status }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Memory Usage:** ${{ steps.service_health.outputs.memory_status }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Disk Usage:** ${{ steps.service_health.outputs.disk_status }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "## 🗄️ Database Health" >> $GITHUB_STEP_SUMMARY
+            echo "- **Database:** ${{ steps.database_health.outputs.database_status }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [[ "${{ inputs.check_type }}" == "deep" ]]; then
+            echo "## ⚡ Performance" >> $GITHUB_STEP_SUMMARY
+            echo "- **API Performance:** ${{ steps.performance_check.outputs.api_performance }}" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: 🚨 Set Overall Status
+        id: overall_status
+        run: |
+          if [[ "${{ steps.basic_health.outputs.basic_health_failed }}" == "true" ]]; then
+            echo "status=critical" >> $GITHUB_OUTPUT
+            echo "message=Basic health checks failed" >> $GITHUB_OUTPUT
+          elif [[ "${{ steps.database_health.outputs.database_health_failed }}" == "true" ]]; then
+            echo "status=critical" >> $GITHUB_OUTPUT
+            echo "message=Database health check failed" >> $GITHUB_OUTPUT
+          elif [[ "${{ steps.performance_check.outputs.performance_check_failed }}" == "true" ]]; then
+            echo "status=degraded" >> $GITHUB_OUTPUT
+            echo "message=Performance issues detected" >> $GITHUB_OUTPUT
+          elif [[ "${{ steps.service_health.outputs.service_health_warning }}" == "true" ]]; then
+            echo "status=warning" >> $GITHUB_OUTPUT
+            echo "message=Service warnings detected" >> $GITHUB_OUTPUT
+          else
+            echo "status=healthy" >> $GITHUB_OUTPUT
+            echo "message=All checks passed" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: 📱 Send Alert (Critical/Warning)
+        if: ${{ (steps.overall_status.outputs.status == 'critical' || steps.overall_status.outputs.status == 'degraded') && (inputs.alert_threshold == true || inputs.alert_threshold == null) }}
+        run: |
+          if [[ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]]; then
+            # Determine alert color and emoji
+            if [[ "${{ steps.overall_status.outputs.status }}" == "critical" ]]; then
+              color="danger"
+              emoji="🚨"
+            else
+              color="warning"  
+              emoji="⚠️"
+            fi
+            
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{
+                \"text\": \"$emoji BankIM Health Alert - ${{ matrix.environment }}\",
+                \"attachments\": [{
+                  \"color\": \"$color\",
+                  \"fields\": [
+                    {\"title\": \"Environment\", \"value\": \"${{ matrix.environment }}\", \"short\": true},
+                    {\"title\": \"Server\", \"value\": \"${{ steps.config.outputs.server_host }}\", \"short\": true},
+                    {\"title\": \"Status\", \"value\": \"${{ steps.overall_status.outputs.status }}\", \"short\": true},
+                    {\"title\": \"Message\", \"value\": \"${{ steps.overall_status.outputs.message }}\", \"short\": true},
+                    {\"title\": \"SSH\", \"value\": \"${{ steps.basic_health.outputs.ssh_status }}\", \"short\": true},
+                    {\"title\": \"API\", \"value\": \"${{ steps.basic_health.outputs.api_status }}\", \"short\": true},
+                    {\"title\": \"Client\", \"value\": \"${{ steps.basic_health.outputs.client_status }}\", \"short\": true},
+                    {\"title\": \"Database\", \"value\": \"${{ steps.database_health.outputs.database_status || 'Not checked' }}\", \"short\": true}
+                  ]
+                }]
+              }" \
+              ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+      
+      - name: ❌ Fail Job on Critical Issues
+        if: ${{ steps.overall_status.outputs.status == 'critical' }}
+        run: |
+          echo "❌ Critical health issues detected on ${{ matrix.environment }}"
+          echo "Status: ${{ steps.overall_status.outputs.status }}"
+          echo "Message: ${{ steps.overall_status.outputs.message }}"
+          exit 1
+
+  # ==============================================================================
+  # HEALTH CHECK SUMMARY
+  # ==============================================================================
+  
+  health-summary:
+    name: 📊 Health Check Summary
+    runs-on: ubuntu-latest
+    needs: [detect-targets, health-check]
+    if: always()
+    
+    steps:
+      - name: 📊 Overall Health Status
+        run: |
+          echo "# 🏥 BankIM Health Check Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Check Type:** ${{ inputs.check_type || 'scheduled' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "**Environments:** ${{ join(fromJson(needs.detect-targets.outputs.environments), ', ') }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Determine overall status
+          if [[ "${{ needs.health-check.result }}" == "success" ]]; then
+            echo "## ✅ Overall Status: HEALTHY" >> $GITHUB_STEP_SUMMARY
+            echo "All health checks passed successfully." >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.health-check.result }}" == "failure" ]]; then
+            echo "## ❌ Overall Status: CRITICAL ISSUES" >> $GITHUB_STEP_SUMMARY
+            echo "Critical health issues detected. Immediate attention required." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ⚠️ Overall Status: WARNINGS" >> $GITHUB_STEP_SUMMARY
+            echo "Some health warnings detected. Review recommended." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔗 Quick Actions" >> $GITHUB_STEP_SUMMARY
+          echo "- [View detailed logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Trigger emergency rollback](https://github.com/${{ github.repository }}/actions/workflows/rollback.yml)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Run manual deployment](https://github.com/${{ github.repository }}/actions/workflows/ci-cd-pipeline.yml)" >> $GITHUB_STEP_SUMMARY

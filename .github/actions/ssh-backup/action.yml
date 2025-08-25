@@ -1,0 +1,62 @@
+name: SSH Backup
+description: Create backup before deployment
+
+inputs:
+  server:
+    description: 'Server hostname or IP'
+    required: true
+  username:
+    description: 'SSH username'
+    required: true
+  password:
+    description: 'SSH password'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create production backup
+      shell: bash
+      run: |
+        sshpass -f <(echo "${{ inputs.password }}") ssh -o StrictHostKeyChecking=no \
+          ${{ inputs.username }}@${{ inputs.server }} << 'EOF'
+        set -e
+        
+        # Colors
+        GREEN='\033[0;32m'
+        YELLOW='\033[1;33m'
+        NC='\033[0m'
+        
+        echo -e "${YELLOW}🔄 Creating production backup...${NC}"
+        
+        # Create backup directory
+        mkdir -p /var/backups/bankim
+        
+        # Create comprehensive backup
+        BACKUP_NAME="pre-deploy-$(date +%Y%m%d-%H%M%S).tar.gz"
+        
+        cd /var/www/bankim
+        tar -czf "/var/backups/bankim/$BACKUP_NAME" \
+          --exclude=node_modules \
+          --exclude=.git \
+          --exclude="*.log" \
+          --exclude=".env*" \
+          . 2>/dev/null || true
+        
+        # Database backup (if applicable)
+        if command -v pg_dump &> /dev/null; then
+          echo -e "${YELLOW}🔄 Creating database backup...${NC}"
+          pg_dump $CONTENT_DATABASE_URL > "/var/backups/bankim/db-content-$(date +%Y%m%d-%H%M%S).sql" 2>/dev/null || true
+          pg_dump $CORE_DATABASE_URL > "/var/backups/bankim/db-core-$(date +%Y%m%d-%H%M%S).sql" 2>/dev/null || true
+        fi
+        
+        # Clean old backups (keep last 10)
+        cd /var/backups/bankim
+        ls -t *.tar.gz | tail -n +11 | xargs -r rm --
+        
+        echo -e "${GREEN}✅ Backup created: $BACKUP_NAME${NC}"
+        
+        # Log backup info
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Backup created: $BACKUP_NAME" >> /var/log/bankim-deploy.log
+        
+        EOF

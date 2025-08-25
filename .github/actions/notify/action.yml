@@ -1,0 +1,26 @@
+name: Deployment Notification
+description: Send deployment notifications
+
+inputs:
+  message:
+    description: 'Notification message'
+    required: true
+  webhook-url:
+    description: 'Slack webhook URL'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Send Slack notification
+      if: inputs.webhook-url != ''
+      shell: bash
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"${{ inputs.message }}\"}" \
+          "${{ inputs.webhook-url }}"
+    
+    - name: Create GitHub deployment status
+      shell: bash
+      run: |
+        echo "::notice::${{ inputs.message }}"

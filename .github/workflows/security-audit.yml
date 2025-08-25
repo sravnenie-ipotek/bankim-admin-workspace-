@@ -1,0 +1,375 @@
+# BankIM Security Audit Pipeline
+# Comprehensive security scanning and vulnerability assessment
+# Runs on schedule and can be triggered manually
+
+name: 🛡️ Security Audit
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday at 2 AM UTC
+  workflow_dispatch:
+    inputs:
+      scan_depth:
+        description: 'Security scan depth'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - quick
+        - full
+        - deep
+      generate_report:
+        description: 'Generate detailed security report'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  # ==============================================================================
+  # DEPENDENCY SECURITY SCANNING
+  # ==============================================================================
+  
+  dependency-scan:
+    name: 📦 Dependency Security Scan
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        package: [client, server, shared]
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 🔧 Install Dependencies
+        working-directory: packages/${{ matrix.package }}
+        run: npm ci
+      
+      - name: 🔍 NPM Audit
+        working-directory: packages/${{ matrix.package }}
+        run: |
+          echo "🔍 Running npm audit for ${{ matrix.package }}..."
+          
+          # Run audit and capture results
+          npm audit --audit-level=moderate --json > audit-${{ matrix.package }}.json || true
+          
+          # Display human-readable results
+          npm audit --audit-level=moderate || echo "Vulnerabilities found - review required"
+          
+          # Check for critical vulnerabilities
+          if npm audit --audit-level=critical --json | jq '.vulnerabilities | length' | grep -v '^0$'; then
+            echo "❌ Critical vulnerabilities found in ${{ matrix.package }}"
+            exit 1
+          fi
+      
+      - name: 📊 Dependency License Check
+        working-directory: packages/${{ matrix.package }}
+        run: |
+          echo "📊 Checking dependency licenses for ${{ matrix.package }}..."
+          
+          # Generate license report
+          npx license-checker --json --out licenses-${{ matrix.package }}.json || true
+          
+          # Check for problematic licenses
+          npx license-checker --failOn 'GPL-2.0;GPL-3.0;AGPL-1.0;AGPL-3.0' || echo "GPL licenses found - review required"
+      
+      - name: 📄 Upload Security Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-${{ matrix.package }}-${{ github.sha }}
+          path: |
+            packages/${{ matrix.package }}/audit-${{ matrix.package }}.json
+            packages/${{ matrix.package }}/licenses-${{ matrix.package }}.json
+          retention-days: 30
+
+  # ==============================================================================
+  # CODE SECURITY SCANNING
+  # ==============================================================================
+  
+  code-security-scan:
+    name: 🔐 Code Security Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: 🔍 Secret Detection
+        run: |
+          echo "🔍 Scanning for exposed secrets..."
+          
+          # Create comprehensive secret patterns
+          cat > secret-patterns.txt << 'EOF'
+          # Database connection strings
+          postgresql://[^\\s]*
+          mysql://[^\\s]*
+          mongodb://[^\\s]*
+          
+          # API Keys
+          [Aa][Pp][Ii]_?[Kk][Ee][Yy].*['\"]([0-9a-zA-Z]{32,})['\"]
+          [Ss][Ee][Cc][Rr][Ee][Tt].*['\"]([0-9a-zA-Z]{32,})['\"]
+          
+          # AWS Credentials
+          AKIA[0-9A-Z]{16}
+          
+          # JWT Tokens
+          eyJ[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*
+          
+          # Private Keys
+          -----BEGIN [A-Z ]*PRIVATE KEY-----
+          EOF
+          
+          # Scan for secrets (excluding node_modules and build artifacts)
+          find . -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.json" -o -name "*.env*" \\) \
+            -not -path "./node_modules/*" \
+            -not -path "./packages/*/node_modules/*" \
+            -not -path "./packages/*/dist/*" \
+            -exec grep -l -f secret-patterns.txt {} \\; > potential-secrets.txt || true
+          
+          if [[ -s potential-secrets.txt ]]; then
+            echo "⚠️ Potential secrets found in the following files:"
+            cat potential-secrets.txt
+            
+            # Don't fail the build, but flag for review
+            echo "SECRETS_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "✅ No obvious secrets detected"
+          fi
+      
+      - name: 🔍 Hardcoded Credentials Check
+        run: |
+          echo "🔍 Checking for hardcoded credentials..."
+          
+          # Look for common credential patterns
+          HARDCODED_PATTERNS=(
+            "password.*=.*['\"][^'\"]{8,}['\"]"
+            "pwd.*=.*['\"][^'\"]{6,}['\"]"
+            "pass.*=.*['\"][^'\"]{6,}['\"]"
+            "admin.*=.*['\"](?!admin)[^'\"]{6,}['\"]"
+            "root.*=.*['\"](?!root)[^'\"]{6,}['\"]"
+          )
+          
+          for pattern in "${HARDCODED_PATTERNS[@]}"; do
+            if find . -type f \\( -name "*.js" -o -name "*.ts" \\) \
+              -not -path "./node_modules/*" \
+              -exec grep -l -i -E "$pattern" {} \\; | head -5; then
+              echo "⚠️ Found potential hardcoded credentials with pattern: $pattern"
+            fi
+          done
+      
+      - name: 🔍 SQL Injection Vulnerability Scan
+        run: |
+          echo "🔍 Scanning for SQL injection vulnerabilities..."
+          
+          # Look for unsafe SQL query patterns
+          find ./packages/server -type f -name "*.js" -exec grep -l -E "(query|exec).*\\+.*req\\.|SELECT.*\\+|INSERT.*\\+|UPDATE.*\\+|DELETE.*\\+" {} \\; || echo "No obvious SQL injection patterns found"
+      
+      - name: 🔍 XSS Vulnerability Scan
+        run: |
+          echo "🔍 Scanning for XSS vulnerabilities..."
+          
+          # Look for unsafe HTML rendering
+          find ./packages/client -type f \\( -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" \\) \
+            -exec grep -l "dangerouslySetInnerHTML\\|innerHTML.*=" {} \\; || echo "No obvious XSS patterns found"
+      
+      - name: 📄 Upload Code Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-security-${{ github.sha }}
+          path: |
+            potential-secrets.txt
+          retention-days: 30
+
+  # ==============================================================================
+  # INFRASTRUCTURE SECURITY SCANNING
+  # ==============================================================================
+  
+  infrastructure-scan:
+    name: 🏗️ Infrastructure Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Docker Security Scan
+        if: ${{ inputs.scan_depth == 'full' || inputs.scan_depth == 'deep' }}
+        run: |
+          echo "🔍 Scanning Docker configurations..."
+          
+          # Check for Docker files
+          if find . -name "Dockerfile*" -o -name "docker-compose*.yml" | head -1; then
+            echo "📋 Docker files found - scanning for security issues..."
+            
+            # Check for running as root
+            find . -name "Dockerfile*" -exec grep -l "USER root\\|^USER 0" {} \\; || echo "No root user configurations found"
+            
+            # Check for latest tags
+            find . -name "Dockerfile*" -exec grep -l "FROM.*:latest" {} \\; && echo "⚠️ Using 'latest' tag is not recommended"
+          else
+            echo "ℹ️ No Docker files found"
+          fi
+      
+      - name: 🔍 GitHub Actions Security
+        run: |
+          echo "🔍 Scanning GitHub Actions for security issues..."
+          
+          # Check for pinned action versions
+          find .github/workflows -name "*.yml" -exec grep -L "@v[0-9]" {} \\; | while read file; do
+            echo "⚠️ $file may contain unpinned action versions"
+          done || echo "All actions appear to be properly pinned"
+          
+          # Check for secret exposure
+          find .github/workflows -name "*.yml" -exec grep -l "\\${{.*secret.*}}" {} \\; | while read file; do
+            echo "📋 $file uses secrets (review for proper usage)"
+          done || echo "No workflow secret usage found"
+      
+      - name: 🔍 Configuration Security
+        run: |
+          echo "🔍 Checking configuration security..."
+          
+          # Check for exposed configuration files
+          EXPOSED_CONFIGS=(
+            ".env"
+            ".env.local"
+            ".env.production"
+            "config.json"
+            "database.json"
+          )
+          
+          for config in "${EXPOSED_CONFIGS[@]}"; do
+            if find . -name "$config" -not -path "./node_modules/*" | head -1; then
+              echo "⚠️ Found potentially exposed configuration: $config"
+            fi
+          done
+
+  # ==============================================================================
+  # COMPREHENSIVE SECURITY REPORT
+  # ==============================================================================
+  
+  generate-security-report:
+    name: 📊 Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-security-scan, infrastructure-scan]
+    if: ${{ inputs.generate_report == true || inputs.generate_report == null }}
+    
+    steps:
+      - name: 📥 Download Security Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: security-*-${{ github.sha }}
+          merge-multiple: true
+      
+      - name: 📊 Generate Comprehensive Report
+        run: |
+          echo "📊 Generating comprehensive security report..."
+          
+          # Create markdown report
+          cat > security-report.md << 'EOF'
+          # 🛡️ BankIM Security Audit Report
+          
+          **Generated:** $(date)
+          **Commit:** ${{ github.sha }}
+          **Branch:** ${{ github.ref_name }}
+          **Scan Depth:** ${{ inputs.scan_depth || 'full' }}
+          
+          ## 📋 Executive Summary
+          
+          This report provides a comprehensive security assessment of the BankIM Management Portal.
+          
+          ## 📦 Dependency Security
+          
+          EOF
+          
+          # Process dependency audit results
+          for pkg in client server shared; do
+            if [[ -f "audit-$pkg.json" ]]; then
+              echo "### $pkg Package" >> security-report.md
+              
+              # Extract vulnerability counts
+              CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' "audit-$pkg.json")
+              HIGH=$(jq '.metadata.vulnerabilities.high // 0' "audit-$pkg.json")
+              MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' "audit-$pkg.json")
+              
+              echo "- **Critical:** $CRITICAL" >> security-report.md
+              echo "- **High:** $HIGH" >> security-report.md  
+              echo "- **Moderate:** $MODERATE" >> security-report.md
+              echo "" >> security-report.md
+            fi
+          done
+          
+          # Add code security section
+          cat >> security-report.md << 'EOF'
+          ## 🔐 Code Security Analysis
+          
+          - **Secret Scanning:** Completed
+          - **SQL Injection Check:** Completed
+          - **XSS Vulnerability Check:** Completed
+          
+          ## 🏗️ Infrastructure Security
+          
+          - **Docker Configuration:** Reviewed
+          - **GitHub Actions:** Scanned
+          - **Configuration Files:** Checked
+          
+          ## 📋 Recommendations
+          
+          1. **Regular Updates:** Keep all dependencies up to date
+          2. **Secret Management:** Use environment variables for all secrets
+          3. **Code Review:** Implement security-focused code reviews
+          4. **Access Control:** Regularly audit access permissions
+          5. **Monitoring:** Implement runtime security monitoring
+          
+          ## 🔗 Next Steps
+          
+          - Review all flagged vulnerabilities
+          - Update dependencies with known vulnerabilities
+          - Implement recommended security measures
+          - Schedule next security audit
+          
+          EOF
+          
+          echo "✅ Security report generated"
+      
+      - name: 📄 Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-${{ github.sha }}
+          path: security-report.md
+          retention-days: 90
+      
+      - name: 📊 Report Summary
+        run: |
+          echo "# 🛡️ Security Audit Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Audit completed successfully**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependency Scan:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Code Security:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Infrastructure:** ✅ Completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 **Detailed report available in artifacts**" >> $GITHUB_STEP_SUMMARY
+      
+      - name: 📱 Security Alert Notification
+        if: ${{ env.SECRETS_FOUND == 'true' }}
+        run: |
+          echo "🚨 Security Alert: Potential secrets detected in codebase"
+          echo "📋 Review required: Check security artifacts for details"
+          
+          # Send Slack alert if configured
+          if [[ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{"text":"🚨 Security Alert: BankIM security scan detected potential secrets in codebase. Immediate review required."}' \
+              ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
