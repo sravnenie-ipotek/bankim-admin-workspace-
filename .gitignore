@@ -114,12 +114,18 @@ cypress/screenshots/
 cypress/videos/
 cypress/fixtures/example.json
 cypress/reports/
+.cache/Cypress/
+packages/client/cypress/downloads/
+packages/client/cypress/screenshots/
+packages/client/cypress/videos/
 
 # SSH Connection Documentation (contains sensitive credentials)
 SSH_README.md
 ssh_connection.md
 server_credentials.md
 SSH_SERVER_HIERARCHY.md.claude-code/
+docs/ssh/sshToServer.md
+docs/ssh/*
 tests/browserstack/
 /.claude-code/
 
