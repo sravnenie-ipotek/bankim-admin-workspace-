@@ -106,20 +106,21 @@ const ContentMenu: React.FC = () => {
   }, [language]); // Re-fetch when language changes
 
   const handleViewClick = (item: MenuSection) => {
-    // Use the actual screen_location from the item
-    const screenLocation = item.screen_location;
+    // Use content_key as unique identifier instead of screen_location
+    // since all menu items share the same screen_location
+    const drillKey = item.content_key || item.screen_location;
     
     console.log(`📍 Navigating to menu drill for item:`, item);
-    console.log(`📍 Screen location: "${screenLocation}"`);
+    console.log(`📍 Using drill key: "${drillKey}"`);
     console.log(`📍 Content key: "${item.content_key}"`);
     
-    if (!screenLocation) {
-      console.error('❌ No screen_location found for item:', item);
+    if (!drillKey) {
+      console.error('❌ No content_key or screen_location found for item:', item);
       return;
     }
     
-    // Navigate to drill page using the actual screen_location
-    navigate(`/content/menu/drill/${screenLocation}`, { 
+    // Navigate to drill page using content_key as identifier
+    navigate(`/content/menu/drill/${encodeURIComponent(drillKey)}`, { 
       state: { 
         fromPage: currentPage,
         searchTerm: searchTerm 

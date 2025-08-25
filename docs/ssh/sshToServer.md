@@ -1,23 +1,47 @@
 # SSH Connection Instructions for Test Server
 
-## =� Quick Connection
+## 🔑 Server Connections
 
-Connect to the test/production server at `45.83.42.74` as root user:
-
+### Admin Panel TEST Server
+✅ **Status: Active and Accessible**
 ```bash
-ssh root@45.83.42.74
+ssh root@91.202.169.54
+# Password: V3sQm9pLxKz7Tf
+# Hostname: adminpaneltest-1
+# Application Directories: /var/www/bank-dev2, /var/www/bankim
 ```
 
-## =� Server Directory Structure
+### Admin Panel PROD Server
+✅ **Status: Active and Accessible**
+```bash
+ssh root@185.220.207.52
+# Password: 6Oz8AdEePUnbn8
+# Hostname: adminpanelprod-2
+# Application Directories: /var/www/bank-dev2, /var/www/bankim
+```
 
-Once connected, navigate to the application directory:
+### Legacy Test Server (Reference)
+```bash
+ssh root@45.83.42.74
+# This appears to be a different test environment
+```
+
+## 🌐 Server Directory Structure
+
+### Production Server (185.220.207.52)
+Once connected, you'll find two main application directories:
 
 ```bash
+# BankIM Admin Panel (Active)
+cd /var/www/bankim
+
+# Bank Dev2 Application (Legacy/Test)
 cd /var/www/bank-dev2
 ```
 
-**Key Directories:**
-- `/var/www/bank-dev2/` - Main application root
+**Key Directories (Production):**
+- `/var/www/bankim/` - BankIM admin panel application
+- `/var/www/bank-dev2/` - Bank Dev2 application root
 - `/var/www/bank-dev2/server/` - Backend Node.js server
 - `/var/www/bank-dev2/mainapp/build/` - Frontend build files
 - `/var/www/bank-dev2/uploads/` - File uploads storage
@@ -183,14 +207,31 @@ free -h
 df -h
 ```
 
-## =� Notes for Claude Code AI
+## 📊 Server Status Summary
 
-- **Server IP**: `45.83.42.74`
-- **Application Path**: `/var/www/bank-dev2/`
-- **Process Name**: `bankim-api`
-- **Database**: Railway PostgreSQL (two databases - main and content)
+### Active Servers
+- **TEST Server**: `91.202.169.54` ✅ (Active, accessible)
+  - Hostname: `adminpaneltest-1`
+  - Applications: `/var/www/bankim/`, `/var/www/bank-dev2/`
+  - Password: `V3sQm9pLxKz7Tf`
+  - Process: Check with `pm2 status`
+
+- **PROD Server**: `185.220.207.52` ✅ (Active, accessible)
+  - Hostname: `adminpanelprod-2`
+  - Applications: `/var/www/bankim/`, `/var/www/bank-dev2/`
+  - Password: `6Oz8AdEePUnbn8`
+  - Process: Check with `pm2 status`
+
+### Legacy Reference
+- **Old Test Server**: `45.83.42.74` (Different environment)
+  - Application Path: `/var/www/bank-dev2/`
+  - Process Name: `bankim-api`
+  - Database: Railway PostgreSQL
+
+### Deployment Notes
 - **Fastest Deployment**: Target file sync + PM2 restart (1-2 seconds)
 - **Full Deployment**: Complete rsync + npm install (2-5 minutes)
+- **Security**: Credentials should be stored in environment variables, not in documentation
 
 ### Recent Fixes Applied
 -  Database configuration now uses Railway in production

@@ -156,6 +156,17 @@ const JSONBDropdownEdit: React.FC = () => {
     try {
       console.log(`📋 Loading JSONB dropdown options for screen: ${screenLocation}`);
       
+      // Special handling for menu items - they don't have dropdown data
+      if (screenLocation === 'main_menu' || screenLocation?.includes('menu')) {
+        console.log(`📋 This is a menu item, creating basic options`);
+        setOptions([
+          { ru: 'Активно', he: 'פעיל' },
+          { ru: 'Неактивно', he: 'לא פעיל' },
+          { ru: 'Скрыто', he: 'מוסתר' }
+        ]);
+        return;
+      }
+      
       // Use the new JSONB API to get dropdown data
       const response = await apiService.getScreenDropdowns(screenLocation, 'ru');
       
@@ -211,7 +222,7 @@ const JSONBDropdownEdit: React.FC = () => {
           setOptions(contextualOptions);
         }
       } else {
-        console.error(`❌ JSONB API error for ${screenLocation}:`, response.error);
+        console.log(`ℹ️ No JSONB data for ${screenLocation}, using contextual defaults`);
         
         // Create contextual default options for this screen
         const contextualOptions = getContextualOptions(screenLocation, content?.translations?.ru, content?.translations?.he);

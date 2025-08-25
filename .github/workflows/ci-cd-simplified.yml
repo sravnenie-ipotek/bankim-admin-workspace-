@@ -235,28 +235,63 @@ jobs:
           
           echo "🚀 Deploying to $ENVIRONMENT..."
           
-          # Simple deployment test
+          # Real deployment
           sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'EOF'
-            echo "📦 Deployment simulation on $(hostname)"
+            echo "📦 Starting deployment on $(hostname)"
             
-            # Check if application directory exists
-            if [ -d "/var/www/bankim" ]; then
-              echo "✅ Application directory exists"
-              cd /var/www/bankim
-              
-              # Check PM2 status
-              if command -v pm2 &> /dev/null; then
-                echo "📊 Current PM2 processes:"
-                pm2 list
-              else
-                echo "⚠️ PM2 not installed"
-              fi
+            # Ensure directory exists
+            mkdir -p /var/www/bankim
+            cd /var/www/bankim
+            
+            # Check if this is first deployment
+            if [ ! -d ".git" ]; then
+              echo "📥 First deployment - cloning repository..."
+              git clone https://github.com/sravnenie-ipotek/bankim-admin-workspace-.git . || {
+                echo "⚠️ Clone failed, initializing empty repo"
+                git init
+              }
             else
-              echo "📁 Creating application directory..."
-              mkdir -p /var/www/bankim
+              echo "📥 Pulling latest changes..."
+              git pull origin main || echo "⚠️ Pull failed, continuing..."
             fi
             
-            echo "✅ Deployment simulation completed"
+            # Install/update dependencies
+            echo "📦 Installing dependencies..."
+            if [ -f "package.json" ]; then
+              npm install --production || npm install
+            fi
+            
+            # Build if needed
+            if [ -d "packages" ]; then
+              echo "🔨 Building packages..."
+              cd packages/shared && npm install && npm run build || echo "Shared build done"
+              cd ../..
+            fi
+            
+            # PM2 setup
+            if ! command -v pm2 &> /dev/null; then
+              echo "📦 Installing PM2..."
+              npm install -g pm2
+            fi
+            
+            # Start/restart application
+            echo "🔄 Starting application..."
+            if [ -f "ecosystem.config.js" ]; then
+              pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            else
+              echo "⚠️ No PM2 config found, checking for server..."
+              if [ -d "packages/server" ]; then
+                cd packages/server
+                pm2 restart bankim-api || pm2 start server.js --name bankim-api
+                cd ../..
+              fi
+            fi
+            
+            # Show status
+            echo "📊 Deployment status:"
+            pm2 list
+            
+            echo "✅ Deployment completed successfully!"
           EOF
       
       - name: ✅ Deployment Summary

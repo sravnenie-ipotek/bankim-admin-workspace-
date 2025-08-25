@@ -1,0 +1,4197 @@
+{
+  "export_date": "2025-08-24T08:22:47.520Z",
+  "total_items": 408,
+  "instructions": "Please fill in the translations for each item in Russian, Hebrew, and English",
+  "screens": {
+    "credit_income_employed": {
+      "item_count": 22,
+      "items": [
+        {
+          "id": "3450",
+          "content_key": "credit_income_employed.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3451",
+          "content_key": "credit_income_employed.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3452",
+          "content_key": "credit_income_employed.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3453",
+          "content_key": "credit_income_employed.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3454",
+          "content_key": "credit_income_employed.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3455",
+          "content_key": "credit_income_employed.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3456",
+          "content_key": "credit_income_employed.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3457",
+          "content_key": "credit_income_employed.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3458",
+          "content_key": "credit_income_employed.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3459",
+          "content_key": "credit_income_employed.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3460",
+          "content_key": "credit_income_employed.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3461",
+          "content_key": "credit_income_employed.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3462",
+          "content_key": "credit_income_employed.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3463",
+          "content_key": "credit_income_employed.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3464",
+          "content_key": "credit_income_employed.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3465",
+          "content_key": "credit_income_employed.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3466",
+          "content_key": "credit_income_employed.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3467",
+          "content_key": "credit_income_employed.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3468",
+          "content_key": "credit_income_employed.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3469",
+          "content_key": "credit_income_employed.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3470",
+          "content_key": "credit_income_employed.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3471",
+          "content_key": "credit_income_employed.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_personal_data": {
+      "item_count": 23,
+      "items": [
+        {
+          "id": "3389",
+          "content_key": "credit_personal_data.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3390",
+          "content_key": "credit_personal_data.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3391",
+          "content_key": "credit_personal_data.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3392",
+          "content_key": "credit_personal_data.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3393",
+          "content_key": "credit_personal_data.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3394",
+          "content_key": "credit_personal_data.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3395",
+          "content_key": "credit_personal_data.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3396",
+          "content_key": "credit_personal_data.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3397",
+          "content_key": "credit_personal_data.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3398",
+          "content_key": "credit_personal_data.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3399",
+          "content_key": "credit_personal_data.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3400",
+          "content_key": "credit_personal_data.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3401",
+          "content_key": "credit_personal_data.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3402",
+          "content_key": "credit_personal_data.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3403",
+          "content_key": "credit_personal_data.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3404",
+          "content_key": "credit_personal_data.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3405",
+          "content_key": "credit_personal_data.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3406",
+          "content_key": "credit_personal_data.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3407",
+          "content_key": "credit_personal_data.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3408",
+          "content_key": "credit_personal_data.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3409",
+          "content_key": "credit_personal_data.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3410",
+          "content_key": "credit_personal_data.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3411",
+          "content_key": "credit_personal_data.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_account_locked_modal": {
+      "item_count": 4,
+      "items": [
+        {
+          "id": "4072",
+          "content_key": "credit_refi_account_locked_modal.item_1",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4073",
+          "content_key": "credit_refi_account_locked_modal.item_2",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4074",
+          "content_key": "credit_refi_account_locked_modal.item_3",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4075",
+          "content_key": "credit_refi_account_locked_modal.item_4",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_coborrower_income": {
+      "item_count": 24,
+      "items": [
+        {
+          "id": "3799",
+          "content_key": "credit_refi_coborrower_income.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3800",
+          "content_key": "credit_refi_coborrower_income.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3801",
+          "content_key": "credit_refi_coborrower_income.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3802",
+          "content_key": "credit_refi_coborrower_income.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3803",
+          "content_key": "credit_refi_coborrower_income.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3804",
+          "content_key": "credit_refi_coborrower_income.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3805",
+          "content_key": "credit_refi_coborrower_income.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3806",
+          "content_key": "credit_refi_coborrower_income.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3807",
+          "content_key": "credit_refi_coborrower_income.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3808",
+          "content_key": "credit_refi_coborrower_income.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3809",
+          "content_key": "credit_refi_coborrower_income.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3810",
+          "content_key": "credit_refi_coborrower_income.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3811",
+          "content_key": "credit_refi_coborrower_income.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3812",
+          "content_key": "credit_refi_coborrower_income.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3813",
+          "content_key": "credit_refi_coborrower_income.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3814",
+          "content_key": "credit_refi_coborrower_income.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3815",
+          "content_key": "credit_refi_coborrower_income.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3816",
+          "content_key": "credit_refi_coborrower_income.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3817",
+          "content_key": "credit_refi_coborrower_income.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3818",
+          "content_key": "credit_refi_coborrower_income.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3819",
+          "content_key": "credit_refi_coborrower_income.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3820",
+          "content_key": "credit_refi_coborrower_income.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3821",
+          "content_key": "credit_refi_coborrower_income.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3822",
+          "content_key": "credit_refi_coborrower_income.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_coborrower_personal": {
+      "item_count": 25,
+      "items": [
+        {
+          "id": "3774",
+          "content_key": "credit_refi_coborrower_personal.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3775",
+          "content_key": "credit_refi_coborrower_personal.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3776",
+          "content_key": "credit_refi_coborrower_personal.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3777",
+          "content_key": "credit_refi_coborrower_personal.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3778",
+          "content_key": "credit_refi_coborrower_personal.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3779",
+          "content_key": "credit_refi_coborrower_personal.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3780",
+          "content_key": "credit_refi_coborrower_personal.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3781",
+          "content_key": "credit_refi_coborrower_personal.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3782",
+          "content_key": "credit_refi_coborrower_personal.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3783",
+          "content_key": "credit_refi_coborrower_personal.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3784",
+          "content_key": "credit_refi_coborrower_personal.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3785",
+          "content_key": "credit_refi_coborrower_personal.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3786",
+          "content_key": "credit_refi_coborrower_personal.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3787",
+          "content_key": "credit_refi_coborrower_personal.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3788",
+          "content_key": "credit_refi_coborrower_personal.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3789",
+          "content_key": "credit_refi_coborrower_personal.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3790",
+          "content_key": "credit_refi_coborrower_personal.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3791",
+          "content_key": "credit_refi_coborrower_personal.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3792",
+          "content_key": "credit_refi_coborrower_personal.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3793",
+          "content_key": "credit_refi_coborrower_personal.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3794",
+          "content_key": "credit_refi_coborrower_personal.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3795",
+          "content_key": "credit_refi_coborrower_personal.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3796",
+          "content_key": "credit_refi_coborrower_personal.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3797",
+          "content_key": "credit_refi_coborrower_personal.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3798",
+          "content_key": "credit_refi_coborrower_personal.item_25",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_income_form": {
+      "item_count": 22,
+      "items": [
+        {
+          "id": "3752",
+          "content_key": "credit_refi_income_form.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3753",
+          "content_key": "credit_refi_income_form.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3754",
+          "content_key": "credit_refi_income_form.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3755",
+          "content_key": "credit_refi_income_form.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3756",
+          "content_key": "credit_refi_income_form.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3757",
+          "content_key": "credit_refi_income_form.item_6",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3758",
+          "content_key": "credit_refi_income_form.item_7",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3759",
+          "content_key": "credit_refi_income_form.item_8",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3760",
+          "content_key": "credit_refi_income_form.item_9",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3761",
+          "content_key": "credit_refi_income_form.item_10",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3762",
+          "content_key": "credit_refi_income_form.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3763",
+          "content_key": "credit_refi_income_form.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3764",
+          "content_key": "credit_refi_income_form.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3765",
+          "content_key": "credit_refi_income_form.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3766",
+          "content_key": "credit_refi_income_form.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3767",
+          "content_key": "credit_refi_income_form.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3768",
+          "content_key": "credit_refi_income_form.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3769",
+          "content_key": "credit_refi_income_form.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3770",
+          "content_key": "credit_refi_income_form.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3771",
+          "content_key": "credit_refi_income_form.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3772",
+          "content_key": "credit_refi_income_form.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3773",
+          "content_key": "credit_refi_income_form.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_income_source_modal_1": {
+      "item_count": 18,
+      "items": [
+        {
+          "id": "4012",
+          "content_key": "credit_refi_income_source_modal_1.item_1",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4013",
+          "content_key": "credit_refi_income_source_modal_1.item_2",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4014",
+          "content_key": "credit_refi_income_source_modal_1.item_3",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4015",
+          "content_key": "credit_refi_income_source_modal_1.item_4",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4016",
+          "content_key": "credit_refi_income_source_modal_1.item_5",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4017",
+          "content_key": "credit_refi_income_source_modal_1.item_6",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4018",
+          "content_key": "credit_refi_income_source_modal_1.item_7",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4019",
+          "content_key": "credit_refi_income_source_modal_1.item_8",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4020",
+          "content_key": "credit_refi_income_source_modal_1.item_9",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4021",
+          "content_key": "credit_refi_income_source_modal_1.item_10",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4022",
+          "content_key": "credit_refi_income_source_modal_1.item_11",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4023",
+          "content_key": "credit_refi_income_source_modal_1.item_12",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4024",
+          "content_key": "credit_refi_income_source_modal_1.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4025",
+          "content_key": "credit_refi_income_source_modal_1.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4026",
+          "content_key": "credit_refi_income_source_modal_1.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4027",
+          "content_key": "credit_refi_income_source_modal_1.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4028",
+          "content_key": "credit_refi_income_source_modal_1.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4029",
+          "content_key": "credit_refi_income_source_modal_1.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_income_source_modal_2": {
+      "item_count": 18,
+      "items": [
+        {
+          "id": "4030",
+          "content_key": "credit_refi_income_source_modal_2.item_1",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4031",
+          "content_key": "credit_refi_income_source_modal_2.item_2",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4032",
+          "content_key": "credit_refi_income_source_modal_2.item_3",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4033",
+          "content_key": "credit_refi_income_source_modal_2.item_4",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4034",
+          "content_key": "credit_refi_income_source_modal_2.item_5",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4035",
+          "content_key": "credit_refi_income_source_modal_2.item_6",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4036",
+          "content_key": "credit_refi_income_source_modal_2.item_7",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4037",
+          "content_key": "credit_refi_income_source_modal_2.item_8",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4038",
+          "content_key": "credit_refi_income_source_modal_2.item_9",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4039",
+          "content_key": "credit_refi_income_source_modal_2.item_10",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4040",
+          "content_key": "credit_refi_income_source_modal_2.item_11",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4041",
+          "content_key": "credit_refi_income_source_modal_2.item_12",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4042",
+          "content_key": "credit_refi_income_source_modal_2.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4043",
+          "content_key": "credit_refi_income_source_modal_2.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4044",
+          "content_key": "credit_refi_income_source_modal_2.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4045",
+          "content_key": "credit_refi_income_source_modal_2.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4046",
+          "content_key": "credit_refi_income_source_modal_2.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4047",
+          "content_key": "credit_refi_income_source_modal_2.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_loading": {
+      "item_count": 6,
+      "items": [
+        {
+          "id": "3823",
+          "content_key": "credit_refi_loading.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3824",
+          "content_key": "credit_refi_loading.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3825",
+          "content_key": "credit_refi_loading.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3826",
+          "content_key": "credit_refi_loading.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3827",
+          "content_key": "credit_refi_loading.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3828",
+          "content_key": "credit_refi_loading.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_login": {
+      "item_count": 12,
+      "items": [
+        {
+          "id": "3862",
+          "content_key": "credit_refi_login.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3863",
+          "content_key": "credit_refi_login.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3864",
+          "content_key": "credit_refi_login.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3865",
+          "content_key": "credit_refi_login.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3866",
+          "content_key": "credit_refi_login.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3867",
+          "content_key": "credit_refi_login.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3868",
+          "content_key": "credit_refi_login.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3869",
+          "content_key": "credit_refi_login.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3870",
+          "content_key": "credit_refi_login.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3871",
+          "content_key": "credit_refi_login.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3872",
+          "content_key": "credit_refi_login.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3873",
+          "content_key": "credit_refi_login.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_obligation_modal_1": {
+      "item_count": 16,
+      "items": [
+        {
+          "id": "4048",
+          "content_key": "credit_refi_obligation_modal_1.item_1",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4049",
+          "content_key": "credit_refi_obligation_modal_1.item_2",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4050",
+          "content_key": "credit_refi_obligation_modal_1.item_3",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4051",
+          "content_key": "credit_refi_obligation_modal_1.item_4",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4052",
+          "content_key": "credit_refi_obligation_modal_1.item_5",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4053",
+          "content_key": "credit_refi_obligation_modal_1.item_6",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4054",
+          "content_key": "credit_refi_obligation_modal_1.item_7",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4055",
+          "content_key": "credit_refi_obligation_modal_1.item_8",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4056",
+          "content_key": "credit_refi_obligation_modal_1.item_9",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4057",
+          "content_key": "credit_refi_obligation_modal_1.item_10",
+          "component_type": "field",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4058",
+          "content_key": "credit_refi_obligation_modal_1.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4059",
+          "content_key": "credit_refi_obligation_modal_1.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4060",
+          "content_key": "credit_refi_obligation_modal_1.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4061",
+          "content_key": "credit_refi_obligation_modal_1.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4062",
+          "content_key": "credit_refi_obligation_modal_1.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4063",
+          "content_key": "credit_refi_obligation_modal_1.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_partner_income": {
+      "item_count": 26,
+      "items": [
+        {
+          "id": "3726",
+          "content_key": "credit_refi_partner_income.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3727",
+          "content_key": "credit_refi_partner_income.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3728",
+          "content_key": "credit_refi_partner_income.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3729",
+          "content_key": "credit_refi_partner_income.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3730",
+          "content_key": "credit_refi_partner_income.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3731",
+          "content_key": "credit_refi_partner_income.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3732",
+          "content_key": "credit_refi_partner_income.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3733",
+          "content_key": "credit_refi_partner_income.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3734",
+          "content_key": "credit_refi_partner_income.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3735",
+          "content_key": "credit_refi_partner_income.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3736",
+          "content_key": "credit_refi_partner_income.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3737",
+          "content_key": "credit_refi_partner_income.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3738",
+          "content_key": "credit_refi_partner_income.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3739",
+          "content_key": "credit_refi_partner_income.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3740",
+          "content_key": "credit_refi_partner_income.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3741",
+          "content_key": "credit_refi_partner_income.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3742",
+          "content_key": "credit_refi_partner_income.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3743",
+          "content_key": "credit_refi_partner_income.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3744",
+          "content_key": "credit_refi_partner_income.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3745",
+          "content_key": "credit_refi_partner_income.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3746",
+          "content_key": "credit_refi_partner_income.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3747",
+          "content_key": "credit_refi_partner_income.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3748",
+          "content_key": "credit_refi_partner_income.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3749",
+          "content_key": "credit_refi_partner_income.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3750",
+          "content_key": "credit_refi_partner_income.item_25",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3751",
+          "content_key": "credit_refi_partner_income.item_26",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_partner_personal": {
+      "item_count": 23,
+      "items": [
+        {
+          "id": "3703",
+          "content_key": "credit_refi_partner_personal.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3704",
+          "content_key": "credit_refi_partner_personal.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3705",
+          "content_key": "credit_refi_partner_personal.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3706",
+          "content_key": "credit_refi_partner_personal.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3707",
+          "content_key": "credit_refi_partner_personal.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3708",
+          "content_key": "credit_refi_partner_personal.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3709",
+          "content_key": "credit_refi_partner_personal.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3710",
+          "content_key": "credit_refi_partner_personal.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3711",
+          "content_key": "credit_refi_partner_personal.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3712",
+          "content_key": "credit_refi_partner_personal.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3713",
+          "content_key": "credit_refi_partner_personal.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3714",
+          "content_key": "credit_refi_partner_personal.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3715",
+          "content_key": "credit_refi_partner_personal.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3716",
+          "content_key": "credit_refi_partner_personal.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3717",
+          "content_key": "credit_refi_partner_personal.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3718",
+          "content_key": "credit_refi_partner_personal.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3719",
+          "content_key": "credit_refi_partner_personal.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3720",
+          "content_key": "credit_refi_partner_personal.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3721",
+          "content_key": "credit_refi_partner_personal.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3722",
+          "content_key": "credit_refi_partner_personal.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3723",
+          "content_key": "credit_refi_partner_personal.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3724",
+          "content_key": "credit_refi_partner_personal.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3725",
+          "content_key": "credit_refi_partner_personal.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_password_reset": {
+      "item_count": 10,
+      "items": [
+        {
+          "id": "3874",
+          "content_key": "credit_refi_password_reset.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3875",
+          "content_key": "credit_refi_password_reset.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3876",
+          "content_key": "credit_refi_password_reset.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3877",
+          "content_key": "credit_refi_password_reset.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3878",
+          "content_key": "credit_refi_password_reset.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3879",
+          "content_key": "credit_refi_password_reset.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3880",
+          "content_key": "credit_refi_password_reset.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3881",
+          "content_key": "credit_refi_password_reset.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3882",
+          "content_key": "credit_refi_password_reset.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3883",
+          "content_key": "credit_refi_password_reset.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_personal_data": {
+      "item_count": 25,
+      "items": [
+        {
+          "id": "3678",
+          "content_key": "credit_refi_personal_data.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3679",
+          "content_key": "credit_refi_personal_data.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3680",
+          "content_key": "credit_refi_personal_data.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3681",
+          "content_key": "credit_refi_personal_data.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3682",
+          "content_key": "credit_refi_personal_data.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3683",
+          "content_key": "credit_refi_personal_data.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3684",
+          "content_key": "credit_refi_personal_data.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3685",
+          "content_key": "credit_refi_personal_data.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3686",
+          "content_key": "credit_refi_personal_data.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3687",
+          "content_key": "credit_refi_personal_data.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3688",
+          "content_key": "credit_refi_personal_data.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3689",
+          "content_key": "credit_refi_personal_data.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3690",
+          "content_key": "credit_refi_personal_data.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3691",
+          "content_key": "credit_refi_personal_data.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3692",
+          "content_key": "credit_refi_personal_data.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3693",
+          "content_key": "credit_refi_personal_data.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3694",
+          "content_key": "credit_refi_personal_data.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3695",
+          "content_key": "credit_refi_personal_data.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3696",
+          "content_key": "credit_refi_personal_data.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3697",
+          "content_key": "credit_refi_personal_data.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3698",
+          "content_key": "credit_refi_personal_data.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3699",
+          "content_key": "credit_refi_personal_data.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3700",
+          "content_key": "credit_refi_personal_data.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3701",
+          "content_key": "credit_refi_personal_data.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3702",
+          "content_key": "credit_refi_personal_data.item_25",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_phone_verification": {
+      "item_count": 18,
+      "items": [
+        {
+          "id": "3660",
+          "content_key": "credit_refi_phone_verification.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3661",
+          "content_key": "credit_refi_phone_verification.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3662",
+          "content_key": "credit_refi_phone_verification.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3663",
+          "content_key": "credit_refi_phone_verification.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3664",
+          "content_key": "credit_refi_phone_verification.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3665",
+          "content_key": "credit_refi_phone_verification.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3666",
+          "content_key": "credit_refi_phone_verification.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3667",
+          "content_key": "credit_refi_phone_verification.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3668",
+          "content_key": "credit_refi_phone_verification.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3669",
+          "content_key": "credit_refi_phone_verification.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3670",
+          "content_key": "credit_refi_phone_verification.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3671",
+          "content_key": "credit_refi_phone_verification.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3672",
+          "content_key": "credit_refi_phone_verification.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3673",
+          "content_key": "credit_refi_phone_verification.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3674",
+          "content_key": "credit_refi_phone_verification.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3675",
+          "content_key": "credit_refi_phone_verification.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3676",
+          "content_key": "credit_refi_phone_verification.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3677",
+          "content_key": "credit_refi_phone_verification.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_program_selection": {
+      "item_count": 15,
+      "items": [
+        {
+          "id": "3829",
+          "content_key": "credit_refi_program_selection.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3830",
+          "content_key": "credit_refi_program_selection.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3831",
+          "content_key": "credit_refi_program_selection.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3832",
+          "content_key": "credit_refi_program_selection.item_4",
+          "component_type": "option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3833",
+          "content_key": "credit_refi_program_selection.item_5",
+          "component_type": "option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3834",
+          "content_key": "credit_refi_program_selection.item_6",
+          "component_type": "option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3835",
+          "content_key": "credit_refi_program_selection.item_7",
+          "component_type": "option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3836",
+          "content_key": "credit_refi_program_selection.item_8",
+          "component_type": "option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3837",
+          "content_key": "credit_refi_program_selection.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3838",
+          "content_key": "credit_refi_program_selection.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3839",
+          "content_key": "credit_refi_program_selection.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3840",
+          "content_key": "credit_refi_program_selection.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3841",
+          "content_key": "credit_refi_program_selection.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3842",
+          "content_key": "credit_refi_program_selection.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3843",
+          "content_key": "credit_refi_program_selection.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_registration": {
+      "item_count": 18,
+      "items": [
+        {
+          "id": "3844",
+          "content_key": "credit_refi_registration.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3845",
+          "content_key": "credit_refi_registration.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3846",
+          "content_key": "credit_refi_registration.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3847",
+          "content_key": "credit_refi_registration.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3848",
+          "content_key": "credit_refi_registration.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3849",
+          "content_key": "credit_refi_registration.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3850",
+          "content_key": "credit_refi_registration.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3851",
+          "content_key": "credit_refi_registration.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3852",
+          "content_key": "credit_refi_registration.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3853",
+          "content_key": "credit_refi_registration.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3854",
+          "content_key": "credit_refi_registration.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3855",
+          "content_key": "credit_refi_registration.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3856",
+          "content_key": "credit_refi_registration.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3857",
+          "content_key": "credit_refi_registration.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3858",
+          "content_key": "credit_refi_registration.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3859",
+          "content_key": "credit_refi_registration.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3860",
+          "content_key": "credit_refi_registration.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3861",
+          "content_key": "credit_refi_registration.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_registration_success_toast": {
+      "item_count": 2,
+      "items": [
+        {
+          "id": "4064",
+          "content_key": "credit_refi_registration_success_toast.item_1",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4065",
+          "content_key": "credit_refi_registration_success_toast.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_step1": {
+      "item_count": 41,
+      "items": [
+        {
+          "id": "3598",
+          "content_key": "credit_refi_step1.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3599",
+          "content_key": "credit_refi_step1.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3600",
+          "content_key": "credit_refi_step1.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3601",
+          "content_key": "credit_refi_step1.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3602",
+          "content_key": "credit_refi_step1.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3603",
+          "content_key": "credit_refi_step1.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3604",
+          "content_key": "credit_refi_step1.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3605",
+          "content_key": "credit_refi_step1.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3606",
+          "content_key": "credit_refi_step1.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3607",
+          "content_key": "credit_refi_step1.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3608",
+          "content_key": "credit_refi_step1.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3609",
+          "content_key": "credit_refi_step1.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3610",
+          "content_key": "credit_refi_step1.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3611",
+          "content_key": "credit_refi_step1.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3612",
+          "content_key": "credit_refi_step1.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3613",
+          "content_key": "credit_refi_step1.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3614",
+          "content_key": "credit_refi_step1.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3615",
+          "content_key": "credit_refi_step1.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3616",
+          "content_key": "credit_refi_step1.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3617",
+          "content_key": "credit_refi_step1.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3618",
+          "content_key": "credit_refi_step1.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3619",
+          "content_key": "credit_refi_step1.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3620",
+          "content_key": "credit_refi_step1.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3621",
+          "content_key": "credit_refi_step1.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3622",
+          "content_key": "credit_refi_step1.item_25",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3623",
+          "content_key": "credit_refi_step1.item_26",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3624",
+          "content_key": "credit_refi_step1.item_27",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3625",
+          "content_key": "credit_refi_step1.item_28",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4174",
+          "content_key": "credit_refi_step1.field.refinance_purpose_ph",
+          "component_type": "placeholder",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4175",
+          "content_key": "credit_refi_step1.field.refinance_purpose_cash_out",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4176",
+          "content_key": "credit_refi_step1.field.refinance_purpose_consolidate_debt",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4177",
+          "content_key": "credit_refi_step1.field.refinance_purpose",
+          "component_type": "dropdown_container",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4178",
+          "content_key": "credit_refi_step1.field.refinance_purpose_lower_rate",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4179",
+          "content_key": "credit_refi_step1.field.current_lender",
+          "component_type": "dropdown_container",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4180",
+          "content_key": "credit_refi_step1.field.refinance_purpose_lower_payment",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4181",
+          "content_key": "credit_refi_step1.field.current_lender_ph",
+          "component_type": "placeholder",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4182",
+          "content_key": "credit_refi_step1.field.current_lender_other",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4183",
+          "content_key": "credit_refi_step1.field.current_lender_mizrahi_tefahot",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4184",
+          "content_key": "credit_refi_step1.field.current_lender_discount_bank",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4185",
+          "content_key": "credit_refi_step1.field.current_lender_bank_leumi",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4186",
+          "content_key": "credit_refi_step1.field.current_lender_bank_hapoalim",
+          "component_type": "dropdown_option",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_step2": {
+      "item_count": 34,
+      "items": [
+        {
+          "id": "3626",
+          "content_key": "credit_refi_step2.item_1",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3627",
+          "content_key": "credit_refi_step2.item_2",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3628",
+          "content_key": "credit_refi_step2.item_3",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3629",
+          "content_key": "credit_refi_step2.item_4",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3630",
+          "content_key": "credit_refi_step2.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3631",
+          "content_key": "credit_refi_step2.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3632",
+          "content_key": "credit_refi_step2.item_7",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3633",
+          "content_key": "credit_refi_step2.item_8",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3634",
+          "content_key": "credit_refi_step2.item_9",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3635",
+          "content_key": "credit_refi_step2.item_10",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3636",
+          "content_key": "credit_refi_step2.item_11",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3637",
+          "content_key": "credit_refi_step2.item_12",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3638",
+          "content_key": "credit_refi_step2.item_13",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3639",
+          "content_key": "credit_refi_step2.item_14",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3640",
+          "content_key": "credit_refi_step2.item_15",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3641",
+          "content_key": "credit_refi_step2.item_16",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3642",
+          "content_key": "credit_refi_step2.item_17",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3643",
+          "content_key": "credit_refi_step2.item_18",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3644",
+          "content_key": "credit_refi_step2.item_19",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3645",
+          "content_key": "credit_refi_step2.item_20",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3646",
+          "content_key": "credit_refi_step2.item_21",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3647",
+          "content_key": "credit_refi_step2.item_22",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3648",
+          "content_key": "credit_refi_step2.item_23",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3649",
+          "content_key": "credit_refi_step2.item_24",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3650",
+          "content_key": "credit_refi_step2.item_25",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3651",
+          "content_key": "credit_refi_step2.item_26",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3652",
+          "content_key": "credit_refi_step2.item_27",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3653",
+          "content_key": "credit_refi_step2.item_28",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3654",
+          "content_key": "credit_refi_step2.item_29",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3655",
+          "content_key": "credit_refi_step2.item_30",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3656",
+          "content_key": "credit_refi_step2.item_31",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3657",
+          "content_key": "credit_refi_step2.item_32",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3658",
+          "content_key": "credit_refi_step2.item_33",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "3659",
+          "content_key": "credit_refi_step2.item_34",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    "credit_refi_wrong_password_modal": {
+      "item_count": 6,
+      "items": [
+        {
+          "id": "4066",
+          "content_key": "credit_refi_wrong_password_modal.item_1",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4067",
+          "content_key": "credit_refi_wrong_password_modal.item_2",
+          "component_type": "button",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4068",
+          "content_key": "credit_refi_wrong_password_modal.item_3",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4069",
+          "content_key": "credit_refi_wrong_password_modal.item_4",
+          "component_type": "title",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4070",
+          "content_key": "credit_refi_wrong_password_modal.item_5",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        },
+        {
+          "id": "4071",
+          "content_key": "credit_refi_wrong_password_modal.item_6",
+          "component_type": "text",
+          "translations_needed": {
+            "ru": "",
+            "he": "",
+            "en": ""
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cache Clear Test</title>
+</head>
+<body>
+    <h1>Clear Frontend Cache Test</h1>
+    <button onclick="clearCache()">Clear Cache & Test API</button>
+    <div id="results"></div>
+    
+    <script>
+        async function clearCache() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Clearing cache and testing APIs...</p>';
+            
+            try {
+                // Test credit-refi drill API directly
+                console.log('Testing credit-refi step1 API...');
+                const response1 = await fetch('/api/content/credit-refi/drill/credit_refi_step1');
+                const data1 = await response1.json();
+                
+                console.log('Testing credit-refi step2 API...');  
+                const response2 = await fetch('/api/content/credit-refi/drill/credit_refi_step2');
+                const data2 = await response2.json();
+                
+                results.innerHTML = `
+                    <h2>API Test Results:</h2>
+                    <h3>Step 1:</h3>
+                    <p>Success: ${data1.success}</p>
+                    <p>Action Count: ${data1.data?.actionCount || 0}</p>
+                    <p>First Action: ${data1.data?.actions?.[0]?.translations?.en || 'N/A'}</p>
+                    
+                    <h3>Step 2:</h3>
+                    <p>Success: ${data2.success}</p>
+                    <p>Action Count: ${data2.data?.actionCount || 0}</p>
+                    <p>First Action: ${data2.data?.actions?.[0]?.translations?.en || 'N/A'}</p>
+                    
+                    <h3>Raw Responses:</h3>
+                    <pre>${JSON.stringify({step1: data1, step2: data2}, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

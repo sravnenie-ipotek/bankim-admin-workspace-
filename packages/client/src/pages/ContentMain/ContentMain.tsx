@@ -51,7 +51,31 @@ const ContentMain: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        console.log(`🔄 Fetching content pages from API for language: ${language}...`);
+        console.log(`🔄 Fetching content pages with actual counts from API...`);
+        
+        // First, fetch the actual counts from the database
+        let actualCounts = {
+          main: 0,
+          menu: 0,
+          mortgage: 0,
+          'mortgage-refi': 0,
+          credit: 0,
+          'credit-refi': 0,
+          general: 0
+        };
+        
+        try {
+          const summaryResponse = await fetch('/api/content/main-summary');
+          if (summaryResponse.ok) {
+            const summaryData = await summaryResponse.json();
+            if (summaryData.status === 'success' && summaryData.summary) {
+              actualCounts = summaryData.summary;
+              console.log('✅ Fetched actual counts from database:', actualCounts);
+            }
+          }
+        } catch (error) {
+          console.warn('⚠️ Could not fetch actual counts, using defaults:', error);
+        }
         
         // Fetch main content in the selected language
         const mainResponse = await apiService.getContentByScreen('main', language);
@@ -131,7 +155,7 @@ const ContentMain: React.FC = () => {
                 id: 'main',
                 title: titles.main,
                 pageNumber: 1,
-                actionCount: 7,
+                actionCount: actualCounts.main || 7,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '#'
               },
@@ -139,7 +163,7 @@ const ContentMain: React.FC = () => {
                 id: 'menu',
                 title: titles.menu,
                 pageNumber: 2,
-                actionCount: 17,
+                actionCount: actualCounts.menu || 17,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/menu'
               },
@@ -147,7 +171,7 @@ const ContentMain: React.FC = () => {
                 id: 'mortgage',
                 title: titles.mortgage,
                 pageNumber: 3,
-                actionCount: 12,
+                actionCount: actualCounts.mortgage || 12,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/mortgage'
               },
@@ -155,7 +179,7 @@ const ContentMain: React.FC = () => {
                 id: 'mortgage-refi',
                 title: titles['mortgage-refi'],
                 pageNumber: 4,
-                actionCount: 8,
+                actionCount: actualCounts['mortgage-refi'] || 8,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/mortgage-refi'
               },
@@ -163,7 +187,7 @@ const ContentMain: React.FC = () => {
                 id: 'credit',
                 title: titles.credit,
                 pageNumber: 5,
-                actionCount: 9,
+                actionCount: actualCounts.credit || 9,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/credit'
               },
@@ -171,7 +195,7 @@ const ContentMain: React.FC = () => {
                 id: 'credit-refi',
                 title: titles['credit-refi'],
                 pageNumber: 6,
-                actionCount: 6,
+                actionCount: actualCounts['credit-refi'] || 6,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/credit-refi'
               },
@@ -179,7 +203,7 @@ const ContentMain: React.FC = () => {
                 id: 'general',
                 title: titles.general,
                 pageNumber: 7,
-                actionCount: 15,
+                actionCount: actualCounts.general || 15,
                 lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
                 path: '/content/general'
               }
@@ -230,7 +254,7 @@ const ContentMain: React.FC = () => {
               id: 'main',
               title: titles.main,
               pageNumber: 1,
-              actionCount: 7,
+              actionCount: actualCounts.main || 7,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '#'
             },
@@ -238,7 +262,7 @@ const ContentMain: React.FC = () => {
               id: 'menu',
               title: titles.menu,
               pageNumber: 2,
-              actionCount: 17,
+              actionCount: actualCounts.menu || 17,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/menu'
             },
@@ -246,7 +270,7 @@ const ContentMain: React.FC = () => {
               id: 'mortgage',
               title: titles.mortgage,
               pageNumber: 3,
-              actionCount: 12,
+              actionCount: actualCounts.mortgage || 12,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/mortgage'
             },
@@ -254,7 +278,7 @@ const ContentMain: React.FC = () => {
               id: 'mortgage-refi',
               title: titles['mortgage-refi'],
               pageNumber: 4,
-              actionCount: 8,
+              actionCount: actualCounts['mortgage-refi'] || 8,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/mortgage-refi'
             },
@@ -262,7 +286,7 @@ const ContentMain: React.FC = () => {
               id: 'credit',
               title: titles.credit,
               pageNumber: 5,
-              actionCount: 9,
+              actionCount: actualCounts.credit || 9,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/credit'
             },
@@ -270,7 +294,7 @@ const ContentMain: React.FC = () => {
               id: 'credit-refi',
               title: titles['credit-refi'],
               pageNumber: 6,
-              actionCount: 6,
+              actionCount: actualCounts['credit-refi'] || 6,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/credit-refi'
             },
@@ -278,7 +302,7 @@ const ContentMain: React.FC = () => {
               id: 'general',
               title: titles.general,
               pageNumber: 7,
-              actionCount: 15,
+              actionCount: actualCounts.general || 15,
               lastModified: new Date().toLocaleString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'ru-RU'),
               path: '/content/general'
             }

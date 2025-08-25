@@ -99,6 +99,10 @@ const safeQuery = async (text, params = []) => {
   }
 };
 
+// Import and setup banks endpoints
+const setupBanksEndpoints = require('./endpoints/banks-endpoints');
+setupBanksEndpoints(app, safeQuery);
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -161,8 +165,10 @@ app.get('/api/content/menu', async (req, res) => {
       data: {
         status: 'success',
         items: menuContent,
+        menu_content: menuContent,  // Add menu_content for frontend compatibility
+        content_count: menuContent.length,  // Add content_count for frontend
         total_items: menuContent.length,
-        screen_locations: ['menu_navigation', 'navigation_menu']
+        screen_locations: ['menu_navigation', 'navigation_menu', 'main_menu']
       }
     });
     
@@ -236,6 +242,124 @@ app.get('/api/content/menu/translations', async (req, res) => {
   } catch (error) {
     logSlowQuery(`menu-translations-ERROR`, startTime, 0);
     console.error('❌ Get menu translations error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Menu drill endpoint - for viewing items in a specific menu location or content_key
+app.get('/api/content/menu/drill/:identifier', async (req, res) => {
+  const startTime = Date.now();
+  
+  try {
+    const { identifier } = req.params;
+    const decodedIdentifier = decodeURIComponent(identifier);
+    console.log(`🔄 Fetching menu drill content for: ${decodedIdentifier}`);
+    
+    // First, try to find if this is a content_key
+    // If it starts with "menu.", it's likely a content_key
+    const isContentKey = decodedIdentifier.startsWith('menu.');
+    
+    let result;
+    if (isContentKey) {
+      // For individual menu items, we should return empty or placeholder content
+      // since these are menu items without drill-down content
+      console.log(`📋 This is a menu item (${decodedIdentifier}), returning item details`);
+      
+      result = await pool.query(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ci.component_type,
+          ci.category,
+          ci.screen_location,
+          ci.is_active,
+          ci.page_number,
+          ci.updated_at,
+          MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
+          MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
+          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+          AND ct.status IN ('approved', 'draft')
+        WHERE ci.content_key = $1
+          AND ci.is_active = TRUE
+        GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
+                 ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
+        ORDER BY ci.page_number, ci.id
+      `, [decodedIdentifier]);
+    } else {
+      // Original logic for screen_location
+      result = await pool.query(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ci.component_type,
+          ci.category,
+          ci.screen_location,
+          ci.is_active,
+          ci.page_number,
+          ci.updated_at,
+          MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END) as text_ru,
+          MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END) as text_he,
+          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END) as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+          AND ct.status IN ('approved', 'draft')
+        WHERE ci.screen_location = $1
+          AND ci.is_active = TRUE
+        GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, 
+                 ci.screen_location, ci.is_active, ci.page_number, ci.updated_at
+        ORDER BY ci.page_number, ci.id
+      `, [decodedIdentifier]);
+    }
+    
+    console.log(`🔍 Menu drill query returned ${result.rows.length} rows for ${decodedIdentifier}`);
+    
+    const drillContent = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      is_active: row.is_active,
+      page_number: row.page_number,
+      translations: {
+        ru: row.text_ru || 'Translation missing',
+        he: row.text_he || 'Translation missing',
+        en: row.text_en || 'Translation missing'
+      },
+      updated_at: row.updated_at
+    }));
+    
+    // Add action numbers to each item
+    const drillContentWithNumbers = drillContent.map((item, index) => ({
+      ...item,
+      actionNumber: index + 1
+    }));
+    
+    // Get page title from the first item's translation or use identifier
+    const pageTitle = drillContent.length > 0 && drillContent[0].translations?.ru 
+      ? drillContent[0].translations.ru 
+      : `Menu: ${decodedIdentifier}`;
+    
+    res.json({
+      success: true,
+      data: {
+        status: 'success',
+        screen_location: decodedIdentifier,
+        pageTitle: pageTitle,
+        actionCount: drillContentWithNumbers.length,
+        actions: drillContentWithNumbers,  // Frontend expects 'actions' not 'items'
+        items: drillContentWithNumbers,  // Keep for backward compatibility
+        total_items: drillContentWithNumbers.length
+      }
+    });
+    
+    logSlowQuery(`menu-drill-${decodedIdentifier}`, startTime, drillContent.length);
+    console.log(`✅ Successfully returned menu drill content for ${decodedIdentifier} (${drillContent.length} items)`);
+  } catch (error) {
+    logSlowQuery(`menu-drill-ERROR`, startTime, 0);
+    console.error('❌ Get menu drill content error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -1772,6 +1896,167 @@ app.get('/api/content/mortgage/all-items', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: error.message 
+    });
+  }
+});
+
+/**
+ * Get main content summary with actual counts
+ * GET /api/content/main-summary
+ * Returns summary of content sections with real item counts from database
+ */
+app.get('/api/content/main-summary', async (req, res) => {
+  try {
+    console.log('🔄 Fetching main content summary with actual counts...');
+    
+    // Get actual counts for each section from database
+    const result = await safeQuery(`
+      WITH section_counts AS (
+        SELECT 
+          CASE 
+            WHEN screen_location LIKE 'menu%' THEN 'menu'
+            WHEN screen_location LIKE 'mortgage_refi%' OR screen_location LIKE 'refinance_%' THEN 'mortgage-refi'
+            WHEN screen_location LIKE 'mortgage%' THEN 'mortgage'
+            WHEN screen_location LIKE 'credit_refi%' THEN 'credit-refi'
+            WHEN screen_location LIKE 'credit%' THEN 'credit'
+            WHEN screen_location IN ('home_page', 'login_page', 'registration_page', 
+                                    'personal_data_management', 'account_settings',
+                                    'privacy_policy', 'terms_of_service', 'help_center',
+                                    'contact_us', 'about_us', 'faq') THEN 'general'
+            ELSE 'main'
+          END as section,
+          COUNT(DISTINCT ci.id) as item_count
+        FROM content_items ci
+        WHERE ci.is_active = true
+        GROUP BY section
+      )
+      SELECT 
+        section,
+        item_count
+      FROM section_counts
+      ORDER BY 
+        CASE section
+          WHEN 'main' THEN 1
+          WHEN 'menu' THEN 2
+          WHEN 'mortgage' THEN 3
+          WHEN 'mortgage-refi' THEN 4
+          WHEN 'credit' THEN 5
+          WHEN 'credit-refi' THEN 6
+          WHEN 'general' THEN 7
+          ELSE 8
+        END
+    `);
+
+    console.log(`✅ Found counts for ${result.rows.length} sections`);
+
+    // Create summary object with actual counts
+    const summary = {
+      main: 0,
+      menu: 0,
+      mortgage: 0,
+      'mortgage-refi': 0,
+      credit: 0,
+      'credit-refi': 0,
+      general: 0
+    };
+
+    // Fill in actual counts from database
+    result.rows.forEach(row => {
+      if (summary.hasOwnProperty(row.section)) {
+        summary[row.section] = parseInt(row.item_count);
+      }
+    });
+
+    res.json({
+      status: 'success',
+      summary: summary,
+      total_sections: Object.keys(summary).length,
+      last_updated: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Error fetching main content summary:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Get general content items
+ * GET /api/content/general
+ * Returns general content items that don't belong to specific workflows
+ */
+app.get('/api/content/general', async (req, res) => {
+  try {
+    console.log('🔄 Fetching general content from database...');
+    
+    // Query for general content items (non-workflow specific)
+    const result = await safeQuery(`
+      SELECT 
+        ci.id,
+        ci.content_key,
+        ci.component_type,
+        ci.category,
+        ci.screen_location,
+        ci.is_active,
+        ci.page_number,
+        COALESCE(
+          MAX(CASE WHEN ct.language_code = 'ru' THEN ct.content_value END),
+          'Translation missing'
+        ) as text_ru,
+        COALESCE(
+          MAX(CASE WHEN ct.language_code = 'he' THEN ct.content_value END),
+          'Translation missing'
+        ) as text_he,
+        COALESCE(
+          MAX(CASE WHEN ct.language_code = 'en' THEN ct.content_value END),
+          'Translation missing'
+        ) as text_en
+      FROM content_items ci
+      LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.is_active = true
+        AND (
+          ci.category = 'general'
+          OR ci.screen_location IN (
+            'home_page', 'login_page', 'registration_page', 
+            'personal_data_management', 'account_settings',
+            'privacy_policy', 'terms_of_service', 'help_center',
+            'contact_us', 'about_us', 'faq'
+          )
+        )
+      GROUP BY ci.id, ci.content_key, ci.component_type, ci.category, ci.screen_location, ci.is_active, ci.page_number
+      ORDER BY ci.screen_location, ci.id
+    `);
+
+    console.log(`✅ Found ${result.rows.length} general content items`);
+
+    // Format the response to match expected structure
+    const contentItems = result.rows.map(row => ({
+      id: row.id,
+      content_key: row.content_key,
+      component_type: row.component_type,
+      category: row.category,
+      screen_location: row.screen_location,
+      is_active: row.is_active,
+      page_number: row.page_number,
+      translations: {
+        ru: row.text_ru,
+        he: row.text_he,
+        en: row.text_en
+      }
+    }));
+
+    res.json({
+      status: 'success',
+      content_count: contentItems.length,
+      content_items: contentItems
+    });
+  } catch (error) {
+    console.error('❌ Error fetching general content:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
     });
   }
 });

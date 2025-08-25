@@ -1,0 +1,5258 @@
+{
+  "timestamp": "2025-08-24T09:17:22.631Z",
+  "summary": {
+    "totalItems": 2816,
+    "totalTranslations": 7224,
+    "itemsWithAllLanguages": 2408,
+    "itemsMissingLanguages": 408,
+    "placeholderTranslations": 278,
+    "meaningfulTranslations": 810,
+    "genericTranslations": 12,
+    "qualityScore": 11
+  },
+  "byScreen": {
+    "about": {
+      "totalItems": 21,
+      "withTranslations": 21,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 6
+    },
+    "account_settings": {
+      "totalItems": 14,
+      "withTranslations": 14,
+      "missingTranslations": 0,
+      "placeholders": 9,
+      "meaningful": 1,
+      "qualityScore": 2
+    },
+    "application_submitted": {
+      "totalItems": 6,
+      "withTranslations": 6,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 11
+    },
+    "auth_modal": {
+      "totalItems": 4,
+      "withTranslations": 4,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 8
+    },
+    "bank_offers": {
+      "totalItems": 4,
+      "withTranslations": 4,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 6,
+      "qualityScore": 50
+    },
+    "borrowers_personal_data_step1": {
+      "totalItems": 33,
+      "withTranslations": 33,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "calculate_credit_3": {
+      "totalItems": 88,
+      "withTranslations": 88,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 69,
+      "qualityScore": 26
+    },
+    "co_borrower_income": {
+      "totalItems": 32,
+      "withTranslations": 32,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 23,
+      "qualityScore": 24
+    },
+    "co_borrower_personal_data": {
+      "totalItems": 31,
+      "withTranslations": 31,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 2
+    },
+    "common": {
+      "totalItems": 14,
+      "withTranslations": 14,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 10
+    },
+    "contact_page": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "contacts": {
+      "totalItems": 47,
+      "withTranslations": 47,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 12,
+      "qualityScore": 9
+    },
+    "cooperation": {
+      "totalItems": 42,
+      "withTranslations": 42,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 12,
+      "qualityScore": 10
+    },
+    "credit_coborrower_income": {
+      "totalItems": 20,
+      "withTranslations": 20,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 20,
+      "qualityScore": 33
+    },
+    "credit_coborrower_personal": {
+      "totalItems": 20,
+      "withTranslations": 20,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_income_employed": {
+      "totalItems": 22,
+      "withTranslations": 0,
+      "missingTranslations": 22,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_loading_screen": {
+      "totalItems": 2,
+      "withTranslations": 2,
+      "missingTranslations": 0,
+      "placeholders": 6,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_login_page": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 78,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_partner_income": {
+      "totalItems": 20,
+      "withTranslations": 20,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 20,
+      "qualityScore": 33
+    },
+    "credit_partner_personal": {
+      "totalItems": 18,
+      "withTranslations": 18,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_personal_data": {
+      "totalItems": 23,
+      "withTranslations": 0,
+      "missingTranslations": 23,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_phone_verification": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 21,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_program_selection": {
+      "totalItems": 11,
+      "withTranslations": 11,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_account_locked_modal": {
+      "totalItems": 4,
+      "withTranslations": 0,
+      "missingTranslations": 4,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_coborrower_income": {
+      "totalItems": 24,
+      "withTranslations": 0,
+      "missingTranslations": 24,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_coborrower_personal": {
+      "totalItems": 25,
+      "withTranslations": 0,
+      "missingTranslations": 25,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_income_form": {
+      "totalItems": 22,
+      "withTranslations": 0,
+      "missingTranslations": 22,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_income_source_modal_1": {
+      "totalItems": 18,
+      "withTranslations": 0,
+      "missingTranslations": 18,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_income_source_modal_2": {
+      "totalItems": 18,
+      "withTranslations": 0,
+      "missingTranslations": 18,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_loading": {
+      "totalItems": 6,
+      "withTranslations": 0,
+      "missingTranslations": 6,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_login": {
+      "totalItems": 12,
+      "withTranslations": 0,
+      "missingTranslations": 12,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_obligation_modal_1": {
+      "totalItems": 16,
+      "withTranslations": 0,
+      "missingTranslations": 16,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_partner_income": {
+      "totalItems": 26,
+      "withTranslations": 0,
+      "missingTranslations": 26,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_partner_personal": {
+      "totalItems": 23,
+      "withTranslations": 0,
+      "missingTranslations": 23,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_password_reset": {
+      "totalItems": 10,
+      "withTranslations": 0,
+      "missingTranslations": 10,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_personal_data": {
+      "totalItems": 25,
+      "withTranslations": 0,
+      "missingTranslations": 25,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_phone_verification": {
+      "totalItems": 18,
+      "withTranslations": 0,
+      "missingTranslations": 18,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_program_selection": {
+      "totalItems": 15,
+      "withTranslations": 0,
+      "missingTranslations": 15,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_registration": {
+      "totalItems": 18,
+      "withTranslations": 0,
+      "missingTranslations": 18,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_registration_success_toast": {
+      "totalItems": 2,
+      "withTranslations": 0,
+      "missingTranslations": 2,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_step1": {
+      "totalItems": 41,
+      "withTranslations": 0,
+      "missingTranslations": 41,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_step2": {
+      "totalItems": 34,
+      "withTranslations": 0,
+      "missingTranslations": 34,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_refi_wrong_password_modal": {
+      "totalItems": 6,
+      "withTranslations": 0,
+      "missingTranslations": 6,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_registration_page": {
+      "totalItems": 20,
+      "withTranslations": 20,
+      "missingTranslations": 0,
+      "placeholders": 60,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_step1": {
+      "totalItems": 45,
+      "withTranslations": 45,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 82,
+      "qualityScore": 61
+    },
+    "credit_step2": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "credit_step3": {
+      "totalItems": 70,
+      "withTranslations": 70,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 19,
+      "qualityScore": 9
+    },
+    "credit_summary": {
+      "totalItems": 12,
+      "withTranslations": 12,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 9,
+      "qualityScore": 25
+    },
+    "home_page": {
+      "totalItems": 24,
+      "withTranslations": 24,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 16,
+      "qualityScore": 22
+    },
+    "income_form_employed": {
+      "totalItems": 32,
+      "withTranslations": 32,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 24,
+      "qualityScore": 25
+    },
+    "loading_screen": {
+      "totalItems": 6,
+      "withTranslations": 6,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 11
+    },
+    "login_page": {
+      "totalItems": 9,
+      "withTranslations": 9,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 7
+    },
+    "main_menu": {
+      "totalItems": 20,
+      "withTranslations": 20,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 5
+    },
+    "main_step1": {
+      "totalItems": 4,
+      "withTranslations": 4,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "main_step2": {
+      "totalItems": 3,
+      "withTranslations": 3,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "mortgage_additional_income_add": {
+      "totalItems": 18,
+      "withTranslations": 18,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 5,
+      "qualityScore": 9
+    },
+    "mortgage_calculation": {
+      "totalItems": 32,
+      "withTranslations": 32,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 14,
+      "qualityScore": 15
+    },
+    "mortgage_coborrower_income": {
+      "totalItems": 33,
+      "withTranslations": 33,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 8,
+      "qualityScore": 8
+    },
+    "mortgage_code_input": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 5
+    },
+    "mortgage_income_add": {
+      "totalItems": 13,
+      "withTranslations": 13,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 8
+    },
+    "mortgage_login_email": {
+      "totalItems": 13,
+      "withTranslations": 13,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 3
+    },
+    "mortgage_login_sms": {
+      "totalItems": 14,
+      "withTranslations": 14,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 2
+    },
+    "mortgage_obligation_add": {
+      "totalItems": 24,
+      "withTranslations": 24,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 7,
+      "qualityScore": 10
+    },
+    "mortgage_phone": {
+      "totalItems": 12,
+      "withTranslations": 12,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "mortgage_step1": {
+      "totalItems": 70,
+      "withTranslations": 70,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 33,
+      "qualityScore": 16
+    },
+    "mortgage_step2": {
+      "totalItems": 101,
+      "withTranslations": 101,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 12,
+      "qualityScore": 4
+    },
+    "mortgage_step3": {
+      "totalItems": 109,
+      "withTranslations": 109,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 49,
+      "qualityScore": 15
+    },
+    "mortgage_step4": {
+      "totalItems": 47,
+      "withTranslations": 47,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 30,
+      "qualityScore": 21
+    },
+    "mortgage_step4_fixed_rate_modal": {
+      "totalItems": 6,
+      "withTranslations": 6,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 11
+    },
+    "mortgage_step4_prime_modal": {
+      "totalItems": 8,
+      "withTranslations": 8,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 8
+    },
+    "mortgage_step4_variable_rate_modal": {
+      "totalItems": 6,
+      "withTranslations": 6,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 11
+    },
+    "other_borrowers": {
+      "totalItems": 5,
+      "withTranslations": 5,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 20
+    },
+    "other_borrowers_step1": {
+      "totalItems": 60,
+      "withTranslations": 60,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 2
+    },
+    "other_borrowers_step2": {
+      "totalItems": 69,
+      "withTranslations": 69,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 19,
+      "qualityScore": 9
+    },
+    "partner_income_form": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 17,
+      "qualityScore": 22
+    },
+    "partner_personal_data": {
+      "totalItems": 22,
+      "withTranslations": 22,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 3
+    },
+    "password_reset": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "personal_data_form": {
+      "totalItems": 24,
+      "withTranslations": 24,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 3
+    },
+    "personal_data_management": {
+      "totalItems": 62,
+      "withTranslations": 62,
+      "missingTranslations": 0,
+      "placeholders": 38,
+      "meaningful": 8,
+      "qualityScore": 4
+    },
+    "phone_verification_modal": {
+      "totalItems": 18,
+      "withTranslations": 18,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 5,
+      "qualityScore": 9
+    },
+    "privacy_policy": {
+      "totalItems": 2,
+      "withTranslations": 2,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 50
+    },
+    "privacy_policy_automated": {
+      "totalItems": 5,
+      "withTranslations": 5,
+      "missingTranslations": 0,
+      "placeholders": 5,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "privacy_policy_sensitive_data": {
+      "totalItems": 5,
+      "withTranslations": 5,
+      "missingTranslations": 0,
+      "placeholders": 4,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "program_selection": {
+      "totalItems": 12,
+      "withTranslations": 12,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 11
+    },
+    "refinance_credit_1": {
+      "totalItems": 51,
+      "withTranslations": 51,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 33,
+      "qualityScore": 22
+    },
+    "refinance_credit_2": {
+      "totalItems": 43,
+      "withTranslations": 43,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 1
+    },
+    "refinance_credit_3": {
+      "totalItems": 24,
+      "withTranslations": 24,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 9,
+      "qualityScore": 13
+    },
+    "refinance_credit_4": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 5,
+      "qualityScore": 24
+    },
+    "refinance_credit_step1": {
+      "totalItems": 19,
+      "withTranslations": 19,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 7
+    },
+    "refinance_credit_step2": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "refinance_credit_step3": {
+      "totalItems": 22,
+      "withTranslations": 22,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 19,
+      "qualityScore": 29
+    },
+    "refinance_mortgage_1": {
+      "totalItems": 30,
+      "withTranslations": 30,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 15,
+      "qualityScore": 17
+    },
+    "refinance_mortgage_2": {
+      "totalItems": 14,
+      "withTranslations": 14,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 8,
+      "qualityScore": 19
+    },
+    "refinance_mortgage_3": {
+      "totalItems": 4,
+      "withTranslations": 4,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 3,
+      "qualityScore": 25
+    },
+    "refinance_mortgage_4": {
+      "totalItems": 6,
+      "withTranslations": 6,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 22
+    },
+    "refinance_mortgage_step1": {
+      "totalItems": 19,
+      "withTranslations": 19,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 7
+    },
+    "refinance_mortgage_step2": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "refinance_mortgage_step3": {
+      "totalItems": 22,
+      "withTranslations": 22,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 19,
+      "qualityScore": 29
+    },
+    "refinance_step1": {
+      "totalItems": 57,
+      "withTranslations": 57,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 42,
+      "qualityScore": 25
+    },
+    "refinance_step2": {
+      "totalItems": 70,
+      "withTranslations": 70,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 1
+    },
+    "refinance_step3": {
+      "totalItems": 51,
+      "withTranslations": 51,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 17,
+      "qualityScore": 11
+    },
+    "reset_password_page": {
+      "totalItems": 15,
+      "withTranslations": 15,
+      "missingTranslations": 0,
+      "placeholders": 45,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "services_landing": {
+      "totalItems": 4,
+      "withTranslations": 4,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 4,
+      "qualityScore": 33
+    },
+    "sidebar": {
+      "totalItems": 26,
+      "withTranslations": 26,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 3
+    },
+    "signup_form": {
+      "totalItems": 7,
+      "withTranslations": 7,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 1,
+      "qualityScore": 5
+    },
+    "sms_code_verification": {
+      "totalItems": 5,
+      "withTranslations": 5,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 2,
+      "qualityScore": 13
+    },
+    "sms_verification": {
+      "totalItems": 12,
+      "withTranslations": 12,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "support_help_center": {
+      "totalItems": 14,
+      "withTranslations": 14,
+      "missingTranslations": 0,
+      "placeholders": 12,
+      "meaningful": 0,
+      "qualityScore": 0
+    },
+    "temporary_franchise": {
+      "totalItems": 92,
+      "withTranslations": 92,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 15,
+      "qualityScore": 5
+    },
+    "tenders_for_brokers": {
+      "totalItems": 56,
+      "withTranslations": 56,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 10,
+      "qualityScore": 6
+    },
+    "tenders_for_lawyers": {
+      "totalItems": 78,
+      "withTranslations": 78,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 7,
+      "qualityScore": 3
+    },
+    "validation_errors": {
+      "totalItems": 40,
+      "withTranslations": 40,
+      "missingTranslations": 0,
+      "placeholders": 0,
+      "meaningful": 15,
+      "qualityScore": 13
+    }
+  },
+  "byLanguage": {
+    "ru": {
+      "total": 2408,
+      "placeholder": 138,
+      "meaningful": 116,
+      "generic": 4
+    },
+    "he": {
+      "total": 2408,
+      "placeholder": 70,
+      "meaningful": 42,
+      "generic": 0
+    },
+    "en": {
+      "total": 2408,
+      "placeholder": 70,
+      "meaningful": 652,
+      "generic": 8
+    }
+  },
+  "issues": [
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2853",
+      "content_key": "account_settings.title",
+      "language": "ru",
+      "value": "[RU] Title"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2854",
+      "content_key": "account_settings.localization_settings",
+      "language": "ru",
+      "value": "[RU] Localization Settings"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2856",
+      "content_key": "account_settings.security_settings",
+      "language": "ru",
+      "value": "[RU] Security Settings"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2857",
+      "content_key": "account_settings.language_label",
+      "language": "ru",
+      "value": "[RU] Language Label"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2858",
+      "content_key": "account_settings.theme_label",
+      "language": "ru",
+      "value": "[RU] Theme Label"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2859",
+      "content_key": "account_settings.currency_label",
+      "language": "ru",
+      "value": "[RU] Currency Label"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2860",
+      "content_key": "account_settings.timezone_label",
+      "language": "ru",
+      "value": "[RU] Timezone Label"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2863",
+      "content_key": "account_settings.two_factor_auth",
+      "language": "ru",
+      "value": "[RU] Two Factor Auth"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "2865",
+      "content_key": "account_settings.setup2FA_modal_title",
+      "language": "ru",
+      "value": "[RU] Setup2FA Modal Title"
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3450",
+      "content_key": "credit_income_employed.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3451",
+      "content_key": "credit_income_employed.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3452",
+      "content_key": "credit_income_employed.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3453",
+      "content_key": "credit_income_employed.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3454",
+      "content_key": "credit_income_employed.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3455",
+      "content_key": "credit_income_employed.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3456",
+      "content_key": "credit_income_employed.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3457",
+      "content_key": "credit_income_employed.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3458",
+      "content_key": "credit_income_employed.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3459",
+      "content_key": "credit_income_employed.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3460",
+      "content_key": "credit_income_employed.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3461",
+      "content_key": "credit_income_employed.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3462",
+      "content_key": "credit_income_employed.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3463",
+      "content_key": "credit_income_employed.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3464",
+      "content_key": "credit_income_employed.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3465",
+      "content_key": "credit_income_employed.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3466",
+      "content_key": "credit_income_employed.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3467",
+      "content_key": "credit_income_employed.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3468",
+      "content_key": "credit_income_employed.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3469",
+      "content_key": "credit_income_employed.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3470",
+      "content_key": "credit_income_employed.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3471",
+      "content_key": "credit_income_employed.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3512",
+      "content_key": "credit_loading_screen.item_1",
+      "language": "en",
+      "value": "[EN] Item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3512",
+      "content_key": "credit_loading_screen.item_1",
+      "language": "he",
+      "value": "[HE] Item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3512",
+      "content_key": "credit_loading_screen.item_1",
+      "language": "ru",
+      "value": "[RU] Item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3513",
+      "content_key": "credit_loading_screen.item_2",
+      "language": "en",
+      "value": "[EN] Item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3513",
+      "content_key": "credit_loading_screen.item_2",
+      "language": "he",
+      "value": "[HE] Item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3513",
+      "content_key": "credit_loading_screen.item_2",
+      "language": "ru",
+      "value": "[RU] Item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3557",
+      "content_key": "credit_login_page.item_1",
+      "language": "en",
+      "value": "[EN] credit login page.item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3557",
+      "content_key": "credit_login_page.item_1",
+      "language": "he",
+      "value": "[HE] credit login page.item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3557",
+      "content_key": "credit_login_page.item_1",
+      "language": "ru",
+      "value": "[RU] credit login page.item 1"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3558",
+      "content_key": "credit_login_page.item_2",
+      "language": "en",
+      "value": "[EN] credit login page.item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3558",
+      "content_key": "credit_login_page.item_2",
+      "language": "he",
+      "value": "[HE] credit login page.item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3558",
+      "content_key": "credit_login_page.item_2",
+      "language": "ru",
+      "value": "[RU] credit login page.item 2"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3559",
+      "content_key": "credit_login_page.item_3",
+      "language": "en",
+      "value": "[EN] credit login page.item 3"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3559",
+      "content_key": "credit_login_page.item_3",
+      "language": "he",
+      "value": "[HE] credit login page.item 3"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3559",
+      "content_key": "credit_login_page.item_3",
+      "language": "ru",
+      "value": "[RU] credit login page.item 3"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3560",
+      "content_key": "credit_login_page.item_4",
+      "language": "en",
+      "value": "[EN] credit login page.item 4"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3560",
+      "content_key": "credit_login_page.item_4",
+      "language": "he",
+      "value": "[HE] credit login page.item 4"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3560",
+      "content_key": "credit_login_page.item_4",
+      "language": "ru",
+      "value": "[RU] credit login page.item 4"
+    },
+    {
+      "type": "PLACEHOLDER_TEXT",
+      "item_id": "3561",
+      "content_key": "credit_login_page.item_5",
+      "language": "en",
+      "value": "[EN] credit login page.item 5"
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3389",
+      "content_key": "credit_personal_data.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3390",
+      "content_key": "credit_personal_data.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3391",
+      "content_key": "credit_personal_data.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3392",
+      "content_key": "credit_personal_data.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3393",
+      "content_key": "credit_personal_data.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3394",
+      "content_key": "credit_personal_data.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3395",
+      "content_key": "credit_personal_data.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3396",
+      "content_key": "credit_personal_data.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3397",
+      "content_key": "credit_personal_data.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3398",
+      "content_key": "credit_personal_data.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3399",
+      "content_key": "credit_personal_data.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3400",
+      "content_key": "credit_personal_data.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3401",
+      "content_key": "credit_personal_data.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3402",
+      "content_key": "credit_personal_data.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3403",
+      "content_key": "credit_personal_data.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3404",
+      "content_key": "credit_personal_data.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3405",
+      "content_key": "credit_personal_data.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3406",
+      "content_key": "credit_personal_data.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3407",
+      "content_key": "credit_personal_data.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3408",
+      "content_key": "credit_personal_data.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3409",
+      "content_key": "credit_personal_data.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3410",
+      "content_key": "credit_personal_data.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3411",
+      "content_key": "credit_personal_data.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4072",
+      "content_key": "credit_refi_account_locked_modal.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4073",
+      "content_key": "credit_refi_account_locked_modal.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4074",
+      "content_key": "credit_refi_account_locked_modal.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4075",
+      "content_key": "credit_refi_account_locked_modal.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3799",
+      "content_key": "credit_refi_coborrower_income.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3800",
+      "content_key": "credit_refi_coborrower_income.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3801",
+      "content_key": "credit_refi_coborrower_income.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3802",
+      "content_key": "credit_refi_coborrower_income.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3803",
+      "content_key": "credit_refi_coborrower_income.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3804",
+      "content_key": "credit_refi_coborrower_income.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3805",
+      "content_key": "credit_refi_coborrower_income.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3806",
+      "content_key": "credit_refi_coborrower_income.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3807",
+      "content_key": "credit_refi_coborrower_income.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3808",
+      "content_key": "credit_refi_coborrower_income.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3809",
+      "content_key": "credit_refi_coborrower_income.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3810",
+      "content_key": "credit_refi_coborrower_income.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3811",
+      "content_key": "credit_refi_coborrower_income.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3812",
+      "content_key": "credit_refi_coborrower_income.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3813",
+      "content_key": "credit_refi_coborrower_income.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3814",
+      "content_key": "credit_refi_coborrower_income.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3815",
+      "content_key": "credit_refi_coborrower_income.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3816",
+      "content_key": "credit_refi_coborrower_income.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3817",
+      "content_key": "credit_refi_coborrower_income.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3818",
+      "content_key": "credit_refi_coborrower_income.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3819",
+      "content_key": "credit_refi_coborrower_income.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3820",
+      "content_key": "credit_refi_coborrower_income.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3821",
+      "content_key": "credit_refi_coborrower_income.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3822",
+      "content_key": "credit_refi_coborrower_income.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3774",
+      "content_key": "credit_refi_coborrower_personal.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3775",
+      "content_key": "credit_refi_coborrower_personal.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3776",
+      "content_key": "credit_refi_coborrower_personal.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3777",
+      "content_key": "credit_refi_coborrower_personal.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3778",
+      "content_key": "credit_refi_coborrower_personal.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3779",
+      "content_key": "credit_refi_coborrower_personal.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3780",
+      "content_key": "credit_refi_coborrower_personal.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3781",
+      "content_key": "credit_refi_coborrower_personal.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3782",
+      "content_key": "credit_refi_coborrower_personal.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3783",
+      "content_key": "credit_refi_coborrower_personal.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3784",
+      "content_key": "credit_refi_coborrower_personal.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3785",
+      "content_key": "credit_refi_coborrower_personal.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3786",
+      "content_key": "credit_refi_coborrower_personal.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3787",
+      "content_key": "credit_refi_coborrower_personal.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3788",
+      "content_key": "credit_refi_coborrower_personal.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3789",
+      "content_key": "credit_refi_coborrower_personal.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3790",
+      "content_key": "credit_refi_coborrower_personal.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3791",
+      "content_key": "credit_refi_coborrower_personal.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3792",
+      "content_key": "credit_refi_coborrower_personal.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3793",
+      "content_key": "credit_refi_coborrower_personal.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3794",
+      "content_key": "credit_refi_coborrower_personal.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3795",
+      "content_key": "credit_refi_coborrower_personal.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3796",
+      "content_key": "credit_refi_coborrower_personal.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3797",
+      "content_key": "credit_refi_coborrower_personal.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3798",
+      "content_key": "credit_refi_coborrower_personal.item_25",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3752",
+      "content_key": "credit_refi_income_form.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3753",
+      "content_key": "credit_refi_income_form.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3754",
+      "content_key": "credit_refi_income_form.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3755",
+      "content_key": "credit_refi_income_form.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3756",
+      "content_key": "credit_refi_income_form.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3757",
+      "content_key": "credit_refi_income_form.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3758",
+      "content_key": "credit_refi_income_form.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3759",
+      "content_key": "credit_refi_income_form.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3760",
+      "content_key": "credit_refi_income_form.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3761",
+      "content_key": "credit_refi_income_form.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3762",
+      "content_key": "credit_refi_income_form.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3763",
+      "content_key": "credit_refi_income_form.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3764",
+      "content_key": "credit_refi_income_form.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3765",
+      "content_key": "credit_refi_income_form.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3766",
+      "content_key": "credit_refi_income_form.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3767",
+      "content_key": "credit_refi_income_form.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3768",
+      "content_key": "credit_refi_income_form.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3769",
+      "content_key": "credit_refi_income_form.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3770",
+      "content_key": "credit_refi_income_form.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3771",
+      "content_key": "credit_refi_income_form.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3772",
+      "content_key": "credit_refi_income_form.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3773",
+      "content_key": "credit_refi_income_form.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4012",
+      "content_key": "credit_refi_income_source_modal_1.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4013",
+      "content_key": "credit_refi_income_source_modal_1.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4014",
+      "content_key": "credit_refi_income_source_modal_1.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4015",
+      "content_key": "credit_refi_income_source_modal_1.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4016",
+      "content_key": "credit_refi_income_source_modal_1.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4017",
+      "content_key": "credit_refi_income_source_modal_1.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4018",
+      "content_key": "credit_refi_income_source_modal_1.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4019",
+      "content_key": "credit_refi_income_source_modal_1.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4020",
+      "content_key": "credit_refi_income_source_modal_1.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4021",
+      "content_key": "credit_refi_income_source_modal_1.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4022",
+      "content_key": "credit_refi_income_source_modal_1.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4023",
+      "content_key": "credit_refi_income_source_modal_1.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4024",
+      "content_key": "credit_refi_income_source_modal_1.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4025",
+      "content_key": "credit_refi_income_source_modal_1.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4026",
+      "content_key": "credit_refi_income_source_modal_1.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4027",
+      "content_key": "credit_refi_income_source_modal_1.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4028",
+      "content_key": "credit_refi_income_source_modal_1.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4029",
+      "content_key": "credit_refi_income_source_modal_1.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4030",
+      "content_key": "credit_refi_income_source_modal_2.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4031",
+      "content_key": "credit_refi_income_source_modal_2.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4032",
+      "content_key": "credit_refi_income_source_modal_2.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4033",
+      "content_key": "credit_refi_income_source_modal_2.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4034",
+      "content_key": "credit_refi_income_source_modal_2.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4035",
+      "content_key": "credit_refi_income_source_modal_2.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4036",
+      "content_key": "credit_refi_income_source_modal_2.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4037",
+      "content_key": "credit_refi_income_source_modal_2.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4038",
+      "content_key": "credit_refi_income_source_modal_2.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4039",
+      "content_key": "credit_refi_income_source_modal_2.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4040",
+      "content_key": "credit_refi_income_source_modal_2.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4041",
+      "content_key": "credit_refi_income_source_modal_2.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4042",
+      "content_key": "credit_refi_income_source_modal_2.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4043",
+      "content_key": "credit_refi_income_source_modal_2.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4044",
+      "content_key": "credit_refi_income_source_modal_2.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4045",
+      "content_key": "credit_refi_income_source_modal_2.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4046",
+      "content_key": "credit_refi_income_source_modal_2.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4047",
+      "content_key": "credit_refi_income_source_modal_2.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3823",
+      "content_key": "credit_refi_loading.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3824",
+      "content_key": "credit_refi_loading.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3825",
+      "content_key": "credit_refi_loading.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3826",
+      "content_key": "credit_refi_loading.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3827",
+      "content_key": "credit_refi_loading.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3828",
+      "content_key": "credit_refi_loading.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3862",
+      "content_key": "credit_refi_login.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3863",
+      "content_key": "credit_refi_login.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3864",
+      "content_key": "credit_refi_login.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3865",
+      "content_key": "credit_refi_login.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3866",
+      "content_key": "credit_refi_login.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3867",
+      "content_key": "credit_refi_login.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3868",
+      "content_key": "credit_refi_login.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3869",
+      "content_key": "credit_refi_login.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3870",
+      "content_key": "credit_refi_login.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3871",
+      "content_key": "credit_refi_login.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3872",
+      "content_key": "credit_refi_login.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3873",
+      "content_key": "credit_refi_login.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4048",
+      "content_key": "credit_refi_obligation_modal_1.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4049",
+      "content_key": "credit_refi_obligation_modal_1.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4050",
+      "content_key": "credit_refi_obligation_modal_1.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4051",
+      "content_key": "credit_refi_obligation_modal_1.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4052",
+      "content_key": "credit_refi_obligation_modal_1.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4053",
+      "content_key": "credit_refi_obligation_modal_1.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4054",
+      "content_key": "credit_refi_obligation_modal_1.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4055",
+      "content_key": "credit_refi_obligation_modal_1.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4056",
+      "content_key": "credit_refi_obligation_modal_1.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4057",
+      "content_key": "credit_refi_obligation_modal_1.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4058",
+      "content_key": "credit_refi_obligation_modal_1.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4059",
+      "content_key": "credit_refi_obligation_modal_1.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4060",
+      "content_key": "credit_refi_obligation_modal_1.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4061",
+      "content_key": "credit_refi_obligation_modal_1.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4062",
+      "content_key": "credit_refi_obligation_modal_1.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4063",
+      "content_key": "credit_refi_obligation_modal_1.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3726",
+      "content_key": "credit_refi_partner_income.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3727",
+      "content_key": "credit_refi_partner_income.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3728",
+      "content_key": "credit_refi_partner_income.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3729",
+      "content_key": "credit_refi_partner_income.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3730",
+      "content_key": "credit_refi_partner_income.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3731",
+      "content_key": "credit_refi_partner_income.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3732",
+      "content_key": "credit_refi_partner_income.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3733",
+      "content_key": "credit_refi_partner_income.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3734",
+      "content_key": "credit_refi_partner_income.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3735",
+      "content_key": "credit_refi_partner_income.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3736",
+      "content_key": "credit_refi_partner_income.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3737",
+      "content_key": "credit_refi_partner_income.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3738",
+      "content_key": "credit_refi_partner_income.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3739",
+      "content_key": "credit_refi_partner_income.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3740",
+      "content_key": "credit_refi_partner_income.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3741",
+      "content_key": "credit_refi_partner_income.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3742",
+      "content_key": "credit_refi_partner_income.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3743",
+      "content_key": "credit_refi_partner_income.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3744",
+      "content_key": "credit_refi_partner_income.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3745",
+      "content_key": "credit_refi_partner_income.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3746",
+      "content_key": "credit_refi_partner_income.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3747",
+      "content_key": "credit_refi_partner_income.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3748",
+      "content_key": "credit_refi_partner_income.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3749",
+      "content_key": "credit_refi_partner_income.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3750",
+      "content_key": "credit_refi_partner_income.item_25",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3751",
+      "content_key": "credit_refi_partner_income.item_26",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3703",
+      "content_key": "credit_refi_partner_personal.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3704",
+      "content_key": "credit_refi_partner_personal.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3705",
+      "content_key": "credit_refi_partner_personal.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3706",
+      "content_key": "credit_refi_partner_personal.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3707",
+      "content_key": "credit_refi_partner_personal.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3708",
+      "content_key": "credit_refi_partner_personal.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3709",
+      "content_key": "credit_refi_partner_personal.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3710",
+      "content_key": "credit_refi_partner_personal.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3711",
+      "content_key": "credit_refi_partner_personal.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3712",
+      "content_key": "credit_refi_partner_personal.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3713",
+      "content_key": "credit_refi_partner_personal.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3714",
+      "content_key": "credit_refi_partner_personal.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3715",
+      "content_key": "credit_refi_partner_personal.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3716",
+      "content_key": "credit_refi_partner_personal.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3717",
+      "content_key": "credit_refi_partner_personal.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3718",
+      "content_key": "credit_refi_partner_personal.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3719",
+      "content_key": "credit_refi_partner_personal.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3720",
+      "content_key": "credit_refi_partner_personal.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3721",
+      "content_key": "credit_refi_partner_personal.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3722",
+      "content_key": "credit_refi_partner_personal.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3723",
+      "content_key": "credit_refi_partner_personal.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3724",
+      "content_key": "credit_refi_partner_personal.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3725",
+      "content_key": "credit_refi_partner_personal.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3874",
+      "content_key": "credit_refi_password_reset.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3875",
+      "content_key": "credit_refi_password_reset.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3876",
+      "content_key": "credit_refi_password_reset.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3877",
+      "content_key": "credit_refi_password_reset.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3878",
+      "content_key": "credit_refi_password_reset.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3879",
+      "content_key": "credit_refi_password_reset.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3880",
+      "content_key": "credit_refi_password_reset.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3881",
+      "content_key": "credit_refi_password_reset.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3882",
+      "content_key": "credit_refi_password_reset.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3883",
+      "content_key": "credit_refi_password_reset.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3678",
+      "content_key": "credit_refi_personal_data.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3679",
+      "content_key": "credit_refi_personal_data.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3680",
+      "content_key": "credit_refi_personal_data.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3681",
+      "content_key": "credit_refi_personal_data.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3682",
+      "content_key": "credit_refi_personal_data.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3683",
+      "content_key": "credit_refi_personal_data.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3684",
+      "content_key": "credit_refi_personal_data.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3685",
+      "content_key": "credit_refi_personal_data.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3686",
+      "content_key": "credit_refi_personal_data.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3687",
+      "content_key": "credit_refi_personal_data.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3688",
+      "content_key": "credit_refi_personal_data.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3689",
+      "content_key": "credit_refi_personal_data.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3690",
+      "content_key": "credit_refi_personal_data.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3691",
+      "content_key": "credit_refi_personal_data.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3692",
+      "content_key": "credit_refi_personal_data.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3693",
+      "content_key": "credit_refi_personal_data.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3694",
+      "content_key": "credit_refi_personal_data.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3695",
+      "content_key": "credit_refi_personal_data.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3696",
+      "content_key": "credit_refi_personal_data.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3697",
+      "content_key": "credit_refi_personal_data.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3698",
+      "content_key": "credit_refi_personal_data.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3699",
+      "content_key": "credit_refi_personal_data.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3700",
+      "content_key": "credit_refi_personal_data.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3701",
+      "content_key": "credit_refi_personal_data.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3702",
+      "content_key": "credit_refi_personal_data.item_25",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3660",
+      "content_key": "credit_refi_phone_verification.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3661",
+      "content_key": "credit_refi_phone_verification.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3662",
+      "content_key": "credit_refi_phone_verification.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3663",
+      "content_key": "credit_refi_phone_verification.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3664",
+      "content_key": "credit_refi_phone_verification.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3665",
+      "content_key": "credit_refi_phone_verification.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3666",
+      "content_key": "credit_refi_phone_verification.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3667",
+      "content_key": "credit_refi_phone_verification.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3668",
+      "content_key": "credit_refi_phone_verification.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3669",
+      "content_key": "credit_refi_phone_verification.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3670",
+      "content_key": "credit_refi_phone_verification.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3671",
+      "content_key": "credit_refi_phone_verification.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3672",
+      "content_key": "credit_refi_phone_verification.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3673",
+      "content_key": "credit_refi_phone_verification.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3674",
+      "content_key": "credit_refi_phone_verification.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3675",
+      "content_key": "credit_refi_phone_verification.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3676",
+      "content_key": "credit_refi_phone_verification.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3677",
+      "content_key": "credit_refi_phone_verification.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3829",
+      "content_key": "credit_refi_program_selection.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3830",
+      "content_key": "credit_refi_program_selection.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3831",
+      "content_key": "credit_refi_program_selection.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3832",
+      "content_key": "credit_refi_program_selection.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3833",
+      "content_key": "credit_refi_program_selection.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3834",
+      "content_key": "credit_refi_program_selection.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3835",
+      "content_key": "credit_refi_program_selection.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3836",
+      "content_key": "credit_refi_program_selection.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3837",
+      "content_key": "credit_refi_program_selection.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3838",
+      "content_key": "credit_refi_program_selection.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3839",
+      "content_key": "credit_refi_program_selection.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3840",
+      "content_key": "credit_refi_program_selection.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3841",
+      "content_key": "credit_refi_program_selection.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3842",
+      "content_key": "credit_refi_program_selection.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3843",
+      "content_key": "credit_refi_program_selection.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3844",
+      "content_key": "credit_refi_registration.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3845",
+      "content_key": "credit_refi_registration.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3846",
+      "content_key": "credit_refi_registration.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3847",
+      "content_key": "credit_refi_registration.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3848",
+      "content_key": "credit_refi_registration.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3849",
+      "content_key": "credit_refi_registration.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3850",
+      "content_key": "credit_refi_registration.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3851",
+      "content_key": "credit_refi_registration.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3852",
+      "content_key": "credit_refi_registration.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3853",
+      "content_key": "credit_refi_registration.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3854",
+      "content_key": "credit_refi_registration.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3855",
+      "content_key": "credit_refi_registration.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3856",
+      "content_key": "credit_refi_registration.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3857",
+      "content_key": "credit_refi_registration.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3858",
+      "content_key": "credit_refi_registration.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3859",
+      "content_key": "credit_refi_registration.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3860",
+      "content_key": "credit_refi_registration.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3861",
+      "content_key": "credit_refi_registration.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4064",
+      "content_key": "credit_refi_registration_success_toast.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4065",
+      "content_key": "credit_refi_registration_success_toast.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3598",
+      "content_key": "credit_refi_step1.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3599",
+      "content_key": "credit_refi_step1.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3600",
+      "content_key": "credit_refi_step1.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3601",
+      "content_key": "credit_refi_step1.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3602",
+      "content_key": "credit_refi_step1.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3603",
+      "content_key": "credit_refi_step1.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3604",
+      "content_key": "credit_refi_step1.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3605",
+      "content_key": "credit_refi_step1.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3606",
+      "content_key": "credit_refi_step1.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3607",
+      "content_key": "credit_refi_step1.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3608",
+      "content_key": "credit_refi_step1.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3609",
+      "content_key": "credit_refi_step1.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3610",
+      "content_key": "credit_refi_step1.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3611",
+      "content_key": "credit_refi_step1.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3612",
+      "content_key": "credit_refi_step1.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3613",
+      "content_key": "credit_refi_step1.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3614",
+      "content_key": "credit_refi_step1.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3615",
+      "content_key": "credit_refi_step1.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3616",
+      "content_key": "credit_refi_step1.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3617",
+      "content_key": "credit_refi_step1.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3618",
+      "content_key": "credit_refi_step1.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3619",
+      "content_key": "credit_refi_step1.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3620",
+      "content_key": "credit_refi_step1.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3621",
+      "content_key": "credit_refi_step1.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3622",
+      "content_key": "credit_refi_step1.item_25",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3623",
+      "content_key": "credit_refi_step1.item_26",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3624",
+      "content_key": "credit_refi_step1.item_27",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3625",
+      "content_key": "credit_refi_step1.item_28",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4174",
+      "content_key": "credit_refi_step1.field.refinance_purpose_ph",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4175",
+      "content_key": "credit_refi_step1.field.refinance_purpose_cash_out",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4176",
+      "content_key": "credit_refi_step1.field.refinance_purpose_consolidate_debt",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4177",
+      "content_key": "credit_refi_step1.field.refinance_purpose",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4178",
+      "content_key": "credit_refi_step1.field.refinance_purpose_lower_rate",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4179",
+      "content_key": "credit_refi_step1.field.current_lender",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4180",
+      "content_key": "credit_refi_step1.field.refinance_purpose_lower_payment",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4181",
+      "content_key": "credit_refi_step1.field.current_lender_ph",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4182",
+      "content_key": "credit_refi_step1.field.current_lender_other",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4183",
+      "content_key": "credit_refi_step1.field.current_lender_mizrahi_tefahot",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4184",
+      "content_key": "credit_refi_step1.field.current_lender_discount_bank",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4185",
+      "content_key": "credit_refi_step1.field.current_lender_bank_leumi",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4186",
+      "content_key": "credit_refi_step1.field.current_lender_bank_hapoalim",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3626",
+      "content_key": "credit_refi_step2.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3627",
+      "content_key": "credit_refi_step2.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3628",
+      "content_key": "credit_refi_step2.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3629",
+      "content_key": "credit_refi_step2.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3630",
+      "content_key": "credit_refi_step2.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3631",
+      "content_key": "credit_refi_step2.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3632",
+      "content_key": "credit_refi_step2.item_7",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3633",
+      "content_key": "credit_refi_step2.item_8",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3634",
+      "content_key": "credit_refi_step2.item_9",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3635",
+      "content_key": "credit_refi_step2.item_10",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3636",
+      "content_key": "credit_refi_step2.item_11",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3637",
+      "content_key": "credit_refi_step2.item_12",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3638",
+      "content_key": "credit_refi_step2.item_13",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3639",
+      "content_key": "credit_refi_step2.item_14",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3640",
+      "content_key": "credit_refi_step2.item_15",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3641",
+      "content_key": "credit_refi_step2.item_16",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3642",
+      "content_key": "credit_refi_step2.item_17",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3643",
+      "content_key": "credit_refi_step2.item_18",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3644",
+      "content_key": "credit_refi_step2.item_19",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3645",
+      "content_key": "credit_refi_step2.item_20",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3646",
+      "content_key": "credit_refi_step2.item_21",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3647",
+      "content_key": "credit_refi_step2.item_22",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3648",
+      "content_key": "credit_refi_step2.item_23",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3649",
+      "content_key": "credit_refi_step2.item_24",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3650",
+      "content_key": "credit_refi_step2.item_25",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3651",
+      "content_key": "credit_refi_step2.item_26",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3652",
+      "content_key": "credit_refi_step2.item_27",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3653",
+      "content_key": "credit_refi_step2.item_28",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3654",
+      "content_key": "credit_refi_step2.item_29",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3655",
+      "content_key": "credit_refi_step2.item_30",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3656",
+      "content_key": "credit_refi_step2.item_31",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3657",
+      "content_key": "credit_refi_step2.item_32",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3658",
+      "content_key": "credit_refi_step2.item_33",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "3659",
+      "content_key": "credit_refi_step2.item_34",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4066",
+      "content_key": "credit_refi_wrong_password_modal.item_1",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4067",
+      "content_key": "credit_refi_wrong_password_modal.item_2",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4068",
+      "content_key": "credit_refi_wrong_password_modal.item_3",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4069",
+      "content_key": "credit_refi_wrong_password_modal.item_4",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4070",
+      "content_key": "credit_refi_wrong_password_modal.item_5",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    },
+    {
+      "type": "MISSING_LANGUAGE",
+      "item_id": "4071",
+      "content_key": "credit_refi_wrong_password_modal.item_6",
+      "missing": [
+        "ru",
+        "he",
+        "en"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "issue": "278 placeholder translations detected",
+      "action": "Replace all placeholder text with actual business content before production"
+    },
+    {
+      "priority": "HIGH",
+      "issue": "408 items missing translations",
+      "action": "Complete translations for all languages"
+    },
+    {
+      "priority": "HIGH",
+      "issue": "Low quality score: 11%",
+      "action": "Review and improve translation quality with business-appropriate content"
+    },
+    {
+      "priority": "MEDIUM",
+      "issue": "Screens with poor translation quality",
+      "screens": [
+        {
+          "screen": "borrowers_personal_data_step1",
+          "qualityScore": 0,
+          "placeholders": 0
+        },
+        {
+          "screen": "contact_page",
+          "qualityScore": 0,
+          "placeholders": 0
+        },
+        {
+          "screen": "credit_coborrower_personal",
+          "qualityScore": 0,
+          "placeholders": 0
+        },
+        {
+          "screen": "credit_income_employed",
+          "qualityScore": 0,
+          "placeholders": 0
+        },
+        {
+          "screen": "credit_login_page",
+          "qualityScore": 0,
+          "placeholders": 78
+        }
+      ],
+      "action": "Prioritize improving these screens first"
+    }
+  ]
+}

@@ -162,11 +162,14 @@
 .language-text {
   flex: 1;
   font-family: 'Arimo';
-  font-weight: 400;
+  font-weight: 500;
   font-size: 14px;
   line-height: 150%;
   color: #F9FAFB;
   text-align: left;
+  display: block;
+  min-width: 70px;
+  white-space: nowrap;
 }
 
 .language-arrow {
@@ -177,6 +180,24 @@
 
 .language-arrow.open {
   transform: rotate(180deg);
+}
+
+/* RTL Support for arrows */
+[dir="rtl"] .language-arrow svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .language-arrow.open svg {
+  transform: scaleX(-1) rotate(180deg);
+}
+
+[dir="rtl"] .user-profile-btn .arrow-icon svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .profile-dropdown {
+  left: 0;
+  right: auto;
 }
 
 /* Language Dropdown */

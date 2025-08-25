@@ -34,6 +34,7 @@ import MortgageRefiDrill from './pages/MortgageRefiDrill';
 import MortgageRefiTextEdit from './pages/MortgageRefiTextEdit';
 import SharedDropdownEdit from './pages/SharedDropdownEdit';
 import ContentMortgageRefi from './pages/ContentMortgageRefi';
+import ContentGeneral from './pages/ContentGeneral';
 import MenuDrill from './pages/MenuDrill';
 import MenuTextEdit from './pages/MenuTextEdit';
 import MenuEdit from './pages/MenuEdit';
@@ -855,9 +856,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Dropdown Migration" activeMenuItem="content-mortgage">
-                  <DropdownRedirect />
-                </AdminLayout>
+                <JSONBDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -891,6 +890,19 @@ const AppRouter: React.FC = () => {
           } 
         />
         
+        {/* General content route - for general pages content management */}
+        <Route 
+          path="/content/general" 
+          element={
+            <ErrorBoundary>
+              {/* <ProtectedRoute requiredPermission={{ action: 'read', resource: 'content-management' }}> */}
+                <AdminLayout title="Общие страницы" activeMenuItem="content-general">
+                  <ContentGeneral />
+                </AdminLayout>
+              {/* </ProtectedRoute> */}
+            </ErrorBoundary>
+          } 
+        />
 
 
         {/* Credit drill route - specific drill page for credit content */}
@@ -983,9 +995,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Dropdown Migration" activeMenuItem="content-credit">
-                  <DropdownRedirect />
-                </AdminLayout>
+                <JSONBDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -1025,9 +1035,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Dropdown Migration" activeMenuItem="content-credit-refi">
-                  <DropdownRedirect />
-                </AdminLayout>
+                <JSONBDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -1067,9 +1075,7 @@ const AppRouter: React.FC = () => {
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Dropdown Migration" activeMenuItem="content-mortgage-refi">
-                  <DropdownRedirect />
-                </AdminLayout>
+                <JSONBDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
@@ -1117,15 +1123,13 @@ const AppRouter: React.FC = () => {
           } 
         />
         
-        {/* Menu dropdown edit route - REDIRECTED TO JSONB ADMIN */}
+        {/* Menu dropdown edit route - Direct to JSONB Edit */}
         <Route 
           path="/content/menu/dropdown-edit/:actionId" 
           element={
             <ErrorBoundary>
               <ProtectedRoute requiredPermission={{ action: 'update', resource: 'content-management' }}>
-                <AdminLayout title="Dropdown Migration" activeMenuItem="content-menu">
-                  <DropdownRedirect />
-                </AdminLayout>
+                <JSONBDropdownEdit />
               </ProtectedRoute>
             </ErrorBoundary>
           } 
