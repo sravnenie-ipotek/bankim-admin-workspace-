@@ -9,6 +9,9 @@ pnpm-debug.log*
 dist/
 build/
 
+# Development tools and scripts
+packages/server/dev-tools/
+
 # Environment variables
 .env
 .env.local
