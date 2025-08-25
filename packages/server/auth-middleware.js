@@ -1,8 +1,5 @@
-const express = require('express');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
-const bcrypt = require('bcrypt');
-const { Pool } = require('pg');
 
 // Session store setup
 function setupSessionStore(pool) {

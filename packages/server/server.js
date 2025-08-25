@@ -3,7 +3,6 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
-const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
@@ -60,6 +59,48 @@ function logSlowQuery(queryName, startTime, rowCount = 0) {
     console.log(`⚡ ${queryName}: ${duration}ms (${rowCount} rows)`);
   }
   return duration;
+}
+
+// Helper function for credit step descriptions
+function getCreditStepDescription(screenLocation) {
+  const descriptions = {
+    'refinance_credit_1': 'Кредитные данные',
+    'refinance_credit_2': 'Личная информация', 
+    'refinance_credit_3': 'Доходы и занятость',
+    'refinance_credit_4': 'Результаты и выбор'
+  };
+  return descriptions[screenLocation] || screenLocation;
+}
+
+// Helper function for credit step translations
+function getCreditStepTranslations(screenLocation) {
+  const translations = {
+    'refinance_credit_1': {
+      ru: 'Кредитные данные',
+      he: 'נתוני אשראי',
+      en: 'Credit details'
+    },
+    'refinance_credit_2': {
+      ru: 'Личная информация',
+      he: 'מידע אישי',
+      en: 'Personal information'
+    },
+    'refinance_credit_3': {
+      ru: 'Доходы и занятость',
+      he: 'הכנסות ותעסוקה',
+      en: 'Income & employment'
+    },
+    'refinance_credit_4': {
+      ru: 'Результаты и выбор',
+      he: 'תוצאות ובחירה',
+      en: 'Results & selection'
+    }
+  };
+  return translations[screenLocation] || {
+    ru: screenLocation,
+    he: screenLocation,
+    en: screenLocation
+  };
 }
 
 // Feature flags for rollback capability
@@ -533,7 +574,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
         }
       };
       
-      missingSteps.forEach((step, index) => {
+      missingSteps.forEach((step, _) => {
         const stepNumber = parseInt(step.replace('refinance_mortgage_', ''));
         const titles = stepTitles[step];
         
@@ -685,7 +726,7 @@ app.get('/api/content/mortgage-refi/all-items', async (req, res) => {
       if (row.translations_data) {
         row.translations_data.split('|||').forEach(trans => {
           const [lang, value] = trans.split(':');
-          if (lang && value && translations.hasOwnProperty(lang)) {
+          if (lang && value && Object.prototype.hasOwnProperty.call(translations, lang)) {
             translations[lang] = value;
           }
         });
@@ -821,7 +862,7 @@ app.get('/api/content/credit-refi/all-items', async (req, res) => {
       if (row.translations_data) {
         row.translations_data.split('|||').forEach(trans => {
           const [lang, value] = trans.split(':');
-          if (lang && value && translations.hasOwnProperty(lang)) {
+          if (lang && value && Object.prototype.hasOwnProperty.call(translations, lang)) {
             translations[lang] = value;
           }
         });
@@ -959,7 +1000,7 @@ app.get('/api/content/credit/all-items', async (req, res) => {
       if (row.translations_data) {
         row.translations_data.split('|||').forEach(trans => {
           const [lang, value] = trans.split(':');
-          if (lang && value && translations.hasOwnProperty(lang)) {
+          if (lang && value && Object.prototype.hasOwnProperty.call(translations, lang)) {
             translations[lang] = value;
           }
         });
@@ -1058,47 +1099,6 @@ app.get('/api/content/credit-refi', async (req, res) => {
 
     console.log(`🔍 Found ${existingStepsResult.rows.length} potential credit refinance step records`);
 
-    // Helper function for credit step descriptions
-    function getCreditStepDescription(screenLocation) {
-      const descriptions = {
-        'refinance_credit_1': 'Кредитные данные',
-        'refinance_credit_2': 'Личная информация', 
-        'refinance_credit_3': 'Доходы и занятость',
-        'refinance_credit_4': 'Результаты и выбор'
-      };
-      return descriptions[screenLocation] || screenLocation;
-    }
-
-    // Helper function for credit step translations
-    function getCreditStepTranslations(screenLocation) {
-      const translations = {
-        'refinance_credit_1': {
-          ru: 'Кредитные данные',
-          he: 'נתוני אשראי',
-          en: 'Credit details'
-        },
-        'refinance_credit_2': {
-          ru: 'Личная информация',
-          he: 'מידע אישי',
-          en: 'Personal information'
-        },
-        'refinance_credit_3': {
-          ru: 'Доходы и занятость',
-          he: 'הכנסות ותעסוקה',
-          en: 'Income & employment'
-        },
-        'refinance_credit_4': {
-          ru: 'Результаты и выбор',
-          he: 'תוצאות ובחירה',
-          en: 'Results & selection'
-        }
-      };
-      return translations[screenLocation] || {
-        ru: screenLocation,
-        he: screenLocation,
-        en: screenLocation
-      };
-    }
 
     // Format the response exactly like mortgage-refi
     const creditRefiContent = existingStepsResult.rows.map(row => ({
@@ -1962,7 +1962,7 @@ app.get('/api/content/main-summary', async (req, res) => {
 
     // Fill in actual counts from database
     result.rows.forEach(row => {
-      if (summary.hasOwnProperty(row.section)) {
+      if (Object.prototype.hasOwnProperty.call(summary, row.section)) {
         summary[row.section] = parseInt(row.item_count);
       }
     });
@@ -2269,9 +2269,9 @@ app.get('/api/content/mortgage/drill/:screenLocation', async (req, res) => {
 // Credit drill endpoint - fetch specific content for a credit step
 app.get('/api/content/credit/drill/:screenLocation', async (req, res) => {
   const startTime = Date.now();
+  const { screenLocation } = req.params;
   
   try {
-    const { screenLocation } = req.params;
     
     // Validate language parameter
     const langValidation = validateLanguage(req.query.lang);
@@ -2462,9 +2462,9 @@ app.get('/api/content/credit/drill/:screenLocation', async (req, res) => {
 // Credit-refi drill endpoint - fetch specific content for a credit-refi step
 app.get('/api/content/credit-refi/drill/:screenLocation', async (req, res) => {
   const startTime = Date.now();
+  const { screenLocation } = req.params;
   
   try {
-    const { screenLocation } = req.params;
     
     // Validate language parameter
     const langValidation = validateLanguage(req.query.lang);

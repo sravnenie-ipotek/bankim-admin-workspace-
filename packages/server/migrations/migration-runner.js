@@ -289,7 +289,7 @@ async function main() {
         await migrator.runMigrations(process.argv[3]);
         break;
         
-      case 'rollback':
+      case 'rollback': {
         const database = process.argv[3];
         const version = process.argv[4];
         if (!database || !version) {
@@ -298,6 +298,7 @@ async function main() {
         }
         await migrator.rollbackMigration(database, version);
         break;
+      }
         
       case 'status':
         await migrator.getStatus();
