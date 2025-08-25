@@ -574,7 +574,7 @@ app.get('/api/content/mortgage-refi', async (req, res) => {
         }
       };
       
-      missingSteps.forEach((step, _) => {
+      missingSteps.forEach((step) => {
         const stepNumber = parseInt(step.replace('refinance_mortgage_', ''));
         const titles = stepTitles[step];
         

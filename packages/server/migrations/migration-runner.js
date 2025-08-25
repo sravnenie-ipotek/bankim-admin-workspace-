@@ -238,7 +238,7 @@ class DatabaseMigrator {
       
       for (const row of result.rows) {
         // Find corresponding migration file
-        const migrationFile = path.join(this.migrationsPath, `${row.version}_*.sql`);
+        const migrationFile = path.join(this.migrationsPath, `${row.version}_*.sql`); // eslint-disable-line no-unused-vars
         // Validate checksum matches
         // This would include checksum validation logic
       }
