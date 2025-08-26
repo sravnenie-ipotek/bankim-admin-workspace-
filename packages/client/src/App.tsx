@@ -41,7 +41,6 @@ import MenuEdit from './pages/MenuEdit';
 import LanguageDemo from './components/LanguageDemo/LanguageDemo';
 import LanguageTest from './components/LanguageTest/LanguageTest';
 import DropdownAdmin from './pages/DropdownAdmin';
-import DropdownRedirect from './components/DropdownRedirect';
 import JSONBDropdownEdit from './components/JSONBDropdownEdit';
 
 

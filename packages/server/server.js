@@ -1156,72 +1156,110 @@ app.get('/api/content/credit/:contentKey/options', async (req, res) => {
     const { contentKey } = req.params;
     console.log(`🔄 Fetching dropdown options for credit content key: ${contentKey}`);
 
-    // Query for ONLY dropdown options related to this specific dropdown
-    // Credit uses dot notation: credit_step1.field.loan_purpose
-    // Options are: credit_step1.field.loan_purpose.option_name
-    const basePattern = contentKey; // Use the key as-is for credit
+    // Extract the base pattern (e.g., from "credit_step1.field.loan_purpose" get "loan_purpose")
+    const fieldName = contentKey.split('.').pop() || contentKey;
     
+    // Build the content key pattern that BankIM uses
+    // For credit, the pattern is: calculate_credit_[field]_option_%
+    const optionPattern = `calculate_credit_${fieldName}_option_%`;
+    
+    console.log(`🔍 Looking for options with pattern: ${optionPattern}`);
+    
+    // Query content_translations with content_items join like BankIM does
     const optionsResult = await safeQuery(`
-      SELECT 
-        ci.id,
+      SELECT DISTINCT
         ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as titleRu,
-        ct_he.content_value as titleHe,
-        ct_en.content_value as titleEn,
-        jsonb_build_object(
-          'ru', COALESCE(ct_ru.content_value, ''),
-          'he', COALESCE(ct_he.content_value, ''),
-          'en', COALESCE(ct_en.content_value, '')
-        ) as translations
+        ct.language_code,
+        ct.content_value as translated_text,
+        ci.page_number as sort_order,
+        COALESCE(ci.page_number, 
+          CAST(SUBSTRING(ci.content_key FROM '.*option_([0-9]+)') AS INTEGER)
+        ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru' 
-        AND ct_ru.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he' 
-        AND ct_he.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en' 
-        AND ct_en.status IN ('approved', 'draft')
-      WHERE ci.component_type IN ('option', 'dropdown_option', 'field_option')
-        AND ci.content_key LIKE $1 || '.%'
+      INNER JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.content_key LIKE $1
+        AND ct.language_code IN ('ru', 'he', 'en')
+        AND ct.status IN ('approved', 'draft')
         AND ci.is_active = true
-      ORDER BY ci.content_key
-    `, [basePattern]);
+      ORDER BY option_order, ci.content_key, ct.language_code
+    `, [optionPattern]);
 
-    console.log(`📋 Found ${optionsResult.rows.length} potential dropdown options for content key: ${contentKey}`);
+    console.log(`📋 Found ${optionsResult.rows.length} translation records for pattern: ${optionPattern}`);
 
     if (optionsResult.rows.length > 0) {
-      // Format the response to match expected API format
-      const options = optionsResult.rows.map(row => ({
-        id: row.id,
-        content_key: row.content_key,
-        component_type: row.component_type,
-        titleRu: row.titleru || '',
-        titleHe: row.titlehe || '',
-        titleEn: row.titleen || '',
-        translations: row.translations,
-        is_active: row.is_active,
-        updated_at: row.updated_at
-      }));
+      // Group translations by content_key to create option objects
+      const optionsMap = new Map();
+      
+      optionsResult.rows.forEach(row => {
+        if (!optionsMap.has(row.content_key)) {
+          optionsMap.set(row.content_key, {
+            content_key: row.content_key,
+            sort_order: row.option_order,
+            text_ru: '',
+            text_he: '',
+            text_en: ''
+          });
+        }
+        
+        const option = optionsMap.get(row.content_key);
+        if (row.language_code === 'ru') option.text_ru = row.translated_text || '';
+        if (row.language_code === 'he') option.text_he = row.translated_text || '';
+        if (row.language_code === 'en') option.text_en = row.translated_text || '';
+      });
 
-      console.log(`✅ Returning ${options.length} dropdown options for credit content`);
+      // Convert map to array and sort by order
+      const options = Array.from(optionsMap.values()).sort((a, b) => a.sort_order - b.sort_order);
+      
+      console.log(`✅ Returning ${options.length} dropdown options for ${contentKey}`);
       res.json({
         success: true,
         data: options
       });
     } else {
-      // Return empty array but successful response - frontend will handle fallback
-      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
-      res.json({
-        success: true,
-        data: []
-      });
+      // Try alternative query - check if options exist in content_items table
+      console.log(`⚠️ No options found in content_translations, trying content_items...`);
+      
+      const basePattern = fieldName.replace(/_label$|_ph$/, '');
+      const altResult = await safeQuery(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ct_ru.content_value as text_ru,
+          ct_he.content_value as text_he,
+          ct_en.content_value as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+          AND ct_ru.language_code = 'ru'
+        LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+          AND ct_he.language_code = 'he'
+        LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+          AND ct_en.language_code = 'en'
+        WHERE ci.component_type IN ('option', 'dropdown_option', 'field_option')
+          AND (ci.content_key LIKE $1 || '.%' OR ci.content_key LIKE $2 || '%')
+          AND ci.is_active = true
+        ORDER BY ci.content_key
+      `, [contentKey, basePattern + '_option']);
+      
+      if (altResult.rows.length > 0) {
+        const options = altResult.rows.map(row => ({
+          content_key: row.content_key,
+          text_ru: row.text_ru || '',
+          text_he: row.text_he || '',
+          text_en: row.text_en || ''
+        }));
+        
+        console.log(`✅ Found ${options.length} options from content_items`);
+        res.json({
+          success: true,
+          data: options
+        });
+      } else {
+        console.log(`⚠️ No dropdown options found for ${contentKey}`);
+        res.json({
+          success: true,
+          data: []
+        });
+      }
     }
 
   } catch (error) {
@@ -1244,73 +1282,111 @@ app.get('/api/content/credit-refi/:contentKey/options', async (req, res) => {
   try {
     console.log(`🔄 Fetching credit-refi dropdown options for contentKey: ${contentKey}`);
     
-    // Extract base pattern (remove _label or _ph suffix if present) 
-    const basePattern = contentKey.replace(/_label$|_ph$/, '');
-    console.log(`🔍 Searching for options with base pattern: ${basePattern}`);
-
-    // Query for dropdown options with flexible pattern matching
+    // Extract the base pattern (e.g., from "refinance_credit_step1.field.loan_purpose" get "loan_purpose")
+    const fieldName = contentKey.split('.').pop() || contentKey;
+    
+    // Build the content key pattern that BankIM uses
+    // For credit-refi, try both refinance_credit and calculate_credit patterns
+    const pattern1 = `refinance_credit_${fieldName}_option_%`;
+    const pattern2 = `calculate_credit_${fieldName}_option_%`;
+    
+    console.log(`🔍 Looking for options with patterns: ${pattern1} or ${pattern2}`);
+    
+    // Query content_translations with content_items join like BankIM does
     const optionsResult = await safeQuery(`
-      SELECT 
-        ci.id,
+      SELECT DISTINCT
         ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as titleRu,
-        ct_he.content_value as titleHe,
-        ct_en.content_value as titleEn,
-        jsonb_build_object(
-          'ru', COALESCE(ct_ru.content_value, ''),
-          'he', COALESCE(ct_he.content_value, ''),
-          'en', COALESCE(ct_en.content_value, '')
-        ) as translations
+        ct.language_code,
+        ct.content_value as translated_text,
+        ci.page_number as sort_order,
+        COALESCE(ci.page_number, 
+          CAST(SUBSTRING(ci.content_key FROM '.*option_([0-9]+)') AS INTEGER)
+        ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru' 
-        AND ct_ru.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he' 
-        AND ct_he.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en' 
-        AND ct_en.status IN ('approved', 'draft')
-      WHERE ci.component_type = 'option'
-        AND ci.content_key LIKE $1 || '%'
+      INNER JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE (ci.content_key LIKE $1 OR ci.content_key LIKE $2)
+        AND ct.language_code IN ('ru', 'he', 'en')
+        AND ct.status IN ('approved', 'draft')
         AND ci.is_active = true
-        AND ci.content_key != $1
-      ORDER BY ci.content_key
-    `, [basePattern]);
+      ORDER BY option_order, ci.content_key, ct.language_code
+    `, [pattern1, pattern2]);
+
+    console.log(`📋 Found ${optionsResult.rows.length} translation records for patterns`);
 
     if (optionsResult.rows.length > 0) {
-      const options = optionsResult.rows.map(row => ({
-        id: row.id,
-        content_key: row.content_key,
-        component_type: row.component_type,
-        ru: row.titleru || row.translations?.ru || '',
-        he: row.titlehe || row.translations?.he || '',
-        en: row.titleen || row.translations?.en || '',
-        titleRu: row.titleru || '',
-        titleHe: row.titlehe || '',
-        titleEn: row.titleen || '',
-        translations: row.translations,
-        is_active: row.is_active,
-        updated_at: row.updated_at
-      }));
+      // Group translations by content_key to create option objects
+      const optionsMap = new Map();
+      
+      optionsResult.rows.forEach(row => {
+        if (!optionsMap.has(row.content_key)) {
+          optionsMap.set(row.content_key, {
+            content_key: row.content_key,
+            sort_order: row.option_order,
+            text_ru: '',
+            text_he: '',
+            text_en: ''
+          });
+        }
+        
+        const option = optionsMap.get(row.content_key);
+        if (row.language_code === 'ru') option.text_ru = row.translated_text || '';
+        if (row.language_code === 'he') option.text_he = row.translated_text || '';
+        if (row.language_code === 'en') option.text_en = row.translated_text || '';
+      });
 
-      console.log(`✅ Returning ${options.length} dropdown options for credit-refi content`);
+      // Convert map to array and sort by order
+      const options = Array.from(optionsMap.values()).sort((a, b) => a.sort_order - b.sort_order);
+      
+      console.log(`✅ Returning ${options.length} dropdown options for ${contentKey}`);
       res.json({
         success: true,
         data: options
       });
     } else {
-      // Return empty array but successful response - frontend will handle fallback
-      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
-      res.json({
-        success: true,
-        data: []
-      });
+      // Try alternative query - check if options exist in content_items table
+      console.log(`⚠️ No options found in content_translations, trying content_items...`);
+      
+      const basePattern = fieldName.replace(/_label$|_ph$/, '');
+      const altResult = await safeQuery(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ct_ru.content_value as text_ru,
+          ct_he.content_value as text_he,
+          ct_en.content_value as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+          AND ct_ru.language_code = 'ru'
+        LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+          AND ct_he.language_code = 'he'
+        LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+          AND ct_en.language_code = 'en'
+        WHERE ci.component_type IN ('option', 'dropdown_option', 'field_option')
+          AND (ci.content_key LIKE $1 || '%' OR ci.content_key LIKE $2 || '%')
+          AND ci.is_active = true
+        ORDER BY ci.content_key
+      `, [contentKey, basePattern + '_option']);
+      
+      if (altResult.rows.length > 0) {
+        const options = altResult.rows.map(row => ({
+          content_key: row.content_key,
+          text_ru: row.text_ru || '',
+          text_he: row.text_he || '',
+          text_en: row.text_en || ''
+        }));
+        
+        console.log(`✅ Found ${options.length} options from content_items`);
+        res.json({
+          success: true,
+          data: options
+        });
+      } else {
+        console.log(`⚠️ No dropdown options found for ${contentKey}`);
+        res.json({
+          success: true,
+          data: []
+        });
+      }
     }
 
   } catch (error) {
@@ -1563,72 +1639,103 @@ app.get('/api/content/mortgage/:contentKey/options', async (req, res) => {
     const { contentKey } = req.params;
     console.log(`🔄 Fetching dropdown options for mortgage content key: ${contentKey}`);
 
-    // Query for ONLY dropdown options related to this specific dropdown
-    // First get the base content key pattern to find related options
-    const basePattern = contentKey.replace(/_label$|_ph$/, ''); // Remove _label or _ph suffixes
+    // Extract the base pattern (e.g., from "mortgage_step1.field.when_needed" get "when_needed")
+    const fieldName = contentKey.split('.').pop() || contentKey;
     
+    // Build the content key pattern that BankIM uses
+    // For mortgage, the pattern is: calculate_mortgage_[field]_option_%
+    const optionPattern = `calculate_mortgage_${fieldName}_option_%`;
+    
+    console.log(`🔍 Looking for options with pattern: ${optionPattern}`);
+    
+    // Query content_translations with content_items join like BankIM does
     const optionsResult = await safeQuery(`
-      SELECT 
-        ci.id,
+      SELECT DISTINCT
         ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as titleRu,
-        ct_he.content_value as titleHe,
-        ct_en.content_value as titleEn,
-        jsonb_build_object(
-          'ru', COALESCE(ct_ru.content_value, ''),
-          'he', COALESCE(ct_he.content_value, ''),
-          'en', COALESCE(ct_en.content_value, '')
-        ) as translations
+        ct.language_code,
+        ct.content_value as translated_text,
+        ci.page_number as sort_order,
+        COALESCE(ci.page_number, 
+          CAST(SUBSTRING(ci.content_key FROM '.*option_([0-9]+)') AS INTEGER)
+        ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru' 
-        AND ct_ru.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he' 
-        AND ct_he.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en' 
-        AND ct_en.status IN ('approved', 'draft')
-      WHERE ci.component_type = 'option'
-        AND ci.content_key LIKE $1 || '%'
+      INNER JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE ci.content_key LIKE $1
+        AND ct.language_code IN ('ru', 'he', 'en')
+        AND ct.status IN ('approved', 'draft')
         AND ci.is_active = true
-        AND ci.content_key != $1
-      ORDER BY ci.content_key
-    `, [basePattern]);
+      ORDER BY option_order, ci.content_key, ct.language_code
+    `, [optionPattern]);
 
-    console.log(`📋 Found ${optionsResult.rows.length} potential dropdown options for content key: ${contentKey}`);
+    console.log(`📋 Found ${optionsResult.rows.length} translation records for pattern: ${optionPattern}`);
 
     if (optionsResult.rows.length > 0) {
-      // Format the response to match expected API format
-      const options = optionsResult.rows.map(row => ({
-        id: row.id,
-        content_key: row.content_key,
-        component_type: row.component_type,
-        titleRu: row.titleru || '',
-        titleHe: row.titlehe || '',
-        titleEn: row.titleen || '',
-        translations: row.translations,
-        is_active: row.is_active,
-        updated_at: row.updated_at
-      }));
+      // Group translations by content_key to create option objects
+      const optionsMap = new Map();
+      
+      optionsResult.rows.forEach(row => {
+        if (!optionsMap.has(row.content_key)) {
+          optionsMap.set(row.content_key, {
+            content_key: row.content_key,
+            sort_order: row.option_order,
+            text_ru: '',
+            text_he: '',
+            text_en: ''
+          });
+        }
+        
+        const option = optionsMap.get(row.content_key);
+        if (row.language_code === 'ru') option.text_ru = row.translated_text || '';
+        if (row.language_code === 'he') option.text_he = row.translated_text || '';
+        if (row.language_code === 'en') option.text_en = row.translated_text || '';
+      });
 
-      console.log(`✅ Returning ${options.length} dropdown options for mortgage content`);
+      // Convert map to array and sort by order
+      const options = Array.from(optionsMap.values()).sort((a, b) => a.sort_order - b.sort_order);
+      
+      console.log(`✅ Returning ${options.length} dropdown options for ${contentKey}`);
       res.json({
         success: true,
         data: options
       });
     } else {
-      // Return empty array but successful response - frontend will handle fallback
-      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
-      res.json({
-        success: true,
-        data: []
-      });
+      // Try alternative query - check if options exist in content_items table
+      console.log(`⚠️ No options found in content_translations, trying content_items...`);
+      
+      const basePattern = fieldName.replace(/_label$|_ph$/, '');
+      const altResult = await safeQuery(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ct_ru.content_value as text_ru,
+          ct_he.content_value as text_he,
+          ct_en.content_value as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+          AND ct_ru.language_code = 'ru'
+        LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+          AND ct_he.language_code = 'he'
+        LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+          AND ct_en.language_code = 'en'
+        WHERE ci.component_type = 'option'
+          AND ci.content_key LIKE $1 || '%'
+          AND ci.is_active = true
+        ORDER BY ci.content_key
+      `, [basePattern]);
+      
+      if (altResult.rows.length > 0) {
+        console.log(`✅ Found ${altResult.rows.length} options in content_items table`);
+        res.json({
+          success: true,
+          data: altResult.rows
+        });
+      } else {
+        console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
+        res.json({
+          success: true,
+          data: []
+        });
+      }
     }
 
   } catch (error) {
@@ -1650,73 +1757,112 @@ app.get('/api/content/mortgage-refi/:contentKey/options', async (req, res) => {
     const { contentKey } = req.params;
     console.log(`🔄 Fetching dropdown options for mortgage-refi content key: ${contentKey}`);
 
-    // Query for ONLY dropdown options related to this specific dropdown
-    // First get the base content key pattern to find related options
-    const basePattern = contentKey.replace(/_label$|_ph$/, ''); // Remove _label or _ph suffixes
+    // Extract the base pattern (e.g., from "refinance_mortgage_step1.field.loan_purpose" get "loan_purpose")
+    const fieldName = contentKey.split('.').pop() || contentKey;
     
+    // Build the content key pattern that BankIM uses
+    // For mortgage-refi, the pattern could be: program_refinance_mortgage_ or calculate_mortgage_
+    // We'll use OR in the SQL query to check both patterns
+    const pattern1 = `program_refinance_mortgage_${fieldName}_option_%`;
+    const pattern2 = `calculate_mortgage_${fieldName}_option_%`;
+    
+    console.log(`🔍 Looking for options with patterns: ${pattern1} or ${pattern2}`);
+    
+    // Query content_translations with content_items join like BankIM does
     const optionsResult = await safeQuery(`
-      SELECT 
-        ci.id,
+      SELECT DISTINCT
         ci.content_key,
-        ci.component_type,
-        ci.category,
-        ci.screen_location,
-        ci.is_active,
-        ci.updated_at,
-        ct_ru.content_value as titleRu,
-        ct_he.content_value as titleHe,
-        ct_en.content_value as titleEn,
-        -- Create translations object for compatibility
-        json_build_object(
-          'ru', COALESCE(ct_ru.content_value, ''),
-          'he', COALESCE(ct_he.content_value, ''),
-          'en', COALESCE(ct_en.content_value, '')
-        ) as translations
+        ct.language_code,
+        ct.content_value as translated_text,
+        ci.page_number as sort_order,
+        COALESCE(ci.page_number, 
+          CAST(SUBSTRING(ci.content_key FROM '.*option_([0-9]+)') AS INTEGER)
+        ) as option_order
       FROM content_items ci
-      LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
-        AND ct_ru.language_code = 'ru' 
-        AND ct_ru.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
-        AND ct_he.language_code = 'he' 
-        AND ct_he.status IN ('approved', 'draft')
-      LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
-        AND ct_en.language_code = 'en' 
-        AND ct_en.status IN ('approved', 'draft')
-      WHERE ci.component_type = 'option'
-        AND ci.content_key LIKE $1 || '%'
+      INNER JOIN content_translations ct ON ci.id = ct.content_item_id
+      WHERE (ci.content_key LIKE $1 OR ci.content_key LIKE $2)
+        AND ct.language_code IN ('ru', 'he', 'en')
+        AND ct.status IN ('approved', 'draft')
         AND ci.is_active = true
-        AND ci.content_key != $1
-      ORDER BY ci.content_key
-    `, [basePattern]);
+      ORDER BY option_order, ci.content_key, ct.language_code
+    `, [pattern1, pattern2]);
 
-    console.log(`📋 Found ${optionsResult.rows.length} potential dropdown options for content key: ${contentKey}`);
+    console.log(`📋 Found ${optionsResult.rows.length} translation records for patterns`);
 
     if (optionsResult.rows.length > 0) {
-      // Format the response to match expected API format
-      const options = optionsResult.rows.map(row => ({
-        id: row.id,
-        content_key: row.content_key,
-        component_type: row.component_type,
-        titleRu: row.titleru || '',
-        titleHe: row.titlehe || '',
-        titleEn: row.titleen || '',
-        translations: row.translations,
-        is_active: row.is_active,
-        updated_at: row.updated_at
-      }));
+      // Group translations by content_key to create option objects
+      const optionsMap = new Map();
+      
+      optionsResult.rows.forEach(row => {
+        if (!optionsMap.has(row.content_key)) {
+          optionsMap.set(row.content_key, {
+            content_key: row.content_key,
+            sort_order: row.option_order,
+            text_ru: '',
+            text_he: '',
+            text_en: ''
+          });
+        }
+        
+        const option = optionsMap.get(row.content_key);
+        if (row.language_code === 'ru') option.text_ru = row.translated_text || '';
+        if (row.language_code === 'he') option.text_he = row.translated_text || '';
+        if (row.language_code === 'en') option.text_en = row.translated_text || '';
+      });
 
-      console.log(`✅ Returning ${options.length} dropdown options for mortgage-refi content`);
+      // Convert map to array and sort by order
+      const options = Array.from(optionsMap.values()).sort((a, b) => a.sort_order - b.sort_order);
+      
+      console.log(`✅ Returning ${options.length} dropdown options for ${contentKey}`);
       res.json({
         success: true,
         data: options
       });
     } else {
-      // Return empty array but successful response - frontend will handle fallback
-      console.log(`⚠️ No dropdown options found for content key: ${contentKey}, returning empty array`);
-      res.json({
-        success: true,
-        data: []
-      });
+      // Try alternative query - check if options exist in content_items table
+      console.log(`⚠️ No options found in content_translations, trying content_items...`);
+      
+      const basePattern = fieldName.replace(/_label$|_ph$/, '');
+      const altResult = await safeQuery(`
+        SELECT 
+          ci.id,
+          ci.content_key,
+          ct_ru.content_value as text_ru,
+          ct_he.content_value as text_he,
+          ct_en.content_value as text_en
+        FROM content_items ci
+        LEFT JOIN content_translations ct_ru ON ci.id = ct_ru.content_item_id 
+          AND ct_ru.language_code = 'ru'
+        LEFT JOIN content_translations ct_he ON ci.id = ct_he.content_item_id 
+          AND ct_he.language_code = 'he'
+        LEFT JOIN content_translations ct_en ON ci.id = ct_en.content_item_id 
+          AND ct_en.language_code = 'en'
+        WHERE ci.component_type IN ('option', 'dropdown_option', 'field_option')
+          AND (ci.content_key LIKE $1 || '%' OR ci.content_key LIKE $2 || '%')
+          AND ci.is_active = true
+        ORDER BY ci.content_key
+      `, [contentKey, basePattern + '_option']);
+      
+      if (altResult.rows.length > 0) {
+        const options = altResult.rows.map(row => ({
+          content_key: row.content_key,
+          text_ru: row.text_ru || '',
+          text_he: row.text_he || '',
+          text_en: row.text_en || ''
+        }));
+        
+        console.log(`✅ Found ${options.length} options from content_items`);
+        res.json({
+          success: true,
+          data: options
+        });
+      } else {
+        console.log(`⚠️ No dropdown options found for ${contentKey}`);
+        res.json({
+          success: true,
+          data: []
+        });
+      }
     }
 
   } catch (error) {

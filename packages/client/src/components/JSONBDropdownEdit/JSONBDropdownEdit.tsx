@@ -34,35 +34,7 @@ interface ContentItem {
   };
 }
 
-// Helper function to create contextual dropdown options
-const getContextualOptions = (screenLocation: string, titleRu?: string, titleHe?: string): DropdownOption[] => {
-  // Create smart defaults based on screen location and content
-  if (screenLocation?.includes('mortgage')) {
-    return [
-      { ru: 'Основной источник дохода', he: 'מקור הכנסה עיקרי' },
-      { ru: 'Дополнительный доход', he: 'הכנסה נוספת' },
-      { ru: 'Пенсия', he: 'פנסיה' },
-      { ru: 'Социальные выплаты', he: 'קצבאות סוציאליות' }
-    ];
-  } else if (screenLocation?.includes('credit')) {
-    return [
-      { ru: 'Да', he: 'כן' },
-      { ru: 'Нет', he: 'לא' },
-      { ru: 'Частично', he: 'חלקית' }
-    ];
-  } else if (titleRu?.includes('источник') || titleHe?.includes('מקור')) {
-    return [
-      { ru: 'Основной источник дохода', he: 'מקור הכנסה עיקרי' },
-      { ru: 'Дополнительный доход', he: 'הכנסה נוספת' }
-    ];
-  } else {
-    return [
-      { ru: 'Вариант 1', he: 'אפשרות 1' },
-      { ru: 'Вариант 2', he: 'אפשרות 2' },
-      { ru: 'Вариант 3', he: 'אפשרות 3' }
-    ];
-  }
-};
+// No fallback options - show empty state when no real data found
 
 const JSONBDropdownEdit: React.FC = () => {
   const { actionId } = useParams<{ actionId: string }>();
@@ -107,13 +79,15 @@ const JSONBDropdownEdit: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      console.log(`📋 Fetching JSONB dropdown content item with ID: ${actionId}`);
+      console.log(`🔍 [DEBUG] Fetching dropdown content for actionId: ${actionId}`);
+      console.log(`🔍 [DEBUG] Current URL path: ${window.location.pathname}`);
       
       // First get the basic content item info
       const response = await apiService.getContentItemById(actionId || '');
       
       if (response.success && response.data) {
         const targetContent = response.data;
+        console.log(`🔍 [DEBUG] Raw API response for actionId ${actionId}:`, targetContent);
         
         // Normalize content structure
         const normalizedContent: ContentItem = {
@@ -132,6 +106,12 @@ const JSONBDropdownEdit: React.FC = () => {
           last_modified: targetContent.updated_at || new Date().toISOString()
         };
 
+        console.log(`🔍 [DEBUG] Normalized content for actionId ${actionId}:`, {
+          content_key: normalizedContent.content_key,
+          component_type: normalizedContent.component_type,
+          screen_location: normalizedContent.screen_location
+        });
+
         setContent(normalizedContent);
         
         // Initialize form fields with loaded data
@@ -139,9 +119,10 @@ const JSONBDropdownEdit: React.FC = () => {
         setTitleHe(normalizedContent.translations.he);
         
         // Load dropdown options from JSONB system
-        await loadJSONBDropdownOptions(normalizedContent.screen_location);
+        await loadJSONBDropdownOptions(normalizedContent.screen_location, normalizedContent);
         
       } else {
+        console.log(`🔍 [DEBUG] No content found for actionId ${actionId}:`, response);
         setError('Содержимое не найдено');
       }
     } catch (err) {
@@ -152,88 +133,67 @@ const JSONBDropdownEdit: React.FC = () => {
     }
   };
 
-  const loadJSONBDropdownOptions = async (screenLocation: string) => {
+  const loadJSONBDropdownOptions = async (screenLocation: string, contentItem?: ContentItem) => {
     try {
-      console.log(`📋 Loading JSONB dropdown options for screen: ${screenLocation}`);
+      console.log(`📋 Loading dropdown options for actionId: ${actionId} (screen: ${screenLocation})`);
       
       // Special handling for menu items - they don't have dropdown data
       if (screenLocation === 'main_menu' || screenLocation?.includes('menu')) {
-        console.log(`📋 This is a menu item, creating basic options`);
-        setOptions([
-          { ru: 'Активно', he: 'פעיל' },
-          { ru: 'Неактивно', he: 'לא פעיל' },
-          { ru: 'Скрыто', he: 'מוסתר' }
-        ]);
+        console.log(`📋 This is a menu item - no options available`);
+        setOptions([]);
         return;
       }
       
-      // Use the new JSONB API to get dropdown data
-      const response = await apiService.getScreenDropdowns(screenLocation, 'ru');
-      
-      if (response.success && response.data) {
-        console.log('📊 Raw JSONB response data:', response.data);
+      // Load dropdown options using the same approach as BankIM
+      if (contentItem?.content_key) {
+        console.log(`🔍 Loading options for content_key: ${contentItem.content_key}`);
         
-        // The response might be an array of dropdowns or a single dropdown
-        let dropdownData = response.data;
+        let dropdownResponse;
+        const currentPath = window.location.pathname;
         
-        // If it's an array, try to find the first dropdown or use the first item
-        if (Array.isArray(dropdownData)) {
-          if (dropdownData.length > 0) {
-            dropdownData = dropdownData[0]; // Use first dropdown
-            console.log('📊 Using first dropdown from array:', dropdownData);
-          } else {
-            console.warn(`⚠️ Empty dropdown array for ${screenLocation}`);
-            dropdownData = null;
-          }
+        // Use the appropriate API based on section
+        if (currentPath.includes('/content/mortgage/')) {
+          dropdownResponse = await apiService.getMortgageDropdownOptions(contentItem.content_key);
+        } else if (currentPath.includes('/content/mortgage-refi/')) {
+          dropdownResponse = await apiService.getMortgageRefiDropdownOptions(contentItem.content_key);
+        } else if (currentPath.includes('/content/credit/')) {
+          dropdownResponse = await apiService.getCreditDropdownOptions(contentItem.content_key);
+        } else if (currentPath.includes('/content/credit-refi/')) {
+          dropdownResponse = await apiService.getCreditRefiDropdownOptions(contentItem.content_key);
+        } else {
+          console.warn(`⚠️ Unknown section, trying mortgage endpoint`);
+          dropdownResponse = await apiService.getMortgageDropdownOptions(contentItem.content_key);
         }
         
-        // Extract options from JSONB data structure
-        if (dropdownData && dropdownData.dropdown_data) {
-          const jsonbData = dropdownData.dropdown_data;
-          
-          if (jsonbData.options && Array.isArray(jsonbData.options)) {
-            const loadedOptions: DropdownOption[] = jsonbData.options.map((option: any) => ({
-              ru: option.ru || option.label?.ru || 'Опция',
-              he: option.he || option.label?.he || 'אפשרות'
+        console.log(`📊 API Response:`, dropdownResponse);
+        
+        if (dropdownResponse?.success && dropdownResponse?.data && Array.isArray(dropdownResponse.data)) {
+          if (dropdownResponse.data.length > 0) {
+            // Transform the data to match our component's expected format
+            const loadedOptions: DropdownOption[] = dropdownResponse.data.map((option: any) => ({
+              ru: option.text_ru || option.titleRu || option.ru || '',
+              he: option.text_he || option.titleHe || option.he || ''
             }));
             
-            console.log(`✅ Loaded ${loadedOptions.length} JSONB options for ${screenLocation}`);
             setOptions(loadedOptions);
-            
-            // Update titles from JSONB data if available
-            if (jsonbData.label?.ru) {
-              setTitleRu(jsonbData.label.ru);
-            }
-            if (jsonbData.label?.he) {
-              setTitleHe(jsonbData.label.he);
-            }
+            console.log(`✅ Loaded ${loadedOptions.length} dropdown options`);
           } else {
-            console.warn(`⚠️ No options found in JSONB dropdown_data for ${screenLocation}. Creating default options.`);
-            setOptions([
-              { ru: 'Да', he: 'כן' },
-              { ru: 'Нет', he: 'לא' }
-            ]);
+            console.log(`ℹ️ No options found in database. Use "Add Option" button to create new options.`);
+            setOptions([]);
           }
         } else {
-          console.warn(`⚠️ No dropdown_data found for ${screenLocation}. Creating contextual options based on screen.`);
-          
-          // Create contextual default options based on screen location
-          const contextualOptions = getContextualOptions(screenLocation, content?.translations?.ru, content?.translations?.he);
-          setOptions(contextualOptions);
+          console.warn(`⚠️ Invalid response format or empty data`);
+          setOptions([]);
         }
       } else {
-        console.log(`ℹ️ No JSONB data for ${screenLocation}, using contextual defaults`);
-        
-        // Create contextual default options for this screen
-        const contextualOptions = getContextualOptions(screenLocation, content?.translations?.ru, content?.translations?.he);
-        setOptions(contextualOptions);
+        console.warn(`⚠️ No content_key available for dropdown`);
+        setOptions([]);
       }
-    } catch (err) {
-      console.error('Error loading JSONB dropdown options:', err);
       
-      // Create contextual default options even for network errors
-      const contextualOptions = getContextualOptions(screenLocation, content?.translations?.ru, content?.translations?.he);
-      setOptions(contextualOptions);
+    } catch (err) {
+      console.error('Error loading dropdown options:', err);
+      console.warn('⚠️ API error occurred - showing empty options');
+      setOptions([]);
     }
   };
 
