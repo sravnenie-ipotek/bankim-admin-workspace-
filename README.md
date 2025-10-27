@@ -21,9 +21,9 @@ This project uses a **multi-repository monorepo structure** where each component
 
 ```
 BankIM Management Portal Ecosystem
-├── 🏠 Main Repository (this repo)
+├── 🏠 Main Repository (this repo - bankim-admin-workspace-)
 │   ├── packages/client/        → Deployed to: bankimOnlineAdmin_client.git
-│   ├── packages/server/        → Separate backend deployment
+│   ├── packages/server/        → Deployed to: Railway (production)
 │   └── packages/shared/        → Deployed to: bankimOnlineAdmin_shared.git
 │
 ├── 🖥️ Client Repository        (bankimOnlineAdmin_client.git)
@@ -32,18 +32,20 @@ BankIM Management Portal Ecosystem
 ├── 🔧 Shared Repository        (bankimOnlineAdmin_shared.git)
 │   └── TypeScript Types & Utilities
 │
-└── ⚙️  Server Deployment       (Separate infrastructure)
-    └── Node.js/Express API Backend
+└── ☁️  Production Deployment    (Railway - All-in-One)
+    ├── Express Server (serves both API and frontend)
+    ├── React Frontend (static build)
+    └── PostgreSQL Database (3 databases)
 ```
 
 ### Repository Relationships
 
 | Repository | Purpose | Technology Stack | Deployment |
 |------------|---------|------------------|------------|
-| **Main** | Development coordination, scripts, documentation | Monorepo tools, Git hooks | GitHub: `bankimOnlineAdmin.git` |
-| **Client** | Frontend application | React 18, TypeScript, Vite, Cypress | GitHub: `bankimOnlineAdmin_client.git` |
-| **Shared** | Common types and utilities | TypeScript, ESM modules | GitHub: `bankimOnlineAdmin_shared.git` |
-| **Server** | Backend API services | Node.js, Express, PostgreSQL | Railway/Cloud infrastructure |
+| **Main** | Development coordination, monorepo workspace | Turborepo, Git hooks, Scripts | GitHub: `sravnenie-ipotek/bankim-admin-workspace-` |
+| **Client** | Frontend application | React 18, TypeScript, Vite, Cypress | GitHub: `MichaelMishaev/bankimOnlineAdmin_client` |
+| **Shared** | Common types and utilities | TypeScript, CommonJS modules | GitHub: `MichaelMishaev/bankimOnlineAdmin_shared` |
+| **Production** | Full-stack deployment | Express + React (single server) | Railway: `bankimonlineadmin-production.up.railway.app` |
 
 ## 🔄 Git Branch Strategy
 
@@ -290,7 +292,102 @@ npm run push:dry-run                 # Test deployment without changes
 
 ## 🚦 Deployment Process
 
+### Production Deployment (Railway)
+
+The project is deployed to **Railway** using a **single-server architecture** where Express serves both the API and the React frontend.
+
+**Live Production URL:** https://bankimonlineadmin-production.up.railway.app
+
+#### Architecture
+
+```
+┌─────────────────────────────────────────┐
+│         Railway Production              │
+│  (bankimonlineadmin-production)         │
+├─────────────────────────────────────────┤
+│                                         │
+│  ┌───────────────────────────────────┐ │
+│  │   Express Server (Node.js)        │ │
+│  │   - Port: Railway $PORT           │ │
+│  │   - Serves API: /api/*            │ │
+│  │   - Serves Frontend: /*           │ │
+│  └───────────────────────────────────┘ │
+│           │                    │        │
+│    ┌──────┴──────┐      ┌─────┴─────┐ │
+│    │ API Routes  │      │  React    │ │
+│    │ /api/auth   │      │  Static   │ │
+│    │ /api/content│      │  Build    │ │
+│    │ /api/health │      │  (dist/)  │ │
+│    └─────────────┘      └───────────┘ │
+│                                         │
+│  ┌───────────────────────────────────┐ │
+│  │   PostgreSQL Databases            │ │
+│  │   - bankim_content                │ │
+│  │   - bankim_core                   │ │
+│  │   - bankim_management             │ │
+│  └───────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+```
+
+#### Deployment Configuration
+
+**Build Command:**
+```bash
+npm install && npm run build
+```
+
+**Start Command:**
+```bash
+npm start  # Runs: NODE_ENV=production node packages/server/server.js
+```
+
+**Environment Variables (Required):**
+```bash
+NODE_ENV=production
+CONTENT_DATABASE_URL=postgresql://user:pass@host:port/bankim_content
+CORE_DATABASE_URL=postgresql://user:pass@host:port/bankim_core
+MANAGEMENT_DATABASE_URL=postgresql://user:pass@host:port/bankim_management
+```
+
+#### Deployment Workflow
+
+1. **Push to GitHub:**
+   ```bash
+   git push origin main
+   ```
+
+2. **Railway Auto-Deploy:**
+   - Detects push to `main` branch
+   - Runs build command (installs deps + builds React)
+   - Starts Express server with `NODE_ENV=production`
+   - Express serves both API and frontend
+
+3. **Verify Deployment:**
+   - Frontend: https://bankimonlineadmin-production.up.railway.app
+   - API Health: https://bankimonlineadmin-production.up.railway.app/api/health
+
+#### Key Production Features
+
+✅ **Single Server Architecture** - Express serves both frontend and API (no CORS issues)
+✅ **CommonJS Modules** - All database configs use `require()` for compatibility
+✅ **Relative API URLs** - Frontend uses `/api/*` for all requests
+✅ **Static File Serving** - Express serves React build from `packages/client/dist/`
+✅ **Production Optimizations** - Minified build, gzip compression, caching headers
+✅ **Health Monitoring** - `/api/health` endpoint for uptime monitoring
+
+### Local Development vs Production
+
+| Feature | Development | Production |
+|---------|-------------|------------|
+| **Frontend** | Vite dev server (port 4002) | Express static files |
+| **Backend** | Express API (port 4000) | Express API (Railway $PORT) |
+| **API URL** | `http://localhost:4000/api` | Relative `/api` URLs |
+| **Hot Reload** | ✅ Vite HMR | ❌ Build required |
+| **Build** | Not required | `npm run build` |
+| **Start** | `npm run dev` | `npm start` |
+
 ### Automated Push System
+
 The project includes a sophisticated push automation system that synchronizes changes across all repositories:
 
 ```bash
@@ -300,15 +397,16 @@ npm run push:all    # Full automation with build and deploy
 **Push Workflow:**
 1. **Auto-commit** - Automatically commit any uncommitted changes
 2. **Build Shared** - Build the shared package (dependency for others)
-3. **Push Main** - Push to the main repository
+3. **Push Main** - Push to the main repository (triggers Railway deploy)
 4. **Push Shared** - Push shared package with version tagging
 5. **Push Client** - Build and push client application
 6. **Verification** - Verify all operations completed successfully
 
 ### Environment Management
-- **Development** - Local development with hot reload
-- **Staging** - Testing environment with production data
-- **Production** - Live environment with monitoring and backups
+
+- **Development** - Local development with hot reload (Vite + Express)
+- **Staging** - Testing environment with production data (optional)
+- **Production** - Railway deployment with monitoring and backups
 
 ## 🌐 Access Points
 
@@ -376,8 +474,34 @@ This project is proprietary software developed for BankIM services. All rights r
 
 ## 🔗 Repository Links
 
-- **Main Repository** - [bankimOnlineAdmin](https://github.com/MichaelMishaev/bankimOnlineAdmin)
-- **Client Repository** - [bankimOnlineAdmin_client](https://github.com/MichaelMishaev/bankimOnlineAdmin_client)  
-- **Shared Repository** - [bankimOnlineAdmin_shared](https://github.com/MichaelMishaev/bankimOnlineAdmin_shared)
+### GitHub Repositories
 
-**🚀 Ready to start developing? Run `npm run dev` and visit `http://localhost:3002`**
+- **Main Repository (Workspace)** - [sravnenie-ipotek/bankim-admin-workspace-](https://github.com/sravnenie-ipotek/bankim-admin-workspace-)
+- **Client Repository** - [MichaelMishaev/bankimOnlineAdmin_client](https://github.com/MichaelMishaev/bankimOnlineAdmin_client)
+- **Shared Repository** - [MichaelMishaev/bankimOnlineAdmin_shared](https://github.com/MichaelMishaev/bankimOnlineAdmin_shared)
+
+### Production Deployment
+
+- **Live Application** - [bankimonlineadmin-production.up.railway.app](https://bankimonlineadmin-production.up.railway.app)
+- **API Health Check** - [bankimonlineadmin-production.up.railway.app/api/health](https://bankimonlineadmin-production.up.railway.app/api/health)
+- **Railway Dashboard** - [Railway Project](https://railway.app)
+
+### Repository Relationships
+
+```
+Main Repository (Development)
+├── Push to: sravnenie-ipotek/bankim-admin-workspace-
+│   └── Triggers: Railway Auto-Deploy
+│
+├── Sync to: MichaelMishaev/bankimOnlineAdmin_client
+│   └── Contains: React frontend code only
+│
+└── Sync to: MichaelMishaev/bankimOnlineAdmin_shared
+    └── Contains: TypeScript types only
+```
+
+---
+
+**🚀 Ready to start developing?**
+- **Local Development:** Run `npm run dev` and visit `http://localhost:4002`
+- **Production:** Visit [bankimonlineadmin-production.up.railway.app](https://bankimonlineadmin-production.up.railway.app)
