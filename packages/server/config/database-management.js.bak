@@ -1,5 +1,5 @@
-const pg = require('pg');
-const dotenv = require('dotenv');
+import pg from 'pg';
+import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
@@ -7,7 +7,7 @@ dotenv.config();
 const { Pool } = pg;
 
 // Management database configuration
-const managementConfig = {
+export const managementConfig = {
   name: 'bankim_management',
   host: 'yamanote.proxy.rlwy.net',
   port: 53119,
@@ -24,7 +24,7 @@ const managementConfig = {
 };
 
 // Create connection pool for management database
-const managementPool = new Pool({
+export const managementPool = new Pool({
   connectionString: managementConfig.connectionString,
   ssl: managementConfig.ssl,
   max: 10,
@@ -33,7 +33,7 @@ const managementPool = new Pool({
 });
 
 // Test connection
-const testManagementConnection = async () => {
+export const testManagementConnection = async () => {
   try {
     const client = await managementPool.connect();
     console.log('✅ Connected to bankim_management database');
@@ -46,7 +46,7 @@ const testManagementConnection = async () => {
 };
 
 // Management database operations
-const managementOperations = {
+export const managementOperations = {
   // Test table operations
   createTestTable: async () => {
     const client = await managementPool.connect();
@@ -103,7 +103,7 @@ const managementOperations = {
 };
 
 // Initialize management database
-const initializeManagementDatabase = async () => {
+export const initializeManagementDatabase = async () => {
   console.log('🚀 Initializing Management Database...');
   console.log(`📊 Database: ${managementConfig.name}`);
   console.log(`🔗 Host: ${managementConfig.host}:${managementConfig.port}`);
@@ -119,4 +119,4 @@ const initializeManagementDatabase = async () => {
   } else {
     console.error('❌ Management database initialization failed');
   }
-}; module.exports = { managementConfig, managementPool, testManagementConnection, managementOperations, initializeManagementDatabase };
+}; 

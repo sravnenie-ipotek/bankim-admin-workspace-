@@ -1,5 +1,5 @@
-const pg = require('pg');
-const dotenv = require('dotenv');
+import pg from 'pg';
+import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
@@ -7,7 +7,7 @@ dotenv.config();
 const { Pool } = pg;
 
 // Core database configuration (bankim_core)
-const coreConfig = {
+export const coreConfig = {
   name: 'bankim_core',
   host: 'yamanote.proxy.rlwy.net',
   port: 53119,
@@ -32,7 +32,7 @@ const coreConfig = {
 };
 
 // Create connection pool for core database
-const corePool = new Pool({
+export const corePool = new Pool({
   connectionString: coreConfig.connectionString,
   ssl: coreConfig.ssl,
   max: 10,
@@ -41,7 +41,7 @@ const corePool = new Pool({
 });
 
 // Test core database connection
-const testCoreConnection = async () => {
+export const testCoreConnection = async () => {
   try {
     const client = await corePool.connect();
     console.log('✅ Connected to bankim_core database');
@@ -59,7 +59,7 @@ const testCoreConnection = async () => {
 };
 
 // Initialize core database tables
-const initializeCoreDatabase = async () => {
+export const initializeCoreDatabase = async () => {
   const client = await corePool.connect();
   
   try {
@@ -276,7 +276,7 @@ const initializeCoreDatabase = async () => {
 };
 
 // Core database operations
-const coreOperations = {
+export const coreOperations = {
   // Calculator Formula Operations (existing)
   async getCalculatorFormula() {
     const client = await corePool.connect();
@@ -728,11 +728,11 @@ const coreOperations = {
 };
 
 // Graceful shutdown
-const closeCoreConnection = async () => {
+export const closeCoreConnection = async () => {
   try {
     await corePool.end();
     console.log('✅ bankim_core database connection closed');
   } catch (error) {
     console.error('❌ Error closing bankim_core connection:', error);
   }
-}; module.exports = { coreConfig, corePool, testCoreConnection, coreOperations, initializeCoreDatabase };
+}; 

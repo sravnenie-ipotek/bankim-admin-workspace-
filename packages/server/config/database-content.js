@@ -1,5 +1,5 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
+const pg = require('pg');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
@@ -7,7 +7,7 @@ dotenv.config();
 const { Pool } = pg;
 
 // Content database configuration
-export const contentConfig = {
+const contentConfig = {
   name: 'bankim_content',
   host: 'shortline.proxy.rlwy.net',
   port: 33452,
@@ -23,7 +23,7 @@ export const contentConfig = {
 };
 
 // Create connection pool for content database
-export const contentPool = new Pool({
+const contentPool = new Pool({
   connectionString: contentConfig.connectionString,
   ssl: contentConfig.ssl,
   max: 10,
@@ -32,7 +32,7 @@ export const contentPool = new Pool({
 });
 
 // Test connection
-export const testContentConnection = async () => {
+const testContentConnection = async () => {
   try {
     const client = await contentPool.connect();
     console.log('✅ Connected to bankim_content database');
@@ -45,16 +45,16 @@ export const testContentConnection = async () => {
 };
 
 // Content database operations
-export const contentOperations = {
-  
+const contentOperations = {
+
   // Get all content items with translations
   getAllContentItems: async () => {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        SELECT 
-          ci.id, ci.content_key, ci.content_type, ci.category, 
-          ci.screen_location, ci.component_type, ci.description, 
+        SELECT
+          ci.id, ci.content_key, ci.content_type, ci.category,
+          ci.screen_location, ci.component_type, ci.description,
           ci.is_active, ci.created_at, ci.updated_at,
           json_agg(
             json_build_object(
@@ -67,8 +67,8 @@ export const contentOperations = {
         FROM content_items ci
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.is_active = true
-        GROUP BY ci.id, ci.content_key, ci.content_type, ci.category, 
-                 ci.screen_location, ci.component_type, ci.description, 
+        GROUP BY ci.id, ci.content_key, ci.content_type, ci.category,
+                 ci.screen_location, ci.component_type, ci.description,
                  ci.is_active, ci.created_at, ci.updated_at
         ORDER BY ci.created_at DESC
       `);
@@ -86,9 +86,9 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        SELECT 
-          ci.id, ci.content_key, ci.content_type, ci.category, 
-          ci.screen_location, ci.component_type, ci.description, 
+        SELECT
+          ci.id, ci.content_key, ci.content_type, ci.category,
+          ci.screen_location, ci.component_type, ci.description,
           ci.is_active, ci.created_at, ci.updated_at,
           json_agg(
             json_build_object(
@@ -101,8 +101,8 @@ export const contentOperations = {
         FROM content_items ci
         LEFT JOIN content_translations ct ON ci.id = ct.content_item_id
         WHERE ci.id = $1
-        GROUP BY ci.id, ci.content_key, ci.content_type, ci.category, 
-                 ci.screen_location, ci.component_type, ci.description, 
+        GROUP BY ci.id, ci.content_key, ci.content_type, ci.category,
+                 ci.screen_location, ci.component_type, ci.description,
                  ci.is_active, ci.created_at, ci.updated_at
       `, [id]);
       return result.rows[0] || null;
@@ -119,8 +119,8 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        SELECT * FROM content_categories 
-        WHERE is_active = true 
+        SELECT * FROM content_categories
+        WHERE is_active = true
         ORDER BY sort_order, name
       `);
       return result.rows;
@@ -137,8 +137,8 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        SELECT * FROM languages 
-        WHERE is_active = true 
+        SELECT * FROM languages
+        WHERE is_active = true
         ORDER BY is_default DESC, name
       `);
       return result.rows;
@@ -155,12 +155,12 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        UPDATE content_translations 
+        UPDATE content_translations
         SET content_value = $1, updated_at = CURRENT_TIMESTAMP, created_by = $2
         WHERE content_item_id = $3 AND language_code = $4
         RETURNING *
       `, [contentValue, userId, contentItemId, languageCode]);
-      
+
       if (result.rows.length === 0) {
         // Create new translation if it doesn't exist
         const insertResult = await client.query(`
@@ -170,7 +170,7 @@ export const contentOperations = {
         `, [contentItemId, languageCode, contentValue, userId]);
         return insertResult.rows[0];
       }
-      
+
       return result.rows[0];
     } catch (error) {
       console.error('Error updating content translation:', error);
@@ -185,17 +185,17 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       await client.query('BEGIN');
-      
+
       // Create content item
       const itemResult = await client.query(`
         INSERT INTO content_items (content_key, content_type, category, screen_location, component_type, description, created_by)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
-      `, [contentData.content_key, contentData.content_type, contentData.category, 
+      `, [contentData.content_key, contentData.content_type, contentData.category,
           contentData.screen_location, contentData.component_type, contentData.description, userId]);
-      
+
       const contentItem = itemResult.rows[0];
-      
+
       // Create translations for each language
       if (contentData.translations && contentData.translations.length > 0) {
         for (const translation of contentData.translations) {
@@ -205,7 +205,7 @@ export const contentOperations = {
           `, [contentItem.id, translation.language_code, translation.content_value, userId]);
         }
       }
-      
+
       await client.query('COMMIT');
       return contentItem;
     } catch (error) {
@@ -218,14 +218,14 @@ export const contentOperations = {
   },
 
   // UI Settings Operations
-  
+
   // Get all UI settings
   getUISettings: async () => {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
         SELECT id, setting_key, setting_value, description, created_at, updated_at
-        FROM ui_settings 
+        FROM ui_settings
         ORDER BY setting_key
       `);
       return result.rows;
@@ -243,7 +243,7 @@ export const contentOperations = {
     try {
       const result = await client.query(`
         SELECT id, setting_key, setting_value, description, created_at, updated_at
-        FROM ui_settings 
+        FROM ui_settings
         WHERE setting_key = $1
       `, [settingKey]);
       return result.rows[0] || null;
@@ -260,12 +260,12 @@ export const contentOperations = {
     const client = await contentPool.connect();
     try {
       const result = await client.query(`
-        UPDATE ui_settings 
+        UPDATE ui_settings
         SET setting_value = $1, updated_at = CURRENT_TIMESTAMP
         WHERE setting_key = $2
         RETURNING id, setting_key, setting_value, description, created_at, updated_at
       `, [settingValue, settingKey]);
-      
+
       if (result.rows.length === 0) {
         // Create new setting if it doesn't exist
         const insertResult = await client.query(`
@@ -275,7 +275,7 @@ export const contentOperations = {
         `, [settingKey, settingValue, 'UI setting']);
         return insertResult.rows[0];
       }
-      
+
       return result.rows[0];
     } catch (error) {
       console.error('Error updating UI setting:', error);
@@ -284,17 +284,17 @@ export const contentOperations = {
       client.release();
     }
   },
-  
+
   // Get database info
   getDbInfo: async () => {
     const client = await contentPool.connect();
     try {
       const tablesResult = await client.query(`
-        SELECT table_name 
-        FROM information_schema.tables 
+        SELECT table_name
+        FROM information_schema.tables
         WHERE table_schema = 'public'
       `);
-      
+
       return {
         database: contentConfig.name,
         host: contentConfig.host,
@@ -312,11 +312,11 @@ export const contentOperations = {
 };
 
 // Initialize content database
-export const initializeContentDatabase = async () => {
+const initializeContentDatabase = async () => {
   console.log('🚀 Initializing Content Database...');
   console.log(`📊 Database: ${contentConfig.name}`);
   console.log(`🔗 Host: ${contentConfig.host}:${contentConfig.port}`);
-  
+
   const connected = await testContentConnection();
   if (connected) {
     // Get db info to verify tables exist
@@ -330,4 +330,12 @@ export const initializeContentDatabase = async () => {
   } else {
     console.error('❌ Content database initialization failed');
   }
-}; 
+};
+
+module.exports = {
+  contentConfig,
+  contentPool,
+  testContentConnection,
+  contentOperations,
+  initializeContentDatabase
+};

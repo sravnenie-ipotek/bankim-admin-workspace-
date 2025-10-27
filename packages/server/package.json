@@ -1,6 +1,7 @@
 {
   "name": "@bankim/server",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "Backend API service for BankIM Content Management",
   "main": "server.js",
   "scripts": {
@@ -33,7 +34,7 @@
     "express-session": "^1.18.2",
     "helmet": "^7.1.0",
     "node-cache": "^5.1.2",
-    "pg": "^8.11.3"
+    "pg": "8.11.3"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
