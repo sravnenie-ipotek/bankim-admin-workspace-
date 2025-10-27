@@ -16,7 +16,8 @@ import {
 import { ContentPage } from '../pages/Chat/ContentManagement/types/contentTypes';
 import { ContentListItem } from '../pages/ContentListBase/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:4000');
+// Use environment variable or default to relative URL (production uses same server)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 const USE_REAL_CONTENT_DATA = import.meta.env.VITE_USE_REAL_CONTENT_DATA === 'true';
 const CONTENT_CACHE_TTL = parseInt(import.meta.env.VITE_CONTENT_CACHE_TTL || '300000');

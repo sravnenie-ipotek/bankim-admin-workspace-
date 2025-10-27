@@ -95,7 +95,8 @@ interface AuthProviderProps {
 }
 
 // API base URL - use proxy in development, environment URL in production
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'http://localhost:4000');
+// Use environment variable or default to relative URL (production uses same server)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 // Map database roles to frontend roles
 const mapDatabaseRoleToFrontendRole = (dbRole: string): UserRole => {
