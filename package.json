@@ -9,6 +9,8 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
+    "start": "NODE_ENV=production node packages/server/server.js",
+    "start:prod": "npm run build && npm start",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
@@ -16,8 +18,7 @@
     "deploy": "npm run build && npm run type-check && git push origin main",
     "deploy:force": "npm run build && git push origin main",
     "deploy:test": "npm run build && npm run type-check && npm test --workspace=@bankim/client && git push origin main",
-    "validate": "npm run type-check && npm run build",
-    "start": "turbo run dev --parallel"
+    "validate": "npm run type-check && npm run build"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

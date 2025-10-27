@@ -3,10 +3,11 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const PORT = 4000; // Force port 4000 for development
+const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
@@ -3108,12 +3109,29 @@ app.post('/api/admin/dropdown/validate', requireAuth, async (req, res) => {
 });
 
 
+// Serve static files from React build in production
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '../client/dist');
+  console.log(`📦 Serving static files from: ${clientBuildPath}`);
+
+  app.use(express.static(clientBuildPath));
+
+  // All remaining requests return the React app (for client-side routing)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+
 // Start server
-const actualPort = PORT || 4000;
-app.listen(actualPort, () => {
-  console.log(`🚀 Server running on port ${actualPort}`);
-  console.log(`📊 Health check: http://localhost:${actualPort}/api/health`);
-  console.log(`📡 Content API: http://localhost:${actualPort}/api/content/mortgage`);
-  console.log(`🍔 Menu API: http://localhost:${actualPort}/api/content/menu`);
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`📡 Content API: http://localhost:${PORT}/api/content/mortgage`);
+  console.log(`🍔 Menu API: http://localhost:${PORT}/api/content/menu`);
   console.log(`🔧 Improved drill endpoints with COALESCE fallback enabled`);
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`🎨 Serving React frontend from built files`);
+  }
 });

@@ -14,6 +14,11 @@ export default defineConfig(({ mode }) => {
     server: {
       port: port,
       host: true,
+      allowedHosts: [
+        'bankimonlineadmin-production.up.railway.app',
+        'localhost',
+        '.railway.app' // Allow all Railway subdomains
+      ],
       proxy: {
         '/api': {
           target: apiUrl,
@@ -24,7 +29,13 @@ export default defineConfig(({ mode }) => {
     },
     preview: {
       port: port,
-      host: true
+      host: true,
+      strictPort: false,
+      allowedHosts: [
+        'bankimonlineadmin-production.up.railway.app',
+        'localhost',
+        '.railway.app' // Allow all Railway subdomains
+      ]
     }
   }
 }) 

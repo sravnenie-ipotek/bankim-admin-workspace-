@@ -1,0 +1,28 @@
+# Development files
+*.log
+npm-debug.log*
+.DS_Store
+
+# Testing
+cypress/videos
+cypress/screenshots
+coverage
+
+# Build artifacts (will be rebuilt on Railway)
+node_modules
+dist
+.turbo
+
+# IDE
+.vscode
+.idea
+
+# Environment files (use Railway env vars instead)
+.env
+.env.local
+.env.*.local
+
+# Documentation
+docs
+*.md
+!README.md
